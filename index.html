@@ -507,7 +507,11 @@
       </div>
 
       <div class="direction-wrap" id="directionWrap">
-        <p class="choice-label" style="width:100%;margin-bottom:0">Kierunek korelacji:</p>
+        <p class="choice-label" style="width:100%;margin-bottom:6px">Kierunek korelacji:</p>
+        <div style="width:100%;font-size:12px;color:var(--c2);line-height:1.5;margin-bottom:10px;padding:10px 12px;background:rgba(79,124,130,.1);border-radius:8px;border:1px solid rgba(79,124,130,.2)">
+          📈 <strong style="color:var(--c3)">Pozytywna</strong> — oba wskaźniki rosną lub maleją razem (np. im więcej sprzedaży, tym wyższe prowizje).<br>
+          📉 <strong style="color:#e07a7a">Negatywna</strong> — gdy jeden rośnie, drugi maleje (np. im więcej reklamacji, tym mniejsza lojalność klientów).
+        </div>
         <button class="dir-btn" id="dirPos" onclick="selectDir('pos')">📈 Pozytywna</button>
         <button class="dir-btn neg" id="dirNeg" onclick="selectDir('neg')">📉 Negatywna</button>
       </div>
@@ -612,25 +616,25 @@ const GITHUB_REPO   = 'korelacja-danych-mba';
 const QUESTIONS = [
   {
     title: 'Logistyka vs. Subskrypcja SaaS',
-    hint: 'Wyobraź sobie firmę, która dostarcza sprzęt i sprzedaje do niego oprogramowanie w modelu SaaS. Czy stan magazynu ma cokolwiek wspólnego z tym, czy klient odnowi umowę?',
+    hint: '💡 SaaS (Software as a Service) — model subskrypcyjny oprogramowania: płacisz miesięcznie za dostęp do aplikacji w chmurze, zamiast kupować ją raz na zawsze (jak Spotify, ale dla firm — np. Salesforce, Microsoft 365). Wyobraź sobie firmę, która dostarcza sprzęt i sprzedaje do niego takie oprogramowanie. Czy opóźnienia w dostawie sprzętu mają cokolwiek wspólnego z tym, czy klient odnowi umowę na software?',
     a: { icon: '📦', name: 'Opóźnienia w dostawach (+1 dzień)', source: 'ERP / Logistyka' },
     b: { icon: '🔄', name: 'Retencja subskrypcji SaaS', source: 'CRM / Billing' }
   },
   {
-    title: 'Nastroje na czacie vs. Jakość kodu',
-    hint: 'GitHub rejestruje bugi, Slack rejestruje emocje. Czy te dwa narzędzia "widzą" to samo zdarzenie — tylko z różnych perspektyw?',
-    a: { icon: '💬', name: 'Negatywny ton wiadomości w komunikatorze', source: 'Slack / Teams' },
-    b: { icon: '🐛', name: 'Liczba bugów w sprincie', source: 'GitHub / Jira' }
+    title: 'Satysfakcja pracowników vs. Wyniki sprzedaży',
+    hint: '💡 Slack — firmowy komunikator (odpowiednik SMS-ów, ale dla całego zespołu), gdzie toczą się rozmowy i dyskusje w czasie rzeczywistym. GitHub — platforma, gdzie programiści przechowują kod i zgłaszają błędy. Wyobraź sobie, że masz dostęp do anonimowych wyników ankiet satysfakcji pracowników z jednej strony, a miesięcznych wyników sprzedaży z drugiej — z tego samego okresu. Czy zadowolenie zespołu przekłada się na to, ile sprzedaje?',
+    a: { icon: '😊', name: 'Wynik ankiety satysfakcji pracowników', source: 'HR / Intranet' },
+    b: { icon: '📈', name: 'Miesięczny wynik sprzedaży zespołu', source: 'CRM / Sales' }
   },
   {
     title: 'Czas reakcji vs. Wartość klienta',
-    hint: 'Dwa systemy, które rzadko ze sobą rozmawiają: helpdesk i CRM. Co by się stało, gdyby handlowiec widział historię ticketów przed rozmową z klientem?',
+    hint: '💡 CRM (Customer Relationship Management) — system do zarządzania relacjami z klientami, który przechowuje historię kontaktów, zakupów i umów (np. Salesforce, HubSpot). To cyfrowa "pamięć" firmy o każdym kliencie. Dwa systemy, które rzadko ze sobą rozmawiają: helpdesk (system obsługi reklamacji) i CRM. Co by się stało, gdyby handlowiec widział historię problemów klienta przed rozmową sprzedażową?',
     a: { icon: '⚡', name: 'Czas pierwszej odpowiedzi na reklamację', source: 'Zendesk / Helpdesk' },
     b: { icon: '💰', name: 'Lifetime Value klienta (LTV)', source: 'CRM / Finance' }
   },
   {
-    title: 'Liczba dashboardów vs. Jakość decyzji',
-    hint: 'Paradoks danych: firmy inwestują miliony w BI, mnożąc dashboardy. Czy przekłada się to wprost na lepsze decyzje w zarządzie?',
+    title: 'Liczba raportów BI vs. Jakość decyzji',
+    hint: '💡 BI (Business Intelligence) — narzędzia do tworzenia interaktywnych raportów i dashboardów z danych firmowych (np. Power BI, Tableau). Służą do wizualizacji wyników i monitorowania KPI. Paradoks: wiele firm wydaje miliony na BI i ma setki dashboardów. Czy to automatycznie przekłada się na trafniejsze decyzje zarządu?',
     a: { icon: '📊', name: 'Liczba dashboardów BI w firmie', source: 'Tableau / PowerBI' },
     b: { icon: '🎯', name: 'Jakość decyzji na poziomie C-suite', source: 'Badania / Wyniki fin.' }
   },
@@ -779,9 +783,14 @@ function submitAnswers(skipAudit = false) {
   lastPayload = { nickname, answers, audit };
   showScreen('sending');
 
-  if (GITHUB_TOKEN === 'YOUR_GITHUB_TOKEN_HERE') {
-    // No token — show results locally
-    setTimeout(() => showSuccess(nickname, answers, audit, false), 800);
+  if (GITHUB_TOKEN === 'YOUR_GITHUB_TOKEN_HERE' || GITHUB_TOKEN === '') {
+    // No token — show friendly notice
+    setTimeout(() => {
+      document.getElementById('errorMsg').innerHTML =
+        '⚙️ Prowadzący jeszcze nie skonfigurował zapisu odpowiedzi.<br><br>' +
+        'Twoje odpowiedzi <strong>nie zostały zapisane</strong> — wróć do testu po otrzymaniu poprawnego linku od prowadzącego.';
+      showScreen('error');
+    }, 800);
     return;
   }
 
