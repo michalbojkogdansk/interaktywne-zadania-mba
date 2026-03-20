@@ -607,9 +607,7 @@
 // Aby odpowiedzi studentów były zapisywane jako GitHub Issues,
 // ustaw poniższy token (fine-grained PAT z uprawnieniem Issues: Write).
 // Instrukcja tworzenia tokena: README.md w tym repozytorium.
-const GITHUB_TOKEN  = 'YOUR_GITHUB_TOKEN_HERE';
-const GITHUB_OWNER  = 'michalbojkogdansk';
-const GITHUB_REPO   = 'korelacja-danych-mba';
+const WORKER_URL = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
 // ───────────────────────────────────────────────────────────────────────────
 
 // ─── QUESTIONS ─────────────────────────────────────────────────────────────
@@ -783,17 +781,6 @@ function submitAnswers(skipAudit = false) {
   lastPayload = { nickname, answers, audit };
   showScreen('sending');
 
-  if (GITHUB_TOKEN === 'YOUR_GITHUB_TOKEN_HERE' || GITHUB_TOKEN === '') {
-    // No token — show friendly notice
-    setTimeout(() => {
-      document.getElementById('errorMsg').innerHTML =
-        '⚙️ Prowadzący jeszcze nie skonfigurował zapisu odpowiedzi.<br><br>' +
-        'Twoje odpowiedzi <strong>nie zostały zapisane</strong> — wróć do testu po otrzymaniu poprawnego linku od prowadzącego.';
-      showScreen('error');
-    }, 800);
-    return;
-  }
-
   postToGitHub(nickname, answers, audit);
 }
 
@@ -834,23 +821,15 @@ ${lines}
 ${audit ? `## 🔍 Data Audit\n\n${audit}\n` : '> Brak Data Audit.'}`;
 
   try {
-    const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues`,
-      {
+    const res = await fetch(WORKER_URL, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${GITHUB_TOKEN}`,
-          Accept: 'application/vnd.github+json',
-          'Content-Type': 'application/json',
-          'X-GitHub-Api-Version': '2022-11-28'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: `📊 ${nick} — ${new Date().toLocaleDateString('pl-PL')}`,
           body,
           labels: ['student-response']
         })
-      }
-    );
+      });
 
     if (res.ok) {
       showSuccess(nick, ans, audit, true);
