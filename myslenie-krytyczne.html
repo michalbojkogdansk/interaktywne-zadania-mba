@@ -1023,7 +1023,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    title: `🧠 Myślenie Krytyczne — ${nickname} — ${results.percentage}%`,
+                    title: `🧠 Myślenie Krytyczne — ${nickname} — ${results.percentage}% — ${new Date().toLocaleDateString('pl-PL')}`,
                     body: issueBody,
                     labels: ['myslenie-krytyczne']
                 })
