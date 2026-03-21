@@ -825,9 +825,9 @@ ${audit ? `## 🔍 Data Audit\n\n${audit}\n` : '> Brak Data Audit.'}`;
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: `📊 ${nick} — ${new Date().toLocaleDateString('pl-PL')}`,
+          title: `📊 Korelacja Danych — ${nick} — ${new Date().toLocaleDateString('pl-PL')}`,
           body,
-          labels: ['student-response']
+          labels: ['korelacja-danych']
         })
       });
 
