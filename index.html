@@ -1,871 +1,258 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Korelacja Danych — Test Intuicji | MBA</title>
-  <style>
-    /* ─── Winter Chill Palette ─────────────────────────────────────── */
-    :root {
-      --c0: #0B2E33;   /* deep ocean */
-      --c1: #4F7C82;   /* teal */
-      --c2: #93B1B5;   /* mist */
-      --c3: #B8E3E9;   /* ice */
-      --c4: #E4F6F8;   /* frost */
-      --white: #F7FCFD;
-      --radius: 14px;
-      --transition: .35s cubic-bezier(.4,0,.2,1);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktywne Zadania MBA</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --frost-white: #F0F4F8;
+            --ice-blue: #D6E4F0;
+            --steel-blue: #7BA7CC;
+            --deep-teal: #2E6B8A;
+            --dark-navy: #1B3A4B;
+            --accent-cyan: #4ECDC4;
+            --accent-mint: #A8E6CF;
+            --glass-white: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
 
-    body {
-      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: var(--c0);
-      color: var(--white);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      overflow-x: hidden;
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* ─── Animated BG ──────────────────────────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(79,124,130,.18) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(184,227,233,.08) 0%, transparent 55%);
-      pointer-events: none;
-      z-index: 0;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1B3A4B 0%, #2E6B8A 40%, #4ECDC4 100%);
+            min-height: 100vh;
+            color: var(--dark-navy);
+        }
 
-    .app {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 680px;
-    }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(78, 205, 196, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(168, 230, 207, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-    /* ─── Progress Bar ─────────────────────────────────────────────── */
-    .progress-wrap {
-      margin-bottom: 28px;
-      opacity: 0;
-      transition: opacity .4s;
-    }
-    .progress-wrap.visible { opacity: 1; }
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--c2);
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    .progress-bar {
-      height: 4px;
-      background: rgba(147,177,181,.2);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--c1), var(--c3));
-      border-radius: 2px;
-      transition: width .5s cubic-bezier(.4,0,.2,1);
-      width: 0%;
-    }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
 
-    /* ─── Card ─────────────────────────────────────────────────────── */
-    .card {
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(184,227,233,.12);
-      border-radius: var(--radius);
-      padding: 40px;
-      backdrop-filter: blur(10px);
-      transition: all var(--transition);
-    }
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
 
-    /* ─── Screen management ────────────────────────────────────────── */
-    .screen {
-      display: none;
-      animation: fadeUp .4s ease forwards;
-    }
-    .screen.active { display: block; }
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            margin-bottom: 0.8rem;
+        }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+        .header p {
+            color: var(--ice-blue);
+            font-size: 1.2rem;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
 
-    /* ─── Welcome Screen ───────────────────────────────────────────── */
-    .logo {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--c1);
-      margin-bottom: 24px;
-    }
-    .logo span { color: var(--c3); }
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
 
-    h1 {
-      font-size: clamp(26px, 5vw, 36px);
-      font-weight: 700;
-      line-height: 1.2;
-      color: var(--white);
-      margin-bottom: 12px;
-    }
-    h1 em {
-      font-style: normal;
-      color: var(--c3);
-    }
+        .task-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .subtitle {
-      font-size: 15px;
-      color: var(--c2);
-      line-height: 1.6;
-      margin-bottom: 32px;
-    }
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 5px;
+            border-radius: 24px 24px 0 0;
+        }
 
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 36px;
-    }
-    .info-item {
-      background: rgba(79,124,130,.15);
-      border: 1px solid rgba(79,124,130,.25);
-      border-radius: 10px;
-      padding: 14px 12px;
-      text-align: center;
-    }
-    .info-item .val { font-size: 22px; font-weight: 700; color: var(--c3); }
-    .info-item .lbl { font-size: 11px; color: var(--c2); margin-top: 2px; }
+        .task-card.correlation::before {
+            background: linear-gradient(90deg, var(--accent-cyan), var(--deep-teal));
+        }
 
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--c2);
-      margin-bottom: 8px;
-    }
+        .task-card.critical::before {
+            background: linear-gradient(90deg, #FF6B6B, #FFE66D);
+        }
 
-    input[type="text"], textarea {
-      width: 100%;
-      background: rgba(255,255,255,.06);
-      border: 1.5px solid rgba(184,227,233,.2);
-      border-radius: 10px;
-      color: var(--white);
-      font-size: 16px;
-      font-family: inherit;
-      padding: 14px 16px;
-      outline: none;
-      transition: border-color .25s;
-    }
-    input[type="text"]::placeholder, textarea::placeholder { color: rgba(147,177,181,.5); }
-    input[type="text"]:focus, textarea:focus {
-      border-color: var(--c3);
-      background: rgba(184,227,233,.06);
-    }
-    textarea { resize: vertical; min-height: 110px; line-height: 1.5; }
+        .task-card.coming-soon::before {
+            background: linear-gradient(90deg, #bbb, #ddd);
+        }
 
-    /* ─── Buttons ──────────────────────────────────────────────────── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px 28px;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      border: none;
-      transition: all .2s;
-      text-decoration: none;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--c1), #3d6970);
-      color: var(--white);
-      width: 100%;
-      margin-top: 20px;
-    }
-    .btn-primary:hover { background: linear-gradient(135deg, #5a8d94, var(--c1)); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(79,124,130,.4); }
-    .btn-primary:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+        .task-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
 
-    /* ─── Question Screen ──────────────────────────────────────────── */
-    .q-number {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      color: var(--c1);
-      margin-bottom: 6px;
-    }
-    .q-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 8px;
-      line-height: 1.3;
-    }
-    .q-hint {
-      font-size: 13px;
-      color: var(--c2);
-      margin-bottom: 28px;
-      line-height: 1.5;
-    }
+        .task-card.coming-soon {
+            opacity: 0.6;
+            pointer-events: none;
+        }
 
-    /* Metric pair */
-    .metrics {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 30px;
-    }
-    .metric {
-      flex: 1;
-      background: rgba(79,124,130,.15);
-      border: 1px solid rgba(79,124,130,.3);
-      border-radius: 12px;
-      padding: 18px 16px;
-      text-align: center;
-    }
-    .metric .icon { font-size: 28px; margin-bottom: 8px; }
-    .metric .name { font-size: 13px; font-weight: 600; color: var(--c3); line-height: 1.3; }
-    .metric .source { font-size: 11px; color: var(--c2); margin-top: 4px; }
-    .metrics-arrow {
-      font-size: 22px;
-      color: var(--c2);
-      flex-shrink: 0;
-    }
+        .task-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
 
-    /* Correlation choice */
-    .choice-label {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--c2);
-      margin-bottom: 10px;
-    }
-    .choices {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-    .choice-btn {
-      flex: 1;
-      padding: 12px 10px;
-      border-radius: 10px;
-      border: 1.5px solid rgba(184,227,233,.15);
-      background: rgba(255,255,255,.04);
-      color: var(--c2);
-      font-size: 14px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all .2s;
-      text-align: center;
-    }
-    .choice-btn:hover { border-color: var(--c1); color: var(--white); background: rgba(79,124,130,.15); }
-    .choice-btn.selected { border-color: var(--c3); color: var(--white); background: rgba(184,227,233,.15); }
+        .task-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-navy);
+            margin-bottom: 0.5rem;
+        }
 
-    /* Direction */
-    .direction-wrap {
-      display: none;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-    .direction-wrap.visible { display: flex; animation: fadeUp .3s ease; }
-    .dir-btn {
-      flex: 1;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1.5px solid rgba(184,227,233,.15);
-      background: rgba(255,255,255,.03);
-      color: var(--c2);
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all .2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    .dir-btn:hover { border-color: var(--c1); color: var(--white); }
-    .dir-btn.selected { border-color: #6dbf7a; color: #6dbf7a; background: rgba(109,191,122,.1); }
-    .dir-btn.selected.neg { border-color: #e07a7a; color: #e07a7a; background: rgba(224,122,122,.1); }
+        .task-desc {
+            font-size: 0.95rem;
+            color: var(--steel-blue);
+            line-height: 1.5;
+            flex: 1;
+        }
 
-    /* Confidence */
-    .confidence-wrap { margin-bottom: 28px; }
-    .stars {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .star {
-      font-size: 26px;
-      cursor: pointer;
-      transition: transform .15s, filter .15s;
-      filter: grayscale(1) opacity(.35);
-    }
-    .star:hover, .star.active { filter: grayscale(0) opacity(1); transform: scale(1.15); }
+        .task-meta {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.2rem;
+            flex-wrap: wrap;
+        }
 
-    /* ─── Data Audit Screen ────────────────────────────────────────── */
-    .audit-tag {
-      display: inline-block;
-      background: rgba(79,124,130,.25);
-      border: 1px solid rgba(79,124,130,.4);
-      color: var(--c3);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 20px;
-      margin-bottom: 16px;
-    }
+        .task-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
 
-    /* ─── Sending / Success ────────────────────────────────────────── */
-    .center { text-align: center; }
-    .big-icon { font-size: 56px; margin-bottom: 20px; }
-    .success-title { font-size: 26px; font-weight: 700; color: var(--c3); margin-bottom: 12px; }
-    .success-sub { font-size: 15px; color: var(--c2); line-height: 1.6; margin-bottom: 28px; }
-    .answer-summary {
-      background: rgba(79,124,130,.1);
-      border: 1px solid rgba(79,124,130,.2);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: left;
-      font-size: 13px;
-      color: var(--c2);
-      line-height: 2;
-    }
-    .answer-summary strong { color: var(--c3); }
-    .link-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 24px;
-      padding: 12px 24px;
-      border-radius: 10px;
-      border: 1.5px solid rgba(184,227,233,.25);
-      color: var(--c3);
-      font-size: 14px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all .2s;
-    }
-    .link-btn:hover { background: rgba(184,227,233,.08); border-color: var(--c3); }
+        .badge-time {
+            background: linear-gradient(135deg, #e8f4f8, #d6e4f0);
+            color: var(--deep-teal);
+        }
 
-    /* Spinner */
-    .spinner {
-      width: 40px; height: 40px;
-      border: 3px solid rgba(184,227,233,.2);
-      border-top-color: var(--c3);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+        .badge-questions {
+            background: linear-gradient(135deg, #e8faf0, #d4f5e4);
+            color: #1a5c37;
+        }
 
-    /* ─── Error ────────────────────────────────────────────────────── */
-    .error-box {
-      background: rgba(224,122,122,.1);
-      border: 1px solid rgba(224,122,122,.3);
-      border-radius: 10px;
-      padding: 16px 20px;
-      font-size: 13px;
-      color: #f0a0a0;
-      margin-top: 16px;
-      display: none;
-    }
-    .error-box.visible { display: block; }
+        .badge-difficulty {
+            background: linear-gradient(135deg, #fff5e6, #ffe0b3);
+            color: #8a6d3b;
+        }
 
-    /* Token notice */
-    .token-notice {
-      background: rgba(184,227,233,.07);
-      border: 1px solid rgba(184,227,233,.2);
-      border-radius: 10px;
-      padding: 14px 18px;
-      font-size: 13px;
-      color: var(--c2);
-      line-height: 1.6;
-      margin-top: 16px;
-    }
-    .token-notice a { color: var(--c3); }
+        .badge-soon {
+            background: #eee;
+            color: #888;
+        }
 
-    /* ─── Responsive ───────────────────────────────────────────────── */
-    @media (max-width: 520px) {
-      .card { padding: 24px 20px; }
-      .info-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-      .info-item .val { font-size: 18px; }
-      .metrics { flex-direction: column; }
-      .metrics-arrow { transform: rotate(90deg); }
-    }
-  </style>
+        .task-arrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            transition: gap 0.3s;
+        }
+
+        .task-card:hover .task-arrow { gap: 0.6rem; }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 700px) {
+            .tasks-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 2rem; }
+            .container { padding: 2rem 1rem; }
+        }
+    </style>
 </head>
 <body>
-
-<div class="app">
-
-  <!-- Progress -->
-  <div class="progress-wrap" id="progressWrap">
-    <div class="progress-label">
-      <span id="progressLabel">Pytanie 1 z 5</span>
-      <span id="progressPct">20%</span>
-    </div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-  </div>
-
-  <!-- SCREEN 0: Welcome -->
-  <div class="screen active" id="screen-welcome">
-    <div class="card">
-      <p class="logo">MBA · <span>Korelacja Danych 2026</span></p>
-      <h1>Czy ufasz <em>swojej intuicji</em>?</h1>
-      <p class="subtitle">
-        Zanim przyjdziesz na zajęcia — sprawdź, jak dobrze "czujesz" dane.
-        5 par wskaźników biznesowych. 5 decyzji. Żadnej ściągawki.
-      </p>
-
-      <div class="info-grid">
-        <div class="info-item">
-          <div class="val">5</div>
-          <div class="lbl">Pytań</div>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Interaktywne Zadania MBA</h1>
+            <p>Wybierz zadanie poniżej. Każde ćwiczenie jest anonimowe — potrzebujesz tylko pseudonimu.</p>
         </div>
-        <div class="info-item">
-          <div class="val">~15</div>
-          <div class="lbl">Minut</div>
+
+        <div class="tasks-grid">
+            <a href="korelacja-danych.html" class="task-card correlation">
+                <div class="task-icon">📊</div>
+                <div class="task-title">Korelacja Danych</div>
+                <div class="task-desc">Czy potrafisz wyczuć, które dane biznesowe są ze sobą powiązane? Sprawdź swoją intuicję o korelacjach w świecie SaaS, CRM i BI.</div>
+                <div class="task-meta">
+                    <span class="task-badge badge-time">⏱ ~30 min</span>
+                    <span class="task-badge badge-questions">5 pytań</span>
+                </div>
+                <div class="task-arrow">Rozpocznij →</div>
+            </a>
+
+            <a href="myslenie-krytyczne.html" class="task-card critical">
+                <div class="task-icon">🧠</div>
+                <div class="task-title">Myślenie Krytyczne</div>
+                <div class="task-desc">Od łatwych do trudnych — 10 pułapek logicznych, z którymi mierzy się każdy menedżer. Błędy poznawcze, fałszywe wnioski, manipulacja danymi.</div>
+                <div class="task-meta">
+                    <span class="task-badge badge-time">⏱ ~20 min</span>
+                    <span class="task-badge badge-questions">10 pytań</span>
+                    <span class="task-badge badge-difficulty">📈 Rosnąca trudność</span>
+                </div>
+                <div class="task-arrow">Rozpocznij →</div>
+            </a>
+
+            <div class="task-card coming-soon">
+                <div class="task-icon">🔮</div>
+                <div class="task-title">Więcej wkrótce...</div>
+                <div class="task-desc">Kolejne zadania interaktywne pojawią się wkrótce. Analiza danych, case studies, symulacje decyzji.</div>
+                <div class="task-meta">
+                    <span class="task-badge badge-soon">Wkrótce</span>
+                </div>
+            </div>
+
+            <div class="task-card coming-soon">
+                <div class="task-icon">📈</div>
+                <div class="task-title">Więcej wkrótce...</div>
+                <div class="task-desc">Dashboardy, symulacje biznesowe i inne interaktywne narzędzia edukacyjne.</div>
+                <div class="task-meta">
+                    <span class="task-badge badge-soon">Wkrótce</span>
+                </div>
+            </div>
         </div>
-        <div class="info-item">
-          <div class="val">100%</div>
-          <div class="lbl">Anonimowo</div>
+
+        <div class="footer">
+            Interaktywne Zadania MBA &copy; 2026
         </div>
-      </div>
-
-      <label for="nicknameInput">Twoja ksywa (widoczna przy wynikach)</label>
-      <input
-        type="text"
-        id="nicknameInput"
-        placeholder="np. DataNinja, ColdBrew, Marek42..."
-        maxlength="30"
-        autocomplete="off"
-      />
-      <div class="error-box" id="nicknameError">Wpisz ksywę — minimum 2 znaki 👆</div>
-
-      <button class="btn btn-primary" id="startBtn" onclick="startQuiz()">
-        ▶ Zaczynam test
-      </button>
-
-      <div class="token-notice">
-        🔐 Twoje odpowiedzi zostaną zapisane anonimowo w repozytorium GitHub prowadzącego.
-        Ksywa służy wyłącznie do identyfikacji Twoich odpowiedzi podczas zajęć.
-      </div>
     </div>
-  </div>
-
-  <!-- SCREEN 1–5: Questions (generated by JS) -->
-  <div class="screen" id="screen-question">
-    <div class="card">
-      <p class="q-number" id="qNumber">Pytanie 1 / 5</p>
-      <h2 class="q-title" id="qTitle"></h2>
-      <p class="q-hint" id="qHint"></p>
-
-      <div class="metrics" id="metricsBlock">
-        <div class="metric" id="metricA">
-          <div class="icon" id="metricAIcon"></div>
-          <div class="name" id="metricAName"></div>
-          <div class="source" id="metricASource"></div>
-        </div>
-        <div class="metrics-arrow">↔</div>
-        <div class="metric" id="metricB">
-          <div class="icon" id="metricBIcon"></div>
-          <div class="name" id="metricBName"></div>
-          <div class="source" id="metricBSource"></div>
-        </div>
-      </div>
-
-      <p class="choice-label">Czy istnieje korelacja?</p>
-      <div class="choices">
-        <button class="choice-btn" onclick="selectChoice('tak')">✅ Tak</button>
-        <button class="choice-btn" onclick="selectChoice('nie')">❌ Nie</button>
-        <button class="choice-btn" onclick="selectChoice('nie_wiem')">🤷 Nie wiem</button>
-      </div>
-
-      <div class="direction-wrap" id="directionWrap">
-        <p class="choice-label" style="width:100%;margin-bottom:6px">Kierunek korelacji:</p>
-        <div style="width:100%;font-size:12px;color:var(--c2);line-height:1.5;margin-bottom:10px;padding:10px 12px;background:rgba(79,124,130,.1);border-radius:8px;border:1px solid rgba(79,124,130,.2)">
-          📈 <strong style="color:var(--c3)">Pozytywna</strong> — oba wskaźniki rosną lub maleją razem (np. im więcej sprzedaży, tym wyższe prowizje).<br>
-          📉 <strong style="color:#e07a7a">Negatywna</strong> — gdy jeden rośnie, drugi maleje (np. im więcej reklamacji, tym mniejsza lojalność klientów).
-        </div>
-        <button class="dir-btn" id="dirPos" onclick="selectDir('pos')">📈 Pozytywna</button>
-        <button class="dir-btn neg" id="dirNeg" onclick="selectDir('neg')">📉 Negatywna</button>
-      </div>
-
-      <div class="confidence-wrap">
-        <p class="choice-label">Pewność siebie</p>
-        <div class="stars" id="starsRow">
-          <span class="star" onclick="selectConfidence(1)">⭐</span>
-          <span class="star" onclick="selectConfidence(2)">⭐</span>
-          <span class="star" onclick="selectConfidence(3)">⭐</span>
-          <span class="star" onclick="selectConfidence(4)">⭐</span>
-          <span class="star" onclick="selectConfidence(5)">⭐</span>
-        </div>
-      </div>
-
-      <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
-        Następne pytanie →
-      </button>
-    </div>
-  </div>
-
-  <!-- SCREEN 6: Data Audit -->
-  <div class="screen" id="screen-audit">
-    <div class="card">
-      <span class="audit-tag">Opcjonalne · Data Audit</span>
-      <h2 class="q-title">Twój silos danych</h2>
-      <p class="subtitle" style="margin-bottom:24px">
-        Pomyśl o swojej firmie lub projekcie. Które dwa systemy / bazy danych
-        "nie rozmawiają ze sobą", a ich połączenie dałoby realną wartość?
-      </p>
-
-      <label for="auditInput">Krótki opis (opcjonalnie)</label>
-      <textarea
-        id="auditInput"
-        placeholder="Np. CRM (Salesforce) + dane reklamacji (Zendesk) — połączenie dałoby handlowcowi historię problemów klienta przed rozmową..."
-      ></textarea>
-
-      <button class="btn btn-primary" id="submitBtn" onclick="submitAnswers()">
-        📤 Wyślij moje odpowiedzi
-      </button>
-
-      <button
-        class="btn"
-        style="width:100%;margin-top:10px;background:transparent;color:var(--c2);border:1.5px solid rgba(147,177,181,.2)"
-        onclick="submitAnswers(true)"
-      >
-        Pomiń i wyślij bez Data Audit
-      </button>
-    </div>
-  </div>
-
-  <!-- SCREEN 7: Sending -->
-  <div class="screen" id="screen-sending">
-    <div class="card center">
-      <div class="spinner"></div>
-      <p style="color:var(--c2);font-size:15px">Zapisuję Twoje odpowiedzi…</p>
-    </div>
-  </div>
-
-  <!-- SCREEN 8: Success -->
-  <div class="screen" id="screen-success">
-    <div class="card center">
-      <div class="big-icon">🧊</div>
-      <h2 class="success-title">Gotowe!</h2>
-      <p class="success-sub" id="successMsg"></p>
-      <div class="answer-summary" id="answerSummary"></div>
-      <a
-        href="https://github.com/michalbojkogdansk/korelacja-danych-mba/issues"
-        target="_blank"
-        class="link-btn"
-      >
-        👁 Zobacz odpowiedzi grupy →
-      </a>
-    </div>
-  </div>
-
-  <!-- SCREEN 9: Error -->
-  <div class="screen" id="screen-error">
-    <div class="card center">
-      <div class="big-icon">⚠️</div>
-      <h2 class="success-title" style="color:#f0a0a0">Ups…</h2>
-      <p class="success-sub" id="errorMsg"></p>
-      <button class="btn btn-primary" style="max-width:300px" onclick="retrySubmit()">
-        🔄 Spróbuj ponownie
-      </button>
-    </div>
-  </div>
-
-</div><!-- .app -->
-
-<script>
-// ─── CONFIG ────────────────────────────────────────────────────────────────
-// Aby odpowiedzi studentów były zapisywane jako GitHub Issues,
-// ustaw poniższy token (fine-grained PAT z uprawnieniem Issues: Write).
-// Instrukcja tworzenia tokena: README.md w tym repozytorium.
-const WORKER_URL = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
-// ───────────────────────────────────────────────────────────────────────────
-
-// ─── QUESTIONS ─────────────────────────────────────────────────────────────
-const QUESTIONS = [
-  {
-    title: 'Logistyka vs. Subskrypcja SaaS',
-    hint: '💡 SaaS (Software as a Service) — model subskrypcyjny oprogramowania: płacisz miesięcznie za dostęp do aplikacji w chmurze, zamiast kupować ją raz na zawsze (jak Spotify, ale dla firm — np. Salesforce, Microsoft 365). Wyobraź sobie firmę, która dostarcza sprzęt i sprzedaje do niego takie oprogramowanie. Czy opóźnienia w dostawie sprzętu mają cokolwiek wspólnego z tym, czy klient odnowi umowę na software?',
-    a: { icon: '📦', name: 'Opóźnienia w dostawach (+1 dzień)', source: 'ERP / Logistyka' },
-    b: { icon: '🔄', name: 'Retencja subskrypcji SaaS', source: 'CRM / Billing' }
-  },
-  {
-    title: 'Satysfakcja pracowników vs. Wyniki sprzedaży',
-    hint: '💡 Slack — firmowy komunikator (odpowiednik SMS-ów, ale dla całego zespołu), gdzie toczą się rozmowy i dyskusje w czasie rzeczywistym. GitHub — platforma, gdzie programiści przechowują kod i zgłaszają błędy. Wyobraź sobie, że masz dostęp do anonimowych wyników ankiet satysfakcji pracowników z jednej strony, a miesięcznych wyników sprzedaży z drugiej — z tego samego okresu. Czy zadowolenie zespołu przekłada się na to, ile sprzedaje?',
-    a: { icon: '😊', name: 'Wynik ankiety satysfakcji pracowników', source: 'HR / Intranet' },
-    b: { icon: '📈', name: 'Miesięczny wynik sprzedaży zespołu', source: 'CRM / Sales' }
-  },
-  {
-    title: 'Czas reakcji vs. Wartość klienta',
-    hint: '💡 CRM (Customer Relationship Management) — system do zarządzania relacjami z klientami, który przechowuje historię kontaktów, zakupów i umów (np. Salesforce, HubSpot). To cyfrowa "pamięć" firmy o każdym kliencie. Dwa systemy, które rzadko ze sobą rozmawiają: helpdesk (system obsługi reklamacji) i CRM. Co by się stało, gdyby handlowiec widział historię problemów klienta przed rozmową sprzedażową?',
-    a: { icon: '⚡', name: 'Czas pierwszej odpowiedzi na reklamację', source: 'Zendesk / Helpdesk' },
-    b: { icon: '💰', name: 'Lifetime Value klienta (LTV)', source: 'CRM / Finance' }
-  },
-  {
-    title: 'Liczba raportów BI vs. Jakość decyzji',
-    hint: '💡 BI (Business Intelligence) — narzędzia do tworzenia interaktywnych raportów i dashboardów z danych firmowych (np. Power BI, Tableau). Służą do wizualizacji wyników i monitorowania KPI. Paradoks: wiele firm wydaje miliony na BI i ma setki dashboardów. Czy to automatycznie przekłada się na trafniejsze decyzje zarządu?',
-    a: { icon: '📊', name: 'Liczba dashboardów BI w firmie', source: 'Tableau / PowerBI' },
-    b: { icon: '🎯', name: 'Jakość decyzji na poziomie C-suite', source: 'Badania / Wyniki fin.' }
-  },
-  {
-    title: 'Real-time ERP vs. Win Rate sprzedaży',
-    hint: 'Klasyczny silos: handlowiec nie wie, co jest na magazynie. Podaje termin dostawy z głowy. Klient weryfikuje i rezygnuje. Czy dane w czasie rzeczywistym zmieniają wynik?',
-    a: { icon: '🏭', name: 'Dostęp do danych magazynowych (real-time)', source: 'ERP / SAP' },
-    b: { icon: '🏆', name: 'Win rate sprzedaży', source: 'CRM / Sales' }
-  }
-];
-
-// ─── STATE ──────────────────────────────────────────────────────────────────
-let currentQ = 0;
-let nickname = '';
-let answers  = [];
-let currentChoice = null;
-let currentDir    = null;
-let currentConf   = 0;
-let lastPayload   = null;
-
-// ─── NAVIGATION ─────────────────────────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
-}
-
-function updateProgress(step, total) {
-  const wrap = document.getElementById('progressWrap');
-  const fill = document.getElementById('progressFill');
-  const lbl  = document.getElementById('progressLabel');
-  const pct  = document.getElementById('progressPct');
-  const perc = Math.round((step / total) * 100);
-  wrap.classList.add('visible');
-  fill.style.width = perc + '%';
-  lbl.textContent  = `Pytanie ${step} z ${total}`;
-  pct.textContent  = perc + '%';
-}
-
-// ─── START ───────────────────────────────────────────────────────────────────
-function startQuiz() {
-  const input = document.getElementById('nicknameInput');
-  const err   = document.getElementById('nicknameError');
-  nickname = input.value.trim();
-  if (nickname.length < 2) {
-    err.classList.add('visible');
-    input.focus();
-    return;
-  }
-  err.classList.remove('visible');
-  currentQ = 0;
-  answers  = [];
-  loadQuestion(0);
-  showScreen('question');
-}
-
-// ─── LOAD QUESTION ───────────────────────────────────────────────────────────
-function loadQuestion(idx) {
-  const q = QUESTIONS[idx];
-  currentChoice = null;
-  currentDir    = null;
-  currentConf   = 0;
-
-  document.getElementById('qNumber').textContent   = `Pytanie ${idx + 1} / ${QUESTIONS.length}`;
-  document.getElementById('qTitle').textContent    = q.title;
-  document.getElementById('qHint').textContent     = q.hint;
-  document.getElementById('metricAIcon').textContent   = q.a.icon;
-  document.getElementById('metricAName').textContent   = q.a.name;
-  document.getElementById('metricASource').textContent = q.a.source;
-  document.getElementById('metricBIcon').textContent   = q.b.icon;
-  document.getElementById('metricBName').textContent   = q.b.name;
-  document.getElementById('metricBSource').textContent = q.b.source;
-
-  // Reset choice buttons
-  document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
-  // Hide direction
-  document.getElementById('directionWrap').classList.remove('visible');
-  document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('selected'));
-  // Reset stars
-  document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
-
-  updateProgress(idx + 1, QUESTIONS.length);
-
-  const nextBtn = document.getElementById('nextBtn');
-  nextBtn.textContent = idx < QUESTIONS.length - 1 ? 'Następne pytanie →' : 'Przejdź do podsumowania →';
-}
-
-// ─── CHOICE / DIRECTION / CONFIDENCE ─────────────────────────────────────────
-function selectChoice(val) {
-  currentChoice = val;
-  currentDir    = null;
-  document.querySelectorAll('.choice-btn').forEach((b, i) => {
-    b.classList.toggle('selected', ['tak','nie','nie_wiem'][i] === val);
-  });
-  const dw = document.getElementById('directionWrap');
-  if (val === 'tak') {
-    dw.classList.add('visible');
-  } else {
-    dw.classList.remove('visible');
-    document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('selected'));
-  }
-}
-
-function selectDir(val) {
-  currentDir = val;
-  document.getElementById('dirPos').classList.toggle('selected', val === 'pos');
-  document.getElementById('dirNeg').classList.toggle('selected', val === 'neg');
-}
-
-function selectConfidence(val) {
-  currentConf = val;
-  document.querySelectorAll('.star').forEach((s, i) => {
-    s.classList.toggle('active', i < val);
-  });
-}
-
-// ─── NEXT ─────────────────────────────────────────────────────────────────────
-function nextQuestion() {
-  if (!currentChoice) {
-    alert('Wybierz odpowiedź przed przejściem dalej 👆');
-    return;
-  }
-
-  const q = QUESTIONS[currentQ];
-  answers.push({
-    question: q.title,
-    metricA:  q.a.name,
-    metricB:  q.b.name,
-    choice:   currentChoice,
-    direction: currentChoice === 'tak' ? (currentDir || 'nieokreślona') : '—',
-    confidence: currentConf || 0
-  });
-
-  currentQ++;
-  if (currentQ < QUESTIONS.length) {
-    loadQuestion(currentQ);
-    showScreen('question');
-  } else {
-    document.getElementById('progressWrap').classList.remove('visible');
-    showScreen('audit');
-  }
-}
-
-// ─── SUBMIT ───────────────────────────────────────────────────────────────────
-function submitAnswers(skipAudit = false) {
-  const audit = skipAudit ? '' : document.getElementById('auditInput').value.trim();
-  lastPayload = { nickname, answers, audit };
-  showScreen('sending');
-
-  postToGitHub(nickname, answers, audit);
-}
-
-function retrySubmit() {
-  if (!lastPayload) { showScreen('welcome'); return; }
-  showScreen('sending');
-  const { nickname, answers, audit } = lastPayload;
-  postToGitHub(nickname, answers, audit);
-}
-
-async function postToGitHub(nick, ans, audit) {
-  const confMap = ['', '★☆☆☆☆','★★☆☆☆','★★★☆☆','★★★★☆','★★★★★'];
-  const choiceMap = { tak: '✅ Tak', nie: '❌ Nie', nie_wiem: '🤷 Nie wiem' };
-  const dirMap = { pos: '📈 Pozytywna', neg: '📉 Negatywna', nieokreślona: '— (nieokreślona)' };
-
-  const lines = ans.map((a, i) => {
-    const dir = a.choice === 'tak' ? `\n> Kierunek: ${dirMap[a.direction] || a.direction}` : '';
-    return `### Pytanie ${i+1}: ${a.question}
-| | |
-|---|---|
-| Metryka A | \`${a.metricA}\` |
-| Metryka B | \`${a.metricB}\` |
-| Korelacja? | ${choiceMap[a.choice]} |${a.choice==='tak' ? `\n| Kierunek | ${dirMap[a.direction]||'—'} |` : ''}
-| Pewność | ${confMap[a.confidence] || '—'} |
-`;
-  }).join('\n');
-
-  const body = `## 📊 Odpowiedzi: **${nick}**
-
-> Wysłano: ${new Date().toLocaleString('pl-PL')} | Test intuicji — Korelacja Danych MBA
-
----
-
-${lines}
-
----
-
-${audit ? `## 🔍 Data Audit\n\n${audit}\n` : '> Brak Data Audit.'}`;
-
-  try {
-    const res = await fetch(WORKER_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: `📊 ${nick} — ${new Date().toLocaleDateString('pl-PL')}`,
-          body,
-          labels: ['student-response']
-        })
-      });
-
-    if (res.ok) {
-      showSuccess(nick, ans, audit, true);
-    } else {
-      const err = await res.json();
-      showError(`GitHub odpowiedział błędem: ${err.message || res.status}`);
-    }
-  } catch (e) {
-    showError('Brak połączenia z internetem lub błąd sieci. Sprawdź połączenie i spróbuj ponownie.');
-  }
-}
-
-// ─── SUCCESS / ERROR ──────────────────────────────────────────────────────────
-function showSuccess(nick, ans, audit, saved) {
-  const confMap = ['—','★☆☆☆☆','★★☆☆☆','★★★☆☆','★★★★☆','★★★★★'];
-  const choiceLabel = { tak:'Tak', nie:'Nie', nie_wiem:'Nie wiem' };
-  const dirLabel = { pos:'📈 Poz.', neg:'📉 Neg.', nieokreślona:'—' };
-
-  const summaryLines = ans.map((a, i) =>
-    `<strong>P${i+1} — ${a.question}</strong><br>
-     Korelacja: ${choiceLabel[a.choice]}${a.choice==='tak' ? ' · ' + (dirLabel[a.direction]||'—') : ''}
-     &nbsp;|&nbsp; Pewność: ${confMap[a.confidence]}`
-  ).join('<br><br>');
-
-  document.getElementById('successMsg').innerHTML = saved
-    ? `Twoje odpowiedzi zostały zapisane w repozytorium GitHub jako <strong style="color:var(--c3)">${nick}</strong>. Sprawdzisz je na zajęciach! 🎉`
-    : `Twoje odpowiedzi zostały przygotowane jako <strong style="color:var(--c3)">${nick}</strong>. Prowadzący skonfiguruje zapis przed zajęciami.`;
-
-  document.getElementById('answerSummary').innerHTML = summaryLines;
-  showScreen('success');
-}
-
-function showError(msg) {
-  document.getElementById('errorMsg').textContent = msg;
-  showScreen('error');
-}
-</script>
 </body>
 </html>
