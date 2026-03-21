@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Myślenia Krytycznego — MBA</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --frost-white: #F0F4F8;
+            --ice-blue: #D6E4F0;
+            --steel-blue: #7BA7CC;
+            --deep-teal: #2E6B8A;
+            --dark-navy: #1B3A4B;
+            --accent-cyan: #4ECDC4;
+            --accent-mint: #A8E6CF;
+            --warm-coral: #FF6B6B;
+            --soft-amber: #FFE66D;
+            --glass-white: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1B3A4B 0%, #2E6B8A 40%, #4ECDC4 100%);
+            min-height: 100vh;
+            color: var(--dark-navy);
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(78, 205, 196, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(168, 230, 207, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(123, 167, 204, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--ice-blue);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .header .meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .header .meta span {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Card styles */
+        .card {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Nickname input */
+        .nickname-section input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--ice-blue);
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .nickname-section input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.15);
+        }
+
+        .nickname-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--dark-navy);
+            font-size: 1.1rem;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-mint));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        /* Timer */
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .timer.warning { color: var(--soft-amber); }
+        .timer.danger { color: var(--warm-coral); animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Difficulty badge */
+        .difficulty {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .difficulty.easy {
+            background: linear-gradient(135deg, #A8E6CF, #7BC8A4);
+            color: #1a5c37;
+        }
+
+        .difficulty.medium {
+            background: linear-gradient(135deg, #FFE66D, #F0C040);
+            color: #6b5a00;
+        }
+
+        .difficulty.hard {
+            background: linear-gradient(135deg, #FF6B6B, #EE5A24);
+            color: white;
+        }
+
+        /* Question */
+        .question-number {
+            font-size: 0.85rem;
+            color: var(--steel-blue);
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--dark-navy);
+            line-height: 1.5;
+            margin-bottom: 1.2rem;
+        }
+
+        .scenario {
+            background: linear-gradient(135deg, #f0f7ff, #e8f4f8);
+            border-left: 4px solid var(--deep-teal);
+            padding: 1rem 1.2rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+
+        /* Answer options */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            padding: 1rem 1.2rem;
+            border: 2px solid var(--ice-blue);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: var(--accent-cyan);
+            background: linear-gradient(135deg, #f0fffe, #e8faf8);
+            transform: translateX(4px);
+        }
+
+        .option.selected {
+            border-color: var(--accent-cyan);
+            background: linear-gradient(135deg, #e0f9f6, #d0f0ec);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.15);
+        }
+
+        .option-letter {
+            min-width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--ice-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--deep-teal);
+            transition: all 0.3s;
+        }
+
+        .option.selected .option-letter {
+            background: var(--accent-cyan);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            padding-top: 4px;
+        }
+
+        /* Confidence slider */
+        .confidence-section {
+            margin-top: 1.2rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid var(--ice-blue);
+        }
+
+        .confidence-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--deep-teal);
+            margin-bottom: 0.8rem;
+        }
+
+        .confidence-slider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .confidence-slider input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--ice-blue), var(--accent-cyan));
+            outline: none;
+        }
+
+        .confidence-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--accent-cyan);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .confidence-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--deep-teal);
+            font-size: 1.1rem;
+        }
+
+        .confidence-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--steel-blue);
+            margin-top: 0.3rem;
+        }
+
+        /* Navigation buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary {
+            background: var(--ice-blue);
+            color: var(--deep-teal);
+        }
+
+        .btn-secondary:hover {
+            background: var(--steel-blue);
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--deep-teal));
+            color: white;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #4ECDC4, #2ECC71);
+            color: white;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(46, 204, 113, 0.4);
+        }
+
+        /* Results screen */
+        .results-container {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-cyan) 0deg, var(--accent-cyan) var(--score-deg), rgba(255,255,255,0.2) var(--score-deg));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .score-inner {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--deep-teal);
+        }
+
+        .score-label {
+            font-size: 0.85rem;
+            color: var(--steel-blue);
+            font-weight: 500;
+        }
+
+        .score-message {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .score-description {
+            color: var(--steel-blue);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* Review section */
+        .review-item {
+            text-align: left;
+            padding: 1.2rem;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+        }
+
+        .review-item.correct {
+            background: linear-gradient(135deg, #e8faf0, #d4f5e4);
+            border: 1px solid #a8e6cf;
+        }
+
+        .review-item.incorrect {
+            background: linear-gradient(135deg, #fff0f0, #ffe0e0);
+            border: 1px solid #ffb3b3;
+        }
+
+        .review-item .q-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-item .q-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .review-item .q-icon { font-size: 1.3rem; }
+
+        .review-item .explanation {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .review-item .your-answer {
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+
+        /* Back link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover { color: white; }
+
+        /* Hide sections */
+        .hidden { display: none !important; }
+
+        /* Status message */
+        .status-msg {
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+
+        .status-msg.success {
+            background: linear-gradient(135deg, #e8faf0, #d4f5e4);
+            color: #1a5c37;
+        }
+
+        .status-msg.error {
+            background: linear-gradient(135deg, #fff0f0, #ffe0e0);
+            color: #c0392b;
+        }
+
+        .status-msg.sending {
+            background: linear-gradient(135deg, #e8f4f8, #d6e4f0);
+            color: var(--deep-teal);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container { padding: 1rem; }
+            .header h1 { font-size: 1.6rem; }
+            .card { padding: 1.5rem; }
+            .header .meta { flex-direction: column; gap: 0.5rem; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Powrót do listy zadań</a>
+
+        <div class="header">
+            <h1>🧠 Test Myślenia Krytycznego</h1>
+            <p>Czy potrafisz rozpoznać pułapki logiczne i błędy w rozumowaniu?</p>
+            <div class="meta">
+                <span>⏱ ~20 minut</span>
+                <span>📊 10 pytań</span>
+                <span>📈 Trudność: rosnąca</span>
+            </div>
+        </div>
+
+        <!-- Nickname -->
+        <div id="nicknameSection" class="card nickname-section">
+            <label>Podaj swój pseudonim</label>
+            <input type="text" id="nickname" placeholder="np. MarketingMike, DataDaria..." maxlength="30">
+            <div style="margin-top: 1rem; text-align: right;">
+                <button class="btn btn-primary" onclick="startQuiz()">Rozpocznij test →</button>
+            </div>
+        </div>
+
+        <!-- Quiz area -->
+        <div id="quizArea" class="hidden">
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span id="progressText">Pytanie 1 / 10</span>
+                    <div class="timer" id="timer">⏱ 20:00</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div id="questionCard" class="card">
+                <!-- Question content rendered by JS -->
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prevBtn" onclick="navigate(-1)">← Wstecz</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="navigate(1)">Dalej →</button>
+                <button class="btn btn-submit hidden" id="submitBtn" onclick="submitQuiz()">📤 Zakończ i wyślij</button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="resultsSection" class="hidden">
+            <div class="card results-container" id="resultsContent">
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const WORKER_URL = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
+
+    const questions = [
+        // --- EASY (1-3) ---
+        {
+            id: 1,
+            difficulty: 'easy',
+            difficultyLabel: 'Łatwe',
+            text: 'W mieście X zainstalowano więcej latarni ulicznych i jednocześnie wzrosła przestępczość. Burmistrz twierdzi: „Latarnie uliczne powodują wzrost przestępczości — musimy je usunąć!" Jaki błąd popełnia burmistrz?',
+            options: [
+                'Ma rację — więcej światła przyciąga przestępców',
+                'Myli korelację z przyczynowością — oba zjawiska mogą mieć wspólną przyczynę (np. rozbudowa miasta)',
+                'Powinien zainstalować jeszcze więcej latarni, żeby sprawdzić',
+                'Błąd polega na tym, że badał tylko jedno miasto'
+            ],
+            correct: 1,
+            explanation: 'To klasyczny błąd „korelacja ≠ przyczynowość" (cum hoc ergo propter hoc). Oba zjawiska mogą wynikać z rozbudowy miasta — więcej ulic = więcej latarni I więcej okazji do przestępstw. Latarnie same w sobie nie powodują przestępczości.'
+        },
+        {
+            id: 2,
+            difficulty: 'easy',
+            difficultyLabel: 'Łatwe',
+            text: 'Reklama suplementu diety mówi: „95% naszych klientów poleca ten produkt!" Na próbkę składa się 200 osób, które dobrowolnie wypełniły ankietę online na stronie producenta. Co jest problemem tego twierdzenia?',
+            options: [
+                'Próbka 200 osób jest za mała',
+                'Suplementy diety nigdy nie działają',
+                'Ankieta jest obciążona — wypełniają ją głównie zadowoleni klienci, a producent kontroluje platformę',
+                'Powinni podać dokładną liczbę zamiast procentu'
+            ],
+            correct: 2,
+            explanation: 'To błąd selekcji próby (selection bias). Osoby niezadowolone rzadko wracają na stronę producenta, żeby wypełnić ankietę. Dodatkowo producent kontroluje platformę — może moderować wyniki. Wiarygodne badanie wymaga losowej, niezależnej próby.'
+        },
+        {
+            id: 3,
+            difficulty: 'easy',
+            difficultyLabel: 'Łatwe',
+            text: 'Kolega mówi: „Mój dziadek palił papierosy całe życie i dożył 95 lat. Więc palenie nie jest aż takie szkodliwe." Jaki to błąd w rozumowaniu?',
+            options: [
+                'Uogólnianie z pojedynczego przypadku — jeden wyjątek nie obala statystyki populacyjnej',
+                'Ma rację — skoro dziadek dożył 95 lat, to palenie mu nie zaszkodziło',
+                'Błąd polega na tym, że nie znamy marki papierosów',
+                'To nie jest błąd — każdy organizm reaguje inaczej'
+            ],
+            correct: 0,
+            explanation: 'To błąd anegdotyczny (anecdotal fallacy). Pojedynczy przypadek nie może obalić dziesiątek tysięcy badań naukowych. Statystycznie palenie znacząco zwiększa ryzyko chorób — ale „zwiększa ryzyko" nie oznacza „gwarantuje chorobę u każdego".'
+        },
+        // --- MEDIUM (4-7) ---
+        {
+            id: 4,
+            difficulty: 'medium',
+            difficultyLabel: 'Średnie',
+            scenario: 'Dyrektor sprzedaży analizuje wyniki zespołu i mówi na zebraniu: „Nasz najlepszy handlowiec, Tomek, nie ma żadnych szkoleń z technik sprzedaży. To dowodzi, że szkolenia są niepotrzebne — powinniśmy ciąć budżet szkoleniowy."',
+            text: 'Jakie błędy w rozumowaniu popełnia dyrektor? (wybierz najlepszą odpowiedź)',
+            options: [
+                'Błąd przetrwania — analizuje tylko „zwycięzcę", ignorując handlowców bez szkoleń, którzy mają słabe wyniki',
+                'Ma rację — najlepszy dowód to wynik najlepszego pracownika',
+                'Jedyny błąd to za mała próbka — powinien porównać więcej handlowców',
+                'Błąd polega na tym, że Tomek może mieć talent wrodzony, ale szkolenia i tak warto robić dla PR'
+            ],
+            correct: 0,
+            explanation: 'To klasyczny błąd przetrwania (survivorship bias). Dyrektor patrzy tylko na jednego „zwycięzcę" i ignoruje dziesiątki handlowców bez szkoleń, którzy mogą mieć fatalne wyniki. To tak jak mówić „Bill Gates rzucił studia i jest bogaty, więc studia są niepotrzebne" — ignorując miliony osób, które rzuciły studia i nie zostały miliarderami.'
+        },
+        {
+            id: 5,
+            difficulty: 'medium',
+            difficultyLabel: 'Średnie',
+            scenario: 'W debacie o strategii firmy padają dwa stanowiska:\n\n👤 Anna: „Musimy zainwestować 100% budżetu w marketing cyfrowy. Tradycyjny marketing jest martwy."\n👤 Marek: „Nie zgadzam się. Musimy zostać przy 100% tradycyjnym marketingu. Digital to bańka."',
+            text: 'Moderator podsumowuje: „Jak zwykle prawda leży pośrodku — zróbmy 50/50." Czy moderator ma rację?',
+            options: [
+                'Tak — kompromis to zawsze najlepsza strategia',
+                'Nie — to błąd złotego środka. Optymalna proporcja powinna wynikać z danych (ROI, grupa docelowa), nie z uśrednienia dwóch skrajnych opinii',
+                'Tak — 50/50 minimalizuje ryzyko',
+                'Nie — powinien posłuchać Anny, bo digital jest przyszłością'
+            ],
+            correct: 1,
+            explanation: 'To błąd złotego środka (argument to moderation / false balance). Prawda nie musi leżeć pośrodku dwóch stanowisk. Jeśli firma sprzedaje oprogramowanie B2B, optymalna proporcja może wynosić 80/20 na korzyść digitalu. Decyzja powinna opierać się na danych, nie na kompromisie między dwiema opiniami.'
+        },
+        {
+            id: 6,
+            difficulty: 'medium',
+            difficultyLabel: 'Średnie',
+            scenario: 'Badanie wykazało, że dzieci, które jedzą śniadanie, mają lepsze oceny w szkole. Gazeta publikuje nagłówek: „Naukowcy udowodnili: śniadanie poprawia oceny! Rodzice, karmcie dzieci rano!"',
+            text: 'Co pomija ten nagłówek?',
+            options: [
+                'Nic nie pomija — badanie jest jasne',
+                'Pomija zmienne zakłócające: rodziny, które zapewniają śniadanie, mogą też zapewniać stabilność, pomoc w lekcjach, lepszy sen — to te czynniki mogą wpływać na oceny',
+                'Pomija fakt, że niektóre dzieci nie lubią śniadań',
+                'Pomija wielkość próby badania'
+            ],
+            correct: 1,
+            explanation: 'Nagłówek pomija zmienne zakłócające (confounding variables). Śniadanie może być markerem (wskaźnikiem) lepszego środowiska domowego — stabilnej rodziny, regularnego trybu życia, wsparcia rodziców. To nie samo jedzenie rano magicznie poprawia oceny, ale cały ekosystem czynników, których śniadanie jest częścią.'
+        },
+        {
+            id: 7,
+            difficulty: 'medium',
+            difficultyLabel: 'Średnie',
+            text: 'Firma farmaceutyczna reklamuje nowy lek na ból głowy: „W badaniu klinicznym 80% pacjentów poczuło ulgę po naszym leku!" Okazuje się, że w grupie placebo (pigułka cukrowa) ulgę poczuło 75% pacjentów. Jak oceniasz skuteczność leku?',
+            options: [
+                '80% to bardzo dobry wynik — lek jest skuteczny',
+                'Różnica 5 punktów procentowych wobec placebo jest minimalna — lek prawdopodobnie nie jest znacząco skuteczniejszy od efektu placebo',
+                'Placebo nie ma znaczenia — liczy się tylko wynik leku',
+                'Potrzebujemy więcej danych, żeby cokolwiek powiedzieć'
+            ],
+            correct: 1,
+            explanation: 'Bez porównania z placebo, „80% skuteczności" brzmi imponująco. Ale jeśli sam cukier daje 75%, rzeczywisty efekt leku to zaledwie 5pp powyżej placebo. To podstawa myślenia naukowego: zawsze pytaj „w porównaniu z czym?" Firmy często podają wynik bezwzględny, bo brzmi lepiej niż wynik względny.'
+        },
+        // --- HARD (8-10) ---
+        {
+            id: 8,
+            difficulty: 'hard',
+            difficultyLabel: 'Trudne',
+            scenario: 'Prezes firmy technologicznej ogłasza na spotkaniu zarządu:\n\n„Przeanalizowałem nasze dane z ostatnich 5 lat. Projekty, w których uczestniczył zespół A, miały 90% wskaźnik sukcesu. Projekty bez zespołu A — tylko 40%. Moja decyzja: od teraz zespół A uczestniczy we WSZYSTKICH projektach."\n\nDodatkowa informacja: Zespół A był przydzielany głównie do projektów z największymi budżetami i najważniejszymi klientami.',
+            text: 'Ile błędów w rozumowaniu widzisz w decyzji prezesa?',
+            options: [
+                'Jeden: myli korelację z przyczynowością',
+                'Dwa: myli korelację z przyczynowością + ignoruje, że zespół A dostawał lepsze projekty (selection bias)',
+                'Trzy: korelacja/przyczynowość + selection bias + rozciągnięcie zespołu A na wszystko może obniżyć ich skuteczność (problem skalowalności)',
+                'Decyzja jest racjonalna — dane mówią same za siebie'
+            ],
+            correct: 2,
+            explanation: 'Prezes popełnia co najmniej 3 błędy: (1) Zakłada, że to zespół A powoduje sukces, a nie odwrotnie (korelacja ≠ przyczynowość). (2) Zespół A dostawał projekty z największymi budżetami — większe zasoby mogą tłumaczyć sukces (selection/allocation bias). (3) Nawet gdyby zespół A był naprawdę lepszy, rozciągnięcie go na wszystkie projekty prawdopodobnie rozproszy ich talent i obniży skuteczność.'
+        },
+        {
+            id: 9,
+            difficulty: 'hard',
+            difficultyLabel: 'Trudne',
+            scenario: 'Podczas pandemii w kraju X wprowadzono lockdown. Po 3 miesiącach liczba zakażeń spadła. Polityk mówi: „Lockdown zadziałał!"\n\nW sąsiednim kraju Y NIE wprowadzono lockdownu. Tam również po 3 miesiącach liczba zakażeń spadła (choć wolniej). Opozycja mówi: „Widzicie? Lockdown był niepotrzebny!"',
+            text: 'Który z poniższych wniosków jest najbardziej uzasadniony?',
+            options: [
+                'Polityk ma rację — lockdown zadziałał, bo zakażenia spadły',
+                'Opozycja ma rację — skoro w kraju Y też spadły, lockdown był niepotrzebny',
+                'Oba stanowiska są uproszczone — bez kontrolowanego eksperymentu nie można przypisać efektu jednemu czynnikowi. Trzeba analizować tempo spadku, śmiertelność, obciążenie szpitali i inne zmienne',
+                'Nie da się nic powiedzieć, bo pandemia jest zbyt skomplikowana'
+            ],
+            correct: 2,
+            explanation: 'Oba stanowiska popełniają błąd atrybucji. Polityk zakłada „post hoc ergo propter hoc" (po tym = z powodu tego). Opozycja porównuje dwa różne kraje (różna demografia, gęstość zaludnienia, kultura) jakby były identyczne. Rzetelna analiza wymaga porównania TEMPA spadku, śmiertelności, obciążenia szpitali — i uwzględnienia dziesiątek zmiennych zakłócających.'
+        },
+        {
+            id: 10,
+            difficulty: 'hard',
+            difficultyLabel: 'Trudne',
+            scenario: 'Przeczytaj uważnie poniższe 4 twierdzenia i oceń, które z nich jest NAJBARDZIEJ wiarygodne:\n\n🔹 A: „Badanie na 50 000 osobach wykazało statystycznie istotną korelację (p < 0.001) między piciem kawy a dłuższym życiem. Badanie sponsorowała Międzynarodowa Federacja Kawy."\n\n🔹 B: „Meta-analiza 23 niezależnych badań (łącznie 180 000 osób) wykazała niewielką pozytywną korelację między umiarkowanym piciem kawy a niższym ryzykiem chorób serca, z zastrzeżeniem o potencjalnych zmiennych zakłócających."\n\n🔹 C: „Mój lekarz powiedział, że kawa jest zdrowa."\n\n🔹 D: „Artykuł w prestiżowym czasopiśmie naukowym — ale wycofany 2 lata później z powodu błędów metodologicznych."',
+            text: 'Które twierdzenie jest NAJBARDZIEJ wiarygodne?',
+            options: [
+                'A — największa próba i wysoka istotność statystyczna',
+                'B — meta-analiza niezależnych badań z jasnym zastrzeżeniem o ograniczeniach',
+                'C — opinia lekarza jest autorytatywna',
+                'D — prestiżowe czasopismo gwarantuje jakość'
+            ],
+            correct: 1,
+            explanation: 'B jest najbardziej wiarygodne: (1) Meta-analiza łączy wiele badań, redukując błędy pojedynczych prób. (2) Niezależne badania eliminują conflict of interest (problem A — sponsoring). (3) Jawne zastrzeżenie o ograniczeniach świadczy o rzetelności naukowej. A ma conflict of interest. C to argument z autorytetu. D zostało wycofane. Kluczowa lekcja: wiarygodność = niezależność + transparentność + replikowalność.'
+        }
+    ];
+
+    let currentQuestion = 0;
+    let answers = {};
+    let nickname = '';
+    let timerInterval;
+    let timeLeft = 20 * 60; // 20 minutes
+
+    function startQuiz() {
+        nickname = document.getElementById('nickname').value.trim();
+        if (!nickname) {
+            document.getElementById('nickname').style.borderColor = 'var(--warm-coral)';
+            document.getElementById('nickname').placeholder = 'Wpisz pseudonim, żeby kontynuować...';
+            return;
+        }
+        document.getElementById('nicknameSection').classList.add('hidden');
+        document.getElementById('quizArea').classList.remove('hidden');
+        renderQuestion();
+        startTimer();
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            const min = Math.floor(timeLeft / 60);
+            const sec = timeLeft % 60;
+            const timerEl = document.getElementById('timer');
+            timerEl.textContent = `⏱ ${min}:${sec.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 120) timerEl.className = 'timer danger';
+            else if (timeLeft <= 300) timerEl.className = 'timer warning';
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                submitQuiz();
+            }
+        }, 1000);
+    }
+
+    function renderQuestion() {
+        const q = questions[currentQuestion];
+        const savedAnswer = answers[q.id];
+
+        let html = `
+            <span class="difficulty ${q.difficulty}">${q.difficultyLabel}</span>
+            <div class="question-number">Pytanie ${q.id} / ${questions.length}</div>
+        `;
+
+        if (q.scenario) {
+            html += `<div class="scenario">${q.scenario.replace(/\n/g, '<br>')}</div>`;
+        }
+
+        html += `<div class="question-text">${q.text}</div>`;
+        html += `<div class="options">`;
+
+        const letters = ['A', 'B', 'C', 'D'];
+        q.options.forEach((opt, i) => {
+            const selected = savedAnswer && savedAnswer.choice === i ? 'selected' : '';
+            html += `
+                <div class="option ${selected}" onclick="selectOption(${q.id}, ${i})">
+                    <div class="option-letter">${letters[i]}</div>
+                    <div class="option-text">${opt}</div>
+                </div>
+            `;
+        });
+
+        html += `</div>`;
+
+        // Confidence slider
+        const conf = savedAnswer ? savedAnswer.confidence : 3;
+        html += `
+            <div class="confidence-section">
+                <div class="confidence-label">Jak pewny/a jesteś swojej odpowiedzi?</div>
+                <div class="confidence-slider">
+                    <span style="font-size:0.85rem;color:var(--steel-blue)">Zgaduję</span>
+                    <input type="range" min="1" max="5" value="${conf}" oninput="updateConfidence(${q.id}, this.value)">
+                    <span style="font-size:0.85rem;color:var(--steel-blue)">100% pewny/a</span>
+                    <div class="confidence-value" id="confVal">${conf}/5</div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('questionCard').innerHTML = html;
+
+        // Update progress
+        document.getElementById('progressText').textContent = `Pytanie ${currentQuestion + 1} / ${questions.length}`;
+        document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+        // Update buttons
+        document.getElementById('prevBtn').style.visibility = currentQuestion === 0 ? 'hidden' : 'visible';
+        if (currentQuestion === questions.length - 1) {
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('submitBtn').classList.remove('hidden');
+        } else {
+            document.getElementById('nextBtn').classList.remove('hidden');
+            document.getElementById('submitBtn').classList.add('hidden');
+        }
+    }
+
+    function selectOption(qId, optionIndex) {
+        if (!answers[qId]) answers[qId] = { confidence: 3 };
+        answers[qId].choice = optionIndex;
+        renderQuestion();
+    }
+
+    function updateConfidence(qId, val) {
+        if (!answers[qId]) answers[qId] = {};
+        answers[qId].confidence = parseInt(val);
+        document.getElementById('confVal').textContent = `${val}/5`;
+    }
+
+    function navigate(dir) {
+        currentQuestion += dir;
+        if (currentQuestion < 0) currentQuestion = 0;
+        if (currentQuestion >= questions.length) currentQuestion = questions.length - 1;
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function calculateResults() {
+        let correct = 0;
+        let totalConfidence = 0;
+        let correctConfidence = 0;
+        let incorrectConfidence = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+
+        const details = questions.map(q => {
+            const a = answers[q.id];
+            const userChoice = a ? a.choice : -1;
+            const isCorrect = userChoice === q.correct;
+            const confidence = a ? a.confidence : 1;
+
+            if (isCorrect) {
+                correct++;
+                correctConfidence += confidence;
+                correctCount++;
+            } else {
+                incorrectConfidence += confidence;
+                incorrectCount++;
+            }
+            totalConfidence += confidence;
+
+            return {
+                id: q.id,
+                difficulty: q.difficultyLabel,
+                question: q.text.substring(0, 80) + '...',
+                userAnswer: userChoice >= 0 ? ['A', 'B', 'C', 'D'][userChoice] : 'brak',
+                correctAnswer: ['A', 'B', 'C', 'D'][q.correct],
+                isCorrect,
+                confidence,
+                explanation: q.explanation
+            };
+        });
+
+        return {
+            score: correct,
+            total: questions.length,
+            percentage: Math.round((correct / questions.length) * 100),
+            avgConfidence: (totalConfidence / questions.length).toFixed(1),
+            avgConfidenceCorrect: correctCount > 0 ? (correctConfidence / correctCount).toFixed(1) : 'N/A',
+            avgConfidenceIncorrect: incorrectCount > 0 ? (incorrectConfidence / incorrectCount).toFixed(1) : 'N/A',
+            timeUsed: 20 * 60 - timeLeft,
+            details
+        };
+    }
+
+    function getScoreMessage(pct) {
+        if (pct >= 90) return { emoji: '🏆', title: 'Wybitnie!', desc: 'Masz niezwykłe zdolności analityczne. Rozpoznajesz pułapki logiczne jak mistrz.' };
+        if (pct >= 70) return { emoji: '🌟', title: 'Bardzo dobrze!', desc: 'Solidne myślenie krytyczne. Kilka pułapek Ci uciekło, ale to normalne.' };
+        if (pct >= 50) return { emoji: '💪', title: 'Dobrze!', desc: 'Masz fundament myślenia krytycznego. Z praktyką będzie jeszcze lepiej.' };
+        if (pct >= 30) return { emoji: '🔍', title: 'Początek drogi', desc: 'Myślenie krytyczne to umiejętność, którą można rozwijać. Te pytania pokażą Ci, na co zwracać uwagę.' };
+        return { emoji: '📚', title: 'Warto się uczyć!', desc: 'Pułapki logiczne potrafią zmylić każdego. Przejrzyj wyjaśnienia — to najlepsza lekcja.' };
+    }
+
+    async function submitQuiz() {
+        clearInterval(timerInterval);
+        const results = calculateResults();
+        const msg = getScoreMessage(results.percentage);
+
+        // Show results
+        document.getElementById('quizArea').classList.add('hidden');
+        document.getElementById('resultsSection').classList.remove('hidden');
+
+        const scoreDeg = (results.percentage / 100) * 360;
+        const timeMin = Math.floor(results.timeUsed / 60);
+        const timeSec = results.timeUsed % 60;
+
+        let html = `
+            <div class="score-circle" style="--score-deg: ${scoreDeg}deg">
+                <div class="score-inner">
+                    <div class="score-number">${results.score}/${results.total}</div>
+                    <div class="score-label">${results.percentage}%</div>
+                </div>
+            </div>
+            <div class="score-message">${msg.emoji} ${msg.title}</div>
+            <div class="score-description">${msg.desc}</div>
+            <div style="display:flex;justify-content:center;gap:2rem;margin-bottom:2rem;flex-wrap:wrap;">
+                <div style="text-align:center">
+                    <div style="font-size:1.5rem;font-weight:700;color:var(--deep-teal)">${results.avgConfidence}</div>
+                    <div style="font-size:0.8rem;color:var(--steel-blue)">Śr. pewność siebie</div>
+                </div>
+                <div style="text-align:center">
+                    <div style="font-size:1.5rem;font-weight:700;color:var(--accent-cyan)">${results.avgConfidenceCorrect}</div>
+                    <div style="font-size:0.8rem;color:var(--steel-blue)">Pewność (poprawne)</div>
+                </div>
+                <div style="text-align:center">
+                    <div style="font-size:1.5rem;font-weight:700;color:var(--warm-coral)">${results.avgConfidenceIncorrect}</div>
+                    <div style="font-size:0.8rem;color:var(--steel-blue)">Pewność (błędne)</div>
+                </div>
+                <div style="text-align:center">
+                    <div style="font-size:1.5rem;font-weight:700;color:var(--dark-navy)">${timeMin}:${timeSec.toString().padStart(2,'0')}</div>
+                    <div style="font-size:0.8rem;color:var(--steel-blue)">Czas</div>
+                </div>
+            </div>
+            <h3 style="text-align:left;margin-bottom:1rem;color:var(--dark-navy)">📋 Przegląd odpowiedzi</h3>
+        `;
+
+        results.details.forEach(d => {
+            html += `
+                <div class="review-item ${d.isCorrect ? 'correct' : 'incorrect'}">
+                    <div class="q-header">
+                        <span class="q-title">Q${d.id} (${d.difficulty}) — pewność: ${d.confidence}/5</span>
+                        <span class="q-icon">${d.isCorrect ? '✅' : '❌'}</span>
+                    </div>
+                    <div class="your-answer" style="color:${d.isCorrect ? '#27ae60' : '#e74c3c'}">
+                        Twoja odpowiedź: <strong>${d.userAnswer}</strong> ${d.isCorrect ? '' : `→ Poprawna: <strong>${d.correctAnswer}</strong>`}
+                    </div>
+                    <div class="explanation">💡 ${d.explanation}</div>
+                </div>
+            `;
+        });
+
+        html += `<div id="submitStatus" class="status-msg sending">📤 Wysyłam wyniki...</div>`;
+        document.getElementById('resultsContent').innerHTML = html;
+
+        // Send to GitHub via Worker
+        try {
+            const issueBody = [
+                `## 🧠 Test Myślenia Krytycznego — ${nickname}`,
+                ``,
+                `**Wynik:** ${results.score}/${results.total} (${results.percentage}%)`,
+                `**Czas:** ${timeMin}:${timeSec.toString().padStart(2,'0')}`,
+                `**Śr. pewność:** ${results.avgConfidence}/5`,
+                `**Pewność (poprawne):** ${results.avgConfidenceCorrect}/5`,
+                `**Pewność (błędne):** ${results.avgConfidenceIncorrect}/5`,
+                ``,
+                `### Odpowiedzi`,
+                `| # | Trudność | Odpowiedź | Poprawna | ✓/✗ | Pewność |`,
+                `|---|---|---|---|---|---|`,
+                ...results.details.map(d =>
+                    `| Q${d.id} | ${d.difficulty} | ${d.userAnswer} | ${d.correctAnswer} | ${d.isCorrect ? '✅' : '❌'} | ${d.confidence}/5 |`
+                ),
+                ``,
+                `---`,
+                `*Wysłano: ${new Date().toLocaleString('pl-PL')}*`
+            ].join('\n');
+
+            const response = await fetch(WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: `🧠 Myślenie Krytyczne — ${nickname} — ${results.percentage}%`,
+                    body: issueBody,
+                    labels: ['myslenie-krytyczne']
+                })
+            });
+
+            if (response.ok) {
+                document.getElementById('submitStatus').className = 'status-msg success';
+                document.getElementById('submitStatus').textContent = '✅ Wyniki zapisane! Dziękuję za wypełnienie testu.';
+            } else {
+                throw new Error('HTTP ' + response.status);
+            }
+        } catch (err) {
+            document.getElementById('submitStatus').className = 'status-msg error';
+            document.getElementById('submitStatus').textContent = '⚠️ Nie udało się wysłać wyników. Twój wynik: ' + results.percentage + '%';
+            console.error(err);
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    </script>
+</body>
+</html>
