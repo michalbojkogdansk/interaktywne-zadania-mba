@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symulacja: Cyfrowa Transformacja | MBA</title>
+<style>
+  :root {
+    --teal: #0d9488;
+    --teal-dark: #0f766e;
+    --teal-light: #ccfbf1;
+    --blue: #0284c7;
+    --blue-light: #e0f2fe;
+    --white: #ffffff;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-500: #64748b;
+    --gray-700: #334155;
+    --gray-900: #0f172a;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --purple: #7c3aed;
+    --purple-light: #ede9fe;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f766e 0%, #0284c7 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--gray-900);
+  }
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 24px 0 16px;
+    color: white;
+  }
+  .header h1 { font-size: 1.8rem; font-weight: 700; }
+  .header p { opacity: 0.85; margin-top: 6px; font-size: 0.95rem; }
+  .header .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.8rem;
+    margin-top: 8px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar-outer {
+    background: rgba(255,255,255,0.2);
+    border-radius: 99px;
+    height: 8px;
+    margin: 16px 0 8px;
+  }
+  .progress-bar-inner {
+    background: white;
+    height: 8px;
+    border-radius: 99px;
+    transition: width 0.5s ease;
+  }
+  .progress-label {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.8rem;
+    text-align: right;
+    margin-bottom: 12px;
+  }
+
+  /* CARD */
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    margin-bottom: 16px;
+  }
+
+  /* SCREEN: INTRO */
+  #screen-intro .company-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  #screen-intro .company-logo .icon {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+  }
+  #screen-intro .company-logo h2 { font-size: 1.4rem; font-weight: 700; color: var(--gray-900); }
+  #screen-intro .company-logo p { color: var(--gray-500); font-size: 0.85rem; }
+  .briefing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .briefing-item {
+    background: var(--gray-50);
+    border-radius: 10px;
+    padding: 14px;
+    border-left: 3px solid var(--teal);
+  }
+  .briefing-item .label { font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; }
+  .briefing-item .value { font-size: 1rem; font-weight: 600; color: var(--gray-900); margin-top: 2px; }
+  .briefing-item .sub { font-size: 0.8rem; color: var(--gray-500); margin-top: 2px; }
+  .intro-challenge {
+    background: var(--amber-light);
+    border-radius: 10px;
+    padding: 16px;
+    border-left: 3px solid var(--amber);
+    margin: 16px 0;
+  }
+  .intro-challenge h3 { color: var(--amber); font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; }
+  .nickname-row { display: flex; gap: 12px; align-items: flex-end; margin-top: 20px; }
+  .nickname-row input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .nickname-row input:focus { border-color: var(--teal); }
+
+  /* BUTTONS */
+  .btn {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    color: white;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13,148,136,0.4); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-secondary {
+    background: var(--gray-100);
+    color: var(--gray-700);
+  }
+  .btn-secondary:hover { background: var(--gray-200); }
+  .btn-full { width: 100%; justify-content: center; }
+
+  /* DECISION SCREEN */
+  .decision-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .decision-number {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .decision-header h2 { font-size: 1.2rem; font-weight: 700; color: var(--gray-900); }
+  .decision-header .tag {
+    font-size: 0.72rem;
+    padding: 2px 10px;
+    border-radius: 99px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .tag-dddm { background: var(--teal-light); color: var(--teal-dark); }
+  .tag-ai { background: var(--purple-light); color: var(--purple); }
+  .tag-tech { background: var(--blue-light); color: var(--blue); }
+  .tag-people { background: var(--amber-light); color: var(--amber); }
+  .tag-strategy { background: var(--green-light); color: var(--green); }
+  .tag-change { background: var(--red-light); color: var(--red); }
+
+  .situation-box {
+    background: var(--gray-50);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--gray-700);
+  }
+  .situation-box strong { color: var(--gray-900); }
+
+  .data-points {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .data-point {
+    background: var(--teal-light);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    color: var(--teal-dark);
+    font-weight: 500;
+  }
+
+  /* QUESTION */
+  .question-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 14px;
+  }
+
+  /* OPTIONS */
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .option-card {
+    border: 2px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .option-card:hover { border-color: var(--teal); background: var(--teal-light); }
+  .option-card.selected { border-color: var(--teal); background: var(--teal-light); }
+  .option-letter {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    color: var(--gray-700);
+  }
+  .option-card.selected .option-letter { background: var(--teal); color: white; }
+  .option-text h4 { font-size: 0.92rem; font-weight: 600; color: var(--gray-900); margin-bottom: 3px; }
+  .option-text p { font-size: 0.82rem; color: var(--gray-500); line-height: 1.4; }
+
+  /* SLIDER */
+  .slider-group { margin-bottom: 20px; }
+  .slider-labels { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--gray-500); margin-bottom: 6px; }
+  .slider-value-display {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 6px;
+  }
+  .slider-unit { font-size: 0.8rem; font-weight: 400; color: var(--gray-500); }
+  input[type=range] {
+    width: 100%;
+    accent-color: var(--teal);
+    cursor: pointer;
+  }
+
+  /* BUDGET SPLIT */
+  .budget-split { margin-bottom: 20px; }
+  .budget-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .budget-row label { width: 180px; font-size: 0.85rem; font-weight: 600; color: var(--gray-700); flex-shrink: 0; }
+  .budget-row input[type=range] { flex: 1; }
+  .budget-row .budget-val { width: 52px; text-align: right; font-size: 0.9rem; font-weight: 700; color: var(--teal); }
+  .budget-total {
+    background: var(--gray-100);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    color: var(--gray-700);
+    margin-top: 8px;
+  }
+  .budget-total .remaining { font-weight: 700; }
+  .budget-total .remaining.ok { color: var(--green); }
+  .budget-total .remaining.warn { color: var(--amber); }
+  .budget-total .remaining.over { color: var(--red); }
+
+  /* TEXT INPUT */
+  .text-input-group { margin-bottom: 20px; }
+  .text-input-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+  }
+  .text-input-group textarea:focus { border-color: var(--teal); }
+  .text-hint { font-size: 0.78rem; color: var(--gray-500); margin-top: 4px; }
+
+  /* NAVIGATION */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+  }
+
+  /* SUMMARY SCREEN */
+  .summary-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .summary-item {
+    background: var(--gray-50);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .summary-item .num {
+    width: 28px; height: 28px;
+    background: var(--teal);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .summary-item .content h4 { font-size: 0.85rem; font-weight: 700; color: var(--gray-900); }
+  .summary-item .content p { font-size: 0.8rem; color: var(--gray-500); margin-top: 3px; }
+  .timer-note {
+    background: var(--amber-light);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    color: var(--amber);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  /* AI LOADING */
+  .ai-loading {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .spinner {
+    width: 52px; height: 52px;
+    border: 4px solid var(--teal-light);
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    margin: 0 auto 20px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ai-loading h3 { font-size: 1.1rem; color: var(--gray-900); margin-bottom: 8px; }
+  .ai-loading p { color: var(--gray-500); font-size: 0.9rem; }
+
+  /* RESULT SCREEN */
+  .result-header {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .result-header .result-icon { font-size: 3rem; margin-bottom: 12px; }
+  .result-header h2 { font-size: 1.5rem; font-weight: 700; }
+  .result-header .score-pill {
+    display: inline-block;
+    padding: 6px 20px;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: var(--gray-50);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    border-top: 3px solid var(--teal);
+  }
+  .kpi-card .kpi-val { font-size: 1.4rem; font-weight: 700; color: var(--teal); }
+  .kpi-card .kpi-label { font-size: 0.72rem; color: var(--gray-500); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  .result-section {
+    margin-bottom: 20px;
+  }
+  .result-section h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray-500);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .result-section .content {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--gray-700);
+  }
+  .result-section .content ul { padding-left: 20px; }
+  .result-section .content li { margin-bottom: 6px; }
+  .result-section .content p { margin-bottom: 10px; }
+  .result-section .content strong { color: var(--gray-900); }
+
+  .whatif-box {
+    background: var(--purple-light);
+    border-radius: 10px;
+    padding: 16px;
+    border-left: 3px solid var(--purple);
+  }
+  .whatif-box h4 { color: var(--purple); font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+
+  .saved-badge {
+    background: var(--green-light);
+    color: var(--green);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .error-box {
+    background: var(--red-light);
+    border: 1px solid #fca5a5;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 0.85rem;
+    color: var(--red);
+    margin-top: 12px;
+    display: none;
+  }
+
+  /* TIMER */
+  .timer-widget {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    padding: 8px 16px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 100;
+  }
+  .timer-widget.warning { background: rgba(220,38,38,0.2); border-color: rgba(220,38,38,0.4); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .briefing-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: 1fr; }
+    .card { padding: 20px; }
+    body { padding: 12px; }
+  }
+
+  .hidden { display: none !important; }
+  
+  /* Markdown-ish rendering from AI */
+  .ai-content h3 { font-size: 1rem; font-weight: 700; color: var(--gray-900); margin: 14px 0 6px; }
+  .ai-content h4 { font-size: 0.92rem; font-weight: 700; color: var(--teal-dark); margin: 10px 0 4px; }
+  .ai-content p { font-size: 0.9rem; line-height: 1.65; color: var(--gray-700); margin-bottom: 8px; }
+  .ai-content ul { padding-left: 20px; margin-bottom: 10px; }
+  .ai-content li { font-size: 0.88rem; line-height: 1.6; color: var(--gray-700); margin-bottom: 4px; }
+  .ai-content strong { color: var(--gray-900); }
+  .ai-content .section-block { 
+    background: var(--gray-50); border-radius: 10px; padding: 16px; margin-bottom: 14px;
+    border-left: 3px solid var(--teal);
+  }
+  .ai-content .section-block.warn { border-left-color: var(--amber); background: var(--amber-light); }
+  .ai-content .section-block.whatif { border-left-color: var(--purple); background: var(--purple-light); }
+  .ai-content .section-block.good { border-left-color: var(--green); background: var(--green-light); }
+  .ai-content .section-block-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500); margin-bottom: 8px; }
+  .ai-content .section-block.warn .section-block-title { color: var(--amber); }
+  .ai-content .section-block.whatif .section-block-title { color: var(--purple); }
+  .ai-content .section-block.good .section-block-title { color: var(--green); }
+</style>
+</head>
+<body>
+
+<div class="timer-widget hidden" id="timerWidget">⏱ <span id="timerDisplay">30:00</span></div>
+
+<div class="container">
+  <div class="header">
+    <h1>🏭 Cyfrowa Transformacja</h1>
+    <p>Symulacja decyzji zarządczych — transformacja cyfrowa firmy</p>
+    <div class="badge">🎓 Ćwiczenie MBA · ~30 minut</div>
+  </div>
+
+  <div class="progress-bar-outer hidden" id="progressBarOuter">
+    <div class="progress-bar-inner" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="progress-label hidden" id="progressLabel"></div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SCREEN 0: INTRO -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div id="screen-intro" class="card">
+    <div class="company-logo">
+      <div class="icon">🏭</div>
+      <div>
+        <h2>ProdukcjaPlus Sp. z o.o.</h2>
+        <p>Firma produkcyjna · 850 pracowników · 45 lat na rynku</p>
+      </div>
+    </div>
+
+    <div class="briefing-grid">
+      <div class="briefing-item">
+        <div class="label">Twoja rola</div>
+        <div class="value">Chief Digital Officer</div>
+        <div class="sub">Nowo mianowany — od 1. dnia pracy</div>
+      </div>
+      <div class="briefing-item">
+        <div class="label">Budżet transformacji</div>
+        <div class="value">500 000 PLN</div>
+        <div class="sub">Na pierwsze 6 miesięcy</div>
+      </div>
+      <div class="briefing-item">
+        <div class="label">Sytuacja</div>
+        <div class="value">Stagnacja wzrostu</div>
+        <div class="sub">Przychody flat od 3 lat, koszty rosną</div>
+      </div>
+      <div class="briefing-item">
+        <div class="label">Presja zarządu</div>
+        <div class="value">Wysokie oczekiwania</div>
+        <div class="sub">Wyniki po 6 miesiącach pod lupą</div>
+      </div>
+    </div>
+
+    <div class="intro-challenge">
+      <h3>⚡ Twoje wyzwanie</h3>
+      <p>Firma działa na Excel-ach, dane są w silosach, decyzje opierają się na intuicji, a konkurencja już wdraża AI. Masz budżet, mandat zarządu i 6 miesięcy. Jaką strategię transformacji cyfrowej wybierzesz?</p>
+    </div>
+
+    <p style="font-size:0.88rem; color:var(--gray-500); margin-bottom:16px;">Podejmiesz <strong>6 kluczowych decyzji</strong>. Każda wpłynie na następną. Na końcu AI przeanalizuje Twoją strategię i pokaże możliwe wyniki. <strong>Nie ma jednej poprawnej ścieżki</strong> — liczy się spójność i uzasadnienie.</p>
+
+    <div class="nickname-row">
+      <input type="text" id="nicknameInput" placeholder="Twój pseudonim (np. Marek_CDO)" maxlength="30" />
+      <button class="btn btn-primary" onclick="startGame()" id="startBtn" disabled>Rozpocznij →</button>
+    </div>
+    <p style="font-size:0.78rem; color:var(--gray-400); margin-top:6px;">Pseudonim jest widoczny tylko dla wykładowcy, nie dla innych studentów.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SCREEN 1-6: DECISIONS -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div id="screen-decisions" class="hidden">
+    <div id="decision-container"></div>
+    <div class="nav-row" id="navRow">
+      <button class="btn btn-secondary" onclick="prevDecision()" id="btnPrev">← Wstecz</button>
+      <button class="btn btn-primary" onclick="nextDecision()" id="btnNext">Dalej →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SCREEN: SUMMARY -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div id="screen-summary" class="card hidden">
+    <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:6px;">📋 Podsumowanie Twojej strategii</h2>
+    <p style="font-size:0.88rem; color:var(--gray-500); margin-bottom:20px;">Sprawdź swoje decyzje przed wysłaniem do analizy AI.</p>
+    <div class="summary-grid" id="summaryGrid"></div>
+    <div class="timer-note" id="timerNote">⏱ Stan gry jest automatycznie zapisywany w przeglądarce.</div>
+    <button class="btn btn-primary btn-full" onclick="submitForAnalysis()" id="btnSubmit">
+      🤖 Analizuj moją strategię z AI
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SCREEN: AI LOADING -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div id="screen-loading" class="card hidden">
+    <div class="ai-loading">
+      <div class="spinner"></div>
+      <h3>AI analizuje Twoją strategię…</h3>
+      <p>Model symuluje wyniki Twoich decyzji i przygotowuje rekomendacje.<br>To może potrwać 10–20 sekund.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SCREEN: RESULTS -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div id="screen-results" class="card hidden">
+    <div id="resultsContent"></div>
+    <div class="saved-badge" id="savedBadge">✅ Wyniki zapisane do systemu wykładowcy</div>
+    <div class="error-box" id="errorBox"></div>
+    <button class="btn btn-secondary btn-full" onclick="location.reload()" style="margin-top:16px;">↩ Zacznij od nowa</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DECISIONS DATA
+// ═══════════════════════════════════════════════════
+const DECISIONS = [
+  {
+    id: 1,
+    title: "Diagnoza — skąd zaczynasz?",
+    tag: "dddm", tagLabel: "DDDM",
+    emoji: "🔍",
+    situation: `<strong>Tydzień 1.</strong> Zanim wydasz złotówkę, musisz zrozumieć gdzie firma jest cyfrowo. Masz dwa podejścia: zlecić zewnętrzny audyt firmie konsultingowej lub zbudować własną wiedzę angażując pracowników. Czas i pieniądze są ograniczone.`,
+    dataPoints: ["Excel w 90% procesów", "4 osobne bazy danych (bez integracji)", "Brak KPI dashboard", "Dział IT: 3 osoby"],
+    question: "Jak przeprowadzisz diagnozę stanu cyfrowego firmy?",
+    type: "options",
+    options: [
+      { letter: "A", title: "Zewnętrzny audyt cyfrowy", desc: "Wynajmujesz firmę konsultingową (koszt ~80k PLN). Raport za 6 tygodni, benchmarking branżowy, niezależna ocena." },
+      { letter: "B", title: "Warsztaty wewnętrzne (Digital Map)", desc: "Seria 4 warsztatów z kierownikami działów (koszt ~15k PLN). Wolniej, ale budujesz zaangażowanie i właścicielstwo zmian." },
+      { letter: "C", title: "Szybka analiza danych + rozmowy", desc: "Sam analizujesz dostępne dane i przeprowadzasz 15 wywiadów z kluczowymi osobami. Koszt: czas własny (~5k PLN). Ryzyko: subiektywność." },
+      { letter: "D", title: "Dwie ścieżki równolegle", desc: "Łączysz lekki audyt zewnętrzny (~30k PLN) z wewnętrznymi warsztatami (~15k PLN). Szybciej, bardziej kompleksowo, ale drożej." }
+    ]
+  },
+  {
+    id: 2,
+    title: "Strategia danych — fundament DDDM",
+    tag: "dddm", tagLabel: "DDDM",
+    emoji: "📊",
+    situation: `<strong>Miesiąc 1–2.</strong> Diagnoza gotowa. Dane firmy są wszędzie i nigdzie jednocześnie. Przed wdrożeniem AI potrzebujesz solidnych fundamentów danych. Pytanie: jak duże fundamenty i jak szybko?`,
+    dataPoints: ["7 systemów bez API", "Dział sprzedaży vs. produkcja: inne definicje KPI", "Raportowanie: 3–5 dni oczekiwania", "Historyczne dane: 8 lat w Excelu"],
+    question: "Jaką strategię danych wdrożysz jako fundament transformacji?",
+    type: "options",
+    options: [
+      { letter: "A", title: "Data Warehouse + BI (Power BI)", desc: "Budujesz centralne repozytorium danych i wdrażasz Power BI (koszt ~120k PLN, czas: 4 miesiące). Solidne, ale wolne i drogie." },
+      { letter: "B", title: "Data lakehouse w chmurze", desc: "Nowoczesna architektura na Azure/AWS (koszt ~90k PLN + subskrypcja). Skalowalna, gotowa pod AI. Wymaga wiedzy technicznej." },
+      { letter: "C", title: "Quick wins — ujednolicenie kluczowych raportów", desc: "Skupiasz się na 3 najważniejszych raportach operacyjnych. Koszt ~30k PLN, efekt w 4 tygodnie. Nie rozwiązuje problemu systemowo." },
+      { letter: "D", title: "Integracja przez middleware (iPaaS)", desc: "Platforma integracyjna (np. Make.com/Zapier Enterprise, koszt ~40k PLN/rok) spinająca istniejące systemy. Kompromis między szybkością a głębokością." }
+    ]
+  },
+  {
+    id: 3,
+    title: "Ludzie i kompetencje — kto to zrobi?",
+    tag: "people", tagLabel: "Ludzie",
+    emoji: "👥",
+    situation: `<strong>Miesiąc 2.</strong> Masz strategię — ale kto ją wdroży? Budujesz wewnętrzny zespół, który będzie z firmą długo, albo kupujesz szybkość przez outsourcing. Budżet na ludzi konkuruje z budżetem na technologię.`,
+    dataPoints: ["Dział IT przytłoczony bieżącą obsługą", "3 pracowników wyraziło chęć szkolenia z AI", "Stawka seniora Data Engineer: 15k+ PLN/mies.", "Firma szkoleniowa: pakiet ~60k PLN dla 20 osób"],
+    question: "Jak zbudujesz kompetencje cyfrowe w organizacji?",
+    type: "budget",
+    budgetTotal: 150,
+    budgetItems: [
+      { id: "hire", label: "Nowe etaty (Data/AI)", unit: "k PLN" },
+      { id: "train", label: "Szkolenia obecnych pracowników", unit: "k PLN" },
+      { id: "outsource", label: "Outsourcing / IT Partner", unit: "k PLN" }
+    ]
+  },
+  {
+    id: 4,
+    title: "Technologia AI — kiedy i jak?",
+    tag: "ai", tagLabel: "AI",
+    emoji: "🤖",
+    situation: `<strong>Miesiąc 3.</strong> Zarząd pyta: „Kiedy będziemy mieć AI?" Presja na szybkie wdrożenie jest duża. Ale AI bez danych to tylko marketingowe hasło. Musisz zdecydować o podejściu do AI w firmie.`,
+    dataPoints: ["Konkurencja wdrożyła chatbota obsługi", "ROI z automatyzacji prognoz: potencjalnie +12% marży", "Dostępne modele: GPT-4, Gemini, modele branżowe", "Ryzyko: 60% projektów AI kończy się niepowodzeniem"],
+    question: "Jaką strategię wdrożenia AI przyjmiesz?",
+    type: "options",
+    options: [
+      { letter: "A", title: "AI-first — agresywne wdrożenie", desc: "Równolegle wdrażasz kilka narzędzi AI: predykcja popytu, automatyzacja obsługi, AI w HR. Szybko, widocznie, ryzykownie." },
+      { letter: "B", title: "Jeden konkretny pilot AI", desc: "Wybierasz jeden obszar (np. prognozowanie produkcji) i budujesz PoC w 8 tygodni. Uczysz się na małym błędzie, nie na dużym." },
+      { letter: "C", title: "AI-ready strategy — najpierw dane", desc: "Deklarujesz AI za 6+ miesięcy, skupiasz się na przygotowaniu danych i kompetencji. Zarząd może być niezadowolony." },
+      { letter: "D", title: "AI w narzędziach produktywności", desc: "Wdrażasz Microsoft Copilot / Google Workspace AI dla pracowników. Niska bariera, szybki efekt, ale nie transformuje procesów core." }
+    ]
+  },
+  {
+    id: 5,
+    title: "Quick wins — jak pokazać wartość?",
+    tag: "strategy", tagLabel: "Strategia",
+    emoji: "⚡",
+    situation: `<strong>Miesiąc 3–4.</strong> Zarząd oczekuje pierwszych wyników. Masz budżet i czas — ale co przyniesie największą wartość w krótkim terminie? To decyzja o komunikacji i wiarygodności CDO.`,
+    dataPoints: ["Raportowanie zajmuje 2 dni/tydzień w każdym dziale", "Błędy w zamówieniach: 8% (koszt ~200k PLN/rok)", "Czas onboardingu nowego pracownika: 3 tygodnie", "Zarząd chce dashboard w czasie rzeczywistym"],
+    question: "Jaki quick win przyniesie największą wartość i wiarygodność?",
+    type: "rank",
+    rankItems: [
+      { id: "dashboard", label: "📈 Dashboard zarządczy w czasie rzeczywistym" },
+      { id: "automation", label: "🔄 Automatyzacja raportowania (oszczędność ~8h/tydzień/dział)" },
+      { id: "errors", label: "❌ Redukcja błędów w zamówieniach (AI validation)" },
+      { id: "onboarding", label: "🚀 Cyfrowy onboarding pracowników" }
+    ]
+  },
+  {
+    id: 6,
+    title: "Change management — jak angażować ludzi?",
+    tag: "change", tagLabel: "Change Mgmt",
+    emoji: "🔄",
+    situation: `<strong>Miesiąc 4–5.</strong> Technologia gotowa — ale połowa pracowników boi się zmian. Część widzi w AI zagrożenie dla swoich miejsc pracy. Bez adopcji narzędzi, transformacja będzie tylko na papierze.`,
+    dataPoints: ["Sondaż: 45% pracowników 'obawia się cyfryzacji'", "Liderzy linii: różne poziomy entuzjazmu", "HR nie był angażowany w planowanie", "Sukces transformacji: 70% to ludzie, 30% technologia"],
+    question: "Jaką strategię change management przyjmiesz?",
+    type: "multi-choice",
+    instruction: "Wybierz <strong>maksymalnie 3</strong> działania, które wdrożysz:",
+    choices: [
+      { id: "champions", label: "🏆 Sieć Digital Champions (ambasadorów zmiany) w każdym dziale" },
+      { id: "communication", label: "📣 Regularna komunikacja od CEO — 'dlaczego transformacja jest konieczna'" },
+      { id: "training-role", label: "🎓 Szkolenia dopasowane do roli (nie jeden program dla wszystkich)" },
+      { id: "metrics", label: "📊 Publiczne KPI transformacji — przejrzystość postępów" },
+      { id: "feedback", label: "💬 Kanał feedbacku dla pracowników — zgłaszanie obaw i pomysłów" },
+      { id: "incentives", label: "🎁 System nagród za adopcję nowych narzędzi cyfrowych" }
+    ]
+  }
+];
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+const STORAGE_KEY = 'mba_simulation_state';
+let state = {
+  nickname: '',
+  currentDecision: 0,
+  answers: {},
+  startTime: null,
+  finished: false
+};
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadState() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    // Only restore if not finished and from today
+    if (!parsed.finished && parsed.startTime) {
+      const elapsed = Date.now() - parsed.startTime;
+      if (elapsed < 90 * 60 * 1000) { // 90 min max
+        return parsed;
+      }
+    }
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════
+// TIMER
+// ═══════════════════════════════════════════════════
+let timerInterval = null;
+const TIMER_DURATION = 30 * 60; // 30 min
+
+function startTimer() {
+  const widget = document.getElementById('timerWidget');
+  widget.classList.remove('hidden');
+  
+  function tick() {
+    const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+    const remaining = Math.max(0, TIMER_DURATION - elapsed);
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    document.getElementById('timerDisplay').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    if (remaining <= 5 * 60) widget.classList.add('warning');
+    if (remaining === 0) clearInterval(timerInterval);
+  }
+  tick();
+  timerInterval = setInterval(tick, 1000);
+}
+
+// ═══════════════════════════════════════════════════
+// INTRO
+// ═══════════════════════════════════════════════════
+document.getElementById('nicknameInput').addEventListener('input', function() {
+  document.getElementById('startBtn').disabled = this.value.trim().length < 2;
+});
+document.getElementById('nicknameInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim().length >= 2) startGame();
+});
+
+function startGame() {
+  const nick = document.getElementById('nicknameInput').value.trim();
+  if (!nick) return;
+  
+  // Check for saved state
+  const saved = loadState();
+  if (saved && saved.nickname === nick) {
+    if (confirm('Znaleziono zapisaną sesję. Chcesz kontynuować od miejsca, w którym skończyłeś/-aś?')) {
+      state = saved;
+    } else {
+      state.nickname = nick;
+      state.startTime = Date.now();
+      state.answers = {};
+      state.currentDecision = 0;
+    }
+  } else {
+    state.nickname = nick;
+    state.startTime = Date.now();
+  }
+  
+  saveState();
+  showScreen('decisions');
+  startTimer();
+  renderDecision(state.currentDecision);
+}
+
+// ═══════════════════════════════════════════════════
+// SCREENS
+// ═══════════════════════════════════════════════════
+function showScreen(name) {
+  ['intro','decisions','summary','loading','results'].forEach(s => {
+    document.getElementById('screen-' + s).classList.add('hidden');
+  });
+  document.getElementById('screen-' + name).classList.remove('hidden');
+  
+  const pb = document.getElementById('progressBarOuter');
+  const pl = document.getElementById('progressLabel');
+  if (name === 'decisions') {
+    pb.classList.remove('hidden');
+    pl.classList.remove('hidden');
+  } else {
+    pb.classList.add('hidden');
+    pl.classList.add('hidden');
+  }
+}
+
+function updateProgress(idx) {
+  const pct = Math.round((idx / DECISIONS.length) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `Decyzja ${idx + 1} z ${DECISIONS.length}`;
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER DECISION
+// ═══════════════════════════════════════════════════
+function renderDecision(idx) {
+  if (idx >= DECISIONS.length) {
+    showSummary();
+    return;
+  }
+  
+  updateProgress(idx);
+  const d = DECISIONS[idx];
+  const container = document.getElementById('decision-container');
+  
+  const tagColors = {
+    dddm: 'tag-dddm', ai: 'tag-ai', tech: 'tag-tech',
+    people: 'tag-people', strategy: 'tag-strategy', change: 'tag-change'
+  };
+  
+  let inputHTML = '';
+  const ans = state.answers[idx];
+  
+  if (d.type === 'options') {
+    inputHTML = `<div class="options-grid">` +
+      d.options.map((o, i) => `
+        <div class="option-card ${ans === i ? 'selected' : ''}" onclick="selectOption(${idx}, ${i})">
+          <div class="option-letter">${o.letter}</div>
+          <div class="option-text">
+            <h4>${o.title}</h4>
+            <p>${o.desc}</p>
+          </div>
+        </div>`).join('') +
+    `</div>`;
+    
+  } else if (d.type === 'budget') {
+    const vals = ans || { hire: 50, train: 50, outsource: 50 };
+    inputHTML = `
+      <div class="budget-split" id="budgetSplit">
+        ${d.budgetItems.map(item => `
+          <div class="budget-row">
+            <label>${item.label}</label>
+            <input type="range" min="0" max="${d.budgetTotal}" value="${vals[item.id]}"
+              oninput="updateBudget(${idx})" id="budget_${item.id}">
+            <span class="budget-val" id="budgetVal_${item.id}">${vals[item.id]}k</span>
+          </div>`).join('')}
+        <div class="budget-total" id="budgetTotal"></div>
+      </div>`;
+    
+  } else if (d.type === 'rank') {
+    const ranked = ans || d.rankItems.map(r => r.id);
+    inputHTML = `
+      <p style="font-size:0.82rem; color:var(--gray-500); margin-bottom:10px;">Przeciągnij lub kliknij strzałki, aby ustawić priorytety (1 = najważniejszy)</p>
+      <div id="rankList" class="options-grid">
+        ${ranked.map((id, i) => {
+          const item = d.rankItems.find(r => r.id === id);
+          return `<div class="option-card" data-rank-id="${id}" style="cursor:default; justify-content:space-between; flex-direction:row; align-items:center;">
+            <div style="display:flex; gap:12px; align-items:center;">
+              <div class="option-letter" style="background:var(--teal); color:white;">${i+1}</div>
+              <span style="font-size:0.9rem; font-weight:600;">${item.label}</span>
+            </div>
+            <div style="display:flex; gap:4px;">
+              ${i > 0 ? `<button onclick="moveRank(${idx},'${id}',-1)" style="background:none;border:1px solid var(--gray-300);border-radius:6px;padding:4px 8px;cursor:pointer;">↑</button>` : '<span style="width:34px;"></span>'}
+              ${i < ranked.length-1 ? `<button onclick="moveRank(${idx},'${id}',1)" style="background:none;border:1px solid var(--gray-300);border-radius:6px;padding:4px 8px;cursor:pointer;">↓</button>` : '<span style="width:34px;"></span>'}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    
+  } else if (d.type === 'multi-choice') {
+    const selected = ans || [];
+    inputHTML = `
+      <p style="font-size:0.82rem; color:var(--gray-500); margin-bottom:10px;">${d.instruction}</p>
+      <div class="options-grid">
+        ${d.choices.map(c => `
+          <div class="option-card ${selected.includes(c.id) ? 'selected' : ''}"
+            onclick="toggleChoice(${idx}, '${c.id}')">
+            <div class="option-letter ${selected.includes(c.id) ? '' : ''}"
+              style="${selected.includes(c.id) ? 'background:var(--teal);color:white;' : ''}">
+              ${selected.includes(c.id) ? '✓' : '○'}
+            </div>
+            <div class="option-text"><h4>${c.label}</h4></div>
+          </div>`).join('')}
+      </div>
+      <p id="choiceCount" style="font-size:0.8rem; color:var(--gray-500); margin-top:-8px; margin-bottom:12px;">Wybrano: ${selected.length}/3</p>`;
+  }
+  
+  container.innerHTML = `
+    <div class="card">
+      <div class="decision-header">
+        <div class="decision-number">${d.id}</div>
+        <div>
+          <h2>${d.emoji} ${d.title}</h2>
+          <span class="tag ${tagColors[d.tag]}">${d.tagLabel}</span>
+        </div>
+      </div>
+      <div class="situation-box">${d.situation}</div>
+      <div class="data-points">
+        ${d.dataPoints.map(dp => `<div class="data-point">📌 ${dp}</div>`).join('')}
+      </div>
+      <div class="question-label">❓ ${d.question}</div>
+      ${inputHTML}
+    </div>`;
+  
+  if (d.type === 'budget') updateBudget(idx);
+  if (d.type === 'rank' && !ans) saveRankAnswer(idx);
+  
+  // Nav buttons
+  document.getElementById('btnPrev').style.visibility = idx === 0 ? 'hidden' : 'visible';
+  document.getElementById('btnNext').textContent = idx === DECISIONS.length - 1 ? 'Podsumowanie →' : 'Dalej →';
+  
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════════════
+// ANSWER HANDLERS
+// ═══════════════════════════════════════════════════
+function selectOption(decIdx, optIdx) {
+  state.answers[decIdx] = optIdx;
+  saveState();
+  renderDecision(decIdx);
+}
+
+function updateBudget(decIdx) {
+  const d = DECISIONS[decIdx];
+  const vals = {};
+  let total = 0;
+  d.budgetItems.forEach(item => {
+    const v = parseInt(document.getElementById('budget_' + item.id).value);
+    vals[item.id] = v;
+    total += v;
+    document.getElementById('budgetVal_' + item.id).textContent = v + 'k';
+  });
+  state.answers[decIdx] = vals;
+  saveState();
+  
+  const remaining = d.budgetTotal - total;
+  const cls = remaining > 20 ? 'ok' : remaining >= 0 ? 'warn' : 'over';
+  document.getElementById('budgetTotal').innerHTML = 
+    `Łącznie: <span class="remaining ${cls}">${total}k PLN</span> (budżet: ${d.budgetTotal}k PLN${remaining >= 0 ? `, pozostaje: ${remaining}k PLN` : `, przekroczono o ${-remaining}k PLN`})`;
+}
+
+function moveRank(decIdx, id, dir) {
+  const d = DECISIONS[decIdx];
+  const ranked = state.answers[decIdx] || d.rankItems.map(r => r.id);
+  const idx = ranked.indexOf(id);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= ranked.length) return;
+  [ranked[idx], ranked[newIdx]] = [ranked[newIdx], ranked[idx]];
+  state.answers[decIdx] = ranked;
+  saveState();
+  renderDecision(decIdx);
+}
+
+function saveRankAnswer(decIdx) {
+  const d = DECISIONS[decIdx];
+  if (!state.answers[decIdx]) {
+    state.answers[decIdx] = d.rankItems.map(r => r.id);
+    saveState();
+  }
+}
+
+function toggleChoice(decIdx, choiceId) {
+  const d = DECISIONS[decIdx];
+  let selected = state.answers[decIdx] || [];
+  const i = selected.indexOf(choiceId);
+  if (i >= 0) {
+    selected.splice(i, 1);
+  } else {
+    if (selected.length >= 3) {
+      selected.shift();
+    }
+    selected.push(choiceId);
+  }
+  state.answers[decIdx] = selected;
+  saveState();
+  renderDecision(decIdx);
+}
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+function isAnswered(idx) {
+  const d = DECISIONS[idx];
+  const ans = state.answers[idx];
+  if (!ans && ans !== 0) return false;
+  if (d.type === 'options') return ans !== undefined && ans !== null;
+  if (d.type === 'budget') return true;
+  if (d.type === 'rank') return Array.isArray(ans) && ans.length > 0;
+  if (d.type === 'multi-choice') return Array.isArray(ans) && ans.length > 0;
+  return true;
+}
+
+function nextDecision() {
+  if (!isAnswered(state.currentDecision)) {
+    alert('Proszę udzielić odpowiedzi przed przejściem dalej.');
+    return;
+  }
+  state.currentDecision++;
+  saveState();
+  if (state.currentDecision >= DECISIONS.length) {
+    showSummary();
+  } else {
+    renderDecision(state.currentDecision);
+  }
+}
+
+function prevDecision() {
+  if (state.currentDecision > 0) {
+    state.currentDecision--;
+    saveState();
+    renderDecision(state.currentDecision);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// SUMMARY
+// ═══════════════════════════════════════════════════
+function showSummary() {
+  showScreen('summary');
+  
+  const grid = document.getElementById('summaryGrid');
+  grid.innerHTML = DECISIONS.map((d, idx) => {
+    const ans = state.answers[idx];
+    let ansText = '—';
+    if (d.type === 'options' && ans !== undefined) {
+      ansText = `${d.options[ans].letter}: ${d.options[ans].title}`;
+    } else if (d.type === 'budget' && ans) {
+      ansText = Object.entries(ans).map(([k,v]) => {
+        const item = d.budgetItems.find(b => b.id === k);
+        return `${item.label}: ${v}k PLN`;
+      }).join(' | ');
+    } else if (d.type === 'rank' && ans) {
+      ansText = ans.map((id, i) => {
+        const item = d.rankItems.find(r => r.id === id);
+        return `${i+1}. ${item.label}`;
+      }).join(', ');
+    } else if (d.type === 'multi-choice' && ans) {
+      ansText = ans.map(id => {
+        const c = d.choices.find(c => c.id === id);
+        return c ? c.label : id;
+      }).join(', ');
+    }
+    return `<div class="summary-item">
+      <div class="num">${d.id}</div>
+      <div class="content">
+        <h4>${d.emoji} ${d.title}</h4>
+        <p>${ansText}</p>
+      </div>
+    </div>`;
+  }).join('');
+  
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════════════
+// AI ANALYSIS
+// ═══════════════════════════════════════════════════
+function buildPrompt() {
+  const d0ans = state.answers[0];
+  const d1ans = state.answers[1];
+  const d2ans = state.answers[2];
+  const d3ans = state.answers[3];
+  const d4ans = state.answers[4];
+  const d5ans = state.answers[5];
+  
+  const d0text = d0ans !== undefined ? DECISIONS[0].options[d0ans].title + ': ' + DECISIONS[0].options[d0ans].desc : 'brak';
+  const d1text = d1ans !== undefined ? DECISIONS[1].options[d1ans].title + ': ' + DECISIONS[1].options[d1ans].desc : 'brak';
+  const d2text = d2ans ? Object.entries(d2ans).map(([k,v]) => { const item = DECISIONS[2].budgetItems.find(b=>b.id===k); return item.label+': '+v+'k PLN'; }).join(', ') : 'brak';
+  const d3text = d3ans !== undefined ? DECISIONS[3].options[d3ans].title + ': ' + DECISIONS[3].options[d3ans].desc : 'brak';
+  const d4text = d4ans ? d4ans.map((id,i) => { const item = DECISIONS[4].rankItems.find(r=>r.id===id); return (i+1)+'. '+item.label; }).join(', ') : 'brak';
+  const d5text = d5ans ? d5ans.map(id => { const c = DECISIONS[5].choices.find(c=>c.id===id); return c ? c.label : id; }).join(', ') : 'brak';
+  
+  return `Jesteś ekspertem od transformacji cyfrowej i coachem MBA. Analizujesz strategię transformacji cyfrowej studentów MBA.
+
+KONTEKST FIRMY: ProdukcjaPlus Sp. z o.o. — firma produkcyjna, 850 pracowników, 45 lat na rynku, stagnacja przychodów od 3 lat, budżet transformacji 500k PLN na 6 miesięcy.
+
+DECYZJE STUDENTA:
+1. Diagnoza (DDDM): ${d0text}
+2. Strategia danych (DDDM): ${d1text}
+3. Budżet ludzie/kompetencje: ${d2text}
+4. Strategia AI: ${d3text}
+5. Quick wins (priorytety): ${d4text}
+6. Change management: ${d5text}
+
+Przeanalizuj tę strategię i zwróć wynik w następującym formacie JSON (TYLKO JSON, bez markdown, bez komentarzy):
+{
+  "profileName": "krótka nazwa profilu strategii (np. 'Ostrożny Fundamentalista', 'Agresywny Innowator', 'Zrównoważony Pragmatyk')",
+  "profileEmoji": "emoji pasujące do profilu",
+  "scoreOverall": liczba 1-100 (ogólna ocena spójności i realności strategii),
+  "kpi": {
+    "digitalMaturity": "poziom dojrzałości cyfrowej po 6 mies. (np. '+2 poziomy')",
+    "roiEstimate": "szacowany ROI (np. '~120%', 'trudny do oceny')",
+    "adoptionRisk": "ryzyko adopcji: Niskie/Średnie/Wysokie"
+  },
+  "strengths": ["mocna strona 1", "mocna strona 2", "mocna strona 3"],
+  "risks": ["ryzyko 1", "ryzyko 2", "ryzyko 3"],
+  "overallAssessment": "2-3 zdania oceny ogólnej strategii, jej spójności i potencjału",
+  "whatIf": [
+    {
+      "scenario": "Co gdyby wybrał(a) inną strategię danych?",
+      "description": "2-3 zdania co by się zmieniło w wynikach i dlaczego"
+    },
+    {
+      "scenario": "Co gdyby AI było wdrożone inaczej?",
+      "description": "2-3 zdania o alternatywnym podejściu do AI"
+    }
+  ],
+  "recommendation": "Najważniejsza jedna rekomendacja na kolejne 3 miesiące (1-2 zdania)"
+}`;
+}
+
+async function submitForAnalysis() {
+  showScreen('loading');
+  window.scrollTo(0, 0);
+  
+  try {
+    const prompt = buildPrompt();
+    const response = await fetch('https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 1200 }
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (!data.candidates || !data.candidates[0]) {
+      throw new Error('Brak odpowiedzi od modelu AI. Spróbuj ponownie.');
+    }
+    
+    const rawText = data.candidates[0].content.parts[0].text;
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Nie udało się sparsować odpowiedzi AI.');
+    
+    const analysis = JSON.parse(jsonMatch[0]);
+    
+    state.finished = true;
+    saveState();
+    
+    showResults(analysis);
+    saveToGitHub(analysis);
+    
+  } catch (err) {
+    showScreen('results');
+    document.getElementById('resultsContent').innerHTML = `<p style="color:var(--red); padding:20px;">Wystąpił błąd analizy AI. Spróbuj ponownie za chwilę.<br><small>${err.message}</small></p>`;
+    document.getElementById('errorBox').style.display = 'block';
+    document.getElementById('errorBox').textContent = 'Błąd: ' + err.message;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// SHOW RESULTS
+// ═══════════════════════════════════════════════════
+function showResults(a) {
+  showScreen('results');
+  
+  const scoreColor = a.scoreOverall >= 75 ? '#16a34a' : a.scoreOverall >= 50 ? '#d97706' : '#dc2626';
+  const scoreBg = a.scoreOverall >= 75 ? '#dcfce7' : a.scoreOverall >= 50 ? '#fef3c7' : '#fee2e2';
+  
+  const adoptionIcon = { 'Niskie': '🟢', 'Średnie': '🟡', 'Wysokie': '🔴' };
+  
+  document.getElementById('resultsContent').innerHTML = `
+    <div class="result-header">
+      <div class="result-icon">${a.profileEmoji || '🏭'}</div>
+      <h2>Twój profil: „${a.profileName}"</h2>
+      <span class="score-pill" style="background:${scoreBg}; color:${scoreColor};">
+        Spójność strategii: ${a.scoreOverall}/100
+      </span>
+    </div>
+    
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-val">${a.kpi.digitalMaturity}</div>
+        <div class="kpi-label">Dojrzałość cyfrowa</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val">${a.kpi.roiEstimate}</div>
+        <div class="kpi-label">Szacowany ROI</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val">${adoptionIcon[a.kpi.adoptionRisk] || '🟡'} ${a.kpi.adoptionRisk}</div>
+        <div class="kpi-label">Ryzyko adopcji</div>
+      </div>
+    </div>
+    
+    <div class="ai-content">
+      <div class="section-block">
+        <div class="section-block-title">📋 Ocena ogólna</div>
+        <p>${a.overallAssessment}</p>
+      </div>
+      
+      <div class="section-block good">
+        <div class="section-block-title">✅ Mocne strony Twojej strategii</div>
+        <ul>${(a.strengths || []).map(s => `<li>${s}</li>`).join('')}</ul>
+      </div>
+      
+      <div class="section-block warn">
+        <div class="section-block-title">⚠️ Ryzyka i wyzwania</div>
+        <ul>${(a.risks || []).map(r => `<li>${r}</li>`).join('')}</ul>
+      </div>
+      
+      <div class="section-block whatif">
+        <div class="section-block-title">🔀 Co by było gdyby…</div>
+        ${(a.whatIf || []).map(w => `
+          <p style="margin-bottom:12px;"><strong>${w.scenario}</strong><br>${w.description}</p>
+        `).join('')}
+      </div>
+      
+      <div class="section-block" style="border-left-color:var(--blue); background:var(--blue-light);">
+        <div class="section-block-title" style="color:var(--blue);">🎯 Najważniejsza rekomendacja</div>
+        <p><strong>${a.recommendation}</strong></p>
+      </div>
+    </div>
+  `;
+  
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════════════
+// SAVE TO GITHUB
+// ═══════════════════════════════════════════════════
+async function saveToGitHub(analysis) {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('pl-PL');
+  
+  const decisionsText = DECISIONS.map((d, idx) => {
+    const ans = state.answers[idx];
+    let ansText = '—';
+    if (d.type === 'options' && ans !== undefined) {
+      ansText = `${d.options[ans].letter}: ${d.options[ans].title}`;
+    } else if (d.type === 'budget' && ans) {
+      ansText = Object.entries(ans).map(([k,v]) => {
+        const item = d.budgetItems.find(b=>b.id===k);
+        return item.label+': '+v+'k PLN';
+      }).join(', ');
+    } else if (d.type === 'rank' && ans) {
+      ansText = ans.map((id,i) => {
+        const item = d.rankItems.find(r=>r.id===id);
+        return `${i+1}. ${item.label}`;
+      }).join('; ');
+    } else if (d.type === 'multi-choice' && ans) {
+      ansText = ans.map(id => { const c = d.choices.find(c=>c.id===id); return c ? c.label : id; }).join(', ');
+    }
+    return `**${d.id}. ${d.title}:** ${ansText}`;
+  }).join('\n');
+  
+  const body = `## 🏭 Symulacja Transformacji Cyfrowej — Wyniki
+
+**Student:** ${state.nickname}
+**Data:** ${dateStr}
+**Profil:** ${analysis.profileEmoji} ${analysis.profileName}
+**Ocena spójności:** ${analysis.scoreOverall}/100
+
+---
+
+### Decyzje
+
+${decisionsText}
+
+---
+
+### Analiza AI
+
+**Ocena ogólna:** ${analysis.overallAssessment}
+
+**Mocne strony:**
+${(analysis.strengths || []).map(s => `- ${s}`).join('\n')}
+
+**Ryzyka:**
+${(analysis.risks || []).map(r => `- ${r}`).join('\n')}
+
+**KPI:**
+- Dojrzałość cyfrowa: ${analysis.kpi.digitalMaturity}
+- Szacowany ROI: ${analysis.kpi.roiEstimate}
+- Ryzyko adopcji: ${analysis.kpi.adoptionRisk}
+
+**Rekomendacja:** ${analysis.recommendation}`;
+
+  try {
+    const response = await fetch('https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: `🏭 Symulacja Transformacji — ${state.nickname} — ${analysis.profileName} — ${dateStr}`,
+        body,
+        labels: ['symulacja-transformacja']
+      })
+    });
+    
+    if (response.ok) {
+      document.getElementById('savedBadge').style.display = 'block';
+    }
+  } catch (e) {
+    console.warn('Nie udało się zapisać do GitHub:', e);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// INIT — restore from localStorage if possible
+// ═══════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  const saved = loadState();
+  if (saved && !saved.finished) {
+    // Pre-fill nickname if we have it
+    if (saved.nickname) {
+      document.getElementById('nicknameInput').value = saved.nickname;
+      document.getElementById('startBtn').disabled = false;
+    }
+  }
+});
+</script>
+</body>
+</html>
