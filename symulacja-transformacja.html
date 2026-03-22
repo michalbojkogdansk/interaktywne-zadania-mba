@@ -644,10 +644,10 @@ const DECISIONS = [
     question: "Jak przeprowadzisz diagnozę stanu cyfrowego firmy?",
     type: "options",
     options: [
-      { letter: "A", title: "Zewnętrzny audyt cyfrowy", desc: "Wynajmujesz firmę konsultingową (koszt ~80k PLN). Raport za 6 tygodni, benchmarking branżowy, niezależna ocena." },
+      { letter: "A", title: "Digital Maturity Assessment (zewnętrzny)", desc: "Profesjonalny audyt przez certyfikowaną firmę konsultingową z doświadczeniem w sektorze produkcyjnym. Raport zawiera benchmarking branżowy i szczegółową roadmapę (koszt ~80k PLN, gotowy za 6 tygodni)." },
       { letter: "B", title: "Warsztaty wewnętrzne (Digital Map)", desc: "Seria 4 warsztatów z kierownikami działów (koszt ~15k PLN). Wolniej, ale budujesz zaangażowanie i właścicielstwo zmian." },
-      { letter: "C", title: "Szybka analiza danych + rozmowy", desc: "Sam analizujesz dostępne dane i przeprowadzasz 15 wywiadów z kluczowymi osobami. Koszt: czas własny (~5k PLN). Ryzyko: subiektywność." },
-      { letter: "D", title: "Dwie ścieżki równolegle", desc: "Łączysz lekki audyt zewnętrzny (~30k PLN) z wewnętrznymi warsztatami (~15k PLN). Szybciej, bardziej kompleksowo, ale drożej." }
+      { letter: "C", title: "Rapid Assessment (dane + wywiady)", desc: "15 ustrukturyzowanych wywiadów z kluczowymi osobami i analiza dostępnych danych systemowych. Szybko, tanio, bezpośredni kontakt z organizacją od pierwszego dnia (koszt ~5k PLN)." },
+      { letter: "D", title: "Podejście zintegrowane (best of both)", desc: "Łączysz obiektywność zewnętrznego eksperta z zaangażowaniem wewnętrznym: lekki audyt (~30k PLN) + warsztaty z kierownikami (~15k PLN). Pełny obraz szybciej niż sam audyt." }
     ]
   },
   {
@@ -660,9 +660,9 @@ const DECISIONS = [
     question: "Jaką strategię danych wdrożysz jako fundament transformacji?",
     type: "options",
     options: [
-      { letter: "A", title: "Data Warehouse + BI (Power BI)", desc: "Budujesz centralne repozytorium danych i wdrażasz Power BI (koszt ~120k PLN, czas: 4 miesiące). Solidne, ale wolne i drogie." },
-      { letter: "B", title: "Data lakehouse w chmurze", desc: "Nowoczesna architektura na Azure/AWS (koszt ~90k PLN + subskrypcja). Skalowalna, gotowa pod AI. Wymaga wiedzy technicznej." },
-      { letter: "C", title: "Quick wins — ujednolicenie kluczowych raportów", desc: "Skupiasz się na 3 najważniejszych raportach operacyjnych. Koszt ~30k PLN, efekt w 4 tygodnie. Nie rozwiązuje problemu systemowo." },
+      { letter: "A", title: "Enterprise Data Warehouse + Power BI", desc: "Budujesz korporacyjną architekturę danych z jednym centralnym repozytorium i wdrażasz Power BI. Zarząd dostaje dashboard z dowolną metryką, jeden punkt prawdy dla całej firmy. Koszt ~120k PLN." },
+      { letter: "B", title: "Modern Data Stack w chmurze (Azure/AWS)", desc: "Data lakehouse używany przez liderów rynku — architektura gotowa na AI i machine learning od pierwszego dnia. Skalowalna, elastyczna, integruje dowolne źródła. Koszt ~90k PLN + subskrypcja." },
+      { letter: "C", title: "Targeted reporting — 3 kluczowe raporty", desc: "Identyfikujesz 3 raporty o najwyższym wpływie na decyzje i ujednolicasz je w 4 tygodnie. Szybkie, widoczne efekty, które natychmiast pokazują wartość transformacji. Koszt ~30k PLN." },
       { letter: "D", title: "Integracja przez middleware (iPaaS)", desc: "Platforma integracyjna (np. Make.com/Zapier Enterprise, koszt ~40k PLN/rok) spinająca istniejące systemy. Kompromis między szybkością a głębokością." }
     ]
   },
@@ -692,10 +692,10 @@ const DECISIONS = [
     question: "Jaką strategię wdrożenia AI przyjmiesz?",
     type: "options",
     options: [
-      { letter: "A", title: "AI-first — agresywne wdrożenie", desc: "Równolegle wdrażasz kilka narzędzi AI: predykcja popytu, automatyzacja obsługi, AI w HR. Szybko, widocznie, ryzykownie." },
+      { letter: "A", title: "AI-first — szerokie wdrożenie", desc: "Odpowiadasz na oczekiwania zarządu kompleksowo: równoległe wdrożenia AI w predykcji popytu, automatyzacji obsługi klienta i HR. Firma wchodzi w erę AI szybko i widocznie." },
       { letter: "B", title: "Jeden konkretny pilot AI", desc: "Wybierasz jeden obszar (np. prognozowanie produkcji) i budujesz PoC w 8 tygodni. Uczysz się na małym błędzie, nie na dużym." },
       { letter: "C", title: "AI-ready strategy — najpierw dane", desc: "Deklarujesz AI za 6+ miesięcy, skupiasz się na przygotowaniu danych i kompetencji. Zarząd może być niezadowolony." },
-      { letter: "D", title: "AI w narzędziach produktywności", desc: "Wdrażasz Microsoft Copilot / Google Workspace AI dla pracowników. Niska bariera, szybki efekt, ale nie transformuje procesów core." }
+      { letter: "D", title: "AI w codziennej pracy (Microsoft Copilot)", desc: "Wdrażasz Microsoft Copilot lub Google Workspace AI dla całego zespołu. Każdy pracownik dostaje asystenta AI od razu — szybka adopcja, zero ryzyka technicznego, widoczny efekt." }
     ]
   },
   {
@@ -1122,42 +1122,73 @@ function buildPrompt() {
   const d4text = d4ans ? d4ans.map((id,i) => { const item = DECISIONS[4].rankItems.find(r=>r.id===id); return (i+1)+'. '+item.label; }).join(', ') : 'brak';
   const d5text = d5ans ? d5ans.map(id => { const c = DECISIONS[5].choices.find(c=>c.id===id); return c ? c.label : id; }).join(', ') : 'brak';
   
-  return `Jesteś ekspertem od transformacji cyfrowej i coachem MBA. Analizujesz strategię transformacji cyfrowej studentów MBA.
+  return `Jesteś surowym egzaminatorem MBA i konsultantem transformacji cyfrowej. Twoja rola to uczciwa, ostra ocena strategii — NIE coaching, NIE komplementowanie. Studenci uczą się WYŁĄCZNIE gdy dostają prawdziwą ocenę swoich błędów.
 
-KONTEKST FIRMY: ProdukcjaPlus Sp. z o.o. — firma produkcyjna, 850 pracowników, 45 lat na rynku, stagnacja przychodów od 3 lat, budżet transformacji 500k PLN na 6 miesięcy.
+KONTEKST FIRMY: ProdukcjaPlus Sp. z o.o. — firma produkcyjna, 850 pracowników, 45 lat na rynku, stagnacja przychodów od 3 lat, BUDŻET TRANSFORMACJI: 500k PLN, CZAS: 6 miesięcy.
 
 DECYZJE STUDENTA:
 1. Diagnoza (DDDM): ${d0text}
 2. Strategia danych (DDDM): ${d1text}
-3. Budżet ludzie/kompetencje: ${d2text}
+3. Budżet na ludzi i kompetencje (pula: 150k PLN): ${d2text}
 4. Strategia AI: ${d3text}
-5. Quick wins (priorytety): ${d4text}
+5. Quick wins (ranking priorytetów): ${d4text}
 6. Change management: ${d5text}
 
-Przeanalizuj tę strategię i zwróć wynik w następującym formacie JSON (TYLKO JSON, bez markdown, bez komentarzy):
+RUBRYKA OCENY — zastosuj rygorystycznie każdy punkt:
+
+DIAGNOZA (D1) — PUŁAPKI:
+- "Digital Maturity Assessment zewnętrzny" za 80k PLN = 16% całego budżetu + 6 tygodni TYLKO na diagnozę. Przy budżecie 500k i 6 miesiącach — marnotrawstwo zasobów na etapie, który nie przynosi żadnej wartości operacyjnej.
+- "Podejście zintegrowane" za 45k PLN = kolejne marnotrawstwo; dobry CDO robi rapid assessment sam lub warsztatami.
+
+STRATEGIA DANYCH (D2) — PUŁAPKI:
+- "Enterprise Data Warehouse + Power BI" za 120k PLN + 4 miesiące = 24% budżetu i 67% dostępnego czasu na samą infrastrukturę. Zostają 2 miesiące i 380k na wszystko inne. To błąd krytyczny — firma nie uzyska ROI w terminie.
+- "Modern Data Stack w chmurze" = wymaga kompetencji Data Engineera seniorskiego, których firma NIE MA (dział IT: 3 osoby, przeciążone bieżącą obsługą). Projekt skończy się porażką lub permanent dependency od konsultantów.
+
+AI (D4) — PUŁAPKI:
+- "AI-first — szerokie wdrożenie" bez solidnych danych = wdrożenie AI na brudnych, niespójnych danych (4 osobne bazy bez integracji) = błędne predykcje, utrata zaufania zarządu. Statystyka: 60% projektów AI kończy się niepowodzeniem właśnie z tego powodu.
+- "AI w codziennej pracy (Microsoft Copilot)" = nie transformuje żadnego core procesu firmy produkcyjnej. To narzędzie produktywności biurowej, nie transformacja cyfrowa zakładu produkcyjnego.
+
+QUICK WINS (D5) — PUŁAPKI:
+- "Cyfrowy onboarding pracowników" na 1. miejscu = najniższy bezpośredni ROI dla firmy produkcyjnej ze wszystkich opcji. Priorytetyzowanie onboardingu nad redukcją błędów zamówień (wartych 200k PLN/rok!) to błąd strategicznego myślenia.
+- Brak "Redukcji błędów w zamówieniach" w top 2 = przeoczenie największej konkretnej oszczędności dostępnej w firmie.
+
+BUDŻET LUDZI (D3) — PUŁAPKI:
+- 0 PLN na szkolenia wewnętrzne = permanentna zależność od zewnętrznych. Każda zmiana w systemach wymaga nowego kontraktu. Firma nie buduje żadnych kompetencji wewnętrznych.
+- 0 PLN na nowe etaty przy ambitnej strategii AI/danych = kto utrzyma systemy po zakończeniu projektu?
+
+CHANGE MANAGEMENT (D6) — PUŁAPKI:
+- Brak "Digital Champions" I jednocześnie brak "Komunikacji CEO" = transformacja zostaje "projektem IT" bez sponsora i ambasadorów. Przy 45% pracowników obawiających się cyfryzacji to gwarantowana niska adopcja.
+- Wybór "System nagród za adopcję" bez szkoleń = kupowanie compliance zamiast budowania kompetencji.
+
+SPÓJNOŚĆ STRATEGII (krzyżowe):
+- Droga diagnoza (80k) + droga infrastruktura DWH (120k) + ambitne AI = 200k wydane zanim powstanie jakakolwiek wartość. Przy budżecie 500k to katastrofa cashflow projektu.
+- Tania diagnoza + szybkie dane + jeden pilot AI + mocny change mgmt = strategia pragmatyczna z realnym ROI.
+
+Zwróć WYŁĄCZNIE JSON (zero markdown, zero komentarzy, zero tekstu poza JSON):
 {
-  "profileName": "krótka nazwa profilu strategii (np. 'Ostrożny Fundamentalista', 'Agresywny Innowator', 'Zrównoważony Pragmatyk')",
-  "profileEmoji": "emoji pasujące do profilu",
-  "scoreOverall": liczba 1-100 (ogólna ocena spójności i realności strategii),
+  "profileName": "nazwa profilu odzwierciedlająca rzeczywisty charakter strategii (np. 'Kosztowny Perfekcjonista', 'Technologiczny Gambler', 'Pragmatyczny Strateg', 'Fundament bez Domu', 'Rynkowy Naiwny', 'Zrównoważony Pragmatyk')",
+  "profileEmoji": "pasujące emoji",
+  "scoreOverall": liczba 1-100 (SUROWA skala: <40 = poważne błędy strategiczne, 40-55 = przeciętna z błędami, 56-70 = dobra z niedociągnięciami, 71-85 = bardzo dobra, 86+ = wyjątkowa. NIE dawaj wysokiej oceny złej strategii),
   "kpi": {
-    "digitalMaturity": "poziom dojrzałości cyfrowej po 6 mies. (np. '+2 poziomy')",
-    "roiEstimate": "szacowany ROI (np. '~120%', 'trudny do oceny')",
-    "adoptionRisk": "ryzyko adopcji: Niskie/Średnie/Wysokie"
+    "digitalMaturity": "realistyczna zmiana poziomów po 6 mies. (może być +0.5 jeśli strategia słaba; maksymalnie +2.0)",
+    "roiEstimate": "ROI po 6 mies. — może być ujemny lub 0 jeśli błędy są poważne. Zakres: od -30% (strata) do 180% (wyjątkowa strategia). Podaj konkretny % z krótkim uzasadnieniem w nawiasie.",
+    "adoptionRisk": "Niskie/Średnie/Wysokie/Krytyczne"
   },
-  "strengths": ["mocna strona 1", "mocna strona 2", "mocna strona 3"],
-  "risks": ["ryzyko 1", "ryzyko 2", "ryzyko 3"],
-  "overallAssessment": "2-3 zdania oceny ogólnej strategii, jej spójności i potencjału",
+  "criticalMistakes": ["opis błędu krytycznego 1 — co dokładnie poszło nie tak i dlaczego", "błąd 2 jeśli istnieje"],
+  "strengths": ["mocna strona 1 — tylko jeśli naprawdę istnieje"],
+  "risks": ["konkretne ryzyko 1", "ryzyko 2", "ryzyko 3"],
+  "overallAssessment": "2-3 zdania SZCZEREJ oceny. Jeśli strategia jest słaba — powiedz to wprost i wyjaśnij dlaczego. Jeśli student popełnił błędy kosztujące budżet lub czas — nazwij to konkretnie. Zero lukrowania.",
   "whatIf": [
     {
-      "scenario": "Co gdyby wybrał(a) inną strategię danych?",
-      "description": "2-3 zdania co by się zmieniło w wynikach i dlaczego"
+      "scenario": "Co gdyby wybrał(a) [wskaż konkretną lepszą alternatywę dla najgorszej decyzji]?",
+      "description": "2-3 zdania — konkretna różnica w wynikach i ROI"
     },
     {
-      "scenario": "Co gdyby AI było wdrożone inaczej?",
-      "description": "2-3 zdania o alternatywnym podejściu do AI"
+      "scenario": "Co gdyby [drugi scenariusz alternatywny]?",
+      "description": "2-3 zdania"
     }
   ],
-  "recommendation": "Najważniejsza jedna rekomendacja na kolejne 3 miesiące (1-2 zdania)"
+  "recommendation": "Jedna najważniejsza rzecz do naprawienia gdyby student zaczynał od nowa. Konkretna, nie ogólna (1-2 zdania)."
 }`;
 }
 
@@ -1212,7 +1243,7 @@ function showResults(a) {
   const scoreColor = a.scoreOverall >= 75 ? '#16a34a' : a.scoreOverall >= 50 ? '#d97706' : '#dc2626';
   const scoreBg = a.scoreOverall >= 75 ? '#dcfce7' : a.scoreOverall >= 50 ? '#fef3c7' : '#fee2e2';
   
-  const adoptionIcon = { 'Niskie': '🟢', 'Średnie': '🟡', 'Wysokie': '🔴' };
+  const adoptionIcon = { 'Niskie': '🟢', 'Średnie': '🟡', 'Wysokie': '🔴', 'Krytyczne': '💀' };
   
   document.getElementById('resultsContent').innerHTML = `
     <div class="result-header">
@@ -1273,9 +1304,15 @@ function showResults(a) {
         <p>${a.overallAssessment}</p>
       </div>
       
+      ${(a.criticalMistakes && a.criticalMistakes.length > 0) ? `
+      <div class="section-block" style="background:#fef2f2; border-left: 4px solid #dc2626; border-radius:12px; padding:18px 20px; margin-bottom:18px;">
+        <div class="section-block-title" style="color:#dc2626; font-size:1rem; font-weight:700; margin-bottom:12px;">🚨 Krytyczne błędy strategiczne</div>
+        <ul style="margin:0; padding-left:20px;">${(a.criticalMistakes || []).map(m => `<li style="margin-bottom:8px; color:#7f1d1d;">${m}</li>`).join('')}</ul>
+      </div>` : ''}
+      
       <div class="section-block good">
         <div class="section-block-title">✅ Mocne strony Twojej strategii</div>
-        <ul>${(a.strengths || []).map(s => `<li>${s}</li>`).join('')}</ul>
+        ${(a.strengths && a.strengths.length > 0) ? `<ul>${a.strengths.map(s => `<li>${s}</li>`).join('')}</ul>` : '<p style="color:#6b7280; font-style:italic;">Brak wyróżniających się mocnych stron w tej strategii.</p>'}
       </div>
       
       <div class="section-block warn">
