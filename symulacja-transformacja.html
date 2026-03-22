@@ -1238,6 +1238,35 @@ function showResults(a) {
       </div>
     </div>
     
+    <div class="section-block" style="background:#f0f9ff; border-left: 4px solid var(--teal); border-radius:12px; padding:18px 20px; margin-bottom:18px;">
+      <div class="section-block-title" style="color:var(--teal); margin-bottom:14px;">📊 Skala dojrzałości cyfrowej (1–5)</div>
+      <div style="display:grid; gap:8px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="min-width:32px; height:32px; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-weight:700; color:#64748b;">1</div>
+          <div><strong>Ad hoc</strong> — Excel wszędzie, brak integracji systemów, brak KPI</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="min-width:32px; height:32px; border-radius:50%; background:#bfdbfe; display:flex; align-items:center; justify-content:center; font-weight:700; color:#1d4ed8;">2</div>
+          <div><strong>Świadomy</strong> — pierwsze systemy (ERP/CRM), świadomość problemów</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="min-width:32px; height:32px; border-radius:50%; background:#99f6e4; display:flex; align-items:center; justify-content:center; font-weight:700; color:#0f766e;">3</div>
+          <div><strong>Zdefiniowany</strong> — dane centralizowane, spójne procesy, BI działające</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="min-width:32px; height:32px; border-radius:50%; background:#6ee7b7; display:flex; align-items:center; justify-content:center; font-weight:700; color:#065f46;">4</div>
+          <div><strong>Zarządzany</strong> — decyzje oparte na danych, automatyzacja, piloty AI</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="min-width:32px; height:32px; border-radius:50%; background:#14b8a6; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff;">5</div>
+          <div><strong>Optymalizujący</strong> — AI w core procesach, ciągłe uczenie, data-driven culture</div>
+        </div>
+      </div>
+      <div style="margin-top:14px; padding:10px 14px; background:rgba(20,184,166,0.12); border-radius:8px; font-size:0.9rem; color:#0f766e;">
+        💡 <strong>Firma startowa (ProdukcjaPlus):</strong> poziom ~1,5 — Twoja strategia przesuwa ją o <strong>${a.kpi.digitalMaturity}</strong>
+      </div>
+    </div>
+
     <div class="ai-content">
       <div class="section-block">
         <div class="section-block-title">📋 Ocena ogólna</div>
