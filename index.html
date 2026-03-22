@@ -40,7 +40,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 960px;
             margin: 0 auto;
             padding: 3rem 1.5rem;
             position: relative;
@@ -106,6 +106,10 @@
             background: linear-gradient(90deg, #FF6B6B, #FFE66D);
         }
 
+        .task-card.simulation::before {
+            background: linear-gradient(90deg, #7c3aed, #0d9488);
+        }
+
         .task-card.coming-soon::before {
             background: linear-gradient(90deg, #bbb, #ddd);
         }
@@ -153,25 +157,17 @@
             font-weight: 600;
         }
 
-        .badge-time {
-            background: linear-gradient(135deg, #e8f4f8, #d6e4f0);
-            color: var(--deep-teal);
+        .badge-time { background: linear-gradient(135deg, #e8f4f8, #d6e4f0); color: var(--deep-teal); }
+        .badge-questions { background: linear-gradient(135deg, #e8faf0, #d4f5e4); color: #1a5c37; }
+        .badge-difficulty { background: linear-gradient(135deg, #fff5e6, #ffe0b3); color: #8a6d3b; }
+        .badge-ai { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #5b21b6; }
+        .badge-soon { background: #eee; color: #888; }
+        .badge-new {
+            background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+            color: #9d174d;
+            animation: pulse 2s infinite;
         }
-
-        .badge-questions {
-            background: linear-gradient(135deg, #e8faf0, #d4f5e4);
-            color: #1a5c37;
-        }
-
-        .badge-difficulty {
-            background: linear-gradient(135deg, #fff5e6, #ffe0b3);
-            color: #8a6d3b;
-        }
-
-        .badge-soon {
-            background: #eee;
-            color: #888;
-        }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
 
         .task-arrow {
             display: inline-flex;
@@ -231,19 +227,23 @@
                 <div class="task-arrow">Rozpocznij →</div>
             </a>
 
-            <div class="task-card coming-soon">
-                <div class="task-icon">🔮</div>
-                <div class="task-title">Więcej wkrótce...</div>
-                <div class="task-desc">Kolejne zadania interaktywne pojawią się wkrótce. Analiza danych, case studies, symulacje decyzji.</div>
+            <a href="symulacja-transformacja.html" class="task-card simulation">
+                <div class="task-icon">🏭</div>
+                <div class="task-title">Symulacja: Transformacja Cyfrowa</div>
+                <div class="task-desc">Wciel się w CDO firmy produkcyjnej. Podejmij 6 decyzji strategicznych — dane, AI, ludzie, technologia. Na końcu Gemini AI przeanalizuje Twoją strategię.</div>
                 <div class="task-meta">
-                    <span class="task-badge badge-soon">Wkrótce</span>
+                    <span class="task-badge badge-time">⏱ ~30 min</span>
+                    <span class="task-badge badge-questions">6 decyzji</span>
+                    <span class="task-badge badge-ai">🤖 AI analiza</span>
+                    <span class="task-badge badge-new">✨ Nowe</span>
                 </div>
-            </div>
+                <div class="task-arrow">Rozpocznij →</div>
+            </a>
 
             <div class="task-card coming-soon">
                 <div class="task-icon">📈</div>
                 <div class="task-title">Więcej wkrótce...</div>
-                <div class="task-desc">Dashboardy, symulacje biznesowe i inne interaktywne narzędzia edukacyjne.</div>
+                <div class="task-desc">Kolejne ćwiczenia interaktywne — dashboardy, case studies i inne narzędzia edukacyjne.</div>
                 <div class="task-meta">
                     <span class="task-badge badge-soon">Wkrótce</span>
                 </div>
