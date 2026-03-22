@@ -563,7 +563,7 @@
             <h1>🧠 Test Myślenia Krytycznego</h1>
             <p>Czy potrafisz rozpoznać pułapki logiczne i błędy w rozumowaniu?</p>
             <div class="meta">
-                <span>⏱ ~20 minut</span>
+                <span>⏱ ~15 minut</span>
                 <span>📊 10 pytań</span>
                 <span>📈 Trudność: rosnąca</span>
             </div>
@@ -619,10 +619,10 @@
             difficultyLabel: 'Łatwe',
             text: 'W mieście X zainstalowano więcej latarni ulicznych i jednocześnie wzrosła przestępczość. Burmistrz twierdzi: „Latarnie uliczne powodują wzrost przestępczości — musimy je usunąć!" Jaki błąd popełnia burmistrz?',
             options: [
-                'Ma rację — więcej światła przyciąga przestępców',
+                'Ma rację — więcej światła przyciąga przestępców, którzy wolą działać w dobrze oświetlonych miejscach',
                 'Myli korelację z przyczynowością — oba zjawiska mogą mieć wspólną przyczynę (np. rozbudowa miasta)',
-                'Powinien zainstalować jeszcze więcej latarni, żeby sprawdzić',
-                'Błąd polega na tym, że badał tylko jedno miasto'
+                'Powinien zainstalować jeszcze więcej latarni w innych dzielnicach i porównać wyniki eksperymentu',
+                'Błąd polega na tym, że badał tylko jedno miasto — potrzebna jest analiza porównawcza wielu miast'
             ],
             correct: 1,
             explanation: 'To klasyczny błąd „korelacja ≠ przyczynowość" (cum hoc ergo propter hoc). Oba zjawiska mogą wynikać z rozbudowy miasta — więcej ulic = więcej latarni I więcej okazji do przestępstw. Latarnie same w sobie nie powodują przestępczości.'
@@ -633,10 +633,10 @@
             difficultyLabel: 'Łatwe',
             text: 'Reklama suplementu diety mówi: „95% naszych klientów poleca ten produkt!" Na próbkę składa się 200 osób, które dobrowolnie wypełniły ankietę online na stronie producenta. Co jest problemem tego twierdzenia?',
             options: [
-                'Próbka 200 osób jest za mała',
-                'Suplementy diety nigdy nie działają',
+                'Próbka 200 osób jest zbyt mała, żeby wyciągać wnioski — minimum to kilka tysięcy respondentów',
+                'Suplementy diety nie przechodzą rygorystycznych badań klinicznych, więc wynik jest z góry niewiarygodny',
                 'Ankieta jest obciążona — wypełniają ją głównie zadowoleni klienci, a producent kontroluje platformę',
-                'Powinni podać dokładną liczbę zamiast procentu'
+                'Powinni podać dokładną liczbę zamiast procentu, bo procenty maskują rzeczywistą skalę wyników'
             ],
             correct: 2,
             explanation: 'To błąd selekcji próby (selection bias). Osoby niezadowolone rzadko wracają na stronę producenta, żeby wypełnić ankietę. Dodatkowo producent kontroluje platformę — może moderować wyniki. Wiarygodne badanie wymaga losowej, niezależnej próby.'
@@ -648,9 +648,9 @@
             text: 'Kolega mówi: „Mój dziadek palił papierosy całe życie i dożył 95 lat. Więc palenie nie jest aż takie szkodliwe." Jaki to błąd w rozumowaniu?',
             options: [
                 'Uogólnianie z pojedynczego przypadku — jeden wyjątek nie obala statystyki populacyjnej',
-                'Ma rację — skoro dziadek dożył 95 lat, to palenie mu nie zaszkodziło',
-                'Błąd polega na tym, że nie znamy marki papierosów',
-                'To nie jest błąd — każdy organizm reaguje inaczej'
+                'Ma rację — skoro dziadek dożył 95 lat mimo palenia, to dowodzi odporności organizmu',
+                'Błąd polega na tym, że nie znamy szczegółów stylu życia dziadka ani jego diety',
+                'To nie jest błąd — reakcja organizmu na palenie zależy od indywidualnej genetyki'
             ],
             correct: 0,
             explanation: 'To błąd anegdotyczny (anecdotal fallacy). Pojedynczy przypadek nie może obalić dziesiątek tysięcy badań naukowych. Statystycznie palenie znacząco zwiększa ryzyko chorób — ale „zwiększa ryzyko" nie oznacza „gwarantuje chorobę u każdego".'
@@ -664,9 +664,9 @@
             text: 'Jakie błędy w rozumowaniu popełnia dyrektor? (wybierz najlepszą odpowiedź)',
             options: [
                 'Błąd przetrwania — analizuje tylko „zwycięzcę", ignorując handlowców bez szkoleń, którzy mają słabe wyniki',
-                'Ma rację — najlepszy dowód to wynik najlepszego pracownika',
-                'Jedyny błąd to za mała próbka — powinien porównać więcej handlowców',
-                'Błąd polega na tym, że Tomek może mieć talent wrodzony, ale szkolenia i tak warto robić dla PR'
+                'Ma rację — wynik najlepszego pracownika jest najbardziej miarodajnym wskaźnikiem skuteczności szkoleń',
+                'Jedyny błąd to za mała próbka — powinien porównać wyniki co najmniej kilkudziesięciu handlowców w firmie',
+                'Błąd polega na tym, że Tomek może mieć wrodzony talent negocjacyjny, który maskuje realną wartość szkoleń'
             ],
             correct: 0,
             explanation: 'To klasyczny błąd przetrwania (survivorship bias). Dyrektor patrzy tylko na jednego „zwycięzcę" i ignoruje dziesiątki handlowców bez szkoleń, którzy mogą mieć fatalne wyniki. To tak jak mówić „Bill Gates rzucił studia i jest bogaty, więc studia są niepotrzebne" — ignorując miliony osób, które rzuciły studia i nie zostały miliarderami.'
@@ -678,10 +678,10 @@
             scenario: 'W debacie o strategii firmy padają dwa stanowiska:\n\n👤 Anna: „Musimy zainwestować 100% budżetu w marketing cyfrowy. Tradycyjny marketing jest martwy."\n👤 Marek: „Nie zgadzam się. Musimy zostać przy 100% tradycyjnym marketingu. Digital to bańka."',
             text: 'Moderator podsumowuje: „Jak zwykle prawda leży pośrodku — zróbmy 50/50." Czy moderator ma rację?',
             options: [
-                'Tak — kompromis to zawsze najlepsza strategia',
+                'Tak — kompromis to zawsze najlepsza strategia, bo minimalizuje konflikt i daje obu stronom poczucie wygranej w negocjacjach',
                 'Nie — to błąd złotego środka. Optymalna proporcja powinna wynikać z danych (ROI, grupa docelowa), nie z uśrednienia dwóch skrajnych opinii',
-                'Tak — 50/50 minimalizuje ryzyko',
-                'Nie — powinien posłuchać Anny, bo digital jest przyszłością'
+                'Tak — podział 50/50 minimalizuje ryzyko błędnej decyzji, bo równomiernie rozkłada zasoby między oba kanały marketingowe',
+                'Nie — powinien posłuchać Anny, bo marketing cyfrowy daje mierzalne wyniki i lepszą kontrolę nad budżetem reklamowym'
             ],
             correct: 1,
             explanation: 'To błąd złotego środka (argument to moderation / false balance). Prawda nie musi leżeć pośrodku dwóch stanowisk. Jeśli firma sprzedaje oprogramowanie B2B, optymalna proporcja może wynosić 80/20 na korzyść digitalu. Decyzja powinna opierać się na danych, nie na kompromisie między dwiema opiniami.'
@@ -693,10 +693,10 @@
             scenario: 'Badanie wykazało, że dzieci, które jedzą śniadanie, mają lepsze oceny w szkole. Gazeta publikuje nagłówek: „Naukowcy udowodnili: śniadanie poprawia oceny! Rodzice, karmcie dzieci rano!"',
             text: 'Co pomija ten nagłówek?',
             options: [
-                'Nic nie pomija — badanie jest jasne',
-                'Pomija zmienne zakłócające: rodziny, które zapewniają śniadanie, mogą też zapewniać stabilność, pomoc w lekcjach, lepszy sen — to te czynniki mogą wpływać na oceny',
-                'Pomija fakt, że niektóre dzieci nie lubią śniadań',
-                'Pomija wielkość próby badania'
+                'Nic nie pomija — korelacja między śniadaniem a ocenami jest wystarczająco silna i wielokrotnie potwierdzona, by uzasadnić zalecenie dla rodziców i szkół',
+                'Pomija zmienne zakłócające: rodziny zapewniające śniadanie mogą też zapewniać stabilność, pomoc w lekcjach i lepszy sen — to te czynniki mogą wpływać na oceny',
+                'Pomija fakt, że rodzaj i skład śniadania ma kluczowe znaczenie — słodkie płatki mogą dawać odwrotny efekt niż pełnowartościowy posiłek z białkiem',
+                'Pomija wielkość próby, sposób jej doboru oraz okres obserwacji — bez tych informacji nie można rzetelnie ocenić wiarygodności wyników tego badania'
             ],
             correct: 1,
             explanation: 'Nagłówek pomija zmienne zakłócające (confounding variables). Śniadanie może być markerem (wskaźnikiem) lepszego środowiska domowego — stabilnej rodziny, regularnego trybu życia, wsparcia rodziców. To nie samo jedzenie rano magicznie poprawia oceny, ale cały ekosystem czynników, których śniadanie jest częścią.'
@@ -707,10 +707,10 @@
             difficultyLabel: 'Średnie',
             text: 'Firma farmaceutyczna reklamuje nowy lek na ból głowy: „W badaniu klinicznym 80% pacjentów poczuło ulgę po naszym leku!" Okazuje się, że w grupie placebo (pigułka cukrowa) ulgę poczuło 75% pacjentów. Jak oceniasz skuteczność leku?',
             options: [
-                '80% to bardzo dobry wynik — lek jest skuteczny',
+                '80% to bardzo dobry wynik bezwzględny — lek jest skuteczny i powinien zostać dopuszczony do sprzedaży na rynku farmaceutycznym',
                 'Różnica 5 punktów procentowych wobec placebo jest minimalna — lek prawdopodobnie nie jest znacząco skuteczniejszy od efektu placebo',
-                'Placebo nie ma znaczenia — liczy się tylko wynik leku',
-                'Potrzebujemy więcej danych, żeby cokolwiek powiedzieć'
+                'Placebo nie ma znaczenia w ocenie leku przeciwbólowego — liczy się wyłącznie subiektywne odczucie ulgi pacjentów',
+                'Potrzebujemy danych o dawkowaniu i skutkach ubocznych, żeby rzetelnie ocenić stosunek korzyści do ryzyka tego leku'
             ],
             correct: 1,
             explanation: 'Bez porównania z placebo, „80% skuteczności" brzmi imponująco. Ale jeśli sam cukier daje 75%, rzeczywisty efekt leku to zaledwie 5pp powyżej placebo. To podstawa myślenia naukowego: zawsze pytaj „w porównaniu z czym?" Firmy często podają wynik bezwzględny, bo brzmi lepiej niż wynik względny.'
@@ -723,10 +723,10 @@
             scenario: 'Prezes firmy technologicznej ogłasza na spotkaniu zarządu:\n\n„Przeanalizowałem nasze dane z ostatnich 5 lat. Projekty, w których uczestniczył zespół A, miały 90% wskaźnik sukcesu. Projekty bez zespołu A — tylko 40%. Moja decyzja: od teraz zespół A uczestniczy we WSZYSTKICH projektach."\n\nDodatkowa informacja: Zespół A był przydzielany głównie do projektów z największymi budżetami i najważniejszymi klientami.',
             text: 'Ile błędów w rozumowaniu widzisz w decyzji prezesa?',
             options: [
-                'Jeden: myli korelację z przyczynowością',
-                'Dwa: myli korelację z przyczynowością + ignoruje, że zespół A dostawał lepsze projekty (selection bias)',
-                'Trzy: korelacja/przyczynowość + selection bias + rozciągnięcie zespołu A na wszystko może obniżyć ich skuteczność (problem skalowalności)',
-                'Decyzja jest racjonalna — dane mówią same za siebie'
+                'Jeden: myli korelację z przyczynowością — sukces projektów mógł wynikać z innych czynników niż udział zespołu A',
+                'Dwa: myli korelację z przyczynowością + ignoruje, że zespół A dostawał lepsze projekty z większymi budżetami (selection bias)',
+                'Trzy: korelacja/przyczynowość + selection bias + rozciągnięcie zespołu A na wszystko może obniżyć ich skuteczność (skalowalność)',
+                'Decyzja jest racjonalna — pięcioletnia analiza danych z wyraźną różnicą wyników to solidna podstawa do podjęcia decyzji'
             ],
             correct: 2,
             explanation: 'Prezes popełnia co najmniej 3 błędy: (1) Zakłada, że to zespół A powoduje sukces, a nie odwrotnie (korelacja ≠ przyczynowość). (2) Zespół A dostawał projekty z największymi budżetami — większe zasoby mogą tłumaczyć sukces (selection/allocation bias). (3) Nawet gdyby zespół A był naprawdę lepszy, rozciągnięcie go na wszystkie projekty prawdopodobnie rozproszy ich talent i obniży skuteczność.'
@@ -738,10 +738,10 @@
             scenario: 'Podczas pandemii w kraju X wprowadzono lockdown. Po 3 miesiącach liczba zakażeń spadła. Polityk mówi: „Lockdown zadziałał!"\n\nW sąsiednim kraju Y NIE wprowadzono lockdownu. Tam również po 3 miesiącach liczba zakażeń spadła (choć wolniej). Opozycja mówi: „Widzicie? Lockdown był niepotrzebny!"',
             text: 'Który z poniższych wniosków jest najbardziej uzasadniony?',
             options: [
-                'Polityk ma rację — lockdown zadziałał, bo zakażenia spadły',
-                'Opozycja ma rację — skoro w kraju Y też spadły, lockdown był niepotrzebny',
-                'Oba stanowiska są uproszczone — bez kontrolowanego eksperymentu nie można przypisać efektu jednemu czynnikowi. Trzeba analizować tempo spadku, śmiertelność, obciążenie szpitali i inne zmienne',
-                'Nie da się nic powiedzieć, bo pandemia jest zbyt skomplikowana'
+                'Polityk ma rację — spadek zakażeń po lockdownie potwierdza związek przyczynowy, bo sekwencja czasowa jest wystarczającym dowodem skuteczności restrykcji',
+                'Opozycja ma rację — spadek zakażeń w kraju Y bez lockdownu dowodzi, że restrykcje były zbędnym kosztem gospodarczym i społecznym dla obywateli',
+                'Oba stanowiska są uproszczone — bez kontrolowanego eksperymentu nie można przypisać efektu jednemu czynnikowi bez analizy tempa spadku i śmiertelności',
+                'Nie da się wyciągnąć żadnych wniosków — pandemia obejmuje zbyt wiele zmiennych demograficznych, społecznych i klimatycznych równocześnie'
             ],
             correct: 2,
             explanation: 'Oba stanowiska popełniają błąd atrybucji. Polityk zakłada „post hoc ergo propter hoc" (po tym = z powodu tego). Opozycja porównuje dwa różne kraje (różna demografia, gęstość zaludnienia, kultura) jakby były identyczne. Rzetelna analiza wymaga porównania TEMPA spadku, śmiertelności, obciążenia szpitali — i uwzględnienia dziesiątek zmiennych zakłócających.'
@@ -753,10 +753,10 @@
             scenario: 'Przeczytaj uważnie poniższe 4 twierdzenia i oceń, które z nich jest NAJBARDZIEJ wiarygodne:\n\n🔹 A: „Badanie na 50 000 osobach wykazało statystycznie istotną korelację (p < 0.001) między piciem kawy a dłuższym życiem. Badanie sponsorowała Międzynarodowa Federacja Kawy."\n\n🔹 B: „Meta-analiza 23 niezależnych badań (łącznie 180 000 osób) wykazała niewielką pozytywną korelację między umiarkowanym piciem kawy a niższym ryzykiem chorób serca, z zastrzeżeniem o potencjalnych zmiennych zakłócających."\n\n🔹 C: „Mój lekarz powiedział, że kawa jest zdrowa."\n\n🔹 D: „Artykuł w prestiżowym czasopiśmie naukowym — ale wycofany 2 lata później z powodu błędów metodologicznych."',
             text: 'Które twierdzenie jest NAJBARDZIEJ wiarygodne?',
             options: [
-                'A — największa próba i wysoka istotność statystyczna',
-                'B — meta-analiza niezależnych badań z jasnym zastrzeżeniem o ograniczeniach',
-                'C — opinia lekarza jest autorytatywna',
-                'D — prestiżowe czasopismo gwarantuje jakość'
+                'A — największa próba i wysoka istotność statystyczna dają najsilniejszą podstawę naukową',
+                'B — meta-analiza niezależnych badań z jasnym zastrzeżeniem o ograniczeniach jest najbardziej rzetelna',
+                'C — opinia lekarza jest autorytatywna, bo opiera się na wieloletnim doświadczeniu klinicznym',
+                'D — publikacja w prestiżowym czasopiśmie przechodzi rygorystyczny proces recenzji naukowej'
             ],
             correct: 1,
             explanation: 'B jest najbardziej wiarygodne: (1) Meta-analiza łączy wiele badań, redukując błędy pojedynczych prób. (2) Niezależne badania eliminują conflict of interest (problem A — sponsoring). (3) Jawne zastrzeżenie o ograniczeniach świadczy o rzetelności naukowej. A ma conflict of interest. C to argument z autorytetu. D zostało wycofane. Kluczowa lekcja: wiarygodność = niezależność + transparentność + replikowalność.'
@@ -767,7 +767,7 @@
     let answers = {};
     let nickname = '';
     let timerInterval;
-    let timeLeft = 20 * 60; // 20 minutes
+    let timeLeft = 15 * 60; // 15 minutes
 
     function startQuiz() {
         nickname = document.getElementById('nickname').value.trim();
