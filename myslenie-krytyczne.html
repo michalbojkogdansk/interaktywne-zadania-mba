@@ -1031,7 +1031,7 @@
 
             if (response.ok) {
                 document.getElementById('submitStatus').className = 'status-msg success';
-                document.getElementById('submitStatus').textContent = '✅ Wyniki zapisane! Dziękuję za wypełnienie testu.';
+                document.getElementById('submitStatus').innerHTML = '✅ Wyniki zapisane! Dziękuję za wypełnienie testu.<br><br><a href="https://michalbojkogdansk.github.io/interaktywne-zadania-mba/" style="display:inline-block;margin-top:8px;padding:12px 28px;background:var(--deep-teal);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;">🏠 Wróć do strony głównej</a>';
             } else {
                 throw new Error('HTTP ' + response.status);
             }
