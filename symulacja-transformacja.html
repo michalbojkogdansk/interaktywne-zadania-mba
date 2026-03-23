@@ -1104,6 +1104,137 @@ function showSummary() {
   window.scrollTo(0, 0);
 }
 
+
+// ═══════════════════════════════════════════════════
+// DETERMINISTIC SCORING (weights-based, no AI)
+// ═══════════════════════════════════════════════════
+const SCORE_WEIGHTS = {
+  D1: { 0: 2, 1: 10, 2: 15, 3: 6 },   // A=external audit(bad), B=workshops, C=rapid(best), D=integrated
+  D2: { 0: 2, 1: 6, 2: 20, 3: 14 },   // A=DWH 120k(bad), B=cloud stack(no competencies), C=targeted(best), D=iPaaS
+  D4: { 0: 2, 1: 20, 2: 11, 3: 6 },   // A=AI-first(bad), B=one pilot(best), C=AI-ready, D=Copilot
+  D5_errors: { 0: 15, 1: 11, 2: 6, 3: 2 }, // position of "errors" in ranking
+  D6: { champions: 5, communication: 4, 'training-role': 4, metrics: 3, feedback: 3, incentives: 1 }
+};
+
+function calcDeterministicScore(answers) {
+  const breakdown = [];
+  let total = 0;
+
+  // D1: Diagnoza (max 15)
+  const d1 = answers[0];
+  const d1score = (d1 !== undefined) ? (SCORE_WEIGHTS.D1[d1] || 0) : 0;
+  const d1labels = ['Zewnętrzny audyt 80k', 'Warsztaty wewnętrzne', 'Rapid Assessment', 'Podejście zintegrowane'];
+  const d1comments = ['❌ 16% budżetu + 6 tyg. bez wartości operacyjnej', '✅ Koszt-efektywne, buduje zaangażowanie', '✅ Najszybsze i najtańsze, bezpośredni kontakt', '⚠️ Sensowne, ale 45k to dużo na etap diagnozy'];
+  breakdown.push({ label: '🔍 Diagnoza', score: d1score, max: 15, choice: d1labels[d1] || '—', comment: d1comments[d1] || '' });
+  total += d1score;
+
+  // D2: Strategia danych (max 20)
+  const d2 = answers[1];
+  const d2score = (d2 !== undefined) ? (SCORE_WEIGHTS.D2[d2] || 0) : 0;
+  const d2labels = ['DWH + Power BI 120k', 'Modern Data Stack (chmura)', '3 kluczowe raporty 30k', 'iPaaS middleware 40k'];
+  const d2comments = ['❌ 24% budżetu + 4 miesiące = 0 wartości przez 2/3 projektu', '⚠️ Wymaga Data Engineera, którego firma nie ma', '✅ Szybkie efekty, niski koszt, widoczna wartość', '✅ Dobry kompromis: szybkość + integracja'];
+  breakdown.push({ label: '📊 Strategia danych', score: d2score, max: 20, choice: d2labels[d2] || '—', comment: d2comments[d2] || '' });
+  total += d2score;
+
+  // D3: Budżet na ludzi (max 15)
+  const d3 = answers[2] || {};
+  const hire = d3.hire || 0;
+  const train = d3.train || 0;
+  const outsource = d3.outsource || 0;
+  let d3score = 8;
+  if (train === 0) d3score -= 6;
+  else if (train < 20) d3score -= 3;
+  if (hire === 0 && outsource < 30) d3score -= 4;
+  if (outsource >= 140) d3score -= 4;
+  if (hire > 20 && train > 20 && outsource > 20) d3score = Math.max(d3score + 5, 12);
+  d3score = Math.max(0, Math.min(15, d3score));
+  let d3comment = '';
+  if (train === 0) d3comment = '❌ 0 PLN na szkolenia = permanentna zależność od zewnętrznych';
+  else if (outsource >= 140) d3comment = '⚠️ Wszystko na outsourcing = firma nie buduje żadnych kompetencji wewnętrznych';
+  else if (hire > 20 && train > 20 && outsource > 20) d3comment = '✅ Zbalansowane inwestycje w ludzi, szkolenia i wykonanie';
+  else d3comment = '⚠️ Niezbalansowany podział — jeden wymiar dominuje';
+  breakdown.push({ label: '👥 Budżet na kompetencje', score: d3score, max: 15, choice: `Etaty: ${hire}k / Szkolenia: ${train}k / Outsourcing: ${outsource}k`, comment: d3comment });
+  total += d3score;
+
+  // D4: Strategia AI (max 20)
+  const d4 = answers[3];
+  const d4score = (d4 !== undefined) ? (SCORE_WEIGHTS.D4[d4] || 0) : 0;
+  const d4labels = ['AI-first (szerokie wdrożenie)', 'Jeden pilot AI', 'AI-ready (najpierw dane)', 'Microsoft Copilot'];
+  const d4comments = ['❌ AI na brudnych danych = 60% ryzyko porażki, utrata zaufania zarządu', '✅ PoC w 8 tyg. — uczysz się na małym, nie na dużym błędzie', '⚠️ Rozsądne, ale zarząd będzie niezadowolony przez 6 miesięcy', '⚠️ Produktywność biurowa ≠ transformacja cyfrowa zakładu produkcyjnego'];
+  breakdown.push({ label: '🤖 Strategia AI', score: d4score, max: 20, choice: d4labels[d4] || '—', comment: d4comments[d4] || '' });
+  total += d4score;
+
+  // D5: Quick wins ranking (max 15) — position of "errors"
+  const d5 = answers[4] || [];
+  const errIdx = d5.indexOf('errors');
+  let d5score = errIdx >= 0 ? SCORE_WEIGHTS.D5_errors[errIdx] : 0;
+  if (d5[0] === 'onboarding') d5score = Math.max(0, d5score - 3);
+  const d5RankLabels = { dashboard: 'Dashboard zarządczy', automation: 'Automatyzacja raportowania', errors: 'Redukcja błędów zamówień', onboarding: 'Onboarding cyfrowy' };
+  let d5comment = '';
+  if (errIdx === 0) d5comment = '✅ Priorytet na oszczędność 200k PLN/rok — świetna decyzja';
+  else if (errIdx === 1) d5comment = '✅ Błędy zamówień w top 2 — dobra priorytetyzacja wartości';
+  else if (errIdx === 2) d5comment = '⚠️ Błędy zamówień (200k/rok) zepchnięte na 3. miejsce';
+  else d5comment = '❌ Największa konkretna oszczędność pominięta — onboarding nie przynosi porównywalnego ROI';
+  breakdown.push({ label: '⚡ Quick wins', score: d5score, max: 15, choice: d5.map((id,i) => `${i+1}. ${d5RankLabels[id]||id}`).join(' → '), comment: d5comment });
+  total += d5score;
+
+  // D6: Change management (max 15)
+  const d6 = answers[5] || [];
+  let d6score = d6.reduce((sum, id) => sum + (SCORE_WEIGHTS.D6[id] || 0), 0);
+  if (d6.includes('incentives') && !d6.includes('training-role')) d6score -= 2;
+  d6score = Math.max(0, Math.min(15, d6score));
+  let d6comment = '';
+  const hasChampsOrComm = d6.includes('champions') || d6.includes('communication');
+  if (!hasChampsOrComm) d6comment = '❌ Brak sponsora zmiany i ambasadorów — transformacja zostanie "projektem IT"';
+  else if (d6.includes('incentives') && !d6.includes('training-role')) d6comment = '⚠️ Nagrody bez szkoleń = kupujesz compliance, nie komptencje';
+  else if (d6.includes('champions') && d6.includes('communication') && d6.includes('training-role')) d6comment = '✅ Najlepsza kombinacja: sponsor + ambasadorzy + kompetencje';
+  else d6comment = '✅ Dobra podstawa zarządzania zmianą';
+  breakdown.push({ label: '🔄 Change management', score: d6score, max: 15, choice: d6.map(id => SCORE_WEIGHTS.D6[id] !== undefined ? id : id).join(', ') || '—', comment: d6comment });
+  total += d6score;
+
+  return { total, breakdown };
+}
+
+function renderDeterministicScore(answers) {
+  const { total, breakdown } = calcDeterministicScore(answers);
+  const pct = Math.round((total / 100) * 100);
+  const color = total >= 75 ? '#16a34a' : total >= 55 ? '#d97706' : total >= 35 ? '#ea580c' : '#dc2626';
+  const bg = total >= 75 ? '#dcfce7' : total >= 55 ? '#fef3c7' : total >= 35 ? '#ffedd5' : '#fee2e2';
+  const label = total >= 75 ? 'Solidna strategia' : total >= 55 ? 'Przeciętna z niedociągnięciami' : total >= 35 ? 'Słaba — poważne błędy' : 'Nieefektywna — krytyczne błędy';
+
+  const rows = breakdown.map(b => {
+    const bpct = Math.round((b.score / b.max) * 100);
+    const bc = b.score / b.max >= 0.7 ? '#16a34a' : b.score / b.max >= 0.4 ? '#d97706' : '#dc2626';
+    return `<div style="margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <span style="font-weight:600; font-size:0.9rem;">${b.label}</span>
+        <span style="font-weight:700; color:${bc};">${b.score}/${b.max}</span>
+      </div>
+      <div style="background:#e2e8f0; border-radius:6px; height:8px; margin-bottom:5px;">
+        <div style="background:${bc}; width:${bpct}%; height:8px; border-radius:6px; transition:width 0.6s;"></div>
+      </div>
+      <div style="font-size:0.78rem; color:#64748b;">${b.comment}</div>
+    </div>`;
+  }).join('');
+
+  return `<div style="background:${bg}; border:2px solid ${color}; border-radius:14px; padding:20px 22px; margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div>
+        <div style="font-weight:700; font-size:1.1rem; color:${color};">🎯 Wynik punktowy strategii</div>
+        <div style="font-size:0.85rem; color:#64748b; margin-top:2px;">Ocena deterministyczna na podstawie wag decyzji</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:2rem; font-weight:800; color:${color};">${total}<span style="font-size:1rem; color:#94a3b8;">/100</span></div>
+        <div style="font-size:0.8rem; font-style:italic; color:${color};">${label}</div>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,0.6); border-radius:10px; padding:16px;">
+      ${rows}
+    </div>
+    <div style="font-size:0.75rem; color:#94a3b8; margin-top:10px; text-align:center;">ℹ️ Ten wynik jest obliczany przez algorytm (bez AI) na podstawie znanych wag każdej decyzji</div>
+  </div>`;
+}
+
 // ═══════════════════════════════════════════════════
 // AI ANALYSIS
 // ═══════════════════════════════════════════════════
@@ -1121,6 +1252,8 @@ function buildPrompt() {
   const d3text = d3ans !== undefined ? DECISIONS[3].options[d3ans].title + ': ' + DECISIONS[3].options[d3ans].desc : 'brak';
   const d4text = d4ans ? d4ans.map((id,i) => { const item = DECISIONS[4].rankItems.find(r=>r.id===id); return (i+1)+'. '+item.label; }).join(', ') : 'brak';
   const d5text = d5ans ? d5ans.map(id => { const c = DECISIONS[5].choices.find(c=>c.id===id); return c ? c.label : id; }).join(', ') : 'brak';
+  
+  const detScore = calcDeterministicScore(state.answers);
   
   return `Jesteś surowym egzaminatorem MBA i konsultantem transformacji cyfrowej. Twoja rola to uczciwa, ostra ocena strategii — NIE coaching, NIE komplementowanie. Studenci uczą się WYŁĄCZNIE gdy dostają prawdziwą ocenę swoich błędów.
 
@@ -1159,6 +1292,29 @@ BUDŻET LUDZI (D3) — PUŁAPKI:
 CHANGE MANAGEMENT (D6) — PUŁAPKI:
 - Brak "Digital Champions" I jednocześnie brak "Komunikacji CEO" = transformacja zostaje "projektem IT" bez sponsora i ambasadorów. Przy 45% pracowników obawiających się cyfryzacji to gwarantowana niska adopcja.
 - Wybór "System nagród za adopcję" bez szkoleń = kupowanie compliance zamiast budowania kompetencji.
+
+WYNIK ALGORYTMICZNY (dla kalibracji Twojej oceny):
+Algorytm deterministyczny wyliczył ${detScore.total}/100 punktów.
+- Twój scoreOverall MUSI być zbliżony do tego wyniku (+/- 10 punktów max).
+- Jeśli detScore < 30: scoreOverall MUSI być <40.
+- Jeśli detScore 30-50: scoreOverall MUSI być 35-60.
+- Jeśli detScore 51-70: scoreOverall MUSI być 55-75.
+- Jeśli detScore > 70: scoreOverall MUSI być 65-90.
+
+KALIBRACJA ROI — używaj WYŁĄCZNIE tych przedziałów:
+- detScore < 25: ROI od -30% do -5% (inwestycja nie zwróci się w 6 mies.)
+- detScore 25-40: ROI od -5% do 20%
+- detScore 41-55: ROI od 15% do 45%
+- detScore 56-70: ROI od 40% do 80%
+- detScore 71-85: ROI od 75% do 130%
+- detScore > 85: ROI od 120% do 180%
+
+KALIBRACJA DOJRZAŁOŚCI CYFROWEJ:
+- detScore < 25: +0.0 lub +0.3 (firma nie ruszy)
+- detScore 25-45: +0.5
+- detScore 46-65: +1.0 lub +1.2
+- detScore 66-80: +1.3 lub +1.5
+- detScore > 80: +1.7 lub +2.0
 
 SPÓJNOŚĆ STRATEGII (krzyżowe):
 - Droga diagnoza (80k) + droga infrastruktura DWH (120k) + ambitne AI = 200k wydane zanim powstanie jakakolwiek wartość. Przy budżecie 500k to katastrofa cashflow projektu.
@@ -1203,7 +1359,7 @@ async function submitForAnalysis() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 1200 }
+        generationConfig: { temperature: 0.3, maxOutputTokens: 1400 }
       })
     });
     
@@ -1298,9 +1454,11 @@ function showResults(a) {
       </div>
     </div>
 
+    ${renderDeterministicScore(state.answers)}
+    
     <div class="ai-content">
       <div class="section-block">
-        <div class="section-block-title">📋 Ocena ogólna</div>
+        <div class="section-block-title">📋 Ocena AI (subiektywna)</div>
         <p>${a.overallAssessment}</p>
       </div>
       
@@ -1370,7 +1528,8 @@ async function saveToGitHub(analysis) {
 **Student:** ${state.nickname}
 **Data:** ${dateStr}
 **Profil:** ${analysis.profileEmoji} ${analysis.profileName}
-**Ocena spójności:** ${analysis.scoreOverall}/100
+**Ocena spójności (AI):** ${analysis.scoreOverall}/100
+**Wynik punktowy (algorytm):** ${calcDeterministicScore(state.answers).total}/100
 
 ---
 
