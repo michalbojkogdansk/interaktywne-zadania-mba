@@ -5,555 +5,423 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Myślenia Krytycznego — MBA</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-        :root {
-            --frost-white: #F0F4F8;
-            --ice-blue: #D6E4F0;
-            --steel-blue: #7BA7CC;
-            --deep-teal: #2E6B8A;
-            --dark-navy: #1B3A4B;
-            --accent-cyan: #4ECDC4;
-            --accent-mint: #A8E6CF;
-            --warm-coral: #FF6B6B;
-            --soft-amber: #FFE66D;
-            --glass-white: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.3);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1B3A4B 0%, #2E6B8A 40%, #4ECDC4 100%);
-            min-height: 100vh;
-            color: var(--dark-navy);
-            overflow-x: hidden;
-        }
-
-        /* Animated background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(78, 205, 196, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(168, 230, 207, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(123, 167, 204, 0.08) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .header h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: white;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            margin-bottom: 0.5rem;
-        }
-
-        .header p {
-            color: var(--ice-blue);
-            font-size: 1.1rem;
-            font-weight: 300;
-        }
-
-        .header .meta {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 1rem;
-        }
-
-        .header .meta span {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        /* Card styles */
-        .card {
-            background: var(--glass-white);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-        }
-
-        /* Nickname input */
-        .nickname-section input {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            border: 2px solid var(--ice-blue);
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s;
-            background: white;
-        }
-
-        .nickname-section input:focus {
-            outline: none;
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.15);
-        }
-
-        .nickname-section label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-            color: var(--dark-navy);
-            font-size: 1.1rem;
-        }
-
-        /* Progress bar */
-        .progress-container {
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--glass-border);
-        }
-
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            color: white;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-mint));
-            border-radius: 4px;
-            transition: width 0.5s ease;
-            width: 0%;
-        }
-
-        /* Timer */
-        .timer {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: white;
-            font-weight: 600;
-        }
-
-        .timer.warning { color: var(--soft-amber); }
-        .timer.danger { color: var(--warm-coral); animation: pulse 1s infinite; }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-        /* Difficulty badge */
-        .difficulty {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 1rem;
-        }
-
-        .difficulty.easy {
-            background: linear-gradient(135deg, #A8E6CF, #7BC8A4);
-            color: #1a5c37;
-        }
-
-        .difficulty.medium {
-            background: linear-gradient(135deg, #FFE66D, #F0C040);
-            color: #6b5a00;
-        }
-
-        .difficulty.hard {
-            background: linear-gradient(135deg, #FF6B6B, #EE5A24);
-            color: white;
-        }
-
-        /* Question */
-        .question-number {
-            font-size: 0.85rem;
-            color: var(--steel-blue);
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-        }
-
-        .question-text {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--dark-navy);
-            line-height: 1.5;
-            margin-bottom: 1.2rem;
-        }
-
-        .scenario {
-            background: linear-gradient(135deg, #f0f7ff, #e8f4f8);
-            border-left: 4px solid var(--deep-teal);
-            padding: 1rem 1.2rem;
-            border-radius: 0 12px 12px 0;
-            margin-bottom: 1.2rem;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #2c3e50;
-        }
-
-        /* Answer options */
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-        }
-
-        .option {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.8rem;
-            padding: 1rem 1.2rem;
-            border: 2px solid var(--ice-blue);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: white;
-        }
-
-        .option:hover {
-            border-color: var(--accent-cyan);
-            background: linear-gradient(135deg, #f0fffe, #e8faf8);
-            transform: translateX(4px);
-        }
-
-        .option.selected {
-            border-color: var(--accent-cyan);
-            background: linear-gradient(135deg, #e0f9f6, #d0f0ec);
-            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.15);
-        }
-
-        .option-letter {
-            min-width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--ice-blue);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--deep-teal);
-            transition: all 0.3s;
-        }
-
-        .option.selected .option-letter {
-            background: var(--accent-cyan);
-            color: white;
-        }
-
-        .option-text {
-            flex: 1;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            padding-top: 4px;
-        }
-
-        /* Confidence slider */
-        .confidence-section {
-            margin-top: 1.2rem;
-            padding-top: 1.2rem;
-            border-top: 1px solid var(--ice-blue);
-        }
-
-        .confidence-label {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--deep-teal);
-            margin-bottom: 0.8rem;
-        }
-
-        .confidence-slider {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .confidence-slider input[type="range"] {
-            flex: 1;
-            -webkit-appearance: none;
-            height: 8px;
-            border-radius: 4px;
-            background: linear-gradient(90deg, var(--ice-blue), var(--accent-cyan));
-            outline: none;
-        }
-
-        .confidence-slider input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: white;
-            border: 3px solid var(--accent-cyan);
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .confidence-value {
-            min-width: 40px;
-            text-align: center;
-            font-weight: 700;
-            color: var(--deep-teal);
-            font-size: 1.1rem;
-        }
-
-        .confidence-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            color: var(--steel-blue);
-            margin-top: 0.3rem;
-        }
-
-        /* Navigation buttons */
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1.5rem;
-        }
-
-        .btn {
-            padding: 0.8rem 2rem;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-secondary {
-            background: var(--ice-blue);
-            color: var(--deep-teal);
-        }
-
-        .btn-secondary:hover {
-            background: var(--steel-blue);
-            color: white;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-cyan), var(--deep-teal));
-            color: white;
-            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-submit {
-            background: linear-gradient(135deg, #4ECDC4, #2ECC71);
-            color: white;
-            padding: 1rem 3rem;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3);
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(46, 204, 113, 0.4);
-        }
-
-        /* Results screen */
-        .results-container {
-            text-align: center;
-        }
-
-        .score-circle {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: conic-gradient(var(--accent-cyan) 0deg, var(--accent-cyan) var(--score-deg), rgba(255,255,255,0.2) var(--score-deg));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 2rem auto;
-            position: relative;
-        }
-
-        .score-inner {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .score-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--deep-teal);
-        }
-
-        .score-label {
-            font-size: 0.85rem;
-            color: var(--steel-blue);
-            font-weight: 500;
-        }
-
-        .score-message {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--dark-navy);
-            margin-bottom: 0.5rem;
-        }
-
-        .score-description {
-            color: var(--steel-blue);
-            font-size: 1rem;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        /* Review section */
-        .review-item {
-            text-align: left;
-            padding: 1.2rem;
-            border-radius: 12px;
-            margin-bottom: 0.8rem;
-        }
-
-        .review-item.correct {
-            background: linear-gradient(135deg, #e8faf0, #d4f5e4);
-            border: 1px solid #a8e6cf;
-        }
-
-        .review-item.incorrect {
-            background: linear-gradient(135deg, #fff0f0, #ffe0e0);
-            border: 1px solid #ffb3b3;
-        }
-
-        .review-item .q-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .review-item .q-title {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .review-item .q-icon { font-size: 1.3rem; }
-
-        .review-item .explanation {
-            font-size: 0.9rem;
-            color: #555;
-            line-height: 1.5;
-        }
-
-        .review-item .your-answer {
-            font-size: 0.85rem;
-            margin-bottom: 0.3rem;
-        }
-
-        /* Back link */
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            font-weight: 500;
-            margin-bottom: 1rem;
-            transition: color 0.3s;
-        }
-
-        .back-link:hover { color: white; }
-
-        /* Hide sections */
-        .hidden { display: none !important; }
-
-        /* Status message */
-        .status-msg {
-            padding: 1rem;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: 500;
-            margin-top: 1rem;
-        }
-
-        .status-msg.success {
-            background: linear-gradient(135deg, #e8faf0, #d4f5e4);
-            color: #1a5c37;
-        }
-
-        .status-msg.error {
-            background: linear-gradient(135deg, #fff0f0, #ffe0e0);
-            color: #c0392b;
-        }
-
-        .status-msg.sending {
-            background: linear-gradient(135deg, #e8f4f8, #d6e4f0);
-            color: var(--deep-teal);
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .container { padding: 1rem; }
-            .header h1 { font-size: 1.6rem; }
-            .card { padding: 1.5rem; }
-            .header .meta { flex-direction: column; gap: 0.5rem; align-items: center; }
-        }
-    </style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --bg:           #F0EDE7;
+      --surface:      #FFFFFF;
+      --border:       #C9CAD6;
+      --accent:       #4A8F8A;
+      --accent-light: #E8F4F3;
+      --text:         #1A1A1A;
+      --text-sec:     #5C5C6E;
+      --danger:       #C0392B;
+      --pos:          #2E7D5E;
+      --neg:          #C0392B;
+      --radius:       3px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter','Segoe UI',system-ui,sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 20px 60px;
+    }
+
+    .hidden { display: none !important; }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* back link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text-sec);
+      text-decoration: none;
+      margin-bottom: 24px;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    /* header */
+    .header { margin-bottom: 28px; }
+    .header h1 {
+      font-size: clamp(24px,5vw,34px);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .header p { font-size: 15px; color: var(--text-sec); line-height: 1.65; }
+    .meta, .header .meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .meta span, .header .meta span {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sec);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    /* card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 44px;
+      margin-bottom: 16px;
+    }
+
+    /* form elements */
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 15px;
+      font-family: inherit;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]::placeholder, textarea::placeholder { color: #AAAABC; }
+    input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
+
+    /* buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+      letter-spacing: .01em;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #3a7a75; }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-sec);
+      border: 1.5px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* progress */
+    .progress-container { margin-bottom: 20px; }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sec);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 6px;
+    }
+    .progress-bar {
+      height: 3px;
+      background: var(--border);
+      border-radius: 0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width .5s ease;
+    }
+
+    /* timer */
+    .timer {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sec);
+      font-variant-numeric: tabular-nums;
+    }
+    .timer.warning { color: #B07C2E; }
+    .timer.danger  { color: var(--danger); }
+
+    /* nav buttons */
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      margin-top: 16px;
+    }
+
+    /* ── Radio-row options (myslenie) ── */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 16px;
+      margin-bottom: 20px;
+    }
+    .option {
+      width: 100%;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      line-height: 1.5;
+    }
+    .option:last-child { border-bottom: none; }
+    .option:hover { background: var(--accent-light); }
+    .option.selected { background: var(--accent-light); }
+    .option.correct  { background: #EAF5EF; border-left: 3px solid var(--pos); }
+    .option.incorrect { background: #FBF0EF; border-left: 3px solid var(--neg); }
+    .option-letter {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      color: var(--accent);
+      background: var(--accent-light);
+      border-radius: 2px;
+      padding: 2px 7px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      min-width: 26px;
+      text-align: center;
+    }
+    .option.correct .option-letter  { background: #EAF5EF; color: var(--pos); }
+    .option.incorrect .option-letter { background: #FBF0EF; color: var(--neg); }
+    .option-text { flex: 1; }
+
+    /* difficulty badge */
+    .difficulty {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 2px;
+      margin-bottom: 10px;
+      border: 1.5px solid var(--border);
+      color: var(--text-sec);
+      background: var(--bg);
+    }
+    .difficulty.easy   { border-color: var(--pos);  color: var(--pos);  background: #EAF5EF; }
+    .difficulty.medium { border-color: #B07C2E; color: #B07C2E; background: #FDF5E6; }
+    .difficulty.hard   { border-color: var(--neg);  color: var(--neg);  background: #FBF0EF; }
+
+    /* question layout */
+    .question-number {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .question-text {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.45;
+      margin-bottom: 16px;
+      letter-spacing: -.01em;
+    }
+    .scenario {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--text-sec);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    /* explanation */
+    .explanation {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--text-sec);
+      line-height: 1.65;
+      margin-top: 14px;
+      animation: fadeUp .25s ease;
+    }
+    .explanation strong { color: var(--text); }
+
+    /* confidence section */
+    .confidence-section { margin-top: 20px; margin-bottom: 8px; }
+    .confidence-section label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .confidence-slider {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .conf-btn {
+      flex: 1;
+      padding: 10px 4px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text-sec);
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .15s;
+      text-align: center;
+    }
+    .conf-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+    .conf-btn.active { border-color: var(--accent); background: var(--accent); color: #fff; }
+
+    /* results */
+    .results-container { }
+    .score-header {
+      text-align: center;
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .score-big {
+      font-size: 64px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+      letter-spacing: -.03em;
+    }
+    .score-label { font-size: 14px; color: var(--text-sec); margin-top: 4px; }
+    .score-grade {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-top: 10px;
+    }
+    .score-grade.excellent { background: #EAF5EF; color: var(--pos); border: 1.5px solid var(--pos); }
+    .score-grade.good      { background: #E8F4F3; color: var(--accent); border: 1.5px solid var(--accent); }
+    .score-grade.avg       { background: #FDF5E6; color: #B07C2E; border: 1.5px solid #B07C2E; }
+    .score-grade.poor      { background: #FBF0EF; color: var(--neg); border: 1.5px solid var(--neg); }
+
+    /* answer review */
+    .review-item {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .review-item:last-child { border-bottom: none; }
+    .review-q {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .review-answer {
+      font-size: 13px;
+      color: var(--text-sec);
+      line-height: 1.5;
+    }
+    .review-correct { color: var(--pos); font-weight: 700; }
+    .review-wrong   { color: var(--neg); font-weight: 700; }
+
+    /* success state */
+    .success-block { text-align: center; padding: 20px 0; }
+    .success-icon  { font-size: 52px; margin-bottom: 16px; }
+    .success-title { font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 8px; letter-spacing: -.02em; }
+    .success-sub   { font-size: 15px; color: var(--text-sec); line-height: 1.65; }
+
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 11px 22px;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      color: var(--text-sec);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all .15s;
+      font-family: inherit;
+      cursor: pointer;
+      background: transparent;
+    }
+    .link-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+    /* spinner / error */
+    .spinner {
+      width: 32px; height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-box {
+      background: #FDF0EF;
+      border: 1px solid #E8C0BE;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--danger);
+      margin-top: 10px;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+</style>
 </head>
 <body>
     <div class="container">
@@ -772,7 +640,7 @@
     function startQuiz() {
         nickname = document.getElementById('nickname').value.trim();
         if (!nickname) {
-            document.getElementById('nickname').style.borderColor = 'var(--warm-coral)';
+            document.getElementById('nickname').style.borderColor = 'var(--danger)';
             document.getElementById('nickname').placeholder = 'Wpisz pseudonim, żeby kontynuować...';
             return;
         }
@@ -835,9 +703,9 @@
             <div class="confidence-section">
                 <div class="confidence-label">Jak pewny/a jesteś swojej odpowiedzi?</div>
                 <div class="confidence-slider">
-                    <span style="font-size:0.85rem;color:var(--steel-blue)">Zgaduję</span>
+                    <span style="font-size:0.85rem;color:var(--accent)">Zgaduję</span>
                     <input type="range" min="1" max="5" value="${conf}" oninput="updateConfidence(${q.id}, this.value)">
-                    <span style="font-size:0.85rem;color:var(--steel-blue)">100% pewny/a</span>
+                    <span style="font-size:0.85rem;color:var(--accent)">100% pewny/a</span>
                     <div class="confidence-value" id="confVal">${conf}/5</div>
                 </div>
             </div>
@@ -960,23 +828,23 @@
             <div class="score-description">${msg.desc}</div>
             <div style="display:flex;justify-content:center;gap:2rem;margin-bottom:2rem;flex-wrap:wrap;">
                 <div style="text-align:center">
-                    <div style="font-size:1.5rem;font-weight:700;color:var(--deep-teal)">${results.avgConfidence}</div>
-                    <div style="font-size:0.8rem;color:var(--steel-blue)">Śr. pewność siebie</div>
+                    <div style="font-size:1.5rem;font-weight:700;color:var(--accent)">${results.avgConfidence}</div>
+                    <div style="font-size:0.8rem;color:var(--accent)">Śr. pewność siebie</div>
                 </div>
                 <div style="text-align:center">
-                    <div style="font-size:1.5rem;font-weight:700;color:var(--accent-cyan)">${results.avgConfidenceCorrect}</div>
-                    <div style="font-size:0.8rem;color:var(--steel-blue)">Pewność (poprawne)</div>
+                    <div style="font-size:1.5rem;font-weight:700;color:var(--accent)">${results.avgConfidenceCorrect}</div>
+                    <div style="font-size:0.8rem;color:var(--accent)">Pewność (poprawne)</div>
                 </div>
                 <div style="text-align:center">
-                    <div style="font-size:1.5rem;font-weight:700;color:var(--warm-coral)">${results.avgConfidenceIncorrect}</div>
-                    <div style="font-size:0.8rem;color:var(--steel-blue)">Pewność (błędne)</div>
+                    <div style="font-size:1.5rem;font-weight:700;color:var(--danger)">${results.avgConfidenceIncorrect}</div>
+                    <div style="font-size:0.8rem;color:var(--accent)">Pewność (błędne)</div>
                 </div>
                 <div style="text-align:center">
-                    <div style="font-size:1.5rem;font-weight:700;color:var(--dark-navy)">${timeMin}:${timeSec.toString().padStart(2,'0')}</div>
-                    <div style="font-size:0.8rem;color:var(--steel-blue)">Czas</div>
+                    <div style="font-size:1.5rem;font-weight:700;color:var(--text)">${timeMin}:${timeSec.toString().padStart(2,'0')}</div>
+                    <div style="font-size:0.8rem;color:var(--accent)">Czas</div>
                 </div>
             </div>
-            <h3 style="text-align:left;margin-bottom:1rem;color:var(--dark-navy)">📋 Przegląd odpowiedzi</h3>
+            <h3 style="text-align:left;margin-bottom:1rem;color:var(--text)">📋 Przegląd odpowiedzi</h3>
         `;
 
         results.details.forEach(d => {
@@ -1031,7 +899,7 @@
 
             if (response.ok) {
                 document.getElementById('submitStatus').className = 'status-msg success';
-                document.getElementById('submitStatus').innerHTML = '✅ Wyniki zapisane! Dziękuję za wypełnienie testu.<br><br><a href="https://michalbojkogdansk.github.io/interaktywne-zadania-mba/" style="display:inline-block;margin-top:8px;padding:12px 28px;background:var(--deep-teal);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;">🏠 Wróć do strony głównej</a>';
+                document.getElementById('submitStatus').innerHTML = '✅ Wyniki zapisane! Dziękuję za wypełnienie testu.<br><br><a href="https://michalbojkogdansk.github.io/interaktywne-zadania-mba/" style="display:inline-block;margin-top:8px;padding:12px 28px;background:var(--accent);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;">🏠 Wróć do strony głównej</a>';
             } else {
                 throw new Error('HTTP ' + response.status);
             }
