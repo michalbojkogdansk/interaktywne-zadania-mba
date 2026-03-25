@@ -304,78 +304,101 @@
 const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
 
 const CARDS = [
+  // 1. WMS logi → dark, monetyzuj ✓
   { id:1, emoji:'📦', title:'Logi systemu WMS',
     desc:'Zapisujemy każde zdarzenie magazynowe od 2019 roku. Baza liczy 2 TB. Nikt nie sięgał do tych danych po zakończeniu dnia operacyjnego.',
     size:'2 TB', age:'od 2019 r.', risk:'medium',
     isDA:true, best:'monetize', cost:14400, value:80000, trap:false,
     cTitle:'Dark Data z dużym potencjałem',
-    cText:'Analiza logów WMS odkrywa wzorce opóźnień i wąskie gardła. Firmy które to robią redukują czas kompletacji o 15–20%. Szacowana oszczędność: ok. 80 000 PLN/rok.'},
+    cText:'Analiza logów WMS odkrywa wzorce opóźnień i wąskie gardła. Firmy które to robią redukują czas kompletacji o 15–20%. Szacowana oszczędność: ok. 80 000 PLN/rok. Decyzja: monetyzuj.'},
+
+  // 2. E-maile → dark, USUŃ (RODO!) — pułapka dla „monetyzuj"
   { id:2, emoji:'📧', title:'Archiwum e-maili pracowników',
-    desc:'7 lat korespondencji firmowej na lokalnym serwerze „na wszelki wypadek". Brak polityki retencji i dokumentacji podstawy prawnej przetwarzania.',
+    desc:'7 lat korespondencji firmowej na lokalnym serwerze „na wszelki wypadek". Brak polityki retencji i dokumentacji podstawy prawnej przetwarzania danych osobowych.',
     size:'800 GB', age:'7 lat', risk:'high',
     isDA:true, best:'delete', cost:5760, value:0, trap:false,
-    cTitle:'Ryzyko RODO — działaj natychmiast',
-    cText:'Przechowywanie e-maili pracowników bez podstawy prawnej narusza RODO. Kara UODOdo 4% rocznego obrotu. Rekomendacja: natychmiastowe usunięcie + wdrożenie polityki retencji.'},
+    cTitle:'Ryzyko RODO — usuń natychmiast',
+    cText:'Przechowywanie e-maili bez podstawy prawnej narusza RODO. Kara UODO do 4% rocznego obrotu. Monetyzacja byłaby dodatkowym naruszeniem — przetwarzanie danych osobowych pracowników wymaga wyraźnej podstawy prawnej. Jedyna słuszna decyzja: usuń + wdroż politykę retencji.'},
+
+  // 3. Kamery → AKTYWNE (nie dark data!) — pułapka dla „dark"
   { id:3, emoji:'📹', title:'Nagrania z kamer magazynowych',
-    desc:'System CCTV — 48 kamer 24/7. Nagrania kasowane po 30 dniach automatycznie. Używane wyłącznie przy incydentach bezpieczeństwa i szkodach.',
+    desc:'System CCTV — 48 kamer 24/7. Nagrania kasowane automatycznie po 30 dniach. Dział bezpieczeństwa używa ich przy incydentach. Ochrona przegląda live feed codziennie.',
     size:'rolling 30 dni', age:'bieżące', risk:'low',
     isDA:false, best:'archive', cost:0, value:0, trap:false,
-    cTitle:'Nie dark data — dane aktywne',
-    cText:'Nagrania mają aktywne zastosowanie: bezpieczeństwo i compliance ubezpieczeniowy. Nie są dark data. Ciekawa opcja: analiza ruchu przez AI dla optymalizacji magazynu — ale to osobna inicjatywa.'},
+    cTitle:'To nie dark data — dane aktywne',
+    cText:'Nagrania mają regularne zastosowanie: bezpieczeństwo, compliance ubezpieczeniowy i codzienne przeglądy. Klasyfikacja „dark data" byłaby błędem — dane są aktywnie używane. Obecna polityka 30 dni to minimum prawne. Archiwizuj zgodnie z wymogami.'},
+
+  // 4. NPS → dark, monetyzuj ✓
   { id:4, emoji:'📋', title:'Ankiety NPS klientów',
-    desc:'3 lata ankiet NPS — 1 200 wypełnionych formularzy w SharePoint. Analizowano tylko średnią ocenę. Pełne odpowiedzi tekstowe nigdy nie były czytane.',
+    desc:'3 lata ankiet NPS — 1 200 wypełnionych formularzy w SharePoint. Analizowano wyłącznie średnią ocenę. Pełne odpowiedzi tekstowe nigdy nie były czytane ani analizowane.',
     size:'45 MB', age:'3 lata', risk:'low',
     isDA:true, best:'monetize', cost:200, value:35000, trap:false,
     cTitle:'Ukryta wiedza o klientach',
-    cText:'Średnia NPS ukrywa systemowe problemy. Text mining odpowiedzi ujawnia je precyzyjnie. Firmy robiące analizę sentymentu ankiet poprawiają retencję klientów o 8–12%.'},
+    cText:'Średnia NPS ukrywa systemowe problemy. Text mining odpowiedzi identyfikuje je precyzyjnie. Firmy analizujące pełne odpowiedzi poprawiają retencję klientów o 8–12%. Koszt analizy: niski, potencjał: wysoki. Decyzja: monetyzuj.'},
+
+  // 5. GPS flota → dark, monetyzuj ✓
   { id:5, emoji:'🚛', title:'Historia GPS floty pojazdów',
-    desc:'45 ciężarówek wysyła GPS co 30 sekund. Real-time widoczne na mapie. Historia kasowana po 90 dniach — „bo zajmuje miejsce na serwerze".',
+    desc:'45 ciężarówek wysyła GPS co 30 sekund. Real-time widoczne na mapie dyspozytorni. Historia kasowana po 90 dniach — „bo zajmuje miejsce na serwerze".',
     size:'kasowane po 90 dniach', age:'bieżące + 90 dni', risk:'low',
     isDA:true, best:'monetize', cost:3600, value:120000, trap:false,
     cTitle:'Kopalnia optymalizacji tras',
-    cText:'Historia GPS to fundament ML do optymalizacji tras. Retencja 2 lat + analiza może obniżyć zużycie paliwa o 8–12%. Przy flocie 45 pojazdów: ok. 120 000 PLN/rok oszczędności.'},
+    cText:'Historia GPS to fundament ML do optymalizacji tras. Retencja 2 lat + analiza może obniżyć zużycie paliwa o 8–12%. Przy flocie 45 pojazdów: ok. 120 000 PLN/rok oszczędności. Decyzja: monetyzuj i zatrzymaj historię.'},
+
+  // 6. Faktury PDF → dark, monetyzuj ✓
   { id:6, emoji:'🧾', title:'Skany faktur (nieustrukturyzowane PDF)',
     desc:'12 lat skanów PDF bez OCR. Księgowość ręcznie przepisuje dane do ERP od 2012 roku. Nikt nie rozważał automatyzacji — „tak zawsze robiliśmy".',
     size:'240 GB', age:'12 lat', risk:'medium',
     isDA:true, best:'monetize', cost:1800, value:60000, trap:false,
-    cTitle:'Automatyzacja z ROI < 12 miesięcy',
-    cText:'OCR + automatyczne przetwarzanie faktur eliminuje 3–4 etaty ręcznej pracy. Historyczne dane ujawnią wzorce płatności i ryzyko kontrahentów. Typowy ROI poniżej 12 miesięcy.'},
+    cTitle:'Automatyzacja z ROI poniżej 12 miesięcy',
+    cText:'OCR + automatyczne przetwarzanie faktur eliminuje 3–4 etaty ręcznej pracy. Historyczne dane ujawnią wzorce płatności i ryzyko kontrahentów. Typowy ROI poniżej 12 miesięcy. Decyzja: monetyzuj.'},
+
+  // 7. Logi ERP → dark, ZBADAJ (nie od razu monetyzuj — mogą być compliance-sensitive)
   { id:7, emoji:'⚠️', title:'Logi błędów systemu ERP',
-    desc:'ERP generuje 50 000 wpisów dziennie. IT reaguje wyłącznie na błędy krytyczne. Pozostałe 95% logów (ostrzeżenia, informacje) — nigdy nie analizowane.',
-    size:'1,2 TB', age:'od 2020 r.', risk:'low',
-    isDA:true, best:'monetize', cost:8640, value:45000, trap:false,
-    cTitle:'Predictive maintenance IT',
-    cText:'Wzorce ostrzeżeń poprzedzają awarie ERP z 48–72h wyprzedzeniem. Nieplanowane przestoje kosztują firmę tej wielkości ok. 45 000 PLN/rok — możliwe do wyeliminowania.'},
+    desc:'ERP generuje 50 000 wpisów dziennie. IT reaguje wyłącznie na błędy krytyczne. Pozostałe 95% logów (ostrzeżenia, informacje) — nigdy nie analizowane. Część logów zawiera dane transakcji klientów.',
+    size:'1,2 TB', age:'od 2020 r.', risk:'medium',
+    isDA:true, best:'investigate', cost:8640, value:45000, trap:false,
+    cTitle:'Zbadaj — zanim zdecydujesz o monetyzacji',
+    cText:'Potencjał jest (predictive maintenance IT, predykcja awarii z 48–72h wyprzedzeniem). Ale część logów może zawierać dane osobowe klientów — przed monetyzacją wymagany audyt prawny i anonimizacja. Decyzja „monetyzuj" bez zbadania zawartości to błąd. Najpierw: zbadaj.'},
+
+  // 8. CRM → dark, ZBADAJ (dirty data — nie od razu monetyzuj)
   { id:8, emoji:'👥', title:'Profile klientów w CRM',
-    desc:'4 200 klientów w CRM. 30% pól pustych, dane niespójne. Ostatnia masowa aktualizacja: 2021. Handlowcy wprowadzają dane nierównomiernie.',
+    desc:'4 200 klientów w CRM. 30% pól pustych, dane niespójne między filiami. Ostatnia masowa aktualizacja rekordów: 2021. Handlowcy wprowadzają dane według własnych uznania.',
     size:'2 GB', age:'od 2018 r.', risk:'medium',
     isDA:true, best:'investigate', cost:500, value:90000, trap:false,
     cTitle:'Dirty data — najpierw audyt jakości',
-    cText:'To nie dark data — to "dirty data". Dane są, ale niskiej jakości. Przed monetyzacją potrzebny audyt. Czyszczenie + wzbogacenie CRM zwiększa skuteczność sprzedaży o 15–20%.'},
+    cText:'To nie klasyczne dark data — to „dirty data". Dane są, ale niskiej jakości. Bezpośrednia monetyzacja brudnych danych da błędne wyniki. Czyszczenie + wzbogacenie CRM zwiększa skuteczność sprzedaży o 15–20%, ale tylko po audycie jakości. Decyzja: zbadaj, a nie monetyzuj.'},
+
+  // 9. Czujniki chłodni → dark, monetyzuj — PUŁAPKA dla „usuń"
   { id:9, emoji:'🌡️', title:'Dane z czujników temperatury chłodni',
-    desc:'Chłodnie wysyłają pomiar co minutę. Sprawdzane tylko przy alarmach. 4 lata historii — nigdy nie analizowane. Magazynier: „mogę to skasować, zajmuje miejsce".',
+    desc:'Chłodnie wysyłają pomiar temperatury co minutę. Sprawdzane tylko przy alarmach przekroczenia normy. 4 lata historii nigdy nie analizowanej. Magazynier: „mogę to skasować, zajmuje miejsce".',
     size:'180 GB', age:'4 lata', risk:'high',
     isDA:true, best:'monetize', cost:1200, value:200000, trap:true,
     cTitle:'⚠️ PUŁAPKA — Błąd krytyczny!',
-    cText:'Historia temperatur to DOWÓD ZGODNOŚCI dla klientów farmaceutycznych i spożywczych. Usunięcie = utrata certyfikacji łańcucha chłodniczego + kontrakt 200k PLN/rok. Dane mają też wartość analityczną: predykcja awarii chłodni.'},
+    cText:'Historia temperatur to DOWÓD ZGODNOŚCI dla klientów farmaceutycznych i spożywczych (cold chain compliance). Usunięcie = utrata certyfikacji + kontrakt 200k PLN/rok. Dane mają też ogromny potencjał analityczny: predykcja awarii chłodni zanim nastąpią. Decyzja: monetyzuj, nie usuwaj nigdy.'},
+
+  // 10. Raporty Excel → dark, ARCHIWIZUJ (nie monetyzuj — niska jakość, różne formaty)
   { id:10, emoji:'📊', title:'Raporty miesięczne w Excelu',
-    desc:'230 plików Excel z lat 2015–2023. Różne formaty, różni autorzy. Nikt nie wie co jest w połowie z nich — leżą na wspólnym dysku sieciowym.',
+    desc:'230 plików Excel z lat 2015–2023. Różne formaty, różni autorzy, niespójne nazewnictwo kolumn. Nikt nie wie co jest w połowie z nich. Leżą na wspólnym dysku sieciowym.',
     size:'8 GB', age:'8 lat', risk:'low',
-    isDA:true, best:'investigate', cost:600, value:25000, trap:false,
-    cTitle:'Data Swamp — najpierw inwentaryzacja',
-    cText:'Klasyczny "data swamp". Część może zawierać dane historyczne niemożliwe do odtworzenia. Rekomendacja: inwentaryzacja i kategoryzacja przed jakąkolwiek decyzją o usunięciu.'},
+    isDA:true, best:'archive', cost:600, value:25000, trap:false,
+    cTitle:'Archiwizuj — nie monetyzuj bez porządku',
+    cText:'Klasyczny „data swamp". Bezpośrednia monetyzacja chaosu Excel nie ma sensu — koszt standaryzacji przekroczyłby wartość. Część może zawierać dane niemożliwe do odtworzenia z innych źródeł, więc usunięcie jest ryzykowne. Decyzja: archiwizuj tanio i przeprowadź inwentaryzację w osobnym projekcie.'},
+
+  // 11. Dane HR (absencje) → dark, ARCHIWIZUJ (dane wrażliwe, nie monetyzuj bez DPIA)
   { id:11, emoji:'🏥', title:'Dane absencji pracowników (HR)',
-    desc:'6 lat danych o zwolnieniach lekarskich. Używane wyłącznie do naliczania wypłat. Nigdy nie zestawiane z wynikami operacyjnymi ani sezonowością zamówień.',
+    desc:'6 lat danych o zwolnieniach lekarskich, zebranych do naliczania wypłat. Nigdy nie zestawiane z wynikami operacyjnymi ani sezonowością. Brak formalnej polityki retencji.',
     size:'500 MB', age:'6 lat', risk:'high',
-    isDA:true, best:'investigate', cost:400, value:30000, trap:false,
-    cTitle:'Potencjał + obowiązki RODO',
-    cText:'Dane o zdrowiu = dane wrażliwe (art. 9 RODO). Każda analiza wymaga DPIA i anonimizacji. Potencjał jest (predykcja, planowanie personelu), ale decyzja "monetyzuj" bez audytu prawnego to błąd.'},
+    isDA:true, best:'archive', cost:400, value:30000, trap:false,
+    cTitle:'Dane wrażliwe — archiwizuj, nie monetyzuj',
+    cText:'Dane o zdrowiu = dane szczególnej kategorii (art. 9 RODO). Monetyzacja bez przeprowadzenia DPIA (oceny skutków) i anonimizacji jest nielegalna. Potencjał analityczny istnieje, ale realizacja wymaga osobnego projektu prawno-technicznego. Bezpieczna decyzja teraz: archiwizuj zgodnie z wymogami RODO.'},
+
+  // 12. Historia przetargów → dark, monetyzuj ✓
   { id:12, emoji:'📁', title:'Historia przegranych przetargów',
-    desc:'180 ofert handlowych które przegraliśmy w latach 2018–2024. Ceny, specyfikacje, powody odrzucenia. Nikt nie wraca — „to już przeszłość, po co do tego wracać".',
+    desc:'180 ofert handlowych odrzuconych w latach 2018–2024. Ceny, specyfikacje, powody odrzucenia zapisane w PDF i e-mailach. Nikt do nich nie wraca — „to już przeszłość, po co".',
     size:'3 GB', age:'6 lat', risk:'low',
     isDA:true, best:'monetize', cost:200, value:150000, trap:false,
     cTitle:'💎 Nieodkryte złoto strategiczne',
-    cText:'Analiza wzorców przegranych ofert ujawnia systematyczne błędy wyceny i pozycjonowania. Win-rate improvement o 20–30% to typowy wynik. Przy obecnym pipeline Nordii: ok. 150 000 PLN/rok.'}
+    cText:'Analiza wzorców przegranych ofert ujawnia systematyczne błędy wyceny i pozycjonowania. Win-rate improvement o 20–30% to typowy wynik takich projektów. Przy obecnym pipeline Nordii: ok. 150 000 PLN/rok. Decyzja: monetyzuj — to jedno z najważniejszych odkryć audytu.'}
 ];
 
 const BENCHMARKS = {
@@ -494,7 +517,7 @@ function confirmDecision() {
   if (clsOk) pts += 5;
   else if (st.cls === 'unknown') pts += 1;
   if (actOk) pts += 5;
-  else if ((st.act === 'investigate' && card.best === 'monetize') || (st.act === 'monetize' && card.best === 'investigate')) pts += 2;
+  else if ((st.act === 'investigate' && card.best === 'monetize') || (st.act === 'monetize' && card.best === 'investigate') || (st.act === 'investigate' && card.best === 'archive') || (st.act === 'archive' && card.best === 'investigate')) pts += 2;
 
   let isTrap = false;
   if (card.trap && st.act === 'delete') { pts -= 10; st.trapsHit++; isTrap = true; }
