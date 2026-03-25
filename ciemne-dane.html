@@ -246,8 +246,9 @@
       </div>
     </div>
 
-    <button class="btn btn-primary" id="confirm-btn" onclick="confirmDecision()" disabled>Zatwierdź ocenę →</button>
     </div><!-- /action-section -->
+
+    <button class="btn btn-primary" id="confirm-btn" onclick="confirmDecision()" disabled>Zatwierdź ocenę →</button>
 
   </div><!-- /decision-area -->
 
@@ -508,7 +509,7 @@ function confirmDecision() {
   const card = CARDS[st.cur];
   let pts = 0;
   const clsOk = (card.isDA && st.cls === 'dark') || (!card.isDA && st.cls === 'active');
-  const actOk = !card.isDA ? false : (st.act === card.best);
+  const actOk = !card.isDA ? true : (st.act === card.best);
   if (clsOk) pts += 5;
   else if (st.cls === 'unknown') pts += 1;
   if (!card.isDA) { /* active data: no action pts */ }
