@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktywne Zadania MBA</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        :root {
+            --bg:           #F0EDE7;
+            --surface:      #FFFFFF;
+            --border:       #D8D2C8;
+            --border-dark:  #B8B2A8;
+            --text:         #1A1A1A;
+            --text-muted:   #6B6560;
+            --accent:       #4A8F8A;
+            --accent-dark:  #357570;
+            --accent-light: #EAF4F3;
+            --danger:       #B84A4A;
+            --warn:         #B87A2A;
+            --radius:       3px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 40px 20px 60px;
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+        }
+
+        /* ── Header ── */
+        .header {
+            border-bottom: 2px solid var(--text);
+            padding-bottom: 24px;
+            margin-bottom: 48px;
+        }
+
+        .header-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 14px;
+        }
+
+        .header p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        /* ── Tasks grid ── */
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+        }
+
+        .task-card {
+            background: var(--surface);
+            padding: 32px 28px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            transition: background 0.15s;
+            position: relative;
+        }
+
+        .task-card:hover {
+            background: var(--accent-light);
+        }
+
+        .task-card.coming-soon {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: default;
+        }
+
+        .task-number {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .task-icon {
+            font-size: 2rem;
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .task-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .task-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .task-badge {
+            padding: 4px 10px;
+            border: 1px solid var(--border-dark);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--bg);
+            letter-spacing: 0.02em;
+        }
+
+        .task-badge.badge-ai {
+            border-color: var(--accent);
+            color: var(--accent-dark);
+            background: var(--accent-light);
+        }
+
+        .task-badge.badge-new {
+            border-color: #357570;
+            color: #357570;
+            background: #EAF4F3;
+        }
+
+        .task-arrow {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .task-card:hover .task-arrow {
+            color: var(--accent-dark);
+        }
+
+        /* ── Accent bar on left edge of each card ── */
+        .task-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+        }
+
+        .task-card.correlation::before { background: var(--accent); }
+        .task-card.critical::before    { background: #B05A2A; }
+        .task-card.simulation::before  { background: #4A5A8F; }
+        .task-card.coming-soon::before { background: var(--border-dark); }
+        .task-card.darkdata::before    { background: #8A4A7A; }
+
+        /* ── Footer ── */
+        .footer {
+            border-top: 1px solid var(--border-dark);
+            margin-top: 48px;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .footer-left {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .footer-right {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        @media (max-width: 640px) {
+            .tasks-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 2rem; }
+            body { padding: 24px 16px 48px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="header">
+            <div class="header-label">Platforma edukacyjna · MBA 2026</div>
+            <h1>Interaktywne Zadania MBA</h1>
+            <p>Wybierz ćwiczenie. Każde jest anonimowe — potrzebujesz tylko pseudonimu.</p>
+        </div>
+
+        <div class="tasks-grid">
+
+            <a href="korelacja-danych.html" class="task-card correlation">
+                <div class="task-number">Ćwiczenie 01</div>
+                <span class="task-icon">📊</span>
+                <div class="task-title">Korelacja Danych</div>
+                <div class="task-desc">Czy potrafisz wyczuć, które dane biznesowe są ze sobą powiązane? Sprawdź swoją intuicję o korelacjach w świecie SaaS, CRM i BI.</div>
+                <div class="task-meta">
+                    <span class="task-badge">⏱ ~15 min</span>
+                    <span class="task-badge">5 pytań</span>
+                </div>
+                <div class="task-arrow">Rozpocznij →</div>
+            </a>
+
+            <a href="myslenie-krytyczne.html" class="task-card critical">
+                <div class="task-number">Ćwiczenie 02</div>
+                <span class="task-icon">🧠</span>
+                <div class="task-title">Myślenie Krytyczne</div>
+                <div class="task-desc">Od łatwych do trudnych — 10 pułapek logicznych, z którymi mierzy się każdy menedżer. Błędy poznawcze, fałszywe wnioski, manipulacja danymi.</div>
+                <div class="task-meta">
+                    <span class="task-badge">⏱ ~15 min</span>
+                    <span class="task-badge">10 pytań</span>
+                    <span class="task-badge">📈 Rosnąca trudność</span>
+                </div>
+                <div class="task-arrow">Rozpocznij →</div>
+            </a>
+
+            <a href="symulacja-transformacja.html" class="task-card simulation">
+                <div class="task-number">Ćwiczenie 03</div>
+                <span class="task-icon">🏭</span>
+                <div class="task-title">Symulacja: Transformacja Cyfrowa</div>
+                <div class="task-desc">Wciel się w CDO firmy produkcyjnej. Podejmij 6 decyzji strategicznych — dane, AI, ludzie, technologia. Na końcu Llama AI przeanalizuje Twoją strategię.</div>
+                <div class="task-meta">
+                    <span class="task-badge">⏱ ~30 min</span>
+                    <span class="task-badge">6 decyzji</span>
+                    <span class="task-badge badge-ai">🤖 AI analiza</span>
+                </div>
+                <div class="task-arrow">Rozpocznij →</div>
+            </a>
+
+            <a href="ciemne-dane.html" class="task-card darkdata">
+                <div class="task-number">Ćwiczenie 04</div>
+                <span class="task-icon">🔦</span>
+                <div class="task-title">Audyt Ciemnych Danych</div>
+                <div class="task-desc">Wciel się w konsultanta danych w Nordia S.A. Oceń 12 zbiorów danych — które to dark data, ile kosztują i co z nimi zrobić. Żywy ticker kosztów.</div>
+                <div class="task-meta">
+                    <span class="task-badge">⏱ ~25 min</span>
+                    <span class="task-badge">12 zbiorów danych</span>
+                    <span class="task-badge badge-new">✨ Nowe</span>
+                </div>
+                <div class="task-arrow">Rozpocznij →</div>
+            </a>
+
+        </div>
+
+        <div class="footer">
+            <div class="footer-left">Interaktywne Zadania MBA &copy; 2026</div>
+            <div class="footer-right">MBA · Zarządzanie Cyfrowe</div>
+        </div>
+
+    </div>
+</body>
+</html>
