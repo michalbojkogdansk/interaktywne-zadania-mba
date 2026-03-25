@@ -381,6 +381,25 @@ const CARDS = [
     cText:'Historia temperatur to DOWÓD ZGODNOŚCI dla klientów farmaceutycznych i spożywczych (cold chain compliance). Usunięcie = utrata certyfikacji + kontrakt 200k PLN/rok. Potencjał: predykcja awarii chłodni zanim nastąpią. Decyzja: monetyzuj, nigdy nie usuwaj.'}
 ]
 
+
+const LEVELS = [
+  { max: 30,  label: 'Stażysta Danych',      color: '#C0392B' },
+  { max: 50,  label: 'Analityk Junior',       color: '#E07B2A' },
+  { max: 65,  label: 'Analityk Danych',       color: '#B8860B' },
+  { max: 79,  label: 'Senior Konsultant',     color: '#4A8F8A' },
+  { max: 89,  label: 'Data Governance Lead',  color: '#2E7D32' },
+  { max: 100, label: 'Chief Data Officer',    color: '#1A1A1A' }
+];
+
+const BENCHMARKS = {
+  logistics:      'Firmy logistyczne mają średnio 48% danych sklasyfikowanych jako dark data. Koszty storage dark data w branży: 18–22% całkowitego budżetu IT.',
+  manufacturing:  'W produkcji średnio 55% zebranych danych nigdy nie jest analizowanych. Największe rezerwy: dane z linii produkcyjnych i czujników IoT.',
+  retail:         'Retail: 60% zebranych danych o klientach i transakcjach pozostaje nieaktywnych. Rekomendacje produktowe to najszybszy ROI z dark data.',
+  services:       'Firmy usługowe mają 40–45% dark data, głównie w korespondencji e-mail i dokumentach. Potencjał NLP jest często niedoceniany.',
+  finance:        'Sektor finansowy: dark data często oznacza compliance risk. 30–35% danych zbieranych jest bez jasnej podstawy prawnej.',
+  other:          'Przeciętna firma zbiera 2–4× więcej danych niż aktywnie używa. Koszty przechowywania dark data wynoszą średnio 15–20% budżetu IT.'
+};
+
 let st = {
   nick: '', profile: { industry:'', size:'', dpo:'' },
   cur: 0, decisions: [],
@@ -545,14 +564,6 @@ function showResults() {
   const level = LEVELS.find(l => score <= l.max) || LEVELS[LEVELS.length-1];
   const darkCards = CARDS.filter(c => c.isDA);
   const darkFound = st.decisions.filter(d => d.cls === 'dark').length;
-  const clsCorrect = st.decisions.filter((d,i) => {
-    const card = CARDS[i];
-    return (card.isDA && d.cls === 'dark') || (!card.isDA && d.cls === 'active');
-  }).length;
-  const clsCorrect = st.decisions.filter((d,i) => {
-    const card = CARDS[i];
-    return (card.isDA && d.cls === 'dark') || (!card.isDA && d.cls === 'active');
-  }).length;
   const clsCorrect = st.decisions.filter((d,i) => {
     const card = CARDS[i];
     return (card.isDA && d.cls === 'dark') || (!card.isDA && d.cls === 'active');
