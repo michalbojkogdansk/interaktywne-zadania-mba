@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔦 Audyt Ciemnych Danych — Nordia S.A.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #F0EDE7; --white: #ffffff; --border: #D5CFC6;
+      --teal: #4A8F8A; --teal-light: #e8f3f2; --dark: #1A1A1A;
+      --mid: #555; --light: #888; --red: #C0392B; --orange: #E07B2A;
+      --green: #2E7D32; --yellow: #B8860B;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
+
+    /* TICKER */
+    .ticker { position: sticky; top: 0; z-index: 100; background: var(--dark); color: white;
+      padding: 10px 24px 13px; display: none; align-items: center; justify-content: space-between; font-size: 13px; }
+    .ticker.visible { display: flex; }
+    .ticker-cost { font-size: 18px; font-weight: 800; color: #FF6B6B; }
+    .ticker-potential { font-size: 18px; font-weight: 800; color: #7DCEAC; }
+    .ticker-progress { height: 3px; background: rgba(255,255,255,0.15); position: absolute; bottom: 0; left: 0; right: 0; }
+    .ticker-progress-fill { height: 100%; background: var(--teal); transition: width 0.3s; }
+
+    /* LAYOUT */
+    .container { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; }
+    .stage { display: none; }
+    .stage.active { display: block; }
+
+    /* TYPOGRAPHY */
+    .exercise-label { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+    h1 { font-size: 32px; font-weight: 800; line-height: 1.15; margin-bottom: 12px; }
+    .subtitle { font-size: 16px; color: var(--mid); line-height: 1.6; margin-bottom: 32px; }
+    .section-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--light); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+    /* COMPANY BRIEF */
+    .company-brief { background: var(--white); border: 1px solid var(--border); padding: 24px; margin-bottom: 32px; }
+    .company-brief h3 { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; }
+    .company-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; text-align: center; }
+    .stat-value { font-size: 22px; font-weight: 800; }
+    .stat-label { font-size: 11px; color: var(--light); margin-top: 2px; }
+
+    /* FORM */
+    .form-group { margin-bottom: 24px; }
+    .form-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--light); margin-bottom: 8px; display: block; }
+    input[type="text"] { width: 100%; padding: 12px 16px; border: 1px solid var(--border); background: var(--white); font-family: inherit; font-size: 15px; color: var(--dark); outline: none; border-radius: 0; }
+    input[type="text"]:focus { border-color: var(--teal); }
+
+    /* RADIO ROWS */
+    .radio-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--border); background: var(--white); cursor: pointer; margin-bottom: 4px; transition: border-color 0.15s, background 0.15s; user-select: none; }
+    .radio-row:hover { border-color: var(--teal); }
+    .radio-row.selected { border-color: var(--teal); background: var(--teal-light); }
+    .radio-circle { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .radio-row.selected .radio-circle { border-color: var(--teal); background: var(--teal); }
+    .radio-row.selected .radio-circle::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; }
+    .radio-text { font-size: 14px; font-weight: 500; }
+    .radio-sub { font-size: 12px; color: var(--light); margin-top: 1px; }
+
+    /* BUTTONS */
+    .btn { display: inline-block; padding: 12px 28px; font-family: inherit; font-size: 14px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; border: none; border-radius: 0; transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--teal); color: white; }
+    .btn-secondary { background: var(--white); color: var(--dark); border: 1px solid var(--border); }
+    .btn-full { width: 100%; text-align: center; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* DATA CARD */
+    .data-card { background: var(--white); border: 1px solid var(--border); margin-bottom: 20px; }
+    .data-card-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 16px; }
+    .card-emoji { font-size: 32px; flex-shrink: 0; line-height: 1; }
+    .card-number { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--light); margin-bottom: 4px; }
+    .card-title { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    .card-description { font-size: 14px; color: var(--mid); line-height: 1.6; }
+    .card-tags { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .tag { font-size: 11px; font-weight: 600; padding: 3px 8px; border: 1px solid var(--border); background: var(--cream); color: var(--mid); }
+
+    /* CONSEQUENCE */
+    .consequence-panel { background: var(--cream); border: 1px solid var(--border); border-top: 3px solid var(--teal); padding: 20px 24px; margin-bottom: 20px; }
+    .consequence-panel.correct { border-top-color: var(--green); }
+    .consequence-panel.partial { border-top-color: var(--orange); }
+    .consequence-panel.trap { border-top-color: var(--red); background: #fff8f8; }
+    .consequence-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .consequence-badge { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px; }
+    .badge-correct { background: #E8F5E9; color: var(--green); }
+    .badge-partial { background: #FFF3E0; color: var(--orange); }
+    .badge-trap { background: var(--red); color: white; }
+    .consequence-text { font-size: 14px; color: var(--mid); line-height: 1.6; margin-bottom: 12px; }
+    .consequence-numbers { display: flex; gap: 12px; flex-wrap: wrap; }
+    .cons-number { flex: 1; min-width: 120px; padding: 12px; background: white; border: 1px solid var(--border); text-align: center; }
+    .cons-number-val { font-size: 18px; font-weight: 800; }
+    .cons-number-label { font-size: 11px; color: var(--light); margin-top: 2px; }
+
+    /* AUDIT PROGRESS */
+    .audit-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .audit-progress-label { font-size: 13px; color: var(--light); white-space: nowrap; }
+    .audit-progress-track { flex: 1; height: 3px; background: var(--border); }
+    .audit-progress-fill { height: 100%; background: var(--teal); transition: width 0.3s; }
+
+    /* RESULTS */
+    .score-display { text-align: center; padding: 40px 24px; background: var(--white); border: 1px solid var(--border); margin-bottom: 24px; }
+    .score-number { font-size: 72px; font-weight: 800; line-height: 1; }
+    .score-label { font-size: 14px; color: var(--light); margin-top: 8px; }
+    .score-level { display: inline-block; margin-top: 16px; padding: 6px 20px; border: 2px solid var(--teal); font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+    .metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+    .metric-card { background: var(--white); border: 1px solid var(--border); padding: 20px; text-align: center; }
+    .metric-value { font-size: 24px; font-weight: 800; }
+    .metric-label { font-size: 12px; color: var(--light); margin-top: 4px; }
+    .cost-breakdown { background: var(--white); border: 1px solid var(--border); padding: 24px; margin-bottom: 24px; }
+    .cost-bar-item { margin-bottom: 16px; }
+    .cost-bar-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+    .cost-bar-track { height: 8px; background: var(--cream); border: 1px solid var(--border); }
+    .cost-bar-fill { height: 100%; background: var(--teal); }
+    .cost-bar-fill.missed { background: #ccc; }
+    .benchmark-box { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--teal); padding: 20px 24px; margin-bottom: 24px; }
+    .benchmark-box h4 { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+    .benchmark-box p { font-size: 14px; color: var(--mid); line-height: 1.6; }
+    .alert { padding: 12px 16px; border: 1px solid; font-size: 13px; margin-bottom: 16px; }
+    .alert-error { border-color: var(--red); background: #fff5f5; color: var(--red); }
+    .alert-success { border-color: var(--green); background: #e8f5e9; color: var(--green); }
+    .back-home-wrap { text-align: center; margin-top: 32px; }
+    .back-home-btn { display: inline-block; padding: 10px 24px; border: 1px solid var(--border); background: var(--white); color: var(--dark); text-decoration: none; font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; transition: border-color 0.15s; }
+    .back-home-btn:hover { border-color: var(--teal); color: var(--teal); }
+  </style>
+</head>
+<body>
+
+<!-- STICKY TICKER -->
+<div class="ticker" id="ticker">
+  <div>
+    <div style="opacity:0.7;font-size:12px;" id="ticker-cards">Karta 1 z 12</div>
+    <div>💸 Koszty dark data: <span class="ticker-cost" id="ticker-cost">0 PLN/rok</span></div>
+  </div>
+  <div style="text-align:right;">
+    <div style="opacity:0.7;font-size:12px;">Potencjał do aktywacji:</div>
+    <div class="ticker-potential" id="ticker-potential">0 PLN/rok</div>
+  </div>
+  <div class="ticker-progress"><div class="ticker-progress-fill" id="ticker-bar" style="width:0%"></div></div>
+</div>
+
+<div class="container">
+
+<!-- ════════════════════ STAGE 0: INTRO ════════════════════ -->
+<div class="stage active" id="stage-intro">
+  <div class="exercise-label">Ćwiczenie 04 · Dark Data</div>
+  <h1>Audyt Ciemnych Danych</h1>
+  <p class="subtitle">Wcielasz się w zewnętrznego konsultanta danych wezwanego przez Nordia S.A. Twoim zadaniem: ocenić 12 zbiorów danych — które to "ciemne dane", ile kosztują i co z nimi zrobić.</p>
+
+  <div class="company-brief">
+    <h3>📋 Profil Klienta</h3>
+    <p style="font-size:14px;color:var(--mid);line-height:1.6;"><strong>Nordia S.A.</strong> — polska firma logistyczna, 800 pracowników, operacje w 6 województwach. Prezes zlecił audyt po tym, jak zewnętrzni doradcy oszacowali, że firma „siedzi na złocie danych, którego nie widzi".</p>
+    <div class="company-stats">
+      <div><div class="stat-value">800</div><div class="stat-label">pracowników</div></div>
+      <div><div class="stat-value">45</div><div class="stat-label">pojazdów we flocie</div></div>
+      <div><div class="stat-value">12 lat</div><div class="stat-label">historia danych</div></div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" for="nick-input">Twój pseudonim (widoczny w wynikach grupy)</label>
+    <input type="text" id="nick-input" placeholder="np. Analityk_Kowalski" maxlength="30">
+  </div>
+  <div style="font-size:13px;color:var(--light);margin-bottom:24px;">⏱ Szacowany czas: 20–25 minut &nbsp;·&nbsp; 12 zbiorów danych do oceny</div>
+  <button class="btn btn-primary" onclick="startProfile()">Rozpocznij audyt →</button>
+</div>
+
+<!-- ════════════════════ STAGE 1: PROFILE ════════════════════ -->
+<div class="stage" id="stage-profile">
+  <div class="exercise-label">Krok 1 z 3 · Profilowanie</div>
+  <h1>Zanim zaczniemy</h1>
+  <p class="subtitle">Trzy szybkie pytania — skalibrują benchmark branżowy na końcu audytu.</p>
+
+  <div class="form-group">
+    <p class="section-title">1. Branża Twojej firmy</p>
+    <div class="radio-row" onclick="selectProfile('industry','logistics',this)"><div class="radio-circle"></div><div><div class="radio-text">Logistyka / Transport</div></div></div>
+    <div class="radio-row" onclick="selectProfile('industry','manufacturing',this)"><div class="radio-circle"></div><div><div class="radio-text">Produkcja / Manufacturing</div></div></div>
+    <div class="radio-row" onclick="selectProfile('industry','retail',this)"><div class="radio-circle"></div><div><div class="radio-text">Handel / Retail</div></div></div>
+    <div class="radio-row" onclick="selectProfile('industry','services',this)"><div class="radio-circle"></div><div><div class="radio-text">Usługi / Services</div></div></div>
+    <div class="radio-row" onclick="selectProfile('industry','finance',this)"><div class="radio-circle"></div><div><div class="radio-text">Finanse / Banking</div></div></div>
+    <div class="radio-row" onclick="selectProfile('industry','other',this)"><div class="radio-circle"></div><div><div class="radio-text">Inna branża</div></div></div>
+  </div>
+
+  <div class="form-group">
+    <p class="section-title">2. Wielkość Twojej firmy (liczba pracowników)</p>
+    <div class="radio-row" onclick="selectProfile('size','small',this)"><div class="radio-circle"></div><div><div class="radio-text">Poniżej 50</div></div></div>
+    <div class="radio-row" onclick="selectProfile('size','medium',this)"><div class="radio-circle"></div><div><div class="radio-text">50–200</div></div></div>
+    <div class="radio-row" onclick="selectProfile('size','large',this)"><div class="radio-circle"></div><div><div class="radio-text">200–1 000</div></div></div>
+    <div class="radio-row" onclick="selectProfile('size','enterprise',this)"><div class="radio-circle"></div><div><div class="radio-text">Powyżej 1 000</div></div></div>
+  </div>
+
+  <div class="form-group">
+    <p class="section-title">3. Czy Twoja firma ma wyznaczonego DPO (Inspektora Ochrony Danych)?</p>
+    <div class="radio-row" onclick="selectProfile('dpo','yes',this)"><div class="radio-circle"></div><div><div class="radio-text">Tak</div></div></div>
+    <div class="radio-row" onclick="selectProfile('dpo','no',this)"><div class="radio-circle"></div><div><div class="radio-text">Nie</div></div></div>
+    <div class="radio-row" onclick="selectProfile('dpo','unknown',this)"><div class="radio-circle"></div><div><div class="radio-text">Nie wiem</div></div></div>
+  </div>
+
+  <button class="btn btn-primary" onclick="startAudit()">Przejdź do audytu →</button>
+</div>
+
+<!-- ════════════════════ STAGE 2: AUDIT ════════════════════ -->
+<div class="stage" id="stage-audit">
+  <div class="audit-progress">
+    <div class="audit-progress-label" id="audit-label">Karta 1 / 12</div>
+    <div class="audit-progress-track"><div class="audit-progress-fill" id="audit-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="card-container"></div>
+
+  <div id="decision-area">
+    <div class="form-group">
+      <p class="section-title">Klasyfikacja tego zbioru danych</p>
+      <div class="radio-row" id="cls-dark" onclick="selectCls('dark',this)">
+        <div class="radio-circle"></div>
+        <div><div class="radio-text">🔦 Dark Data</div><div class="radio-sub">Zbieramy, ale nie analizujemy / nie używamy</div></div>
+      </div>
+      <div class="radio-row" id="cls-active" onclick="selectCls('active',this)">
+        <div class="radio-circle"></div>
+        <div><div class="radio-text">✅ Dane aktywne</div><div class="radio-sub">Regularnie używane w procesach lub decyzjach</div></div>
+      </div>
+      <div class="radio-row" id="cls-unknown" onclick="selectCls('unknown',this)">
+        <div class="radio-circle"></div>
+        <div><div class="radio-text">❓ Potrzebuję więcej informacji</div></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <p class="section-title">Rekomendowana akcja</p>
+      <div class="radio-row" id="act-monetize" onclick="selectAct('monetize',this)">
+        <div class="radio-circle"></div>
+        <div><div class="radio-text">💰 Monetyzuj / Aktywuj</div><div class="radio-sub">Warto zainwestować w analizę i wykorzystanie</div></div>
+      </div>
+      <div class="radio-row" id="act-delete" onclick="selectAct('delete',this)">
+        <div class="radio-circle"></div>
+        <div><div class="radio-text">🗑️ Usuń</div><div class="radio-sub">Brak wartości lub ryzyko compliance — bezpieczne usunięcie</div></div>
+      </div>
+      <div class="radio-row" id="act-archive" onclick="selectAct('archive',this)">
+        <div class="radio-circle"></div>
+        <div><div class="radio-text">📦 Archiwizuj</div><div class="radio-sub">Przechowaj tanio, bez aktywnego użycia</div></div>
+      </div>
+      <div class="radio-row" id="act-investigate" onclick="selectAct('investigate',this)">
+        <div class="radio-circle"></div>
+        <div><div class="radio-text">🔍 Zbadaj dalej</div><div class="radio-sub">Potrzebuję więcej informacji przed decyzją</div></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="confirm-btn" onclick="confirmDecision()" disabled>Zatwierdź ocenę →</button>
+  </div>
+
+  <div id="consequence-area"></div>
+  <div id="next-area" style="display:none;margin-top:16px;"></div>
+</div>
+
+<!-- ════════════════════ STAGE 3: RESULTS ════════════════════ -->
+<div class="stage" id="stage-results">
+  <div class="exercise-label">Wyniki Audytu · Nordia S.A.</div>
+  <h1>Raport Końcowy</h1>
+
+  <div class="score-display">
+    <div class="score-number" id="res-score">—</div>
+    <div class="score-label">punktów na 100</div>
+    <div class="score-level" id="res-level">—</div>
+  </div>
+
+  <div class="metric-grid">
+    <div class="metric-card"><div class="metric-value" id="m-dark" style="color:var(--red)">—</div><div class="metric-label">Dark data zidentyfikowane</div></div>
+    <div class="metric-card"><div class="metric-value" id="m-cost" style="color:var(--orange)">— PLN</div><div class="metric-label">Roczne koszty storage + ryzyko</div></div>
+    <div class="metric-card"><div class="metric-value" id="m-potential" style="color:var(--green)">— PLN</div><div class="metric-label">Potencjał do aktywacji</div></div>
+    <div class="metric-card"><div class="metric-value" id="m-traps">—</div><div class="metric-label">Pułapki uniknięte</div></div>
+  </div>
+
+  <div class="cost-breakdown">
+    <p class="section-title" style="margin-bottom:20px;">Rozkład Kosztów Dark Data (odkryte vs. przeoczone)</p>
+    <div id="cost-bars"></div>
+    <div style="display:flex;gap:16px;margin-top:16px;font-size:12px;">
+      <span style="display:flex;align-items:center;gap:6px;"><span style="width:16px;height:8px;background:var(--teal);display:inline-block;"></span> Zidentyfikowane przez Ciebie</span>
+      <span style="display:flex;align-items:center;gap:6px;"><span style="width:16px;height:8px;background:#ccc;display:inline-block;"></span> Przeoczone</span>
+    </div>
+  </div>
+
+  <div class="benchmark-box">
+    <h4>📊 Benchmark Branżowy</h4>
+    <p id="benchmark-text">—</p>
+  </div>
+
+  <div id="submit-area">
+    <div class="form-group">
+      <label class="form-label">Komentarz po audycie (opcjonalnie)</label>
+      <input type="text" id="comment-input" placeholder="Spostrzeżenia, wnioski, pytania..." maxlength="200">
+    </div>
+    <button class="btn btn-primary btn-full" id="submit-btn" onclick="submitResults()">Wyślij wyniki →</button>
+    <div id="submit-feedback" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="back-home-wrap" id="back-home" style="display:none;">
+    <a href="index.html" class="back-home-btn">← Powrót do strony głównej</a>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
+
+const CARDS = [
+  { id:1, emoji:'📦', title:'Logi systemu WMS',
+    desc:'Zapisujemy każde zdarzenie magazynowe od 2019 roku. Baza liczy 2 TB. Nikt nie sięgał do tych danych po zakończeniu dnia operacyjnego.',
+    size:'2 TB', age:'od 2019 r.', risk:'medium',
+    isDA:true, best:'monetize', cost:14400, value:80000, trap:false,
+    cTitle:'Dark Data z dużym potencjałem',
+    cText:'Analiza logów WMS odkrywa wzorce opóźnień i wąskie gardła. Firmy które to robią redukują czas kompletacji o 15–20%. Szacowana oszczędność: ok. 80 000 PLN/rok.'},
+  { id:2, emoji:'📧', title:'Archiwum e-maili pracowników',
+    desc:'7 lat korespondencji firmowej na lokalnym serwerze „na wszelki wypadek". Brak polityki retencji i dokumentacji podstawy prawnej przetwarzania.',
+    size:'800 GB', age:'7 lat', risk:'high',
+    isDA:true, best:'delete', cost:5760, value:0, trap:false,
+    cTitle:'Ryzyko RODO — działaj natychmiast',
+    cText:'Przechowywanie e-maili pracowników bez podstawy prawnej narusza RODO. Kara UODOdo 4% rocznego obrotu. Rekomendacja: natychmiastowe usunięcie + wdrożenie polityki retencji.'},
+  { id:3, emoji:'📹', title:'Nagrania z kamer magazynowych',
+    desc:'System CCTV — 48 kamer 24/7. Nagrania kasowane po 30 dniach automatycznie. Używane wyłącznie przy incydentach bezpieczeństwa i szkodach.',
+    size:'rolling 30 dni', age:'bieżące', risk:'low',
+    isDA:false, best:'archive', cost:0, value:0, trap:false,
+    cTitle:'Nie dark data — dane aktywne',
+    cText:'Nagrania mają aktywne zastosowanie: bezpieczeństwo i compliance ubezpieczeniowy. Nie są dark data. Ciekawa opcja: analiza ruchu przez AI dla optymalizacji magazynu — ale to osobna inicjatywa.'},
+  { id:4, emoji:'📋', title:'Ankiety NPS klientów',
+    desc:'3 lata ankiet NPS — 1 200 wypełnionych formularzy w SharePoint. Analizowano tylko średnią ocenę. Pełne odpowiedzi tekstowe nigdy nie były czytane.',
+    size:'45 MB', age:'3 lata', risk:'low',
+    isDA:true, best:'monetize', cost:200, value:35000, trap:false,
+    cTitle:'Ukryta wiedza o klientach',
+    cText:'Średnia NPS ukrywa systemowe problemy. Text mining odpowiedzi ujawnia je precyzyjnie. Firmy robiące analizę sentymentu ankiet poprawiają retencję klientów o 8–12%.'},
+  { id:5, emoji:'🚛', title:'Historia GPS floty pojazdów',
+    desc:'45 ciężarówek wysyła GPS co 30 sekund. Real-time widoczne na mapie. Historia kasowana po 90 dniach — „bo zajmuje miejsce na serwerze".',
+    size:'kasowane po 90 dniach', age:'bieżące + 90 dni', risk:'low',
+    isDA:true, best:'monetize', cost:3600, value:120000, trap:false,
+    cTitle:'Kopalnia optymalizacji tras',
+    cText:'Historia GPS to fundament ML do optymalizacji tras. Retencja 2 lat + analiza może obniżyć zużycie paliwa o 8–12%. Przy flocie 45 pojazdów: ok. 120 000 PLN/rok oszczędności.'},
+  { id:6, emoji:'🧾', title:'Skany faktur (nieustrukturyzowane PDF)',
+    desc:'12 lat skanów PDF bez OCR. Księgowość ręcznie przepisuje dane do ERP od 2012 roku. Nikt nie rozważał automatyzacji — „tak zawsze robiliśmy".',
+    size:'240 GB', age:'12 lat', risk:'medium',
+    isDA:true, best:'monetize', cost:1800, value:60000, trap:false,
+    cTitle:'Automatyzacja z ROI < 12 miesięcy',
+    cText:'OCR + automatyczne przetwarzanie faktur eliminuje 3–4 etaty ręcznej pracy. Historyczne dane ujawnią wzorce płatności i ryzyko kontrahentów. Typowy ROI poniżej 12 miesięcy.'},
+  { id:7, emoji:'⚠️', title:'Logi błędów systemu ERP',
+    desc:'ERP generuje 50 000 wpisów dziennie. IT reaguje wyłącznie na błędy krytyczne. Pozostałe 95% logów (ostrzeżenia, informacje) — nigdy nie analizowane.',
+    size:'1,2 TB', age:'od 2020 r.', risk:'low',
+    isDA:true, best:'monetize', cost:8640, value:45000, trap:false,
+    cTitle:'Predictive maintenance IT',
+    cText:'Wzorce ostrzeżeń poprzedzają awarie ERP z 48–72h wyprzedzeniem. Nieplanowane przestoje kosztują firmę tej wielkości ok. 45 000 PLN/rok — możliwe do wyeliminowania.'},
+  { id:8, emoji:'👥', title:'Profile klientów w CRM',
+    desc:'4 200 klientów w CRM. 30% pól pustych, dane niespójne. Ostatnia masowa aktualizacja: 2021. Handlowcy wprowadzają dane nierównomiernie.',
+    size:'2 GB', age:'od 2018 r.', risk:'medium',
+    isDA:true, best:'investigate', cost:500, value:90000, trap:false,
+    cTitle:'Dirty data — najpierw audyt jakości',
+    cText:'To nie dark data — to "dirty data". Dane są, ale niskiej jakości. Przed monetyzacją potrzebny audyt. Czyszczenie + wzbogacenie CRM zwiększa skuteczność sprzedaży o 15–20%.'},
+  { id:9, emoji:'🌡️', title:'Dane z czujników temperatury chłodni',
+    desc:'Chłodnie wysyłają pomiar co minutę. Sprawdzane tylko przy alarmach. 4 lata historii — nigdy nie analizowane. Magazynier: „mogę to skasować, zajmuje miejsce".',
+    size:'180 GB', age:'4 lata', risk:'high',
+    isDA:true, best:'monetize', cost:1200, value:200000, trap:true,
+    cTitle:'⚠️ PUŁAPKA — Błąd krytyczny!',
+    cText:'Historia temperatur to DOWÓD ZGODNOŚCI dla klientów farmaceutycznych i spożywczych. Usunięcie = utrata certyfikacji łańcucha chłodniczego + kontrakt 200k PLN/rok. Dane mają też wartość analityczną: predykcja awarii chłodni.'},
+  { id:10, emoji:'📊', title:'Raporty miesięczne w Excelu',
+    desc:'230 plików Excel z lat 2015–2023. Różne formaty, różni autorzy. Nikt nie wie co jest w połowie z nich — leżą na wspólnym dysku sieciowym.',
+    size:'8 GB', age:'8 lat', risk:'low',
+    isDA:true, best:'investigate', cost:600, value:25000, trap:false,
+    cTitle:'Data Swamp — najpierw inwentaryzacja',
+    cText:'Klasyczny "data swamp". Część może zawierać dane historyczne niemożliwe do odtworzenia. Rekomendacja: inwentaryzacja i kategoryzacja przed jakąkolwiek decyzją o usunięciu.'},
+  { id:11, emoji:'🏥', title:'Dane absencji pracowników (HR)',
+    desc:'6 lat danych o zwolnieniach lekarskich. Używane wyłącznie do naliczania wypłat. Nigdy nie zestawiane z wynikami operacyjnymi ani sezonowością zamówień.',
+    size:'500 MB', age:'6 lat', risk:'high',
+    isDA:true, best:'investigate', cost:400, value:30000, trap:false,
+    cTitle:'Potencjał + obowiązki RODO',
+    cText:'Dane o zdrowiu = dane wrażliwe (art. 9 RODO). Każda analiza wymaga DPIA i anonimizacji. Potencjał jest (predykcja, planowanie personelu), ale decyzja "monetyzuj" bez audytu prawnego to błąd.'},
+  { id:12, emoji:'📁', title:'Historia przegranych przetargów',
+    desc:'180 ofert handlowych które przegraliśmy w latach 2018–2024. Ceny, specyfikacje, powody odrzucenia. Nikt nie wraca — „to już przeszłość, po co do tego wracać".',
+    size:'3 GB', age:'6 lat', risk:'low',
+    isDA:true, best:'monetize', cost:200, value:150000, trap:false,
+    cTitle:'💎 Nieodkryte złoto strategiczne',
+    cText:'Analiza wzorców przegranych ofert ujawnia systematyczne błędy wyceny i pozycjonowania. Win-rate improvement o 20–30% to typowy wynik. Przy obecnym pipeline Nordii: ok. 150 000 PLN/rok.'}
+];
+
+const BENCHMARKS = {
+  logistics: 'Firmy logistyczne mają typowo 65–75% danych jako dark data — jeden z wyższych wskaźników w gospodarce. Nordia S.A. jest przypadkiem typowym dla branży.',
+  manufacturing: 'Produkcja generuje ogromne wolumeny dark data z czujników i linii produkcyjnych — typowo 70–80% całego wolumenu.',
+  retail: 'Handel ma dużo dark data w historii transakcji i zachowaniach klientów online — typowo 55–65%.',
+  finance: 'Sektor finansowy jest liderem w utilizacji danych, ale dark data nadal stanowi 40–55% wolumenu.',
+  services: 'Firmy usługowe mają typowo 50–60% dark data, głównie w komunikacji wewnętrznej i dokumentach.',
+  other: 'Według Gartnera, typowa organizacja ma ok. 80% swoich danych jako dark data — nieustrukturyzowane, nieużywane.'
+};
+
+const LEVELS = [
+  { max: 35, label: 'Junior Data Analyst', color: 'var(--red)' },
+  { max: 55, label: 'Data Analyst', color: 'var(--orange)' },
+  { max: 75, label: 'Senior Data Analyst', color: 'var(--yellow)' },
+  { max: 90, label: 'Data Manager', color: 'var(--teal)' },
+  { max: 100, label: 'Chief Data Officer', color: 'var(--green)' }
+];
+
+let st = {
+  nick: '', profile: { industry:'', size:'', dpo:'' },
+  cur: 0, decisions: [],
+  totalCost: 0, totalPotential: 0,
+  trapsHit: 0, cls: null, act: null,
+  finalScore: 0, finalLevel: ''
+};
+
+function showStage(id) {
+  document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startProfile() {
+  const nick = document.getElementById('nick-input').value.trim();
+  if (!nick) { alert('Wpisz pseudonim, żeby kontynuować.'); return; }
+  st.nick = nick;
+  showStage('stage-profile');
+}
+
+function selectProfile(field, val, el) {
+  el.parentElement.querySelectorAll('.radio-row').forEach(r => r.classList.remove('selected'));
+  el.classList.add('selected');
+  st.profile[field] = val;
+}
+
+function startAudit() {
+  if (!st.profile.industry || !st.profile.size || !st.profile.dpo) {
+    alert('Odpowiedz na wszystkie 3 pytania.'); return;
+  }
+  showStage('stage-audit');
+  document.getElementById('ticker').classList.add('visible');
+  renderCard(0);
+}
+
+function renderCard(i) {
+  st.cls = null; st.act = null;
+  const card = CARDS[i];
+  const riskColors = { low:'var(--green)', medium:'var(--orange)', high:'var(--red)' };
+  const riskLabels = { low:'Ryzyko: niskie', medium:'Ryzyko: średnie', high:'Ryzyko: WYSOKIE' };
+
+  document.getElementById('card-container').innerHTML = `
+    <div class="data-card">
+      <div class="data-card-header">
+        <div class="card-emoji">${card.emoji}</div>
+        <div style="flex:1">
+          <div class="card-number">Zbiór danych ${i+1} z ${CARDS.length}</div>
+          <div class="card-title">${card.title}</div>
+          <div class="card-description">${card.desc}</div>
+          <div class="card-tags">
+            <span class="tag">📏 ${card.size}</span>
+            <span class="tag">📅 ${card.age}</span>
+            <span class="tag" style="color:${riskColors[card.risk]};border-color:${riskColors[card.risk]}">${riskLabels[card.risk]}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  ['cls-dark','cls-active','cls-unknown'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  ['act-monetize','act-delete','act-archive','act-investigate'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  document.getElementById('confirm-btn').disabled = true;
+  document.getElementById('consequence-area').innerHTML = '';
+  document.getElementById('next-area').style.display = 'none';
+  document.getElementById('decision-area').style.display = 'block';
+
+  const pct = (i / CARDS.length) * 100;
+  document.getElementById('audit-fill').style.width = pct + '%';
+  document.getElementById('audit-label').textContent = `Karta ${i+1} / ${CARDS.length}`;
+  document.getElementById('ticker-cards').textContent = `Karta ${i+1} z ${CARDS.length}`;
+  document.getElementById('ticker-bar').style.width = pct + '%';
+}
+
+function selectCls(val, el) {
+  ['cls-dark','cls-active','cls-unknown'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  el.classList.add('selected');
+  st.cls = val;
+  checkReady();
+}
+
+function selectAct(val, el) {
+  ['act-monetize','act-delete','act-archive','act-investigate'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  el.classList.add('selected');
+  st.act = val;
+  checkReady();
+}
+
+function checkReady() {
+  document.getElementById('confirm-btn').disabled = !(st.cls && st.act);
+}
+
+function confirmDecision() {
+  const card = CARDS[st.cur];
+  let pts = 0;
+  const clsOk = (card.isDA && st.cls === 'dark') || (!card.isDA && st.cls === 'active');
+  const actOk = st.act === card.best;
+  if (clsOk) pts += 5;
+  else if (st.cls === 'unknown') pts += 1;
+  if (actOk) pts += 5;
+  else if ((st.act === 'investigate' && card.best === 'monetize') || (st.act === 'monetize' && card.best === 'investigate')) pts += 2;
+
+  let isTrap = false;
+  if (card.trap && st.act === 'delete') { pts -= 10; st.trapsHit++; isTrap = true; }
+
+  if (st.cls === 'dark') {
+    st.totalCost += card.cost;
+    if (st.act === 'monetize') st.totalPotential += card.value;
+  }
+
+  st.decisions.push({ cardId: card.id, cls: st.cls, act: st.act, pts, clsOk, actOk, isTrap });
+
+  document.getElementById('ticker-cost').textContent = fmt(st.totalCost) + ' PLN/rok';
+  document.getElementById('ticker-potential').textContent = fmt(st.totalPotential) + ' PLN/rok';
+
+  const isOk = clsOk && actOk;
+  const panelClass = isTrap ? 'trap' : isOk ? 'correct' : 'partial';
+  const badgeClass = isTrap ? 'badge-trap' : isOk ? 'badge-correct' : 'badge-partial';
+  const badgeText = isTrap ? '⚠️ PUŁAPKA — błąd krytyczny!' : isOk ? '✓ Trafna ocena' : '~ Częściowo poprawnie';
+
+  const nums = (card.cost > 0 || card.value > 0) ? `
+    <div class="consequence-numbers">
+      ${card.cost > 0 ? `<div class="cons-number"><div class="cons-number-val" style="color:var(--red)">−${fmt(card.cost)} PLN</div><div class="cons-number-label">Roczny koszt storage + ryzyko</div></div>` : ''}
+      ${card.value > 0 ? `<div class="cons-number"><div class="cons-number-val" style="color:var(--green)">+${fmt(card.value)} PLN</div><div class="cons-number-label">Potencjał po aktywacji</div></div>` : ''}
+    </div>` : '';
+
+  document.getElementById('consequence-area').innerHTML = `
+    <div class="consequence-panel ${panelClass}">
+      <div class="consequence-header">
+        <span class="consequence-badge ${badgeClass}">${badgeText}</span>
+        <strong>${card.cTitle}</strong>
+      </div>
+      <div class="consequence-text">${card.cText}</div>
+      ${nums}
+    </div>`;
+
+  document.getElementById('decision-area').style.display = 'none';
+  const isLast = st.cur === CARDS.length - 1;
+  document.getElementById('next-area').style.display = 'block';
+  document.getElementById('next-area').innerHTML = isLast
+    ? `<button class="btn btn-primary" onclick="showResults()">Zobacz wyniki audytu →</button>`
+    : `<button class="btn btn-primary" onclick="nextCard()">Następna karta →</button>`;
+}
+
+function nextCard() { st.cur++; renderCard(st.cur); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function showResults() {
+  const rawTotal = st.decisions.reduce((s,d) => s+d.pts, 0);
+  const maxPts = CARDS.length * 10;
+  const score = Math.max(0, Math.min(100, Math.round((rawTotal / maxPts) * 100)));
+  const level = LEVELS.find(l => score <= l.max) || LEVELS[LEVELS.length-1];
+  const darkCards = CARDS.filter(c => c.isDA);
+  const darkFound = st.decisions.filter(d => d.cls === 'dark').length;
+  const totalTraps = CARDS.filter(c => c.trap).length;
+  const trapsOk = totalTraps - st.trapsHit;
+
+  st.finalScore = score;
+  st.finalLevel = level.label;
+
+  document.getElementById('res-score').textContent = score;
+  document.getElementById('res-score').style.color = level.color;
+  document.getElementById('res-level').textContent = level.label;
+  document.getElementById('res-level').style.color = level.color;
+  document.getElementById('res-level').style.borderColor = level.color;
+
+  document.getElementById('m-dark').textContent = `${darkFound} / ${darkCards.length}`;
+  document.getElementById('m-cost').textContent = fmt(st.totalCost) + ' PLN';
+  document.getElementById('m-potential').textContent = fmt(st.totalPotential) + ' PLN';
+  document.getElementById('m-traps').textContent = `${trapsOk === totalTraps ? '✅' : '❌'} ${trapsOk}/${totalTraps}`;
+
+  const costCards = CARDS.filter(c => c.cost > 0);
+  const maxCost = Math.max(...costCards.map(c => c.cost));
+  document.getElementById('cost-bars').innerHTML = costCards.map(c => {
+    const found = st.decisions.find(d => d.cardId === c.id && d.cls === 'dark');
+    const pct = (c.cost / maxCost) * 100;
+    return `<div class="cost-bar-item">
+      <div class="cost-bar-label">
+        <span>${c.emoji} ${c.title}</span>
+        <span style="font-weight:700;color:${found?'var(--red)':'var(--light)'}">${fmt(c.cost)} PLN/rok</span>
+      </div>
+      <div class="cost-bar-track"><div class="cost-bar-fill ${found?'':'missed'}" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+
+  const bench = BENCHMARKS[st.profile.industry] || BENCHMARKS.other;
+  document.getElementById('benchmark-text').textContent =
+    bench + ` Twój audyt zidentyfikował ${darkFound} z ${darkCards.length} zbiorów dark data, odkrywając koszty ${fmt(st.totalCost)} PLN/rok i możliwości aktywacji warte ${fmt(st.totalPotential)} PLN/rok.`;
+
+  document.getElementById('ticker').classList.remove('visible');
+  showStage('stage-results');
+}
+
+async function submitResults() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = 'Wysyłam...';
+  const comment = document.getElementById('comment-input').value.trim();
+  const date = new Date().toLocaleDateString('pl-PL');
+
+  const rows = st.decisions.map((d,i) => {
+    const c = CARDS[i];
+    return `| ${c.emoji} ${c.title} | ${d.cls} | ${d.act} | ${d.clsOk?'✓':'✗'} | ${d.actOk?'✓':'✗'} | ${d.isTrap?'⚠️ PUŁAPKA':'—'} |`;
+  }).join('\n');
+
+  const body = `## 🔦 Audyt Ciemnych Danych — Nordia S.A.
+
+**Pseudonim:** ${st.nick}
+**Wynik:** ${st.finalScore}/100 (${st.finalLevel})
+**Data:** ${date}
+
+### Profil Studenta
+- Branża: ${st.profile.industry}
+- Wielkość firmy: ${st.profile.size}
+- DPO: ${st.profile.dpo}
+
+### Wyniki Finansowe
+- Zidentyfikowane koszty dark data: ${fmt(st.totalCost)} PLN/rok
+- Potencjał do aktywacji: ${fmt(st.totalPotential)} PLN/rok
+- Pułapki uniknięte: ${CARDS.filter(c=>c.trap).length - st.trapsHit}/${CARDS.filter(c=>c.trap).length}
+
+### Decyzje Audytowe
+| Zbiór danych | Klasyfikacja | Akcja | Klas. OK | Akcja OK | Uwaga |
+|---|---|---|---|---|---|
+${rows}
+${comment ? `\n### Komentarz\n${comment}` : ''}`;
+
+  try {
+    const res = await fetch(WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'github',
+        title: `🔦 Ciemne Dane — ${st.nick} — ${st.finalScore}pkt — ${date}`,
+        body,
+        labels: ['ciemne-dane']
+      })
+    });
+    if (res.ok) {
+      document.getElementById('submit-feedback').innerHTML = '<div class="alert alert-success">✓ Wyniki zapisane. Dziękujemy za udział w ćwiczeniu!</div>';
+      btn.style.display = 'none';
+      document.getElementById('back-home').style.display = 'block';
+    } else { throw new Error(); }
+  } catch {
+    document.getElementById('submit-feedback').innerHTML = '<div class="alert alert-error">Błąd połączenia. Spróbuj ponownie.</div>';
+    btn.disabled = false; btn.textContent = 'Wyślij wyniki →';
+  }
+}
+
+function fmt(n) { return n.toLocaleString('pl-PL'); }
+</script>
+</body>
+</html>
