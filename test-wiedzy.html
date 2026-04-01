@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Wiedzy — MBA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #F0EDE7;
+    color: #1A1A1A;
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+  }
+
+  .page-header {
+    background: #1A1A1A;
+    color: #F0EDE7;
+    padding: 28px 40px;
+    margin: -40px -20px 40px;
+  }
+  .page-header .label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #4A8F8A;
+    margin-bottom: 6px;
+  }
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+  .page-header .meta {
+    font-size: 13px;
+    color: #aaa;
+    margin-top: 8px;
+  }
+
+  .container { max-width: 760px; margin: 0 auto; }
+
+  .card {
+    background: #fff;
+    border: 1px solid #D8D4CE;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+
+  .card h2 {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #4A8F8A;
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #555;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    border: 1px solid #D8D4CE;
+    background: #fff;
+    padding: 10px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: #1A1A1A;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input[type="text"]:focus { border-color: #4A8F8A; }
+
+  .form-row { margin-bottom: 16px; }
+
+  /* ── Pytania ── */
+  .question-block {
+    border: 1px solid #D8D4CE;
+    padding: 24px;
+    margin-bottom: 20px;
+    background: #fff;
+  }
+
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .q-number {
+    background: #1A1A1A;
+    color: #F0EDE7;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 9px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .q-text {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .q-context {
+    font-size: 13px;
+    color: #666;
+    background: #F7F5F2;
+    border-left: 3px solid #4A8F8A;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 8px; }
+
+  .option-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid #D8D4CE;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: border-color 0.12s, background 0.12s;
+    user-select: none;
+  }
+  .option-row:hover { border-color: #4A8F8A; background: #F7F5F2; }
+  .option-row.selected { border-color: #4A8F8A; background: #EEF6F5; }
+
+  .option-circle {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+    transition: border-color 0.12s;
+  }
+  .option-row.selected .option-circle { border-color: #4A8F8A; }
+  .option-row.selected .option-circle::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #4A8F8A;
+  }
+
+  .option-label { font-size: 14px; line-height: 1.4; }
+
+  /* ── Timer ── */
+  .timer-bar {
+    background: #1A1A1A;
+    color: #F0EDE7;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .timer-bar .t-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #aaa; }
+  .timer-bar .t-value { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .timer-bar .t-value.warning { color: #E8945A; }
+  .timer-bar .t-progress {
+    flex: 1;
+    height: 3px;
+    background: #444;
+    margin-left: auto;
+  }
+  .timer-bar .t-progress-inner {
+    height: 100%;
+    background: #4A8F8A;
+    transition: width 1s linear;
+  }
+
+  /* ── Przycisk ── */
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 13px 28px;
+    cursor: pointer;
+    border: none;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: opacity 0.15s;
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: #1A1A1A; color: #F0EDE7; }
+  .btn-primary:not(:disabled):hover { background: #333; }
+  .btn-secondary { background: transparent; border: 1px solid #1A1A1A; color: #1A1A1A; }
+  .btn-secondary:hover { background: #1A1A1A; color: #F0EDE7; }
+
+  /* ── Modal kodu dostępu ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,26,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal-box {
+    background: #F0EDE7;
+    padding: 40px;
+    max-width: 440px;
+    width: 90%;
+  }
+  .modal-box h2 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .modal-box p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .modal-box input {
+    width: 100%;
+    border: 2px solid #1A1A1A;
+    background: #fff;
+    padding: 14px;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    margin-bottom: 8px;
+  }
+  .modal-error {
+    font-size: 12px;
+    color: #c0392b;
+    font-weight: 600;
+    min-height: 18px;
+    margin-bottom: 16px;
+  }
+  .modal-box .lock-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+
+  /* ── Wyniki ── */
+  .results-box { display: none; }
+  .score-big {
+    font-size: 72px;
+    font-weight: 800;
+    color: #4A8F8A;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .score-label { font-size: 14px; color: #666; margin-bottom: 24px; }
+
+  .result-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .result-q { font-weight: 600; }
+  .result-a { color: #666; font-size: 13px; margin-top: 2px; }
+
+  .progress-bar-wrap { margin: 20px 0; }
+  .progress-bar-wrap .pb-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .pb-track {
+    height: 3px;
+    background: #D8D4CE;
+    width: 100%;
+  }
+  .pb-fill {
+    height: 3px;
+    background: #4A8F8A;
+    transition: width 1s ease;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Modal: kod dostępu ─────────────────────────────────────────── -->
+<div class="modal-overlay" id="access-modal">
+  <div class="modal-box">
+    <div class="lock-icon">🔒</div>
+    <h2>Kod dostępu</h2>
+    <p>Ten test jest dostępny wyłącznie dla uczestników zajęć. Wpisz kod otrzymany od prowadzącego.</p>
+    <input type="text" id="access-input" placeholder="XXXXXX" maxlength="10"
+           oninput="this.value=this.value.toUpperCase()"
+           onkeydown="if(event.key==='Enter') verifyAccess()">
+    <div class="modal-error" id="access-error"></div>
+    <button class="btn btn-primary" id="access-btn" onclick="verifyAccess()">Wejdź do testu →</button>
+  </div>
+</div>
+
+<!-- ── Nagłówek ───────────────────────────────────────────────────── -->
+<div class="page-header">
+  <div class="label">Ćwiczenie 05</div>
+  <h1>Test Wiedzy</h1>
+  <div class="meta">~15 minut · odpowiedzi zapisywane poufnie</div>
+</div>
+
+<div class="container">
+
+  <!-- Timer -->
+  <div class="timer-bar" id="timer-bar" style="display:none">
+    <div>
+      <div class="t-label">Czas</div>
+      <div class="t-value" id="timer-display">15:00</div>
+    </div>
+    <div class="t-progress">
+      <div class="t-progress-inner" id="timer-progress" style="width:100%"></div>
+    </div>
+  </div>
+
+  <!-- Dane studenta -->
+  <div class="card" id="student-card">
+    <h2>Dane uczestnika</h2>
+    <div class="form-row">
+      <label for="first-name">Imię</label>
+      <input type="text" id="first-name" placeholder="np. Jan">
+    </div>
+    <div class="form-row">
+      <label for="last-name">Nazwisko</label>
+      <input type="text" id="last-name" placeholder="np. Kowalski">
+    </div>
+    <div class="form-row" style="margin-bottom:0">
+      <label for="group-name">Grupa / Rok</label>
+      <input type="text" id="group-name" placeholder="np. MBA 2025/2026">
+    </div>
+  </div>
+
+  <!-- Pytania -->
+  <div id="questions-area">
+    <!-- Generowane przez JS -->
+  </div>
+
+  <div style="display:flex; gap:12px; margin-top:8px" id="submit-area">
+    <button class="btn btn-primary" id="submit-btn" onclick="submitTest()" disabled>
+      Zatwierdź odpowiedzi →
+    </button>
+    <button class="btn btn-secondary" onclick="window.location.href='index.html'">← Powrót</button>
+  </div>
+
+  <!-- Wyniki -->
+  <div class="card results-box" id="results-box" style="display:none">
+    <h2>Twój wynik</h2>
+    <div class="score-big" id="score-value">—</div>
+    <div class="score-label" id="score-label">poprawnych odpowiedzi</div>
+
+    <div class="progress-bar-wrap">
+      <div class="pb-label">
+        <span>Wynik</span>
+        <span id="score-pct-label">—</span>
+      </div>
+      <div class="pb-track"><div class="pb-fill" id="score-bar" style="width:0%"></div></div>
+    </div>
+
+    <div id="result-details"></div>
+
+    <div style="margin-top:28px; display:flex; gap:12px; flex-wrap:wrap;">
+      <button class="btn btn-secondary" onclick="window.location.href='index.html'">← Strona główna</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
+const TOTAL_SECONDS = 15 * 60;
+let timerInterval = null;
+let secondsLeft = TOTAL_SECONDS;
+let accessCode = '';
+
+// ─────────────────────────────────────────────
+// PYTANIA — do uzupełnienia przez prowadzącego
+// ─────────────────────────────────────────────
+const QUESTIONS = [
+  // Format:
+  // { id: 1, text: 'Treść pytania', context: 'Opcjonalny kontekst/cytat', options: ['A', 'B', 'C', 'D'], correct: 0 }
+  // correct = indeks poprawnej odpowiedzi (0-based)
+
+  {
+    id: 1,
+    text: 'PLACEHOLDER — Pytanie 1 zostanie dodane przez prowadzącego.',
+    context: '',
+    options: ['Odpowiedź A', 'Odpowiedź B', 'Odpowiedź C', 'Odpowiedź D'],
+    correct: 0
+  },
+  {
+    id: 2,
+    text: 'PLACEHOLDER — Pytanie 2 zostanie dodane przez prowadzącego.',
+    context: '',
+    options: ['Odpowiedź A', 'Odpowiedź B', 'Odpowiedź C', 'Odpowiedź D'],
+    correct: 1
+  },
+  {
+    id: 3,
+    text: 'PLACEHOLDER — Pytanie 3 zostanie dodane przez prowadzącego.',
+    context: '',
+    options: ['Odpowiedź A', 'Odpowiedź B', 'Odpowiedź C', 'Odpowiedź D'],
+    correct: 2
+  },
+];
+
+// ─────────────────────────────────────────────
+// WERYFIKACJA KODU DOSTĘPU
+// ─────────────────────────────────────────────
+async function verifyAccess() {
+  const btn = document.getElementById('access-btn');
+  const errEl = document.getElementById('access-error');
+  const code = document.getElementById('access-input').value.trim().toUpperCase();
+
+  if (!code) { errEl.textContent = 'Wpisz kod dostępu.'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Sprawdzam…';
+  errEl.textContent = '';
+
+  try {
+    const res = await fetch(WORKER + '/verify-access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+
+    if (data.valid) {
+      accessCode = code;
+      document.getElementById('access-modal').style.display = 'none';
+      startTest();
+    } else {
+      errEl.textContent = 'Nieprawidłowy kod. Spróbuj ponownie.';
+      btn.disabled = false;
+      btn.textContent = 'Wejdź do testu →';
+    }
+  } catch(e) {
+    errEl.textContent = 'Błąd połączenia. Odśwież stronę.';
+    btn.disabled = false;
+    btn.textContent = 'Wejdź do testu →';
+  }
+}
+
+// ─────────────────────────────────────────────
+// START TESTU
+// ─────────────────────────────────────────────
+function startTest() {
+  renderQuestions();
+  document.getElementById('timer-bar').style.display = 'flex';
+  startTimer();
+  document.querySelectorAll('input[type="text"]').forEach(el => {
+    el.addEventListener('input', checkAllAnswered);
+  });
+}
+
+function renderQuestions() {
+  const area = document.getElementById('questions-area');
+  area.innerHTML = QUESTIONS.map((q, qi) => `
+    <div class="question-block" id="qblock-${q.id}">
+      <div class="q-header">
+        <span class="q-number">${String(qi+1).padStart(2,'0')}</span>
+        <span class="q-text">${q.text}</span>
+      </div>
+      ${q.context ? `<div class="q-context">${q.context}</div>` : ''}
+      <div class="options" id="opts-${q.id}">
+        ${q.options.map((opt, oi) => `
+          <div class="option-row" id="opt-${q.id}-${oi}" onclick="selectOption(${q.id}, ${oi})">
+            <div class="option-circle"></div>
+            <div class="option-label">${opt}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+const answers = {};
+
+function selectOption(qid, oidx) {
+  answers[qid] = oidx;
+  // Visual update
+  const opts = document.querySelectorAll(`#opts-${qid} .option-row`);
+  opts.forEach((el, i) => el.classList.toggle('selected', i === oidx));
+  checkAllAnswered();
+}
+
+function checkAllAnswered() {
+  const fname = document.getElementById('first-name').value.trim();
+  const lname = document.getElementById('last-name').value.trim();
+  const allAnswered = QUESTIONS.every(q => answers[q.id] !== undefined);
+  document.getElementById('submit-btn').disabled = !(fname && lname && allAnswered);
+}
+
+// ─────────────────────────────────────────────
+// TIMER
+// ─────────────────────────────────────────────
+function startTimer() {
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    updateTimerDisplay();
+    if (secondsLeft <= 0) {
+      clearInterval(timerInterval);
+      submitTest(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(secondsLeft / 60);
+  const s = secondsLeft % 60;
+  const display = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const el = document.getElementById('timer-display');
+  const prog = document.getElementById('timer-progress');
+  el.textContent = display;
+  el.className = 't-value' + (secondsLeft <= 120 ? ' warning' : '');
+  prog.style.width = (secondsLeft / TOTAL_SECONDS * 100) + '%';
+}
+
+// ─────────────────────────────────────────────
+// SUBMIT
+// ─────────────────────────────────────────────
+async function submitTest(timedOut = false) {
+  if (timerInterval) clearInterval(timerInterval);
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('submit-btn').textContent = 'Zapisuję…';
+
+  const fname = document.getElementById('first-name').value.trim();
+  const lname = document.getElementById('last-name').value.trim();
+  const group = document.getElementById('group-name').value.trim();
+
+  // Oblicz wynik
+  let correct = 0;
+  const details = QUESTIONS.map(q => {
+    const chosen = answers[q.id];
+    const isCorrect = chosen === q.correct;
+    if (isCorrect) correct++;
+    return {
+      question: q.text,
+      chosen: chosen !== undefined ? q.options[chosen] : '— brak odpowiedzi —',
+      correct: q.options[q.correct],
+      isCorrect,
+    };
+  });
+
+  const pct = Math.round(correct / QUESTIONS.length * 100);
+  const now = new Date().toLocaleDateString('pl-PL');
+
+  // Buduj treść Issue
+  const body = `## Wynik: ${correct}/${QUESTIONS.length} (${pct}%)
+
+**Student:** ${fname} ${lname}
+**Grupa:** ${group || '—'}
+**Data:** ${now}
+${timedOut ? '\n⏱️ *Test zakończony przez upływ czasu*\n' : ''}
+
+---
+
+${details.map((d, i) => `### P${i+1}: ${d.question}
+- Odpowiedź studenta: **${d.chosen}**
+- Poprawna odpowiedź: **${d.correct}**
+- Ocena: ${d.isCorrect ? '✅ Poprawna' : '❌ Niepoprawna'}`).join('\n\n')}
+`;
+
+  try {
+    await fetch(WORKER + '/private-issue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code: accessCode,
+        title: `📝 Test Wiedzy — ${fname} ${lname} — ${pct}% — ${now}`,
+        body,
+        labels: ['test-wiedzy'],
+      })
+    });
+  } catch(e) {
+    console.error('Błąd zapisu:', e);
+  }
+
+  showResults(fname, lname, correct, pct, details);
+}
+
+function showResults(fname, lname, correct, pct, details) {
+  document.getElementById('submit-area').style.display = 'none';
+  document.getElementById('student-card').style.display = 'none';
+  document.getElementById('questions-area').style.display = 'none';
+  document.getElementById('timer-bar').style.display = 'none';
+
+  const box = document.getElementById('results-box');
+  box.style.display = 'block';
+
+  document.getElementById('score-value').textContent = `${correct}/${QUESTIONS.length}`;
+  document.getElementById('score-label').textContent = 'poprawnych odpowiedzi';
+  document.getElementById('score-pct-label').textContent = pct + '%';
+
+  setTimeout(() => {
+    document.getElementById('score-bar').style.width = pct + '%';
+  }, 100);
+
+  const detailsEl = document.getElementById('result-details');
+  detailsEl.innerHTML = details.map((d, i) => `
+    <div class="result-row">
+      <div class="result-icon">${d.isCorrect ? '✅' : '❌'}</div>
+      <div>
+        <div class="result-q">Pytanie ${i+1}</div>
+        <div class="result-a">Twoja odpowiedź: <strong>${d.chosen}</strong></div>
+        ${!d.isCorrect ? `<div class="result-a" style="color:#4A8F8A">Poprawna: <strong>${d.correct}</strong></div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+</script>
+</body>
+</html>
