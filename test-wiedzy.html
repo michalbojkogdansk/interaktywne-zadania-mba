@@ -513,7 +513,7 @@ function updateProgress(qid) {
 function checkReady() {
   const fname = document.getElementById('first-name').value.trim();
   const lname = document.getElementById('last-name').value.trim();
-  const allFilled = QUESTIONS.every(q => countWords(document.getElementById('ans-' + q.id)?.value || '') >= 5);
+  const allFilled = QUESTIONS.every(q => countWords(document.getElementById('ans-' + q.id)?.value || '') >= 1);
   document.getElementById('submit-btn').disabled = !(fname && lname && allFilled);
 
   // Aktualizuj progress przy zmianach imię/nazwisko
