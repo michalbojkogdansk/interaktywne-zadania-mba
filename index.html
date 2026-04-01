@@ -17,9 +17,6 @@
             --accent:       #4A8F8A;
             --accent-dark:  #357570;
             --accent-light: #EAF4F3;
-            --danger:       #B84A4A;
-            --warn:         #B87A2A;
-            --radius:       3px;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,10 +29,7 @@
             padding: 40px 20px 60px;
         }
 
-        .container {
-            max-width: 880px;
-            margin: 0 auto;
-        }
+        .container { max-width: 880px; margin: 0 auto; }
 
         /* ── Header ── */
         .header {
@@ -43,7 +37,6 @@
             padding-bottom: 24px;
             margin-bottom: 48px;
         }
-
         .header-label {
             font-size: 11px;
             font-weight: 700;
@@ -52,7 +45,6 @@
             color: var(--text-muted);
             margin-bottom: 10px;
         }
-
         .header h1 {
             font-size: clamp(2rem, 5vw, 3.2rem);
             font-weight: 900;
@@ -61,7 +53,6 @@
             color: var(--text);
             margin-bottom: 14px;
         }
-
         .header p {
             font-size: 1.05rem;
             color: var(--text-muted);
@@ -69,7 +60,7 @@
             line-height: 1.6;
         }
 
-        /* ── Tasks grid ── */
+        /* ── Grid ── */
         .tasks-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -85,20 +76,13 @@
             color: inherit;
             display: flex;
             flex-direction: column;
-            gap: 0;
             transition: background 0.15s;
             position: relative;
         }
+        .task-card:hover { background: var(--accent-light); }
 
-        .task-card:hover {
-            background: var(--accent-light);
-        }
-
-        .task-card.coming-soon {
-            opacity: 0.5;
-            pointer-events: none;
-            cursor: default;
-        }
+        /* 5th card spans full row */
+        .task-card.test { grid-column: 1 / -1; }
 
         .task-number {
             font-size: 11px;
@@ -108,13 +92,7 @@
             color: var(--text-muted);
             margin-bottom: 16px;
         }
-
-        .task-icon {
-            font-size: 2rem;
-            margin-bottom: 14px;
-            display: block;
-        }
-
+        .task-icon { font-size: 2rem; margin-bottom: 14px; display: block; }
         .task-title {
             font-size: 1.25rem;
             font-weight: 800;
@@ -122,7 +100,6 @@
             margin-bottom: 10px;
             line-height: 1.2;
         }
-
         .task-desc {
             font-size: 0.9rem;
             color: var(--text-muted);
@@ -130,14 +107,7 @@
             flex: 1;
             margin-bottom: 20px;
         }
-
-        .task-meta {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
+        .task-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
         .task-badge {
             padding: 4px 10px;
             border: 1px solid var(--border-dark);
@@ -147,18 +117,9 @@
             background: var(--bg);
             letter-spacing: 0.02em;
         }
-
-        .task-badge.badge-ai {
-            border-color: var(--accent);
-            color: var(--accent-dark);
-            background: var(--accent-light);
-        }
-
-        .task-badge.badge-new {
-            border-color: #357570;
-            color: #357570;
-            background: #EAF4F3;
-        }
+        .task-badge.badge-ai { border-color: var(--accent); color: var(--accent-dark); background: var(--accent-light); }
+        .task-badge.badge-new { border-color: #357570; color: #357570; background: #EAF4F3; }
+        .task-badge.badge-locked { border-color: #8A6A2A; color: #8A6A2A; background: #FAF5EC; }
 
         .task-arrow {
             font-size: 0.85rem;
@@ -170,24 +131,32 @@
             align-items: center;
             gap: 6px;
         }
+        .task-card:hover .task-arrow { color: var(--accent-dark); }
 
-        .task-card:hover .task-arrow {
-            color: var(--accent-dark);
-        }
-
-        /* ── Accent bar on left edge of each card ── */
+        /* Accent bar */
         .task-card::before {
             content: '';
             position: absolute;
             left: 0; top: 0; bottom: 0;
             width: 4px;
         }
-
         .task-card.correlation::before { background: var(--accent); }
         .task-card.critical::before    { background: #B05A2A; }
         .task-card.simulation::before  { background: #4A5A8F; }
-        .task-card.coming-soon::before { background: var(--border-dark); }
         .task-card.darkdata::before    { background: #8A4A7A; }
+        .task-card.test::before        { background: #8A6A2A; }
+
+        /* 5th card inner layout: horizontal on wide screens */
+        .task-card.test .task-inner {
+            display: flex;
+            align-items: flex-start;
+            gap: 32px;
+        }
+        .task-card.test .task-left { flex-shrink: 0; }
+        .task-card.test .task-right { flex: 1; }
+        @media (max-width: 600px) {
+            .task-card.test .task-inner { flex-direction: column; gap: 0; }
+        }
 
         /* ── Footer ── */
         .footer {
@@ -200,25 +169,14 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-
-        .footer-left {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .footer-right {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
+        .footer-left { font-size: 0.8rem; color: var(--text-muted); }
+        .footer-right { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
 
         @media (max-width: 640px) {
             .tasks-grid { grid-template-columns: 1fr; }
             .header h1 { font-size: 2rem; }
             body { padding: 24px 16px 48px; }
+            .task-card.test { grid-column: auto; }
         }
     </style>
 </head>
@@ -282,6 +240,25 @@
                     <span class="task-badge badge-new">✨ Nowe</span>
                 </div>
                 <div class="task-arrow">Rozpocznij →</div>
+            </a>
+
+            <a href="test-wiedzy.html" class="task-card test">
+                <div class="task-inner">
+                    <div class="task-left">
+                        <div class="task-number">Ćwiczenie 05</div>
+                        <span class="task-icon">📝</span>
+                    </div>
+                    <div class="task-right">
+                        <div class="task-title">Test Wiedzy</div>
+                        <div class="task-desc">Sprawdzian zamknięty dla uczestników zajęć. Wyniki są poufne i widoczne wyłącznie dla prowadzącego. Do wejścia potrzebujesz kodu otrzymanego na zajęciach.</div>
+                        <div class="task-meta">
+                            <span class="task-badge">⏱ ~15 min</span>
+                            <span class="task-badge badge-locked">🔒 Kod dostępu</span>
+                            <span class="task-badge">📋 Wyniki poufne</span>
+                        </div>
+                        <div class="task-arrow">Wejdź z kodem →</div>
+                    </div>
+                </div>
             </a>
 
         </div>
