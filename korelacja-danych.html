@@ -661,14 +661,8 @@
 </div><!-- .app -->
 
 <script>
-// ─── CONFIG ────────────────────────────────────────────────────────────────
-// Aby odpowiedzi studentów były zapisywane jako GitHub Issues,
-// ustaw poniższy token (fine-grained PAT z uprawnieniem Issues: Write).
-// Instrukcja tworzenia tokena: README.md w tym repozytorium.
 const WORKER_URL = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
-// ───────────────────────────────────────────────────────────────────────────
 
-// ─── QUESTIONS ─────────────────────────────────────────────────────────────
 const QUESTIONS = [
   {
     title: 'Logistyka vs. Subskrypcja SaaS',
@@ -678,7 +672,7 @@ const QUESTIONS = [
   },
   {
     title: 'Satysfakcja pracowników vs. Wyniki sprzedaży',
-    hint: '💡 Slack — firmowy komunikator (odpowiednik SMS-ów, ale dla całego zespołu), gdzie toczą się rozmowy i dyskusje w czasie rzeczywistym. GitHub — platforma, gdzie programiści przechowują kod i zgłaszają błędy. Wyobraź sobie, że masz dostęp do anonimowych wyników ankiet satysfakcji pracowników z jednej strony, a miesięcznych wyników sprzedaży z drugiej — z tego samego okresu. Czy zadowolenie zespołu przekłada się na to, ile sprzedaje?',
+    hint: '💡 Wyobraź sobie, że masz dostęp do anonimowych wyników ankiet satysfakcji pracowników z jednej strony, a miesięcznych wyników sprzedaży zespołu z drugiej — z tego samego okresu. Dane z HR i z CRM. Czy zadowolenie pracowników z pracy przekłada się na to, ile sprzedają?',
     a: { icon: '😊', name: 'Wynik ankiety satysfakcji pracowników', source: 'HR / Intranet' },
     b: { icon: '📈', name: 'Miesięczny wynik sprzedaży zespołu', source: 'CRM / Sales' }
   },
@@ -855,7 +849,6 @@ async function postToGitHub(nick, ans, audit) {
   const dirMap = { pos: '📈 Pozytywna', neg: '📉 Negatywna', nieokreślona: '— (nieokreślona)' };
 
   const lines = ans.map((a, i) => {
-    const dir = a.choice === 'tak' ? `\n> Kierunek: ${dirMap[a.direction] || a.direction}` : '';
     return `### Pytanie ${i+1}: ${a.question}
 | | |
 |---|---|
