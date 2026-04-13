@@ -562,7 +562,7 @@ function nextCard() { st.cur++; renderCard(st.cur); window.scrollTo({top:0,behav
 
 function showResults() {
   const rawTotal = st.decisions.reduce((s,d) => s+d.pts, 0);
-  const maxPts = CARDS.length * 10;
+  const maxPts = CARDS.reduce((s, c) => s + (c.isDA ? 10 : 5), 0);
   const score = Math.max(0, Math.min(100, Math.round((rawTotal / maxPts) * 100)));
   const level = LEVELS.find(l => score <= l.max) || LEVELS[LEVELS.length-1];
   const darkCards = CARDS.filter(c => c.isDA);
