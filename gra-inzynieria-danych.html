@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ćwiczenie 06 · Gra: Inżynieria Danych Biznesowych</title>
+<title>Ćwiczenie 05 · Gra: Inżynieria Danych Biznesowych</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -62,19 +62,19 @@
 
   /* === NAGŁÓWEK === */
   .page-header {
-    background: #1A1A1A; color: var(--bg);
+    background: var(--surface);
+    border-bottom: 2px solid var(--text);
     padding: 24px 40px 20px;
   }
   .page-header .label {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--accent); margin-bottom: 4px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;
   }
-  .page-header h1 { font-size: 26px; font-weight: 800; line-height: 1.2; }
-  .page-header .meta { font-size: 13px; color: #aaa; margin-top: 6px; }
+  .page-header h1 { font-size: 26px; font-weight: 800; line-height: 1.2; color: var(--text); }
+  .page-header .meta { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
 
   /* === PROGRESS BAR === */
   .progress-strip { height: 3px; background: #D8D4CE; }
-  .progress-fill { height: 3px; background: var(--accent); transition: width 0.4s ease; width: 0%; }
 
   /* === LAYOUT === */
   .main-layout {
@@ -308,6 +308,46 @@
     .theory-grid { grid-template-columns: 1fr; }
     .footer { padding: 18px 20px; }
   }
+
+  /* === NAVBAR === */
+  .site-nav {
+    background: #fff;
+    border-bottom: 2px solid var(--text);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+  .nav-home {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
+    text-transform: uppercase; text-decoration: none;
+    color: var(--text); white-space: nowrap;
+  }
+  .nav-home:hover { color: var(--accent); }
+  .nav-items {
+    display: flex; align-items: center; gap: 2px;
+  }
+  .nav-item {
+    display: flex; align-items: center; justify-content: center;
+    min-width: 36px; height: 32px; padding: 0 10px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    text-transform: uppercase; text-decoration: none;
+    color: var(--text-muted); border: 1px solid transparent;
+    transition: all 0.12s;
+  }
+  .nav-item:hover { background: var(--bg); color: var(--text); border-color: var(--border); }
+  .nav-item.active { background: var(--text); color: var(--bg); }
+  .nav-item.nav-final { border: 1px solid var(--border-dark); color: var(--text-muted); }
+  .nav-item.nav-final:hover { background: var(--text); color: var(--bg); }
+  @media (max-width: 480px) {
+    .site-nav { padding: 0 16px; }
+    .nav-home span.nav-home-full { display: none; }
+  }
+
 </style>
 </head>
 <body>
@@ -328,15 +368,26 @@
   </div>
 </div>
 
+<nav class="site-nav">
+  <a href="index.html" class="nav-home">&#8592; Zadania MBA</a>
+  <div class="nav-items">
+    <a href="korelacja-danych.html" class="nav-item" title="Korelacja Danych">01</a>
+    <a href="myslenie-krytyczne.html" class="nav-item" title="Myślenie Krytyczne">02</a>
+    <a href="symulacja-transformacja.html" class="nav-item" title="Symulacja">03</a>
+    <a href="ciemne-dane.html" class="nav-item" title="Ciemne Dane">04</a>
+    <a href="gra-inzynieria-danych.html" class="nav-item active" title="Inżynieria Danych">05</a>
+    <a href="test-wiedzy.html" class="nav-item nav-final" title="Zadanie końcowe">&#10003;</a>
+  </div>
+</nav>
+
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!--  NAGŁÓWEK                                                    -->
 <!-- ═══════════════════════════════════════════════════════════ -->
 <div class="page-header">
-  <div class="label">Ćwiczenie 06 · MBA 2026</div>
+  <div class="label">Ćwiczenie 05 · MBA 2026</div>
   <h1>🗄️ Gra: Inżynieria Danych Biznesowych</h1>
   <div class="meta">5 misji · ~4h · Agent AI + baza NEXO Retail na Azure · Raport końcowy</div>
 </div>
-<div class="progress-strip"><div class="progress-fill" id="progress-fill"></div></div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!--  LAYOUT: SIDEBAR + CONTENT                                   -->
@@ -387,20 +438,6 @@
       </div>
     </button>
 
-    <div class="sidebar-divider"></div>
-
-    <button class="mission-item" id="nav-5" onclick="showMission(5)">
-      <div class="m-num" style="background:var(--bg);border-color:var(--accent);color:var(--accent)">📋</div>
-      <div class="m-label">
-        <div class="m-title">Szablon Raportu</div>
-        <div class="m-meta">Struktura oddawanego raportu</div>
-      </div>
-    </button>
-
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-info">
-      💡 Zaznacz misję jako ukończoną, gdy skończysz. Pasek postępu na górze pokaże Twój stan.
-    </div>
   </div>
 
   <!-- CONTENT -->
@@ -851,19 +888,6 @@ const MISSIONS = [
       '3 rekomendacje biznesowe w tabeli: decyzja / oparcie w danych / ROI / ryzyko / horyzont',
       'Gotowość do prezentacji wniosków — draft raportu (patrz szablon obok)'
     ]
-  },
-
-  // ── RAPORT ──
-  {
-    tag: 'Szablon Raportu',
-    title: 'Struktura Raportu Końcowego',
-    desc: 'Twój raport końcowy powinien zawierać poniższe rozdziały. Każdy rozdział buduje na poprzednim — to spójna opowieść o NEXO Retail widziana oczami analityka danych.',
-    badges: ['📋 Raport', '~10-15 stron', '🎯 Oddajesz po zajęciach'],
-    theory: null,
-    brief: null,
-    hints: [],
-    deliverables: [],
-    reportMode: true
   }
 ];
 
@@ -871,7 +895,6 @@ const MISSIONS = [
 //  STAN APLIKACJI
 // ═══════════════════════════════════════════════════════════
 let currentMission = 0;
-const doneMissions = new Set();
 const openHints = {};
 const openTheory = {};
 
@@ -881,7 +904,7 @@ const openTheory = {};
 function showMission(idx) {
   currentMission = idx;
   // Odśwież sidebar
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 5; i++) {
     const nav = document.getElementById('nav-' + i);
     if (nav) {
       nav.classList.toggle('active', i === idx);
@@ -899,22 +922,15 @@ function renderContent(idx) {
   const m = MISSIONS[idx];
   const area = document.getElementById('content-area');
 
-  if (m.reportMode) {
-    area.innerHTML = renderReport(m);
-    return;
-  }
-
-  const isDone = doneMissions.has(idx);
   let html = '';
 
   // NAGŁÓWEK MISJI
   html += `<div class="mission-header">
     <div class="mission-tag">${m.tag}</div>
-    <h2>${isDone ? '✅ ' : ''}${m.title}</h2>
+    <h2>${m.title}</h2>
     <div class="mission-desc">${m.desc}</div>
     <div class="mission-badges">
       ${m.badges.map(b => `<span class="badge">${b}</span>`).join('')}
-      ${isDone ? '<span class="badge badge-accent">✓ Ukończona</span>' : ''}
     </div>
   </div>`;
 
@@ -956,68 +972,14 @@ function renderContent(idx) {
     html += `</div>`;
   }
 
-  // DELIVERABLES
-  if (m.deliverables.length > 0) {
-    html += `<div class="section">
-      <div class="deliverables-box">
-        <div class="del-label">📤 Co oddajesz po tej misji</div>
-        <ul>${m.deliverables.map(d => `<li>${d}</li>`).join('')}</ul>
-      </div>
+  // NAWIGACJA MISJI
+  if (idx < 4) {
+    html += `<div class="mission-done-area">
+      <button class="btn btn-primary" onclick="showMission(${idx + 1})">Następna misja &#8594;</button>
     </div>`;
   }
 
-  // PRZYCISK UKOŃCZ
-  html += `<div class="mission-done-area">
-    <button class="btn ${isDone ? 'btn-secondary' : 'btn-primary'} mission-done-btn" onclick="toggleDone(${idx})">
-      ${isDone ? '↩ Oznacz jako w toku' : '✓ Oznacz jako ukończoną'}
-    </button>
-    ${idx < 4 ? `<button class="btn btn-secondary" onclick="showMission(${idx + 1})" style="margin-left:4px">Następna misja →</button>` : ''}
-    <span class="done-note">${isDone ? 'Świetna robota! Przejdź do kolejnej misji.' : 'Kliknij gdy skończysz wszystkie deliverables.'}</span>
-  </div>`;
-
   area.innerHTML = html;
-}
-
-function renderReport(m) {
-  return `<div class="mission-header">
-    <div class="mission-tag">${m.tag}</div>
-    <h2>${m.title}</h2>
-    <div class="mission-desc">${m.desc}</div>
-    <div class="mission-badges">${m.badges.map(b => `<span class="badge">${b}</span>`).join('')}</div>
-  </div>
-
-  <div class="report-section">
-    ${[
-      ['Streszczenie wykonawcze', 'Maks. 1 strona. Kim jesteś jako analityk w tej grze, co odkryłeś, jakie 3 kluczowe rekomendacje?', ['Rola i kontekst (2-3 zdania)', 'Top 3 odkrycia (bullet points)', 'Top 3 rekomendacje z szacowanym ROI']],
-      ['Profil firmy NEXO Retail', 'Opisy struktury danych firmy — co NEXO zbiera i jak to jest zorganizowane.', ['Opis 6 domen danych', 'Mapa połączeń między domenami', 'Ocena dojrzałości danych (1-5)']],
-      ['Dark Data — inwentarz i ROI', 'Wyniki Misji 3. Kompletna lista ciemnych danych z kalkulacją wartości.', ['Tabela: min. 4 obszary dark data', 'Sumaryczny koszt przechowywania/rok', 'Top 1 obszar do aktywacji + uzasadnienie ROI']],
-      ['Korelacje i Insights', 'Wyniki Misji 4. Co NEXO powinno wiedzieć o swoich danych, czego nie wiedziało.', ['3 korelacje z hipotezami i wynikami testów', 'Implikacje biznesowe każdej korelacji', 'BONUS: korelacja pozorna — ostrzeżenie dla zarządu']],
-      ['Ocena Architektury Danych', 'Wyniki Misji 5. SSoT vs Data Mesh — gdzie jest NEXO i dokąd powinno zmierzać.', ['Diagnoza: SSoT / Mesh / Hybryd — z uzasadnieniem', '2 problemy architektoniczne', 'Rekomendacja kierunku rozwoju architektury']],
-      ['Rekomendacje Strategiczne', '3 konkretne decyzje biznesowe oparte na Twoich analizach. To jest clue raportu.', ['Decyzja 1: [nazwa] — dane / ROI / ryzyko / horyzont', 'Decyzja 2: [nazwa] — dane / ROI / ryzyko / horyzont', 'Decyzja 3: [nazwa] — dane / ROI / ryzyko / horyzont']],
-      ['Refleksja i Ograniczenia', 'Co byś zbadał dalej? Jakie są ograniczenia Twojej analizy? Czego brakuje w danych?', ['Pytania bez odpowiedzi', 'Dane których brakuje do pełnej analizy', 'Wnioski o pracy z agentami AI — co zadziałało, co nie']]
-    ].map(([title, desc, items], i) => `
-      <div class="report-chapter">
-        <div class="report-chapter-header">
-          <div class="report-chapter-num">${String(i+1).padStart(2,'0')}</div>
-          <div class="report-chapter-title">${title}</div>
-        </div>
-        <div class="report-chapter-body">
-          <p>${desc}</p>
-          <ul>${items.map(it => `<li>${it}</li>`).join('')}</ul>
-        </div>
-      </div>
-    `).join('')}
-  </div>
-
-  <div style="background:#fff;border:1px solid var(--border);padding:20px;margin-top:8px">
-    <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Wymagania formalne</div>
-    <ul style="padding-left:18px">
-      <li style="font-size:13px;line-height:1.7;color:#444;margin-bottom:4px">Format: PDF, 10-15 stron (bez załączników)</li>
-      <li style="font-size:13px;line-height:1.7;color:#444;margin-bottom:4px">Wykresy/tabele z danych agenta mile widziane</li>
-      <li style="font-size:13px;line-height:1.7;color:#444;margin-bottom:4px">Każda rekomendacja musi być zakotwiczona w konkretnych danych z bazy NEXO</li>
-      <li style="font-size:13px;line-height:1.7;color:#444;margin-bottom:4px">Screenshoty promptów agenta jako załącznik (opcjonalnie, ale wartościowe)</li>
-    </ul>
-  </div>`;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1033,21 +995,6 @@ function toggleHint(key) {
   renderContent(currentMission);
 }
 
-function toggleDone(idx) {
-  if (doneMissions.has(idx)) doneMissions.delete(idx);
-  else doneMissions.add(idx);
-  // Odśwież num w sidebar
-  const num = document.getElementById('num-' + idx);
-  if (num) {
-    const nav = document.getElementById('nav-' + idx);
-    if (doneMissions.has(idx)) nav.classList.add('done');
-    else nav.classList.remove('done');
-  }
-  // Pasek postępu
-  const pct = Math.round((doneMissions.size / 5) * 100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-  renderContent(idx);
-}
 
 // ═══════════════════════════════════════════════════════════
 //  INIT
