@@ -419,12 +419,13 @@
 // ═══════════════════════════════════════════════════════════
 //  WERYFIKACJA HASŁA (SHA-256 client-side)
 // ═══════════════════════════════════════════════════════════
-const CORRECT_HASH = '4618fc3fd2b9fbc10f4be6de77672c10e24304a69b65fbb991eb0815efeaab73';
 
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
+
+const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
 
 async function verifyAccess() {
   const btn = document.getElementById('access-btn');
@@ -434,11 +435,22 @@ async function verifyAccess() {
   btn.disabled = true;
   btn.textContent = 'Sprawdzam…';
   errEl.textContent = '';
-  const hash = await sha256(code);
-  if (hash === CORRECT_HASH) {
-    document.getElementById('access-modal').style.display = 'none';
-  } else {
-    errEl.textContent = 'Nieprawidłowe hasło. Spróbuj ponownie.';
+  try {
+    const res = await fetch(WORKER + '/verify-nexo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if (data.valid) {
+      document.getElementById('access-modal').style.display = 'none';
+    } else {
+      errEl.textContent = 'Nieprawidłowe hasło. Spróbuj ponownie.';
+      btn.disabled = false;
+      btn.textContent = 'Wejdź do materiałów →';
+    }
+  } catch(e) {
+    errEl.textContent = 'Błąd połączenia. Odśwież stronę.';
     btn.disabled = false;
     btn.textContent = 'Wejdź do materiałów →';
   }
