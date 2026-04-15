@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test Wiedzy — MBA</title>
+<title>Zadanie końcowe — MBA</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,14 +13,14 @@
     background: #F0EDE7;
     color: #1A1A1A;
     min-height: 100vh;
-    padding: 40px 20px 60px;
+    padding: 52px 20px 60px;
   }
 
   .page-header {
     background: #1A1A1A;
     color: #F0EDE7;
     padding: 28px 40px;
-    margin: -40px -20px 40px;
+    margin: -52px -20px 40px;
   }
   .page-header .label {
     font-size: 11px;
@@ -316,8 +316,62 @@
     width: 0%;
   }
 </style>
+<style>
+  /* ═══ SITE-NAV (shared) ════════════════════════════════════════════════ */
+  .site-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 999;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.97);
+    border-bottom: 1px solid rgba(100,116,139,0.18);
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+  .site-nav .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 6px 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .site-nav .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    color: #334155;
+    transition: background 0.15s, color 0.15s;
+  }
+  .site-nav .nav-link:hover  { background: rgba(59,130,246,0.10); color: #2563eb; }
+  .site-nav .nav-link.active { background: rgba(59,130,246,0.14); color: #2563eb; font-weight: 700; }
+  @media (max-width: 560px) {
+    .site-nav .nav-link .nav-label { display: none; }
+    .site-nav .nav-link { padding: 0.3rem 0.45rem; }
+  }
+  /* ════════════════════════════════════════════════════════════════════════ */
+</style>
 </head>
 <body>
+<nav class="site-nav">
+  <div class="nav-links">
+    <a class="nav-link" href="index.html">🏠 <span class="nav-label">MBA 2026</span></a>
+    <a class="nav-link" href="korelacja-danych.html">🔗 <span class="nav-label">01 · Korelacja</span></a>
+    <a class="nav-link" href="myslenie-krytyczne.html">🧠 <span class="nav-label">02 · Myślenie</span></a>
+    <a class="nav-link" href="symulacja-transformacja.html">🎮 <span class="nav-label">03 · Symulacja</span></a>
+    <a class="nav-link" href="ciemne-dane.html">🌑 <span class="nav-label">04 · Ciemne Dane</span></a>
+    <a class="nav-link" href="gra-inzynieria-danych.html">🤖 <span class="nav-label">05 · Inżynieria</span></a>
+    <a class="nav-link active" href="test-wiedzy.html">✅ <span class="nav-label">Zadanie końcowe</span></a>
+  </div>
+</nav>
+
 
 <!-- ── Modal: kod dostępu ─────────────────────────────────────────── -->
 <div class="modal-overlay" id="access-modal">
@@ -335,8 +389,7 @@
 
 <!-- ── Nagłówek ───────────────────────────────────────────────────── -->
 <div class="page-header">
-  <div class="label">Ćwiczenie 05</div>
-  <h1>Test Wiedzy</h1>
+  <h1>Zadanie końcowe</h1>
   <div class="meta">4 pytania otwarte · odpowiedzi zapisywane poufnie</div>
 </div>
 

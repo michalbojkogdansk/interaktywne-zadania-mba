@@ -29,7 +29,7 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 40px 20px 60px;
+      padding: 52px 20px 60px;
     }
 
     .hidden { display: none !important; }
@@ -680,8 +680,62 @@
     }
 
 </style>
+<style>
+  /* ═══ SITE-NAV (shared) ════════════════════════════════════════════════ */
+  .site-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 999;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.97);
+    border-bottom: 1px solid rgba(100,116,139,0.18);
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+  .site-nav .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 6px 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .site-nav .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    color: #334155;
+    transition: background 0.15s, color 0.15s;
+  }
+  .site-nav .nav-link:hover  { background: rgba(59,130,246,0.10); color: #2563eb; }
+  .site-nav .nav-link.active { background: rgba(59,130,246,0.14); color: #2563eb; font-weight: 700; }
+  @media (max-width: 560px) {
+    .site-nav .nav-link .nav-label { display: none; }
+    .site-nav .nav-link { padding: 0.3rem 0.45rem; }
+  }
+  /* ════════════════════════════════════════════════════════════════════════ */
+</style>
 </head>
 <body>
+<nav class="site-nav">
+  <div class="nav-links">
+    <a class="nav-link" href="index.html">🏠 <span class="nav-label">MBA 2026</span></a>
+    <a class="nav-link" href="korelacja-danych.html">🔗 <span class="nav-label">01 · Korelacja</span></a>
+    <a class="nav-link" href="myslenie-krytyczne.html">🧠 <span class="nav-label">02 · Myślenie</span></a>
+    <a class="nav-link active" href="symulacja-transformacja.html">🎮 <span class="nav-label">03 · Symulacja</span></a>
+    <a class="nav-link" href="ciemne-dane.html">🌑 <span class="nav-label">04 · Ciemne Dane</span></a>
+    <a class="nav-link" href="gra-inzynieria-danych.html">🤖 <span class="nav-label">05 · Inżynieria</span></a>
+    <a class="nav-link" href="test-wiedzy.html">✅ <span class="nav-label">Zadanie końcowe</span></a>
+  </div>
+</nav>
+
 
 <div class="timer-widget hidden" id="timerWidget">⏱ <span id="timerDisplay">30:00</span></div>
 

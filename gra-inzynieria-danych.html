@@ -80,7 +80,7 @@
   .main-layout {
     display: grid; grid-template-columns: 260px 1fr;
     max-width: 1100px; margin: 0 auto;
-    min-height: calc(100vh - 90px);
+    min-height: calc(100vh - 50px - 90px);
   }
 
   /* === SIDEBAR — MISJE === */
@@ -309,48 +309,66 @@
     .footer { padding: 18px 20px; }
   }
 
-  /* === NAVBAR === */
-  .site-nav {
-    background: #fff;
-    border-bottom: 2px solid var(--text);
-    padding: 0 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 48px;
-    position: sticky;
-    top: 0;
-    z-index: 200;
-  }
-  .nav-home {
-    font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
-    text-transform: uppercase; text-decoration: none;
-    color: var(--text); white-space: nowrap;
-  }
-  .nav-home:hover { color: var(--accent); }
-  .nav-items {
-    display: flex; align-items: center; gap: 2px;
-  }
-  .nav-item {
-    display: flex; align-items: center; justify-content: center;
-    min-width: 36px; height: 32px; padding: 0 10px;
-    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
-    text-transform: uppercase; text-decoration: none;
-    color: var(--text-muted); border: 1px solid transparent;
-    transition: all 0.12s;
-  }
-  .nav-item:hover { background: var(--bg); color: var(--text); border-color: var(--border); }
-  .nav-item.active { background: var(--text); color: var(--bg); }
-  .nav-item.nav-final { border: 1px solid var(--border-dark); color: var(--text-muted); }
-  .nav-item.nav-final:hover { background: var(--text); color: var(--bg); }
-  @media (max-width: 480px) {
-    .site-nav { padding: 0 16px; }
-    .nav-home span.nav-home-full { display: none; }
-  }
+  
 
 </style>
+<style>
+  /* ═══ SITE-NAV (shared) ════════════════════════════════════════════════ */
+  .site-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 999;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.97);
+    border-bottom: 1px solid rgba(100,116,139,0.18);
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+  .site-nav .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 6px 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .site-nav .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    color: #334155;
+    transition: background 0.15s, color 0.15s;
+  }
+  .site-nav .nav-link:hover  { background: rgba(59,130,246,0.10); color: #2563eb; }
+  .site-nav .nav-link.active { background: rgba(59,130,246,0.14); color: #2563eb; font-weight: 700; }
+  @media (max-width: 560px) {
+    .site-nav .nav-link .nav-label { display: none; }
+    .site-nav .nav-link { padding: 0.3rem 0.45rem; }
+  }
+  /* ════════════════════════════════════════════════════════════════════════ */
+</style>
+<style>body { padding-top: 50px !important; }</style>
 </head>
 <body>
+<nav class="site-nav">
+  <div class="nav-links">
+    <a class="nav-link" href="index.html">🏠 <span class="nav-label">MBA 2026</span></a>
+    <a class="nav-link" href="korelacja-danych.html">🔗 <span class="nav-label">01 · Korelacja</span></a>
+    <a class="nav-link" href="myslenie-krytyczne.html">🧠 <span class="nav-label">02 · Myślenie</span></a>
+    <a class="nav-link" href="symulacja-transformacja.html">🎮 <span class="nav-label">03 · Symulacja</span></a>
+    <a class="nav-link" href="ciemne-dane.html">🌑 <span class="nav-label">04 · Ciemne Dane</span></a>
+    <a class="nav-link active" href="gra-inzynieria-danych.html">🤖 <span class="nav-label">05 · Inżynieria</span></a>
+    <a class="nav-link" href="test-wiedzy.html">✅ <span class="nav-label">Zadanie końcowe</span></a>
+  </div>
+</nav>
+
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!--  MODAL — HASŁO DOSTĘPU                                       -->
@@ -367,18 +385,6 @@
     <button class="btn btn-primary" id="access-btn" onclick="verifyAccess()" style="width:100%">Wejdź do materiałów →</button>
   </div>
 </div>
-
-<nav class="site-nav">
-  <a href="index.html" class="nav-home">&#8592; Zadania MBA</a>
-  <div class="nav-items">
-    <a href="korelacja-danych.html" class="nav-item" title="Korelacja Danych">01</a>
-    <a href="myslenie-krytyczne.html" class="nav-item" title="Myślenie Krytyczne">02</a>
-    <a href="symulacja-transformacja.html" class="nav-item" title="Symulacja">03</a>
-    <a href="ciemne-dane.html" class="nav-item" title="Ciemne Dane">04</a>
-    <a href="gra-inzynieria-danych.html" class="nav-item active" title="Inżynieria Danych">05</a>
-    <a href="test-wiedzy.html" class="nav-item nav-final" title="Zadanie końcowe">&#10003;</a>
-  </div>
-</nav>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!--  NAGŁÓWEK                                                    -->
