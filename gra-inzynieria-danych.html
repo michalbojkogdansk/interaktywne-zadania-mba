@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ćwiczenie 06 · Gra: Inżynieria Danych Biznesowych</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F0EDE7;
+    --surface: #FFFFFF;
+    --border: #D8D2C8;
+    --border-dark: #B8B2A8;
+    --text: #1A1A1A;
+    --text-muted: #6B6560;
+    --accent: #4A8F8A;
+    --accent-dark: #357570;
+    --accent-light: #EAF4F3;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* === MODAL HASŁA === */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,26,26,0.88);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+  }
+  .modal-box {
+    background: var(--bg);
+    padding: 44px 40px;
+    max-width: 440px; width: 90%;
+  }
+  .modal-box .lock-icon { font-size: 38px; margin-bottom: 14px; }
+  .modal-box h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .modal-box p { font-size: 14px; color: #666; margin-bottom: 22px; line-height: 1.5; }
+  .modal-box input {
+    width: 100%; border: 2px solid var(--text);
+    background: #fff; padding: 14px;
+    font-size: 20px; font-weight: 800; letter-spacing: 0.2em;
+    text-align: center; text-transform: uppercase;
+    font-family: 'Inter', sans-serif; outline: none;
+    margin-bottom: 8px;
+  }
+  .modal-error { font-size: 12px; color: #c0392b; font-weight: 600; min-height: 18px; margin-bottom: 14px; }
+  .btn {
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
+    padding: 13px 28px; cursor: pointer; border: none;
+    letter-spacing: 0.05em; text-transform: uppercase; transition: opacity 0.15s;
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: #1A1A1A; color: var(--bg); }
+  .btn-primary:not(:disabled):hover { background: #333; }
+  .btn-secondary { background: transparent; border: 1px solid var(--text); color: var(--text); }
+  .btn-secondary:hover { background: var(--text); color: var(--bg); }
+
+  /* === NAGŁÓWEK === */
+  .page-header {
+    background: #1A1A1A; color: var(--bg);
+    padding: 24px 40px 20px;
+  }
+  .page-header .label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 4px;
+  }
+  .page-header h1 { font-size: 26px; font-weight: 800; line-height: 1.2; }
+  .page-header .meta { font-size: 13px; color: #aaa; margin-top: 6px; }
+
+  /* === PROGRESS BAR === */
+  .progress-strip { height: 3px; background: #D8D4CE; }
+  .progress-fill { height: 3px; background: var(--accent); transition: width 0.4s ease; width: 0%; }
+
+  /* === LAYOUT === */
+  .main-layout {
+    display: grid; grid-template-columns: 260px 1fr;
+    max-width: 1100px; margin: 0 auto;
+    min-height: calc(100vh - 90px);
+  }
+
+  /* === SIDEBAR — MISJE === */
+  .sidebar {
+    background: #fff; border-right: 1px solid var(--border);
+    padding: 28px 0;
+  }
+  .sidebar-title {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-muted);
+    padding: 0 24px; margin-bottom: 16px;
+  }
+  .mission-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 24px; cursor: pointer;
+    transition: background 0.12s; border: none;
+    background: none; width: 100%; text-align: left;
+    border-left: 3px solid transparent;
+  }
+  .mission-item:hover { background: var(--bg); }
+  .mission-item.active { background: var(--accent-light); border-left-color: var(--accent); }
+  .mission-item.done .m-num { background: var(--accent); color: #fff; }
+  .m-num {
+    flex-shrink: 0; width: 26px; height: 26px;
+    background: var(--bg); border: 1.5px solid var(--border-dark);
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .m-label { flex: 1; }
+  .m-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
+  .m-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .sidebar-divider { height: 1px; background: var(--border); margin: 12px 24px; }
+  .sidebar-info {
+    padding: 12px 24px;
+    font-size: 11px; color: var(--text-muted); line-height: 1.6;
+  }
+
+  /* === CONTENT === */
+  .content { padding: 36px 40px; max-width: 780px; }
+
+  .mission-header { margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .mission-tag {
+    display: inline-block; font-size: 10px; font-weight: 800;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 6px;
+  }
+  .mission-header h2 { font-size: 24px; font-weight: 800; line-height: 1.2; margin-bottom: 8px; }
+  .mission-header .mission-desc { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
+  .mission-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .badge {
+    padding: 4px 10px; border: 1px solid var(--border-dark);
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    background: var(--bg);
+  }
+  .badge-accent { border-color: var(--accent); color: var(--accent-dark); background: var(--accent-light); }
+
+  /* === SEKCJE TREŚCI === */
+  .section { margin-bottom: 24px; }
+
+  /* Teoria — akordeon */
+  .theory-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 16px 20px;
+    background: #1A1A1A; color: var(--bg);
+    border: none; cursor: pointer; font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .theory-toggle .arrow { transition: transform 0.2s; font-size: 16px; }
+  .theory-toggle.open .arrow { transform: rotate(180deg); }
+  .theory-body {
+    display: none; padding: 24px;
+    border: 1px solid var(--border); border-top: none;
+    background: #fff;
+  }
+  .theory-body.open { display: block; }
+
+  .theory-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .theory-card {
+    padding: 16px; background: var(--bg);
+    border-left: 3px solid var(--accent);
+  }
+  .theory-card .tc-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+  }
+  .theory-card .tc-text { font-size: 13px; line-height: 1.6; color: var(--text); }
+
+  .def-box {
+    background: var(--accent-light); border-left: 3px solid var(--accent);
+    padding: 14px 18px; margin: 12px 0;
+  }
+  .def-box strong { color: var(--accent-dark); }
+  .def-box p { font-size: 13px; line-height: 1.65; margin: 0; }
+
+  .theory-body h3 { font-size: 14px; font-weight: 800; margin-bottom: 8px; margin-top: 16px; color: var(--text); }
+  .theory-body h3:first-child { margin-top: 0; }
+  .theory-body p { font-size: 13px; line-height: 1.7; color: #444; margin-bottom: 10px; }
+  .theory-body ul { padding-left: 18px; margin-bottom: 10px; }
+  .theory-body ul li { font-size: 13px; line-height: 1.7; color: #444; margin-bottom: 4px; }
+
+  /* Brief misji */
+  .brief-box {
+    background: #fff; border: 1px solid var(--border); padding: 24px;
+  }
+  .brief-box .brief-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px;
+  }
+  .brief-box h3 { font-size: 16px; font-weight: 800; margin-bottom: 10px; }
+  .brief-box p { font-size: 14px; line-height: 1.7; color: #444; margin-bottom: 10px; }
+  .brief-box ul { padding-left: 20px; }
+  .brief-box ul li { font-size: 14px; line-height: 1.7; color: #444; margin-bottom: 6px; }
+  .brief-box ul li strong { color: var(--text); }
+
+  /* Podpowiedzi */
+  .hints-section { }
+  .hints-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px;
+  }
+  .hint-item {
+    background: #fff; border: 1px solid var(--border);
+    margin-bottom: 8px; overflow: hidden;
+  }
+  .hint-toggle {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%; padding: 14px 18px;
+    background: none; border: none; cursor: pointer;
+    font-family: 'Inter', sans-serif; text-align: left;
+  }
+  .hint-toggle:hover { background: var(--bg); }
+  .hint-number {
+    flex-shrink: 0; width: 22px; height: 22px;
+    background: var(--text); color: var(--bg);
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hint-toggle-text { font-size: 13px; font-weight: 600; color: var(--text-muted); flex: 1; }
+  .hint-toggle-icon { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+  .hint-body {
+    display: none; padding: 14px 18px 18px;
+    border-top: 1px solid var(--border);
+    background: #FAFAF8;
+  }
+  .hint-body.open { display: block; }
+  .hint-body p { font-size: 13px; line-height: 1.7; color: #444; margin: 0; }
+  .hint-body code {
+    display: inline-block; background: var(--bg);
+    border: 1px solid var(--border); padding: 2px 6px;
+    font-family: 'Courier New', monospace; font-size: 12px;
+    color: var(--accent-dark);
+  }
+  .hint-body .prompt-example {
+    background: #1A1A1A; color: #E8F5F4;
+    padding: 12px 16px; margin-top: 10px;
+    font-family: 'Courier New', monospace; font-size: 12px;
+    line-height: 1.6; border-left: 3px solid var(--accent);
+  }
+
+  /* Deliverables */
+  .deliverables-box {
+    background: var(--bg); border: 2px solid var(--text); padding: 22px;
+  }
+  .deliverables-box .del-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text); margin-bottom: 12px;
+  }
+  .deliverables-box ul { padding-left: 0; list-style: none; }
+  .deliverables-box ul li {
+    font-size: 14px; line-height: 1.6; color: var(--text);
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .deliverables-box ul li:last-child { border-bottom: none; }
+  .deliverables-box ul li::before {
+    content: '□'; color: var(--accent); font-size: 16px;
+    flex-shrink: 0; margin-top: 1px;
+  }
+
+  /* Done button */
+  .mission-done-area { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
+  .mission-done-btn { }
+  .done-note { font-size: 12px; color: var(--text-muted); }
+
+  /* Raport szablon */
+  .report-section { }
+  .report-chapter {
+    background: #fff; border: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .report-chapter-header {
+    padding: 16px 20px; display: flex; align-items: center; gap: 14px;
+    background: var(--bg);
+  }
+  .report-chapter-num {
+    width: 28px; height: 28px; background: var(--text); color: var(--bg);
+    font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .report-chapter-title { font-size: 14px; font-weight: 700; }
+  .report-chapter-body { padding: 16px 20px; border-top: 1px solid var(--border); }
+  .report-chapter-body p { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+  .report-chapter-body ul { padding-left: 18px; }
+  .report-chapter-body ul li { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 4px; }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid var(--border-dark);
+    padding: 18px 40px; display: flex;
+    justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .footer-left { font-size: 0.8rem; color: var(--text-muted); }
+  .footer-right { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+
+  /* Responsive */
+  @media (max-width: 760px) {
+    .main-layout { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid var(--border); padding: 16px 0; }
+    .content { padding: 24px 20px; }
+    .page-header { padding: 20px 20px 16px; }
+    .theory-grid { grid-template-columns: 1fr; }
+    .footer { padding: 18px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  MODAL — HASŁO DOSTĘPU                                       -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="access-modal">
+  <div class="modal-box">
+    <div class="lock-icon">🔒</div>
+    <h2>Kod dostępu</h2>
+    <p>Materiały do gry są dostępne wyłącznie dla uczestników zajęć.<br>Wpisz hasło otrzymane od prowadzącego.</p>
+    <input type="text" id="access-input" placeholder="XXXXXXXXX" maxlength="12"
+           oninput="this.value=this.value.toUpperCase()"
+           onkeydown="if(event.key==='Enter') verifyAccess()">
+    <div class="modal-error" id="access-error"></div>
+    <button class="btn btn-primary" id="access-btn" onclick="verifyAccess()" style="width:100%">Wejdź do materiałów →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  NAGŁÓWEK                                                    -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page-header">
+  <div class="label">Ćwiczenie 06 · MBA 2026</div>
+  <h1>🗄️ Gra: Inżynieria Danych Biznesowych</h1>
+  <div class="meta">5 misji · ~4h · Agent AI + baza NEXO Retail na Azure · Raport końcowy</div>
+</div>
+<div class="progress-strip"><div class="progress-fill" id="progress-fill"></div></div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  LAYOUT: SIDEBAR + CONTENT                                   -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="main-layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-title">Misje</div>
+
+    <button class="mission-item active" id="nav-0" onclick="showMission(0)">
+      <div class="m-num" id="num-0">01</div>
+      <div class="m-label">
+        <div class="m-title">Uruchomienie Agenta AI</div>
+        <div class="m-meta">⏱ ~40 min · Setup</div>
+      </div>
+    </button>
+
+    <button class="mission-item" id="nav-1" onclick="showMission(1)">
+      <div class="m-num" id="num-1">02</div>
+      <div class="m-label">
+        <div class="m-title">Eksploracja Bazy Danych</div>
+        <div class="m-meta">⏱ ~40 min · Mapowanie</div>
+      </div>
+    </button>
+
+    <button class="mission-item" id="nav-2" onclick="showMission(2)">
+      <div class="m-num" id="num-2">03</div>
+      <div class="m-label">
+        <div class="m-title">Dark Data Hunt</div>
+        <div class="m-meta">⏱ ~45 min · Odkrywanie</div>
+      </div>
+    </button>
+
+    <button class="mission-item" id="nav-3" onclick="showMission(3)">
+      <div class="m-num" id="num-3">04</div>
+      <div class="m-label">
+        <div class="m-title">Korelacje Biznesowe</div>
+        <div class="m-meta">⏱ ~45 min · Analiza</div>
+      </div>
+    </button>
+
+    <button class="mission-item" id="nav-4" onclick="showMission(4)">
+      <div class="m-num" id="num-4">05</div>
+      <div class="m-label">
+        <div class="m-title">Architektura & ROI</div>
+        <div class="m-meta">⏱ ~50 min · Wnioski</div>
+      </div>
+    </button>
+
+    <div class="sidebar-divider"></div>
+
+    <button class="mission-item" id="nav-5" onclick="showMission(5)">
+      <div class="m-num" style="background:var(--bg);border-color:var(--accent);color:var(--accent)">📋</div>
+      <div class="m-label">
+        <div class="m-title">Szablon Raportu</div>
+        <div class="m-meta">Struktura oddawanego raportu</div>
+      </div>
+    </button>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-info">
+      💡 Zaznacz misję jako ukończoną, gdy skończysz. Pasek postępu na górze pokaże Twój stan.
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" id="content-area">
+    <!-- Wypełniane dynamicznie przez JS -->
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="footer-left">Interaktywne Zadania MBA &copy; 2026</div>
+  <div class="footer-right">MBA · Zarządzanie Cyfrowe</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  WERYFIKACJA HASŁA (SHA-256 client-side)
+// ═══════════════════════════════════════════════════════════
+const CORRECT_HASH = '4618fc3fd2b9fbc10f4be6de77672c10e24304a69b65fbb991eb0815efeaab73';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function verifyAccess() {
+  const btn = document.getElementById('access-btn');
+  const errEl = document.getElementById('access-error');
+  const code = document.getElementById('access-input').value.trim().toUpperCase();
+  if (!code) { errEl.textContent = 'Wpisz hasło dostępu.'; return; }
+  btn.disabled = true;
+  btn.textContent = 'Sprawdzam…';
+  errEl.textContent = '';
+  const hash = await sha256(code);
+  if (hash === CORRECT_HASH) {
+    document.getElementById('access-modal').style.display = 'none';
+  } else {
+    errEl.textContent = 'Nieprawidłowe hasło. Spróbuj ponownie.';
+    btn.disabled = false;
+    btn.textContent = 'Wejdź do materiałów →';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DANE MISJI
+// ═══════════════════════════════════════════════════════════
+const MISSIONS = [
+  // ── MISJA 1 ──
+  {
+    tag: 'Misja 01 · Setup',
+    title: 'Uruchomienie Agenta AI',
+    desc: 'Skonfigurujesz własnego agenta AI i połączysz go z bazą danych NEXO Retail na Azure. To fundament całej gry — agent stanie się Twoim "analitykiem" przez resztę zajęć.',
+    badges: ['⏱ ~40 min', '🤖 Agent AI', '🔗 Azure SQL'],
+    theory: {
+      title: '📖 Teoria: Agenty AI i połączenia z danymi',
+      body: `
+        <h3>Czym jest agent AI?</h3>
+        <p>Agent AI to model językowy (LLM), który posiada dostęp do <strong>narzędzi</strong> — może wykonywać zapytania SQL, przeglądać pliki, wywoływać API. W odróżnieniu od chatbota, agent <em>działa</em>, a nie tylko <em>mówi</em>.</p>
+        <div class="def-box">
+          <p><strong>Agent = LLM + narzędzia + pamięć kontekstu</strong><br>
+          Zamiast pisać SQL ręcznie, opisujesz problem biznesowym językiem — agent tłumaczy to na zapytania, wykonuje je i interpretuje wyniki.</p>
+        </div>
+        <h3>Dlaczego agent, a nie SQL?</h3>
+        <p>Agent pozwala zadawać pytania iteracyjnie: "Znajdź sklep z najgorzej rosnącą sprzedażą, a potem sprawdź, czy jego HR-owe dane to tłumaczą". To niemożliwe w jednym zapytaniu SQL bez wiedzy o strukturze bazy.</p>
+        <div class="theory-grid">
+          <div class="theory-card">
+            <div class="tc-label">SQL (tradycyjny)</div>
+            <div class="tc-text">Musisz znać strukturę bazy. Jedno pytanie = jeden wynik. Wymaga iteracji ręcznej.</div>
+          </div>
+          <div class="theory-card">
+            <div class="tc-label">Agent AI</div>
+            <div class="tc-text">Odkrywa strukturę sam. Zadajesz pytania biznesowe. Iteruje automatycznie.</div>
+          </div>
+        </div>
+        <h3>Narzędzia do wyboru</h3>
+        <ul>
+          <li><strong>Google Gemini</strong> (z rozszerzeniem do SQL) — prosto, dostępne przez przeglądarkę</li>
+          <li><strong>ChatGPT + Code Interpreter</strong> — zaawansowane, działa z uploadem danych</li>
+          <li><strong>Azure AI Foundry</strong> — najlepsze połączenie z Azure SQL, ale wymaga konfiguracji</li>
+          <li><strong>Cursor / VS Code Copilot</strong> — dla bardziej technicznych uczestników</li>
+        </ul>
+      `
+    },
+    brief: `
+      <div class="brief-label">Twoje zadanie</div>
+      <h3>Skonfiguruj agenta i wykonaj pierwsze 3 odkrycia</h3>
+      <p>Prowadzący poda Ci dane połączenia do bazy NEXO Retail na Azure SQL (server, database, login, password). Twoim zadaniem jest:</p>
+      <ul>
+        <li>Uruchomić wybranego agenta AI z dostępem do SQL</li>
+        <li>Połączyć agenta z bazą NEXO Retail</li>
+        <li>Zadać pierwsze pytania eksploracyjne i <strong>udokumentować 3 odkrycia</strong> o strukturze lub danych firmy</li>
+      </ul>
+      <p style="margin-top:10px;font-size:13px;color:var(--text-muted)">Nie szukaj jeszcze odpowiedzi na konkretne pytania biznesowe — na tym etapie chodzi o <strong>orientację w terenie</strong>.</p>
+    `,
+    hints: [
+      {
+        title: 'Jak zacząć — pierwsze pytanie do agenta',
+        body: `<p>Zacznij od mapy, nie od analizy. Poproś agenta:</p>
+        <div class="prompt-example">"Połącz się z bazą danych. Pokaż mi listę wszystkich tabel wraz z liczbą rekordów w każdej. Pogrupuj według domeny biznesowej."</div>
+        <p style="margin-top:10px">Jeśli agent nie zna domen — poproś o listę tabel i sam je pogrupuj. Zobaczysz, jak wiele "obszarów" ma NEXO.</p>`
+      },
+      {
+        title: 'Jak sprawdzić jakość połączenia',
+        body: `<p>Po połączeniu wykonaj szybki test sanity:</p>
+        <div class="prompt-example">"Sprawdź zakres dat transakcji sprzedażowych. Ile jest rekordów? Czy są luki w danych (miesiące bez transakcji)?"</div>
+        <p style="margin-top:10px">To pokaże, czy baza jest świeża, czy historyczna — i da Ci pierwsze poczucie jakości danych.</p>`
+      },
+      {
+        title: 'Pierwsze ciekawe pytanie analityczne',
+        body: `<p>Gdy masz mapę tabel, zadaj pytanie które łączy dwie domeny:</p>
+        <div class="prompt-example">"Który sklep NEXO ma najwyższy przychód na pracownika? Użyj danych sprzedażowych i HR."</div>
+        <p style="margin-top:10px">Jeśli agent potrafi to połączyć — masz działający setup. Jeśli nie — zapisz komunikat błędu i poproś o pomoc.</p>`
+      }
+    ],
+    deliverables: [
+      'Screenshot potwierdzający połączenie agenta z bazą NEXO',
+      'Lista tabel z liczbą rekordów (wklejona do notatek)',
+      '3 obserwacje o strukturze lub zawartości bazy (własnymi słowami)',
+      'Wybrane narzędzie AI i krótkie uzasadnienie wyboru'
+    ]
+  },
+
+  // ── MISJA 2 ──
+  {
+    tag: 'Misja 02 · Mapowanie',
+    title: 'Eksploracja Bazy Danych NEXO',
+    desc: 'Zmapujesz wszystkie domeny danych firmy, zidentyfikujesz anomalie i zrozumiesz, które obszary mają największy potencjał analityczny. Koniec tej misji = rozumiesz, czym NEXO "żyje".',
+    badges: ['⏱ ~40 min', '🗺️ Mapowanie domen', '🔍 Anomalie'],
+    theory: {
+      title: '📖 Teoria: Domeny danych i jakość danych',
+      body: `
+        <h3>Czym są domeny danych?</h3>
+        <p>Domena danych to logiczna grupa danych przypisana do jednego obszaru biznesowego. W NEXO Retail mamy 6 domen: Sprzedaż, Klienci, Produkty/Logistyka, HR, Marketing, Kontekst zewnętrzny.</p>
+        <div class="def-box">
+          <p><strong>Dlaczego domeny są ważne?</strong><br>
+          Gdy dane są podzielone na domeny, każda ma swojego "właściciela" biznesowego. To fundament koncepcji Data Mesh (poznasz ją w Misji 5).</p>
+        </div>
+        <h3>Anomalie w danych — na co patrzeć?</h3>
+        <ul>
+          <li><strong>Luki czasowe</strong> — brakujące miesiące w historii transakcji</li>
+          <li><strong>Wartości zerowe</strong> — produkty z zerową sprzedażą przez długi czas</li>
+          <li><strong>Outliers</strong> — transakcje 100x większe niż średnia</li>
+          <li><strong>NULL plaga</strong> — kolumny gdzie 70%+ wartości to NULL</li>
+          <li><strong>Duplikaty</strong> — ten sam klient pod różnymi ID</li>
+        </ul>
+        <div class="theory-grid">
+          <div class="theory-card">
+            <div class="tc-label">Dane aktywne</div>
+            <div class="tc-text">Regularnie czytane i aktualizowane. Mają właściciela. Służą decyzjom.</div>
+          </div>
+          <div class="theory-card">
+            <div class="tc-label">Dane pasywne</div>
+            <div class="tc-text">Zbierane, ale nieczytane. Zajmują miejsce. Mogą być ciemnymi danymi.</div>
+          </div>
+        </div>
+        <h3>ROI z danych</h3>
+        <p>ROI (Return on Investment) z danych = wartość decyzji podjętych dzięki danym minus koszt zbierania i przetwarzania danych. Jeśli nie wiesz, jaką decyzję wspierają dane — prawdopodobnie są ciemnymi danymi.</p>
+      `
+    },
+    brief: `
+      <div class="brief-label">Twoje zadanie</div>
+      <h3>Zmapuj NEXO i znajdź anomalie</h3>
+      <p>Korzystając z agenta AI, zbadaj każdą z 6 domen NEXO Retail. Twoim celem jest:</p>
+      <ul>
+        <li>Opisać co "robi" każda domena i jakie ma tabele</li>
+        <li>Znaleźć <strong>min. 2 anomalie</strong> w danych (luki, wartości zerowe, NULLe, outliers)</li>
+        <li>Ocenić, <strong>która domena ma największy potencjał</strong> analityczny i uzasadnić</li>
+        <li>Narysować (lub opisać) mapę połączeń między domenami</li>
+      </ul>
+      <p style="margin-top:10px;font-size:13px;color:var(--text-muted)">Pamiętaj: domeny w NEXO nie są idealnie odseparowane — szukaj tabel, które "łączą" kilka obszarów.</p>
+    `,
+    hints: [
+      {
+        title: 'Jak zbadać każdą domenę szybko',
+        body: `<p>Dla każdej domeny zadaj agentowi to samo pytanie-szablon:</p>
+        <div class="prompt-example">"Zbadaj tabele związane z [domeną]. Podaj: liczbę rekordów, zakres dat, procent wartości NULL w kluczowych kolumnach, oraz 1 obserwację o jakości danych."</div>
+        <p style="margin-top:10px">To da Ci spójny "raport" dla każdej domeny w ciągu kilku minut.</p>`
+      },
+      {
+        title: 'Gdzie szukać anomalii — dobre miejsca startowe',
+        body: `<p>Zacznij od tabel, gdzie anomalie są najbardziej prawdopodobne:</p>
+        <div class="prompt-example">"Znajdź produkty, które były sprzedawane przez minimum 6 miesięcy, ale w ciągu ostatnich 3 miesięcy mają zero sprzedaży."</div>
+        <p style="margin-top:10px">To klasyczny sygnał anomalii — produkt "aktywny" w systemie, ale nieaktywny w rzeczywistości.</p>`
+      },
+      {
+        title: 'Jak ocenić potencjał domeny analitycznie',
+        body: `<p>Potencjał domeny = bogactwo danych × aktywność biznesowa × stan jakości. Zapytaj agenta:</p>
+        <div class="prompt-example">"Porównaj domeny pod kątem: liczby tabel, kompletności danych (% NULL), i częstotliwości aktualizacji. Które 2 domeny są najmniej 'zbadane'?"</div>`
+      }
+    ],
+    deliverables: [
+      'Mapa 6 domen NEXO z opisem każdej (2-3 zdania)',
+      'Lista min. 2 anomalii z opisem i potencjalnym wpływem biznesowym',
+      'Ocena: która domena ma największy potencjał i dlaczego',
+      'Pierwsze pytanie biznesowe, które chcesz zbadać w kolejnych misjach'
+    ]
+  },
+
+  // ── MISJA 3 ──
+  {
+    tag: 'Misja 03 · Dark Data',
+    title: 'Dark Data Hunt — Co chowa NEXO?',
+    desc: 'Poszukasz ukrytych skarbów — danych zbieranych przez NEXO, które nikt nie analizuje. Oszacujesz ich koszt i potencjał aktywacji. Firmy przeciętnie "siedzą na" 60-80% ciemnych danych.',
+    badges: ['⏱ ~45 min', '🌑 Dark Data', '💰 ROI'],
+    theory: {
+      title: '📖 Teoria: Dark Data — definicja, koszty, ROI',
+      body: `
+        <h3>Co to są Dark Data?</h3>
+        <p>Dark Data (Ciemne Dane) to dane zbierane przez organizację, które nie są aktywnie wykorzystywane w decyzjach ani procesach. Gartner szacuje, że <strong>80% danych korporacyjnych to dark data</strong>.</p>
+        <div class="def-box">
+          <p><strong>Dark Data = zbieramy, ale nie widzimy wartości.</strong><br>
+          Mogą być cennym zasobem lub kosztownym ciężarem — zależy od tego, co w nich siedzi i czy można je aktywować.</p>
+        </div>
+        <h3>Typowe przykłady dark data</h3>
+        <ul>
+          <li>Logi systemowe i logi błędów (terabajty danych o zachowaniu systemu)</li>
+          <li>Notatki z call center (nieustrukturyzowany tekst, bogaty w insights)</li>
+          <li>Zdjęcia i pliki multimedialne w systemach firmowych</li>
+          <li>Dane historyczne sprzed wdrożenia obecnego systemu</li>
+          <li>Tabele "na wszelki wypadek" — nigdy nieczytane przez żadne narzędzie BI</li>
+          <li>Dane z zewnętrznych źródeł (np. pogoda, dane demograficzne) — pobrane ale nieużyte</li>
+        </ul>
+        <h3>Jak liczyć koszty dark data?</h3>
+        <div class="theory-grid">
+          <div class="theory-card">
+            <div class="tc-label">Koszty storage</div>
+            <div class="tc-text">Azure SQL: ~20 PLN/GB/rok. 1 TB dark data = 20 000 PLN rocznie samego storage.</div>
+          </div>
+          <div class="theory-card">
+            <div class="tc-label">Koszty compliance</div>
+            <div class="tc-text">RODO: dane osobowe muszą być usunięte gdy niepotrzebne. Ryzyko kar: do 20 mln EUR lub 4% obrotu.</div>
+          </div>
+          <div class="theory-card">
+            <div class="tc-label">Koszty pośrednie</div>
+            <div class="tc-text">Spowolnienie zapytań. Trudniejszy backup. Czas IT na utrzymanie martwych tabel.</div>
+          </div>
+          <div class="theory-card">
+            <div class="tc-label">Potencjał aktywacji</div>
+            <div class="tc-text">Jeśli dane mogą wspierać decyzję wartą X PLN → aktywacja z ROI = X / koszt analizy.</div>
+          </div>
+        </div>
+        <h3>Co zrobić z dark data?</h3>
+        <p>Cztery opcje: <strong>Aktywuj</strong> (zainwestuj w analizę i użycie), <strong>Archiwizuj</strong> (przenieś do taniej storage, zachowaj dostęp), <strong>Usuń</strong> (brak wartości + ryzyko compliance), <strong>Zbadaj dalej</strong> (potrzebujesz więcej informacji).</p>
+      `
+    },
+    brief: `
+      <div class="brief-label">Twoje zadanie</div>
+      <h3>Znajdź min. 4 obszary dark data w NEXO i oszacuj ich wartość</h3>
+      <p>Używając agenta AI, przeszukaj bazę NEXO pod kątem danych, które są zbierane ale nieużywane. Dla każdego obszaru:</p>
+      <ul>
+        <li>Zidentyfikuj tabelę/obszar danych i opisz co zawiera</li>
+        <li>Uzasadnij, dlaczego to dark data (kto nie czyta? jakim narzędziem?)</li>
+        <li>Oszacuj roczny koszt przechowywania (rozmiar × stawka Azure)</li>
+        <li>Oceń potencjał: <strong>Aktywuj / Archiwizuj / Usuń / Zbadaj dalej</strong></li>
+      </ul>
+      <p style="margin-top:10px;font-size:13px;color:var(--text-muted)">Wskazówka: dark data często chowają się w tabelach z wieloma NULL-ami, starych logach, danych z "projektu który skończyliśmy" lub tabelach powiązanych z zewnętrznymi systemami.</p>
+    `,
+    hints: [
+      {
+        title: 'Gdzie najczęściej siedzi dark data w NEXO',
+        body: `<p>Zacznij od tabel, które brzmią jak "zapomniane": logi, notatki, kontekst zewnętrzny. Zapytaj agenta:</p>
+        <div class="prompt-example">"Znajdź tabele, które nie są połączone kluczami obcymi z innymi tabelami. Ile rekordów mają? Kiedy ostatnio były aktualizowane?"</div>
+        <p style="margin-top:10px">Tabela bez połączeń z innymi = prawdopodobnie nikt jej nie używa w raportach.</p>`
+      },
+      {
+        title: 'Jak wykryć dane "zapomniane przez BI"',
+        body: `<p>Zapytaj agenta o tabele z dużym udziałem NULLi — to często oznaka, że dane były zbierane "na wszelki wypadek":</p>
+        <div class="prompt-example">"Dla każdej tabeli w bazie oblicz średni procent wartości NULL we wszystkich kolumnach. Posortuj od najwyższego. Pokaż top 5."</div>
+        <p style="margin-top:10px">Tabela z 60%+ NULLi to niemal na pewno dark data.</p>`
+      },
+      {
+        title: 'Jak oszacować ROI z aktywacji dark data',
+        body: `<p>Dla każdego obszaru dark data użyj prostego wzoru:</p>
+        <div class="prompt-example">"Zakładam, że notatki call center zawierają informacje o 500 klientach ryzyko rezygnacji. Średnia wartość klienta NEXO = X PLN rocznie. ROI z aktywacji = 500 × X × wskaźnik retencji."</div>
+        <p style="margin-top:10px">To szacunek — nie musi być perfekcyjnie dokładny. Chodzi o rząd wielkości.</p>`
+      }
+    ],
+    deliverables: [
+      'Lista min. 4 obszarów dark data z tabelą: obszar / opis / koszt roczny / rekomendacja',
+      'Sumaryczny roczny koszt dark data w NEXO (PLN)',
+      'Szacunkowy potencjał ROI z aktywacji najcenniejszego obszaru',
+      'Uzasadnienie: dlaczego wybrany obszar ma największy potencjał'
+    ]
+  },
+
+  // ── MISJA 4 ──
+  {
+    tag: 'Misja 04 · Analiza',
+    title: 'Korelacje Biznesowe — Co napędza NEXO?',
+    desc: 'Znajdziesz nieoczywiste zależności między różnymi domenami danych. Dobra korelacja = pytanie do dalszego zbadania, a nie gotowa odpowiedź. Dane powiedzą Ci, gdzie patrzeć — decyzja należy do Ciebie.',
+    badges: ['⏱ ~45 min', '🔗 Korelacje', '💡 Hipotezy'],
+    theory: {
+      title: '📖 Teoria: Korelacje, kauzacja i testowanie hipotez',
+      body: `
+        <h3>Korelacja vs Kauzacja</h3>
+        <p>Korelacja = dwie zmienne zmieniają się razem. Kauzacja = jedna zmiana <em>powoduje</em> drugą. To różnica, która kosztuje miliony złych decyzji rocznie.</p>
+        <div class="def-box">
+          <p><strong>Klasyczny błąd: "Sprzedaż lodów rośnie kiedy rośnie liczba utonięć. Lody powodują utonięcia?"</strong><br>
+          Nie — obie zmienne są zależne od trzeciej: temperatury. Szukaj zmiennej pośredniczącej zanim wyciągniesz wnioski przyczynowo-skutkowe.</p>
+        </div>
+        <h3>Jak testować hipotezy przez agenta</h3>
+        <p>Dobry workflow: Obserwacja → Hipoteza → Test (agent) → Interpretacja → Decyzja lub odrzucenie hipotezy.</p>
+        <div class="theory-grid">
+          <div class="theory-card">
+            <div class="tc-label">Korelacja pozytywna</div>
+            <div class="tc-text">Gdy X rośnie, Y też rośnie. Np. więcej szkoleń HR → wyższy NPS w tym sklepie.</div>
+          </div>
+          <div class="theory-card">
+            <div class="tc-label">Korelacja negatywna</div>
+            <div class="tc-text">Gdy X rośnie, Y spada. Np. wyższa rotacja pracowników → niższe oceny obsługi klientów.</div>
+          </div>
+          <div class="theory-card">
+            <div class="tc-label">Korelacja pozorna</div>
+            <div class="tc-text">Obie zmienne rosną, ale przez wspólną przyczynę. Klasyczna pułapka w danych biznesowych.</div>
+          </div>
+          <div class="theory-card">
+            <div class="tc-label">Korelacja lagged</div>
+            <div class="tc-text">Efekt pojawia się z opóźnieniem. Np. kampania reklamowa działa 2 tygodnie po emisji.</div>
+          </div>
+        </div>
+        <h3>Siła korelacji (dla zainteresowanych)</h3>
+        <p>Współczynnik Pearsona (r): wartości od -1 do +1. Powyżej 0.7 = silna korelacja, 0.4-0.7 = umiarkowana, poniżej 0.4 = słaba. Pamiętaj jednak, że nawet r=0.9 nie dowodzi przyczynowości.</p>
+      `
+    },
+    brief: `
+      <div class="brief-label">Twoje zadanie</div>
+      <h3>Znajdź min. 3 nieoczywiste korelacje i sformułuj hipotezy</h3>
+      <p>Każda korelacja powinna łączyć dane z <strong>przynajmniej 2 różnych domen</strong> (np. HR + Sprzedaż, Marketing + Produkty, Kontekst zewnętrzny + Klienci).</p>
+      <ul>
+        <li>Dla każdej korelacji: sformułuj hipotezę, przetestuj agentą, opisz wynik</li>
+        <li>Oceń kierunek (pozytywna/negatywna) i przybliżoną siłę korelacji</li>
+        <li>Zaproponuj <strong>decyzję biznesową</strong> wynikającą z każdej korelacji</li>
+        <li>BONUS: Znajdź jedną korelację <em>pozorną</em> — i wyjaśnij, co ją powoduje</li>
+      </ul>
+      <p style="margin-top:10px;font-size:13px;color:var(--text-muted)">Pamiętaj: korelacja to pytanie do dalszego zbadania, nie gotowa odpowiedź. Zapisz co chciałbyś sprawdzić dalej.</p>
+    `,
+    hints: [
+      {
+        title: 'Korelacja HR ↔ Sprzedaż — dobry punkt startowy',
+        body: `<p>Jedna z najbardziej użytecznych korelacji w danych NEXO. Zapytaj agenta:</p>
+        <div class="prompt-example">"Porównaj poziom rotacji pracowników (liczba odejść / stan zatrudnienia) w każdym sklepie z wynikami sprzedaży na pracownika w tym samym kwartale. Czy sklepy z wyższą rotacją mają niższe wyniki?"</div>
+        <p style="margin-top:10px">Jeśli tak — to hipoteza: "Rotacja pracowników wpływa negatywnie na wyniki sprzedaży". Jaką decyzję by to implikowało?</p>`
+      },
+      {
+        title: 'Korelacja kontekst zewnętrzny ↔ kategorie produktów',
+        body: `<p>Dane o pogodzie i świętach to często ciemne dane — ale gdy je połączysz ze sprzedażą, mogą być bezcenne:</p>
+        <div class="prompt-example">"Przeanalizuj czy temperatura zewnętrzna koreluje ze sprzedażą konkretnych kategorii produktów. Które kategorie są najbardziej 'sezonowe'?"</div>
+        <p style="margin-top:10px">To może być podstawa do optymalizacji stanów magazynowych i planowania promocji.</p>`
+      },
+      {
+        title: 'Jak odróżnić korelację prawdziwą od pozornej',
+        body: `<p>Gdy znajdziesz silną korelację, zapytaj agenta o zmienną pośredniczącą:</p>
+        <div class="prompt-example">"Znalazłem, że wydatki na marketing rosną równolegle z wartością reklamacji. Czy to może być efekt wspólnej zmiennej — np. okresu świątecznego gdy rośnie i sprzedaż, i marketing, i problemy z logistyką?"</div>
+        <p style="margin-top:10px">Agent powinien pomóc Ci "rozebrać" korelację i sprawdzić czy po uwzględnieniu sezonowości efekt zostaje.</p>`
+      }
+    ],
+    deliverables: [
+      'Tabela: 3 korelacje × {hipoteza / domeny / kierunek / siła / decyzja biznesowa}',
+      'Opis metody testowania każdej korelacji (jakie zapytanie, jakie dane)',
+      'BONUS: opis jednej korelacji pozornej z wyjaśnieniem zmiennej pośredniczącej',
+      'Które korelacje chciałbyś zbadać głębiej — i co byś potrzebował do tego?'
+    ]
+  },
+
+  // ── MISJA 5 ──
+  {
+    tag: 'Misja 05 · Wnioski',
+    title: 'Architektura Danych & Maksymalizacja ROI',
+    desc: 'Ostatnia misja integruje wszystko. Ocenisz jak NEXO zarządza danymi architektonicznie, porównasz dwa podejścia (Data Mesh vs SSoT), i sformułujesz 3 decyzje strategiczne z szacowanym ROI.',
+    badges: ['⏱ ~50 min', '🏗️ Architektura', '📈 ROI', '📋 Raport'],
+    theory: {
+      title: '📖 Teoria: Data Mesh vs SSoT — dwie wizje zarządzania danymi',
+      body: `
+        <h3>Single Source of Truth (SSoT)</h3>
+        <p>Centralne podejście: jeden "magazyn" danych, jedno miejsce prawdy. Wszystkie systemy zasilają centrum, a z centrum pobierają dane do raportów.</p>
+        <div class="def-box">
+          <p><strong>SSoT = Data Warehouse / Data Lake w centrum</strong><br>
+          Zalety: spójność danych, łatwe raportowanie cross-domain, jeden standard. Wady: wąskie gardło, wolne wdrożenia, centralne IT jako bottleneck.</p>
+        </div>
+        <h3>Data Mesh</h3>
+        <p>Zdecentralizowane podejście: każda domena biznesowa jest właścicielem swoich danych i odpowiada za ich jakość, dostępność i dokumentację. Dane traktowane jak produkty.</p>
+        <div class="def-box">
+          <p><strong>Data Mesh = dane jako produkt, własność domenowa</strong><br>
+          Zalety: szybkość, autonomia, skalowalność. Wady: ryzyko silosów, potrzeba silnego governance, trudna integracja cross-domain.</p>
+        </div>
+        <div class="theory-grid">
+          <div class="theory-card">
+            <div class="tc-label">Kiedy SSoT</div>
+            <div class="tc-text">Mała/średnia firma. Dane finansowe wymagające 100% spójności. Regulacje nakazujące jeden rejestr. Brak dojrzałości data culture.</div>
+          </div>
+          <div class="theory-card">
+            <div class="tc-label">Kiedy Data Mesh</div>
+            <div class="tc-text">Duże organizacje. Wiele niezależnych domen. Szybkość ważna. Dojrzałe zespoły domenowe. Skalowanie ponad możliwości centrum.</div>
+          </div>
+        </div>
+        <h3>A co ma NEXO?</h3>
+        <p>Baza NEXO Retail jest zbudowana w sposób hybrydowy — masz domeny, ale połączone centralnie. To typowy stan przejściowy: firmy zwykle zaczynają od SSoT i migrują w kierunku Data Mesh gdy rosną.</p>
+        <h3>Jak liczyć ROI z decyzji opartych na danych?</h3>
+        <p>ROI = (wartość decyzji – koszt analizy) / koszt analizy × 100%. Przykład: decyzja o zamknięciu 2 nierentownych sklepów na podstawie danych HR+Sprzedaż oszczędza 1,2 mln PLN/rok. Koszt analizy agentową = 80h × 200 PLN = 16 000 PLN. ROI = (1 200 000 – 16 000) / 16 000 × 100% = <strong>7400%</strong>.</p>
+      `
+    },
+    brief: `
+      <div class="brief-label">Twoje zadanie</div>
+      <h3>Oceń architekturę NEXO i zaproponuj 3 decyzje strategiczne</h3>
+      <p>Na podstawie wiedzy z wszystkich poprzednich misji:</p>
+      <ul>
+        <li>Oceń: czy NEXO działa bardziej jak SSoT czy Data Mesh — i co to oznacza praktycznie</li>
+        <li>Wskaż <strong>2 problemy architektoniczne</strong> które widzisz w danych (fragmentacja, brak ownership, itp.)</li>
+        <li>Zaproponuj <strong>3 konkretne decyzje biznesowe</strong> NEXO powinno podjąć — każda oparta na Twoich analizach z misji 2-4</li>
+        <li>Dla każdej decyzji: szacowane ROI, ryzyko, horyzont czasowy</li>
+      </ul>
+      <p style="margin-top:10px;font-size:13px;color:var(--text-muted)">To jest fundament raportu końcowego. Myśl jak konsultant: co byś rekomendował Zarządowi NEXO na podstawie tego co odkryłeś?</p>
+    `,
+    hints: [
+      {
+        title: 'Jak ocenić architekturę przez pryzmat danych',
+        body: `<p>Zapytaj agenta o "własność" danych — czy każda domena ma jasno zdefiniowanego właściciela?</p>
+        <div class="prompt-example">"Czy w bazie są tabele łączące dane z wielu domen (np. tabela ze sprzedażą + HR + marketing w jednym miejscu)? Czy każda domena ma swój schemat/prefix w nazwach tabel?"</div>
+        <p style="margin-top:10px">Jeśli tabele są pomieszane — to znak SSoT (lub braku architektury). Jeśli są wyraźnie odseparowane — to zalążek Data Mesh.</p>`
+      },
+      {
+        title: 'Jak sformułować mocną rekomendację biznesową',
+        body: `<p>Najlepsza rekomendacja = konkretna decyzja + dane które ją uzasadniają + szacunkowy efekt finansowy:</p>
+        <div class="prompt-example">"Na podstawie korelacji rotacja↔sprzedaż i dark data w systemie szkoleń HR: rekomendacja — zainwestuj X PLN w program retencji w 3 sklepach o najwyższej rotacji. Prognozowany efekt: wzrost sprzedaży o Y% w 12 miesiącach."</div>`
+      },
+      {
+        title: 'Jak liczyć ROI bez dokładnych danych',
+        body: `<p>Nie musisz mieć perfekcyjnych liczb — zakres jest ok. Użyj wrażliwości:</p>
+        <div class="prompt-example">"Zakładam 3 scenariusze: pesymistyczny (wzrost sprzedaży 2%), bazowy (5%), optymistyczny (10%). Przy każdym scenariuszu, jaki jest ROI z rekomendacji?"</div>
+        <p style="margin-top:10px">Analiza scenariuszowa = profesjonalne narzędzie zarządcze. Pokaz prowadzącemu, że myślisz w zakresach, nie w punktach.</p>`
+      }
+    ],
+    deliverables: [
+      'Ocena architektury NEXO: SSoT vs Data Mesh — co i dlaczego',
+      '2 problemy architektoniczne z uzasadnieniem (co konkretnie widzisz w danych)',
+      '3 rekomendacje biznesowe w tabeli: decyzja / oparcie w danych / ROI / ryzyko / horyzont',
+      'Gotowość do prezentacji wniosków — draft raportu (patrz szablon obok)'
+    ]
+  },
+
+  // ── RAPORT ──
+  {
+    tag: 'Szablon Raportu',
+    title: 'Struktura Raportu Końcowego',
+    desc: 'Twój raport końcowy powinien zawierać poniższe rozdziały. Każdy rozdział buduje na poprzednim — to spójna opowieść o NEXO Retail widziana oczami analityka danych.',
+    badges: ['📋 Raport', '~10-15 stron', '🎯 Oddajesz po zajęciach'],
+    theory: null,
+    brief: null,
+    hints: [],
+    deliverables: [],
+    reportMode: true
+  }
+];
+
+// ═══════════════════════════════════════════════════════════
+//  STAN APLIKACJI
+// ═══════════════════════════════════════════════════════════
+let currentMission = 0;
+const doneMissions = new Set();
+const openHints = {};
+const openTheory = {};
+
+// ═══════════════════════════════════════════════════════════
+//  NAWIGACJA
+// ═══════════════════════════════════════════════════════════
+function showMission(idx) {
+  currentMission = idx;
+  // Odśwież sidebar
+  for (let i = 0; i < 6; i++) {
+    const nav = document.getElementById('nav-' + i);
+    if (nav) {
+      nav.classList.toggle('active', i === idx);
+    }
+  }
+  // Renderuj treść
+  renderContent(idx);
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RENDER TREŚCI
+// ═══════════════════════════════════════════════════════════
+function renderContent(idx) {
+  const m = MISSIONS[idx];
+  const area = document.getElementById('content-area');
+
+  if (m.reportMode) {
+    area.innerHTML = renderReport(m);
+    return;
+  }
+
+  const isDone = doneMissions.has(idx);
+  let html = '';
+
+  // NAGŁÓWEK MISJI
+  html += `<div class="mission-header">
+    <div class="mission-tag">${m.tag}</div>
+    <h2>${isDone ? '✅ ' : ''}${m.title}</h2>
+    <div class="mission-desc">${m.desc}</div>
+    <div class="mission-badges">
+      ${m.badges.map(b => `<span class="badge">${b}</span>`).join('')}
+      ${isDone ? '<span class="badge badge-accent">✓ Ukończona</span>' : ''}
+    </div>
+  </div>`;
+
+  // TEORIA
+  if (m.theory) {
+    const tOpen = openTheory[idx];
+    html += `<div class="section">
+      <button class="theory-toggle ${tOpen ? 'open' : ''}" onclick="toggleTheory(${idx})">
+        <span>${m.theory.title}</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="theory-body ${tOpen ? 'open' : ''}">${m.theory.body}</div>
+    </div>`;
+  }
+
+  // BRIEF
+  if (m.brief) {
+    html += `<div class="section">
+      <div class="brief-box">${m.brief}</div>
+    </div>`;
+  }
+
+  // PODPOWIEDZI
+  if (m.hints.length > 0) {
+    html += `<div class="section hints-section">
+      <div class="hints-label">💡 Podpowiedzi (kliknij aby odkryć)</div>`;
+    m.hints.forEach((h, hi) => {
+      const key = idx + '-' + hi;
+      const open = openHints[key];
+      html += `<div class="hint-item">
+        <button class="hint-toggle" onclick="toggleHint('${key}')">
+          <div class="hint-number">${hi + 1}</div>
+          <div class="hint-toggle-text">${h.title}</div>
+          <div class="hint-toggle-icon">${open ? '▲' : '▼'}</div>
+        </button>
+        <div class="hint-body ${open ? 'open' : ''}">${h.body}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // DELIVERABLES
+  if (m.deliverables.length > 0) {
+    html += `<div class="section">
+      <div class="deliverables-box">
+        <div class="del-label">📤 Co oddajesz po tej misji</div>
+        <ul>${m.deliverables.map(d => `<li>${d}</li>`).join('')}</ul>
+      </div>
+    </div>`;
+  }
+
+  // PRZYCISK UKOŃCZ
+  html += `<div class="mission-done-area">
+    <button class="btn ${isDone ? 'btn-secondary' : 'btn-primary'} mission-done-btn" onclick="toggleDone(${idx})">
+      ${isDone ? '↩ Oznacz jako w toku' : '✓ Oznacz jako ukończoną'}
+    </button>
+    ${idx < 4 ? `<button class="btn btn-secondary" onclick="showMission(${idx + 1})" style="margin-left:4px">Następna misja →</button>` : ''}
+    <span class="done-note">${isDone ? 'Świetna robota! Przejdź do kolejnej misji.' : 'Kliknij gdy skończysz wszystkie deliverables.'}</span>
+  </div>`;
+
+  area.innerHTML = html;
+}
+
+function renderReport(m) {
+  return `<div class="mission-header">
+    <div class="mission-tag">${m.tag}</div>
+    <h2>${m.title}</h2>
+    <div class="mission-desc">${m.desc}</div>
+    <div class="mission-badges">${m.badges.map(b => `<span class="badge">${b}</span>`).join('')}</div>
+  </div>
+
+  <div class="report-section">
+    ${[
+      ['Streszczenie wykonawcze', 'Maks. 1 strona. Kim jesteś jako analityk w tej grze, co odkryłeś, jakie 3 kluczowe rekomendacje?', ['Rola i kontekst (2-3 zdania)', 'Top 3 odkrycia (bullet points)', 'Top 3 rekomendacje z szacowanym ROI']],
+      ['Profil firmy NEXO Retail', 'Opisy struktury danych firmy — co NEXO zbiera i jak to jest zorganizowane.', ['Opis 6 domen danych', 'Mapa połączeń między domenami', 'Ocena dojrzałości danych (1-5)']],
+      ['Dark Data — inwentarz i ROI', 'Wyniki Misji 3. Kompletna lista ciemnych danych z kalkulacją wartości.', ['Tabela: min. 4 obszary dark data', 'Sumaryczny koszt przechowywania/rok', 'Top 1 obszar do aktywacji + uzasadnienie ROI']],
+      ['Korelacje i Insights', 'Wyniki Misji 4. Co NEXO powinno wiedzieć o swoich danych, czego nie wiedziało.', ['3 korelacje z hipotezami i wynikami testów', 'Implikacje biznesowe każdej korelacji', 'BONUS: korelacja pozorna — ostrzeżenie dla zarządu']],
+      ['Ocena Architektury Danych', 'Wyniki Misji 5. SSoT vs Data Mesh — gdzie jest NEXO i dokąd powinno zmierzać.', ['Diagnoza: SSoT / Mesh / Hybryd — z uzasadnieniem', '2 problemy architektoniczne', 'Rekomendacja kierunku rozwoju architektury']],
+      ['Rekomendacje Strategiczne', '3 konkretne decyzje biznesowe oparte na Twoich analizach. To jest clue raportu.', ['Decyzja 1: [nazwa] — dane / ROI / ryzyko / horyzont', 'Decyzja 2: [nazwa] — dane / ROI / ryzyko / horyzont', 'Decyzja 3: [nazwa] — dane / ROI / ryzyko / horyzont']],
+      ['Refleksja i Ograniczenia', 'Co byś zbadał dalej? Jakie są ograniczenia Twojej analizy? Czego brakuje w danych?', ['Pytania bez odpowiedzi', 'Dane których brakuje do pełnej analizy', 'Wnioski o pracy z agentami AI — co zadziałało, co nie']]
+    ].map(([title, desc, items], i) => `
+      <div class="report-chapter">
+        <div class="report-chapter-header">
+          <div class="report-chapter-num">${String(i+1).padStart(2,'0')}</div>
+          <div class="report-chapter-title">${title}</div>
+        </div>
+        <div class="report-chapter-body">
+          <p>${desc}</p>
+          <ul>${items.map(it => `<li>${it}</li>`).join('')}</ul>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+
+  <div style="background:#fff;border:1px solid var(--border);padding:20px;margin-top:8px">
+    <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Wymagania formalne</div>
+    <ul style="padding-left:18px">
+      <li style="font-size:13px;line-height:1.7;color:#444;margin-bottom:4px">Format: PDF, 10-15 stron (bez załączników)</li>
+      <li style="font-size:13px;line-height:1.7;color:#444;margin-bottom:4px">Wykresy/tabele z danych agenta mile widziane</li>
+      <li style="font-size:13px;line-height:1.7;color:#444;margin-bottom:4px">Każda rekomendacja musi być zakotwiczona w konkretnych danych z bazy NEXO</li>
+      <li style="font-size:13px;line-height:1.7;color:#444;margin-bottom:4px">Screenshoty promptów agenta jako załącznik (opcjonalnie, ale wartościowe)</li>
+    </ul>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INTERAKCJE
+// ═══════════════════════════════════════════════════════════
+function toggleTheory(idx) {
+  openTheory[idx] = !openTheory[idx];
+  renderContent(idx);
+}
+
+function toggleHint(key) {
+  openHints[key] = !openHints[key];
+  renderContent(currentMission);
+}
+
+function toggleDone(idx) {
+  if (doneMissions.has(idx)) doneMissions.delete(idx);
+  else doneMissions.add(idx);
+  // Odśwież num w sidebar
+  const num = document.getElementById('num-' + idx);
+  if (num) {
+    const nav = document.getElementById('nav-' + idx);
+    if (doneMissions.has(idx)) nav.classList.add('done');
+    else nav.classList.remove('done');
+  }
+  // Pasek postępu
+  const pct = Math.round((doneMissions.size / 5) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  renderContent(idx);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+showMission(0);
+</script>
+</body>
+</html>
