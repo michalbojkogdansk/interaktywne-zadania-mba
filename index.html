@@ -81,7 +81,7 @@
         }
         .task-card:hover { background: var(--accent-light); }
 
-        /* 5th card spans full row */
+        /* Last card spans full row */
         .task-card.test { grid-column: 1 / -1; }
 
         .task-number {
@@ -145,6 +145,7 @@
         .task-card.simulation::before  { background: #4A5A8F; }
         .task-card.darkdata::before    { background: #8A4A7A; }
         .task-card.test::before        { background: #8A6A2A; }
+        .task-card.dataeng::before     { background: #2A6A8A; }
 
         /* 5th card inner layout: horizontal on wide screens */
         .task-card.test .task-inner {
@@ -240,6 +241,21 @@
                     <span class="task-badge badge-new">✨ Nowe</span>
                 </div>
                 <div class="task-arrow">Rozpocznij →</div>
+            </a>
+
+
+            <a href="https://nexo-data-game.michal-bojko-gdansk.workers.dev" target="_blank" class="task-card dataeng">
+                <div class="task-number">Ćwiczenie 06</div>
+                <span class="task-icon">🗄️</span>
+                <div class="task-title">Gra: Inżynieria Danych Biznesowych</div>
+                <div class="task-desc">Wciel się w analityka danych firmy NEXO Retail. Uruchom agenta AI, połącz się z bazą danych i przez 5 misji wyciągnij maksymalne ROI — odkryj dark data, przetestuj Data Mesh i znajdź niespodziewane korelacje.</div>
+                <div class="task-meta">
+                    <span class="task-badge">⏱ ~4h</span>
+                    <span class="task-badge">5 misji</span>
+                    <span class="task-badge badge-ai">🤖 Agent AI</span>
+                    <span class="task-badge badge-locked">🔒 Kod dostępu</span>
+                </div>
+                <div class="task-arrow">Uruchom grę →</div>
             </a>
 
             <a href="test-wiedzy.html" class="task-card test">
