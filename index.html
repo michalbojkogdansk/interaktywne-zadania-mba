@@ -179,9 +179,61 @@
             body { padding: 24px 16px 48px; }
             .task-card.test { grid-column: auto; }
         }
+    
+  /* === NAVBAR === */
+  .site-nav {
+    background: #fff;
+    border-bottom: 2px solid var(--text);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+  .nav-home {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
+    text-transform: uppercase; text-decoration: none;
+    color: var(--text); white-space: nowrap;
+  }
+  .nav-home:hover { color: var(--accent); }
+  .nav-items {
+    display: flex; align-items: center; gap: 2px;
+  }
+  .nav-item {
+    display: flex; align-items: center; justify-content: center;
+    min-width: 36px; height: 32px; padding: 0 10px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    text-transform: uppercase; text-decoration: none;
+    color: var(--text-muted); border: 1px solid transparent;
+    transition: all 0.12s;
+  }
+  .nav-item:hover { background: var(--bg); color: var(--text); border-color: var(--border); }
+  .nav-item.active { background: var(--text); color: var(--bg); }
+  .nav-item.nav-final { border: 1px solid var(--border-dark); color: var(--text-muted); }
+  .nav-item.nav-final:hover { background: var(--text); color: var(--bg); }
+  @media (max-width: 480px) {
+    .site-nav { padding: 0 16px; }
+    .nav-home span.nav-home-full { display: none; }
+  }
+
     </style>
 </head>
 <body>
+    <nav class="site-nav">
+  <a href="index.html" class="nav-home">MBA 2026</a>
+  <div class="nav-items">
+    <a href="korelacja-danych.html" class="nav-item" title="Korelacja Danych">01</a>
+    <a href="myslenie-krytyczne.html" class="nav-item" title="Myślenie Krytyczne">02</a>
+    <a href="symulacja-transformacja.html" class="nav-item" title="Symulacja">03</a>
+    <a href="ciemne-dane.html" class="nav-item" title="Ciemne Dane">04</a>
+    <a href="gra-inzynieria-danych.html" class="nav-item" title="Inżynieria Danych">05</a>
+    <a href="test-wiedzy.html" class="nav-item nav-final" title="Zadanie końcowe">&#10003;</a>
+  </div>
+</nav>
+
     <div class="container">
 
         <div class="header">
@@ -245,7 +297,7 @@
 
 
             <a href="gra-inzynieria-danych.html" class="task-card dataeng">
-                <div class="task-number">Ćwiczenie 06</div>
+                <div class="task-number">Ćwiczenie 05</div>
                 <span class="task-icon">🗄️</span>
                 <div class="task-title">Gra: Inżynieria Danych Biznesowych</div>
                 <div class="task-desc">Wciel się w analityka danych firmy NEXO Retail. Uruchom agenta AI, połącz się z bazą danych i przez 5 misji wyciągnij maksymalne ROI — odkryj dark data, przetestuj Data Mesh i znajdź niespodziewane korelacje.</div>
@@ -261,7 +313,6 @@
             <a href="test-wiedzy.html" class="task-card test">
                 <div class="task-inner">
                     <div class="task-left">
-                        <div class="task-number">Ćwiczenie 05</div>
                         <span class="task-icon">📝</span>
                     </div>
                     <div class="task-right">
