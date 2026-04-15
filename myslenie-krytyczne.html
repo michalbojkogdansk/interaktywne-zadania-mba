@@ -479,23 +479,40 @@
 </nav>
 
     <div class="container">
-        <div class="header">
-            <h1>🧠 Test Myślenia Krytycznego</h1>
-            <p>Czy potrafisz rozpoznać pułapki logiczne i błędy w rozumowaniu?</p>
-            <div class="meta">
-                <span>⏱ ~15 minut</span>
-                <span>📊 10 pytań</span>
-                <span>📈 Trudność: rosnąca</span>
-            </div>
-        </div>
-
-        <!-- Nickname -->
+        <!-- Welcome card – styl wzorowany na korelacja-danych -->
         <div id="nicknameSection" class="card nickname-section">
-            <label>Podaj swój pseudonim</label>
-            <input type="text" id="nickname" placeholder="np. MarketingMike, DataDaria..." maxlength="30">
-            <div style="margin-top: 1rem; text-align: right;">
-                <button class="btn btn-primary" onclick="startQuiz()">Rozpocznij test →</button>
+          <p class="logo" style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">MBA · <span>Myślenie Krytyczne 2026</span></p>
+          <h1 style="font-size:clamp(22px,5vw,32px);font-weight:900;line-height:1.2;margin-bottom:12px;">Czy <em style="color:var(--accent);font-style:normal;">widzisz</em> błędy logiczne?</h1>
+          <p style="font-size:15px;color:var(--text-sec);line-height:1.65;margin-bottom:20px;">
+            Zanim przyjdziesz na zajęcia — sprawdź, jak reagujesz na pułapki
+            w argumentacji. 10 scenariuszy, w których dane i logika mogą cię zmylić.
+            Bez ściągawki, bez oceny, tylko twój wynik.
+          </p>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;text-align:center;">
+            <div style="background:var(--bg2,#f5f5f5);border-radius:10px;padding:14px 8px;">
+              <div style="font-size:24px;font-weight:900;color:var(--accent)">10</div>
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec);margin-top:3px;">Pytań</div>
             </div>
+            <div style="background:var(--bg2,#f5f5f5);border-radius:10px;padding:14px 8px;">
+              <div style="font-size:24px;font-weight:900;color:var(--accent)">~15</div>
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec);margin-top:3px;">Minut</div>
+            </div>
+            <div style="background:var(--bg2,#f5f5f5);border-radius:10px;padding:14px 8px;">
+              <div style="font-size:24px;font-weight:900;color:var(--accent)">↑</div>
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec);margin-top:3px;">Trudność</div>
+            </div>
+          </div>
+
+          <label>Twój pseudonim (widoczny przy wynikach)</label>
+          <input type="text" id="nickname" placeholder="np. MarketingMike, DataDaria..." maxlength="30">
+          <div style="margin-top:16px;">
+            <button class="btn btn-primary" style="width:100%" onclick="startQuiz()">▶ Zaczynam test</button>
+          </div>
+          <div style="margin-top:14px;font-size:12px;color:var(--text-sec);background:var(--bg2,#f0f0f0);padding:12px 14px;border-radius:8px;line-height:1.5;">
+            🔐 Twoje odpowiedzi zostaną zapisane anonimowo w repozytorium GitHub prowadzącego.
+            Pseudonim służy wyłącznie do identyfikacji Twoich odpowiedzi podczas zajęć.
+          </div>
         </div>
 
         <!-- Quiz area -->
