@@ -182,7 +182,8 @@
             transition: border-color 0.15s;
         }
         .task-card:hover .tech-icon-pill { border-color: var(--accent); }
-        .tech-icon-pill img { width: 16px; height: 16px; display: block; }
+        .tech-icon-pill img,
+        .tech-icon-pill svg { width: 16px; height: 16px; display: block; }
 
         /* ── Footer ── */
         .footer {
@@ -344,7 +345,11 @@
                 </div>
                 <div class="tech-icons">
                     <span class="tech-icon-pill" title="PostgreSQL"><img src="https://cdn.simpleicons.org/postgresql/4169E1" width="16" height="16" alt="PostgreSQL"></span>
-                    <span class="tech-icon-pill" title="Neon (serverless PostgreSQL)"><img src="https://cdn.simpleicons.org/neon/00E599" width="16" height="16" alt="Neon"></span>
+                    <span class="tech-icon-pill" title="Neon Serverless Postgres">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="16" height="16" fill="none">
+                            <path fill="#00E599" d="M27.542 0V28L16.795 18.492V27.815H0V0ZM3.376 24.439H13.42V11.084l10.747 9.508V3.382l-20.79-.005z"/>
+                        </svg>
+                    </span>
                     <span class="tech-icon-pill" title="Cloudflare Workers"><img src="https://cdn.simpleicons.org/cloudflare/F48120" width="16" height="16" alt="Cloudflare Workers"></span>
                 </div>
                 <div class="task-arrow">Uruchom grę →</div>
