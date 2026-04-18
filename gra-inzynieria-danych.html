@@ -299,6 +299,53 @@
   .footer-left { font-size: 0.8rem; color: var(--text-muted); }
   .footer-right { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
 
+  /* DB Connect Widget */
+  .db-connect-box {
+    background: #fff; border: 2px solid var(--text);
+    padding: 24px; margin-top: 20px;
+  }
+  .db-connect-box .db-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;
+  }
+  .db-connect-box h3 { font-size: 15px; font-weight: 800; margin-bottom: 8px; }
+  .db-connect-box p { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 14px; }
+  .db-connect-row { display: flex; gap: 10px; align-items: stretch; }
+  .db-connect-row input {
+    flex: 1; border: 2px solid var(--text);
+    background: var(--bg); padding: 11px 14px;
+    font-size: 16px; font-weight: 800; letter-spacing: 0.15em;
+    text-align: center; text-transform: uppercase;
+    font-family: 'Inter', sans-serif; outline: none;
+  }
+  .db-connect-row input:focus { border-color: var(--accent); }
+  .db-connect-error { font-size: 12px; color: #c0392b; font-weight: 600; min-height: 18px; margin-top: 8px; }
+  .db-string-reveal {
+    display: none; margin-top: 16px;
+    background: #1A1A1A; padding: 16px 18px;
+    border-left: 4px solid #00E599;
+  }
+  .db-string-reveal.visible { display: block; }
+  .db-string-reveal .ds-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #00E599; margin-bottom: 8px;
+  }
+  .db-string-reveal .ds-value {
+    font-family: 'Courier New', monospace; font-size: 12px;
+    color: #E8F5F4; line-height: 1.5; word-break: break-all;
+  }
+  .db-copy-btn {
+    margin-top: 10px; font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 8px 16px;
+    background: transparent; border: 1px solid #00E599;
+    color: #00E599; cursor: pointer; transition: all 0.15s;
+  }
+  .db-copy-btn:hover { background: #00E599; color: #1A1A1A; }
+  .db-success-note {
+    margin-top: 12px; font-size: 12px; color: #aaa; line-height: 1.6;
+  }
+
   /* Responsive */
   @media (max-width: 760px) {
     .main-layout { grid-template-columns: 1fr; }
@@ -392,7 +439,7 @@
 <div class="page-header">
   <div class="label">Ćwiczenie 05 · MBA 2026</div>
   <h1>🗄️ Gra: Inżynieria Danych Biznesowych</h1>
-  <div class="meta">5 misji · ~4h · Agent AI + baza NEXO Retail na Azure · Raport końcowy</div>
+  <div class="meta">5 misji · ~4h · Agent AI + baza NEXO Retail (PostgreSQL) · Raport końcowy</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -959,6 +1006,11 @@ function renderContent(idx) {
     </div>`;
   }
 
+  // DB WIDGET — tylko w Misji 1
+  if (idx === 0) {
+    html += `<div class="section">${renderDbWidget()}</div>`;
+  }
+
   // PODPOWIEDZI
   if (m.hints.length > 0) {
     html += `<div class="section hints-section">
@@ -1001,6 +1053,75 @@ function toggleHint(key) {
   renderContent(currentMission);
 }
 
+
+// ═══════════════════════════════════════════════════════════
+//  DB CONNECTION WIDGET
+// ═══════════════════════════════════════════════════════════
+let dbConnectionString = null;
+
+function renderDbWidget() {
+  return `<div class="db-connect-box">
+    <div class="db-label">🔗 Połączenie z bazą danych NEXO Retail</div>
+    <h3>Odblokuj connection string</h3>
+    <p>Wpisz hasło otrzymane od prowadzącego, aby uzyskać adres połączenia z bazą PostgreSQL. Skopiuj go do swojego narzędzia AI.</p>
+    <div class="db-connect-row">
+      <input type="text" id="db-code-input" placeholder="XXXXXXXXXXX" maxlength="16"
+             oninput="this.value=this.value.toUpperCase()"
+             onkeydown="if(event.key==='Enter') fetchDbConnection()">
+      <button class="btn btn-primary" id="db-code-btn" onclick="fetchDbConnection()">Odblokuj →</button>
+    </div>
+    <div class="db-connect-error" id="db-code-error"></div>
+    <div class="db-string-reveal ${dbConnectionString ? 'visible' : ''}" id="db-reveal">
+      <div class="ds-label">✅ Connection String (read-only)</div>
+      <div class="ds-value" id="db-string-val">${dbConnectionString || ''}</div>
+      <button class="db-copy-btn" onclick="copyDbString()">📋 Kopiuj do schowka</button>
+      <div class="db-success-note">
+        Użytkownik ma dostęp <strong>tylko do odczytu</strong> (SELECT). Wklej connection string do swojego narzędzia AI (Outerbase, ChatGPT, Claude itp.).
+      </div>
+    </div>
+  </div>`;
+}
+
+async function fetchDbConnection() {
+  const btn = document.getElementById('db-code-btn');
+  const errEl = document.getElementById('db-code-error');
+  const code = document.getElementById('db-code-input').value.trim().toUpperCase();
+  if (!code) { errEl.textContent = 'Wpisz hasło dostępu.'; return; }
+  btn.disabled = true;
+  btn.textContent = 'Sprawdzam…';
+  errEl.textContent = '';
+  try {
+    const res = await fetch(WORKER + '/get-db-connection', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if (data.valid && data.connectionString) {
+      dbConnectionString = data.connectionString;
+      document.getElementById('db-reveal').classList.add('visible');
+      document.getElementById('db-string-val').textContent = data.connectionString;
+      btn.textContent = '✓ Odblokowano';
+    } else {
+      errEl.textContent = 'Nieprawidłowe hasło. Spróbuj ponownie.';
+      btn.disabled = false;
+      btn.textContent = 'Odblokuj →';
+    }
+  } catch(e) {
+    errEl.textContent = 'Błąd połączenia. Odśwież stronę.';
+    btn.disabled = false;
+    btn.textContent = 'Odblokuj →';
+  }
+}
+
+function copyDbString() {
+  const val = document.getElementById('db-string-val').textContent;
+  navigator.clipboard.writeText(val).then(() => {
+    const btn = document.querySelector('.db-copy-btn');
+    btn.textContent = '✓ Skopiowano!';
+    setTimeout(() => { btn.textContent = '📋 Kopiuj do schowka'; }, 2000);
+  });
+}
 
 // ═══════════════════════════════════════════════════════════
 //  INIT
