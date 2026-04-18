@@ -317,6 +317,7 @@
     font-size: 16px; font-weight: 800; letter-spacing: 0.15em;
     text-align: center; text-transform: uppercase;
     font-family: 'Inter', sans-serif; outline: none;
+    text-transform: none; letter-spacing: 0.05em;
   }
   .db-connect-row input:focus { border-color: var(--accent); }
   .db-connect-error { font-size: 12px; color: #c0392b; font-weight: 600; min-height: 18px; margin-top: 8px; }
@@ -1065,8 +1066,7 @@ function renderDbWidget() {
     <h3>Odblokuj connection string</h3>
     <p>Wpisz hasło otrzymane od prowadzącego, aby uzyskać adres połączenia z bazą PostgreSQL. Skopiuj go do swojego narzędzia AI.</p>
     <div class="db-connect-row">
-      <input type="text" id="db-code-input" placeholder="XXXXXXXXXXX" maxlength="16"
-             oninput="this.value=this.value.toUpperCase()"
+      <input type="text" id="db-code-input" placeholder="Wpisz hasło..." maxlength="20"
              onkeydown="if(event.key==='Enter') fetchDbConnection()">
       <button class="btn btn-primary" id="db-code-btn" onclick="fetchDbConnection()">Odblokuj →</button>
     </div>
