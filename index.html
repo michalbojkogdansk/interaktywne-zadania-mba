@@ -159,6 +159,31 @@
             .task-card.test .task-inner { flex-direction: column; gap: 0; }
         }
 
+        /* ── Tech icons ── */
+        .tech-icons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 0;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .tech-icon-pill {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            border: 1px solid var(--border-dark);
+            border-radius: 50%;
+            padding: 5px;
+            width: 28px;
+            height: 28px;
+            transition: border-color 0.15s;
+        }
+        .task-card:hover .tech-icon-pill { border-color: var(--accent); }
+        .tech-icon-pill img { width: 16px; height: 16px; display: block; }
+
         /* ── Footer ── */
         .footer {
             border-top: 1px solid var(--border-dark);
@@ -285,6 +310,11 @@
                     <span class="task-badge">6 decyzji</span>
                     <span class="task-badge badge-ai">🤖 AI analiza</span>
                 </div>
+                <div class="tech-icons">
+                    <span class="tech-icon-pill" title="Meta Llama AI"><img src="https://cdn.simpleicons.org/meta/0467DF" width="16" height="16" alt="Meta Llama AI"></span>
+                    <span class="tech-icon-pill" title="Cloudflare Workers"><img src="https://cdn.simpleicons.org/cloudflare/F48120" width="16" height="16" alt="Cloudflare Workers"></span>
+                    <span class="tech-icon-pill" title="JavaScript"><img src="https://cdn.simpleicons.org/javascript/F7DF1E" width="16" height="16" alt="JavaScript"></span>
+                </div>
                 <div class="task-arrow">Rozpocznij →</div>
             </a>
 
@@ -312,6 +342,13 @@
                     <span class="task-badge">5 misji</span>
                     <span class="task-badge badge-ai">🤖 Agent AI</span>
                     <span class="task-badge badge-locked">🔒 Kod dostępu</span>
+                </div>
+                <div class="tech-icons">
+                    <span class="tech-icon-pill" title="PostgreSQL (Neon)"><img src="https://cdn.simpleicons.org/postgresql/4169E1" width="16" height="16" alt="PostgreSQL"></span>
+                    <span class="tech-icon-pill" title="Python"><img src="https://cdn.simpleicons.org/python/3776AB" width="16" height="16" alt="Python"></span>
+                    <span class="tech-icon-pill" title="GitHub"><img src="https://cdn.simpleicons.org/github/24292e" width="16" height="16" alt="GitHub"></span>
+                    <span class="tech-icon-pill" title="Cloudflare Workers"><img src="https://cdn.simpleicons.org/cloudflare/F48120" width="16" height="16" alt="Cloudflare Workers"></span>
+                    <span class="tech-icon-pill" title="OpenAI"><img src="https://cdn.simpleicons.org/openai/412991" width="16" height="16" alt="OpenAI"></span>
                 </div>
                 <div class="task-arrow">Uruchom grę →</div>
             </a>
