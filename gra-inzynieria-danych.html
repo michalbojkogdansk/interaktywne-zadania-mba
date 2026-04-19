@@ -1007,12 +1007,8 @@ function renderSetupGuide() {
           <strong>Otwórz plik konfiguracyjny Claude Desktop</strong>
           <p>Claude przechowuje swoje ustawienia w pliku tekstowym na Twoim komputerze. Musisz go znaleźć i otworzyć w Notatniku (lub dowolnym edytorze tekstu).</p>
           <div class="step-os-label">🪟 Windows</div>
-          <p><strong>Sposób 1:</strong> Naciśnij jednocześnie klawisze <kbd>Win</kbd> + <kbd>R</kbd>. W okienku które się pojawi wpisz poniższy tekst i kliknij OK:</p>
-          <div class="step-code">%APPDATA%\Claude</div>
-          <p style="margin-top:8px"><strong>Sposób 2 (jeśli sposób 1 nie działa):</strong> Otwórz Eksplorator plików (żółta teczka na pasku zadań). Kliknij pasek adresu na górze okna (gdzie widać ścieżkę folderu) — zaznacz całą zawartość i wpisz dokładnie:</p>
-          <div class="step-code">C:\Users\TWOJA_NAZWA\AppData\Roaming\Claude</div>
-          <p style="margin-top:8px">Zamień <strong>TWOJA_NAZWA</strong> na nazwę swojego konta Windows (tę samą co widać na ekranie startowym). Naciśnij <kbd>Enter</kbd>.</p>
-          <div class="step-note">💡 Jeśli nie wiesz jak się nazywa Twoje konto: otwórz Eksplorator plików → kliknij <strong>Ten komputer</strong> → otwórz dysk C: → otwórz folder <strong>Użytkownicy</strong> — Twoja nazwa to nazwa folderu który tam widzisz.</div>
+          <p>Otwórz <strong>Eksplorator plików</strong> (żółta teczka na pasku zadań). Przejdź kolejno: dysk <strong>C:</strong> → folder <strong>Użytkownicy</strong> → folder z Twoją nazwą → <strong>AppData</strong> → <strong>Roaming</strong> → <strong>Claude</strong>.</p>
+          <div class="step-note">💡 Folder AppData jest domyślnie ukryty. Jeśli go nie widzisz: w Eksploratorze kliknij zakładkę <strong>Widok</strong> (górny pasek) → zaznacz <strong>Elementy ukryte</strong>.</div>
           <p style="margin-top:8px">Znajdź plik o nazwie <span class="step-path">claude_desktop_config.json</span>. Kliknij go <strong>prawym przyciskiem myszy</strong> → <strong>Otwórz za pomocą</strong> → <strong>Notatnik</strong>.</p>
           <div class="step-os-label">🍎 Mac</div>
           <p>Otwórz Finder. Naciśnij jednocześnie <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd>. W okienku wpisz poniższy adres i kliknij Przejdź:</p>
@@ -1025,20 +1021,26 @@ function renderSetupGuide() {
         <div class="step-num">4</div>
         <div class="step-content">
           <strong>Wklej konfigurację do pliku</strong>
-          <p>W otwartym pliku zaznacz całą zawartość (<kbd>Ctrl+A</kbd> lub <kbd>Cmd+A</kbd>), a następnie skasuj ją i wklej poniższy kod. Zamień fragment <strong>WKLEJ_CONNECTION_STRING</strong> na adres skopiowany w kroku 2 (użyj Ctrl+V lub Cmd+V):</p>
+          <p>W otwartym pliku zaznacz całą zawartość (<kbd>Ctrl+A</kbd> lub <kbd>Cmd+A</kbd>), skasuj ją i wklej poniższy kod. Następnie zamień fragment <strong>TU WKLEJ CONNECTION STRING</strong> na adres skopiowany w kroku 2:</p>
           <div class="step-code">{
+  "preferences": {
+    "coworkWebSearchEnabled": true,
+    "coworkScheduledTasksEnabled": false,
+    "ccdScheduledTasksEnabled": false
+  },
   "mcpServers": {
     "nexo-retail": {
       "command": "npx",
       "args": [
         "-y",
         "@modelcontextprotocol/server-postgres",
-        "WKLEJ_CONNECTION_STRING"
+        "TU WKLEJ CONNECTION STRING"
       ]
     }
   }
 }</div>
-          <div class="step-note">⚠️ Jeśli plik miał już jakąś zawartość (widać klamry <code style="background:none;border:none;font-size:11px">{ }</code> i tekst) — nie kasuj go całego. Pokaż ekran prowadzącemu — razem połączymy obie konfiguracje w 1 minutę.</div>
+          <p style="margin-top:10px">Po wklejeniu connection stringa fragment <strong>TU WKLEJ CONNECTION STRING</strong> zastąpi długi adres zaczynający się od <code style="background:none;border:none;font-size:11px">postgresql://</code>. Całość musi pozostać w cudzysłowach.</p>
+          <div class="step-note">⚠️ Jeśli plik miał już jakąś zawartość (widać klamry { } i tekst) — nie kasuj go całego. Pokaż ekran prowadzącemu — razem połączymy obie konfiguracje w 1 minutę.</div>
         </div>
       </div>
 
