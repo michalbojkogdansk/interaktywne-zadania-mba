@@ -1007,9 +1007,10 @@ function renderSetupGuide() {
           <strong>Otwórz plik konfiguracyjny Claude Desktop</strong>
           <p>Claude przechowuje swoje ustawienia w pliku tekstowym na Twoim komputerze. Musisz go znaleźć i otworzyć w Notatniku (lub dowolnym edytorze tekstu).</p>
           <div class="step-os-label">🪟 Windows</div>
-          <p>Otwórz <strong>Eksplorator plików</strong> (żółta teczka na pasku zadań). Przejdź kolejno: dysk <strong>C:</strong> → folder <strong>Użytkownicy</strong> → folder z Twoją nazwą → <strong>AppData</strong> → <strong>Roaming</strong> → <strong>Claude</strong>.</p>
-          <div class="step-note">💡 Folder AppData jest domyślnie ukryty. Jeśli go nie widzisz: w Eksploratorze kliknij zakładkę <strong>Widok</strong> (górny pasek) → zaznacz <strong>Elementy ukryte</strong>.</div>
-          <p style="margin-top:8px">Znajdź plik o nazwie <span class="step-path">claude_desktop_config.json</span>. Kliknij go <strong>prawym przyciskiem myszy</strong> → <strong>Otwórz za pomocą</strong> → <strong>Notatnik</strong>.</p>
+          <p>Otwórz <strong>Eksplorator plików</strong> (żółta teczka na pasku zadań). W prawym górnym rogu okna znajdziesz pole wyszukiwania — kliknij je i wpisz:</p>
+          <div class="step-code">claude_desktop_config.json</div>
+          <p style="margin-top:8px">Poczekaj chwilę na wyniki. Gdy plik się pojawi na liście — kliknij go <strong>prawym przyciskiem myszy</strong> → <strong>Otwórz za pomocą</strong> → <strong>Notatnik</strong>.</p>
+          <div class="step-note">💡 Jeśli wyszukiwanie nie znajduje pliku: upewnij się że Claude Desktop był uruchomiony co najmniej raz — plik tworzy się przy pierwszym uruchomieniu programu.</div>
           <div class="step-os-label">🍎 Mac</div>
           <p>Otwórz Finder. Naciśnij jednocześnie <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd>. W okienku wpisz poniższy adres i kliknij Przejdź:</p>
           <div class="step-code">~/Library/Application Support/Claude</div>
@@ -1053,16 +1054,6 @@ function renderSetupGuide() {
           <p><strong>Windows:</strong> znajdź ikonę Claude w prawym dolnym rogu paska zadań (przy zegarku). Kliknij ją <strong>prawym przyciskiem myszy</strong> → <strong>Quit</strong>.</p>
           <p><strong>Mac:</strong> kliknij okno Claude, potem naciśnij <kbd>Cmd</kbd> + <kbd>Q</kbd>.</p>
           <p>Otwórz Claude Desktop ponownie.</p>
-        </div>
-      </div>
-
-      <div class="setup-step">
-        <div class="step-num">6</div>
-        <div class="step-content">
-          <strong>Sprawdź czy agent widzi bazę danych</strong>
-          <p>Otwórz nową rozmowę w Claude Desktop i wpisz dokładnie to zdanie:</p>
-          <div class="prompt-example">Jakie tabele masz dostępne w bazie danych? Podaj ich nazwy i liczbę rekordów w każdej.</div>
-          <div class="step-note">✅ <strong>Działa poprawnie</strong> — jeśli Claude wymieni nazwy tabel takich jak <em>transactions</em>, <em>customers</em>, <em>employees</em>. Możesz zaczynać misję!<br><br>❌ <strong>Nie działa</strong> — jeśli Claude odpowiada że nie ma dostępu do bazy. Sprawdź czy connection string w pliku jest wklejony bez dodatkowych spacji na początku i końcu. Jeśli nadal nie działa — zgłoś się do prowadzącego.</div>
         </div>
       </div>
 
