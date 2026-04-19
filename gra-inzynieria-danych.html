@@ -1007,9 +1007,13 @@ function renderSetupGuide() {
           <strong>Otwórz plik konfiguracyjny Claude Desktop</strong>
           <p>Claude przechowuje swoje ustawienia w pliku tekstowym na Twoim komputerze. Musisz go znaleźć i otworzyć w Notatniku (lub dowolnym edytorze tekstu).</p>
           <div class="step-os-label">🪟 Windows</div>
-          <p>Naciśnij jednocześnie klawisze <kbd>Win</kbd> + <kbd>R</kbd>. W okienku które się pojawi wpisz dokładnie poniższy tekst i kliknij OK:</p>
+          <p><strong>Sposób 1:</strong> Naciśnij jednocześnie klawisze <kbd>Win</kbd> + <kbd>R</kbd>. W okienku które się pojawi wpisz poniższy tekst i kliknij OK:</p>
           <div class="step-code">%APPDATA%\Claude</div>
-          <p style="margin-top:8px">Otworzy się folder z plikami Claude. Znajdź plik o nazwie <span class="step-path">claude_desktop_config.json</span>. Kliknij go <strong>prawym przyciskiem myszy</strong> → <strong>Otwórz za pomocą</strong> → <strong>Notatnik</strong>.</p>
+          <p style="margin-top:8px"><strong>Sposób 2 (jeśli sposób 1 nie działa):</strong> Otwórz Eksplorator plików (żółta teczka na pasku zadań). Kliknij pasek adresu na górze okna (gdzie widać ścieżkę folderu) — zaznacz całą zawartość i wpisz dokładnie:</p>
+          <div class="step-code">C:\Users\TWOJA_NAZWA\AppData\Roaming\Claude</div>
+          <p style="margin-top:8px">Zamień <strong>TWOJA_NAZWA</strong> na nazwę swojego konta Windows (tę samą co widać na ekranie startowym). Naciśnij <kbd>Enter</kbd>.</p>
+          <div class="step-note">💡 Jeśli nie wiesz jak się nazywa Twoje konto: otwórz Eksplorator plików → kliknij <strong>Ten komputer</strong> → otwórz dysk C: → otwórz folder <strong>Użytkownicy</strong> — Twoja nazwa to nazwa folderu który tam widzisz.</div>
+          <p style="margin-top:8px">Znajdź plik o nazwie <span class="step-path">claude_desktop_config.json</span>. Kliknij go <strong>prawym przyciskiem myszy</strong> → <strong>Otwórz za pomocą</strong> → <strong>Notatnik</strong>.</p>
           <div class="step-os-label">🍎 Mac</div>
           <p>Otwórz Finder. Naciśnij jednocześnie <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd>. W okienku wpisz poniższy adres i kliknij Przejdź:</p>
           <div class="step-code">~/Library/Application Support/Claude</div>
