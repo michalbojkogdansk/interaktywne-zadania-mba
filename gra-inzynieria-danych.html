@@ -512,6 +512,13 @@
         <div class="m-meta">⏱ ~50 min · Wnioski</div>
       </div>
     </button>
+    <button class="mission-item" id="nav-5" onclick="showMission(5)">
+      <div class="m-num" id="num-5">06</div>
+      <div class="m-label">
+        <div class="m-title">Raport & Strategia</div>
+        <div class="m-meta">⏱ ~60 min · Zaliczenie</div>
+      </div>
+    </button>
   </div>
 
   <div class="content" id="content-area"></div>
@@ -890,6 +897,92 @@ const MISSIONS = [
       '3 rekomendacje: decyzja / oparcie w danych / ROI / ryzyko / horyzont',
       'Draft raportu końcowego'
     ]
+  },
+  {
+    tag: 'Misja 06 · Zaliczenie',
+    title: 'Raport Analityczny i Strategia Organizacyjna',
+    desc: 'Tworzysz pełny raport analityczny dla zarządu NEXO — z identyfikacją dark data, nieoczywistymi korelacjami, scenariuszami ROI i strategią wdrożenia kultury danych.',
+    badges: ['⏱ ~60 min', '📄 Raport', '🎯 Strategia', '🏆 Zaliczenie'],
+    theory: {
+      title: '📖 Wzorcowy raport analityczny — do pobrania',
+      body: `
+        <p>Poniżej znajdziesz przykładowy raport analityczny przygotowany na podstawie tej samej bazy NEXO Retail. Zapoznaj się z nim <strong>przed</strong> przystąpieniem do zadania — zwróć uwagę na strukturę argumentacji, sposób prezentacji korelacji oraz formę rekomendacji z szacowanym ROI.</p>
+        <div class="def-box" style="text-align:center; padding: 24px;">
+          <div style="font-size: 32px; margin-bottom: 12px;">📄</div>
+          <div style="font-weight: 700; font-size: 16px; margin-bottom: 8px;">Przykładowy raport: NEXO Retail Analytics</div>
+          <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Dark Data · Korelacje · Scenariusze ROI · Kwiecień 2026</div>
+          <a href="raport_nexo_przyklad.pdf" download style="display:inline-flex; align-items:center; gap:8px; background:var(--accent); color:#fff; padding:10px 24px; border-radius:8px; font-weight:600; text-decoration:none; font-size:15px;">
+            ⬇ Pobierz PDF
+          </a>
+        </div>
+        <h3>Co zawiera wzorcowy raport?</h3>
+        <ul>
+          <li><strong>Sekcja 1 — Dark Data:</strong> 4 zidentyfikowane obszary danych zbieranych, lecz nieużywanych w procesach decyzyjnych</li>
+          <li><strong>Sekcja 2 — Korelacje:</strong> 3 nieoczywiste zależności wykryte przez analizę cross-domain (pogoda, lojalność, pracownicy)</li>
+          <li><strong>Sekcja 3 — ROI:</strong> 4 nowe wskaźniki ROI możliwe do obliczenia wyłącznie z istniejących danych</li>
+          <li><strong>Sekcja 4 — Kierunki dalszej analizy:</strong> 5 projektów analitycznych jako następne kroki</li>
+        </ul>
+        <div class="def-box">
+          <p><strong>Uwaga:</strong> Wzorcowy raport to punkt odniesienia, nie szablon do kopiowania. Twój raport powinien zawierać Twoje własne odkrycia z poprzednich misji i być uzasadniony konkretnymi wynikami zapytań do bazy NEXO.</p>
+        </div>
+      `
+    },
+    brief: `
+      <div class="brief-label">Twoje zadanie końcowe</div>
+      <h3>Przygotuj raport analityczny dla zarządu NEXO i strategię transformacji organizacyjnej</h3>
+      <p style="color:var(--text-muted); margin-bottom:16px;">Raport ma być gotowy do prezentacji zarządowi — konkretny, oparty na danych, z rekomendacjami i uzasadnionym ROI.</p>
+
+      <p><strong>Część 1 — Dark Data</strong></p>
+      <ul>
+        <li>Zidentyfikuj co najmniej <strong>3 obszary dark data</strong> w bazie NEXO</li>
+        <li>Dla każdego: opisz co to są za dane, dlaczego są nieużywane i jaki potencjał biznesowy w nich drzemie</li>
+        <li>Zaproponuj konkretne działanie: monetyzować / archiwizować / usunąć — z uzasadnieniem</li>
+      </ul>
+
+      <p><strong>Część 2 — Nieoczywiste korelacje</strong></p>
+      <ul>
+        <li>Znajdź <strong>co najmniej 2 nieoczywiste korelacje</strong> między różnymi domenami danych (np. pogoda ↔ sprzedaż, szkolenia ↔ NPS, rotacja ↔ koszyk)</li>
+        <li>Dla każdej korelacji: opisz zależność, podaj liczby z bazy i wyjaśnij dlaczego jest nieoczywista</li>
+        <li>Wyraźnie zaznacz: czy to korelacja czy przyczynowość? Co trzeba sprawdzić, żeby to potwierdzić?</li>
+      </ul>
+
+      <p><strong>Część 3 — Scenariusze ROI</strong></p>
+      <ul>
+        <li>Opracuj <strong>2–3 scenariusze biznesowe</strong>, które wykorzystują odkryte korelacje i dark data do stworzenia nowej wartości</li>
+        <li>Każdy scenariusz powinien zawierać: nazwę inicjatywy, opis działania, potrzebne dane (jakie tabele), szacowany ROI w 3 wariantach (pesymistyczny / bazowy / optymistyczny), ryzyko i horyzont czasowy</li>
+      </ul>
+
+      <p><strong>Część 4 — Strategia organizacyjna</strong></p>
+      <ul>
+        <li>Zaproponuj strategię, która sprawi, że analiza NEXO <strong>nie będzie jednorazową akcją</strong>, lecz stałym sposobem działania organizacji</li>
+        <li>Odpowiedz na pytania: Kto w organizacji jest właścicielem danych? Jak często prowadzona jest eksploracja dark data? Jaki proces decyzyjny zapewnia, że wnioski z analiz trafiają do działań operacyjnych?</li>
+        <li>Zainspiruj się konceptami: data ownership, data product thinking, analityczny OKR (np. "co kwartał identyfikujemy 1 nową korelację i testujemy ją w trybie A/B")</li>
+      </ul>
+    `,
+    hints: [
+      {
+        title: 'Jak znaleźć dark data przez agenta AI',
+        body: `<div class="prompt-example">"Pokaż mi wszystkie tabele w bazie NEXO. Dla każdej powiedz: ile rekordów zawiera, kiedy ostatnio były modyfikowane dane i czy ta tabela pojawia się w JOIN-ach z tabelą transactions. Które tabele nigdy nie są łączone z transactions?"</div>`
+      },
+      {
+        title: 'Jak szukać nieoczywistych korelacji',
+        body: `<div class="prompt-example">"Oblicz średnią wartość koszyka zakupowego (avg_basket) w podziale na warunki pogodowe (weather_condition) z tabeli weather_daily. Połącz przez miasto (city) i datę (date). Czy jest jakaś różnica między słonecznym a deszczowym dniem?"</div>`
+      },
+      {
+        title: 'Jak zbudować scenariusz ROI',
+        body: `<div class="prompt-example">"W dniach deszczowych średni koszyk jest o 8% wyższy. NEXO ma 12 sklepów, średni koszyk bazowy to 86 PLN, dziennie 150 transakcji. Jeśli wprowadzimy promocje pogodowe i zwiększymy ruch w złą pogodę o 10% — jaki to roczny przychód dodatkowy? Policz dla 3 scenariuszy."</div>`
+      },
+      {
+        title: 'Jak sformułować strategię organizacyjną',
+        body: `<div class="prompt-example">"Jakie tabele w NEXO nie mają właściciela domenowego? Które domeny danych (sprzedaż, HR, logistyka, lojalność) są najgorzej zintegrowane? Na tej podstawie zaproponuj strukturę data ownership dla organizacji."</div>`
+      }
+    ],
+    deliverables: [
+      'Minimum 3 obszary dark data — opis, potencjał, rekomendacja działania',
+      'Minimum 2 nieoczywiste korelacje z liczbami z bazy i oceną przyczynowości',
+      '2–3 scenariusze ROI z wariantami pesymistycznym / bazowym / optymistycznym',
+      'Strategia organizacyjna: data ownership, cykl eksploracji, mechanizm wdrażania wniosków'
+    ]
   }
 ];
 
@@ -900,7 +993,7 @@ let dbConnectionString = null;
 
 function showMission(idx) {
   currentMission = idx;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     const nav = document.getElementById('nav-' + i);
     if (nav) nav.classList.toggle('active', i === idx);
   }
