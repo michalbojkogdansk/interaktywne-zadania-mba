@@ -167,7 +167,23 @@
 </style>
 <style>body { padding-top: 52px !important; }</style>
 </head>
-<body>
+<body><!-- MBA GROUP GATE OVERLAY -->
+<div id="mba-group-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#F0EDE7;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;">
+  <div style="background:#fff;border:1.5px solid #D0CBC4;padding:48px 40px;max-width:420px;width:90%;box-sizing:border-box;">
+    <p style="font-size:11px;font-weight:700;letter-spacing:1.8px;color:#9b8f84;text-transform:uppercase;margin:0 0 12px;">MBA Platform</p>
+    <h2 style="font-size:1.6rem;font-weight:800;margin:0 0 8px;color:#1a1a1a;font-family:Inter,sans-serif;">Dostęp do ćwiczenia</h2>
+    <p style="color:#666;margin:0 0 28px;font-size:0.95rem;line-height:1.55;">Wpisz hasło swojej grupy, aby kontynuować.</p>
+    <input type="text" id="mba-gate-input" placeholder="Hasło grupy..." autocomplete="off"
+      style="width:100%;box-sizing:border-box;padding:13px 14px;border:1.5px solid #D0CBC4;font-size:1rem;font-family:Inter,sans-serif;background:#fff;outline:none;margin-bottom:10px;border-radius:0;"
+      onkeydown="if(event.key==='Enter')verifyGroupGate();" />
+    <div id="mba-gate-error" style="color:#c0392b;font-size:0.88rem;min-height:18px;margin-bottom:14px;"></div>
+    <button id="mba-gate-btn" onclick="verifyGroupGate()"
+      style="width:100%;padding:14px;background:#4A8F8A;color:#fff;border:none;font-size:1rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;letter-spacing:0.3px;border-radius:0;">
+      Wejdź →
+    </button>
+  </div>
+</div>
+
 <nav class="site-nav">
   <div class="nav-links">
     <a class="nav-link" href="index.html">🏠 <span class="nav-label">MBA 2026</span></a>
@@ -703,13 +719,15 @@ ${comment ? `\n### Komentarz\n${comment}` : ''}`;
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'github',
-        title: `🔦 Ciemne Dane — ${st.nick} — ${st.finalScore}pkt — ${date}`,
-        body,
+        title: `🔦 Ciemne Dane — ${st.nick}${getGroupName() ? ' — ' + getGroupName() : ''} — ${st.finalScore}pkt — ${date}`,
+        body: body + (getGroupName() ? '\n\n---\n**Grupa:** ' + getGroupName() : ''),
         labels: ['ciemne-dane']
       })
     });
     if (res.ok) {
-      document.getElementById('submit-feedback').innerHTML = '<div class="alert alert-success">✓ Wyniki zapisane. Dziękujemy za udział w ćwiczeniu!</div>';
+      const _cdD = await res.json();
+      const _cdN = _cdD.number ? ` · Potwierdzenie: <strong>#${_cdD.number}</strong>` : '';
+      document.getElementById('submit-feedback').innerHTML = `<div class="alert alert-success">✓ Wyniki zapisane${_cdN}. Dziękujemy za udział w ćwiczeniu!</div>`;
       btn.style.display = 'none';
       document.getElementById('back-home').style.display = 'block';
     } else { throw new Error(); }
@@ -720,6 +738,45 @@ ${comment ? `\n### Komentarz\n${comment}` : ''}`;
 }
 
 function fmt(n) { return n.toLocaleString('pl-PL'); }
+// ─── GROUP GATE ───────────────────────────────────────────────────────────────
+(function() {
+  try {
+    const g = sessionStorage.getItem('mba_group');
+    if (g) { const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none'; }
+  } catch(e) {}
+})();
+
+async function verifyGroupGate() {
+  const input = document.getElementById('mba-gate-input');
+  const password = (input ? input.value : '').trim();
+  const btn = document.getElementById('mba-gate-btn');
+  const errEl = document.getElementById('mba-gate-error');
+  if (!password) { errEl.textContent = 'Wpisz hasło grupy.'; return; }
+  btn.disabled = true; btn.textContent = 'Sprawdzam...'; errEl.textContent = '';
+  try {
+    const res = await fetch('https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev/verify-group', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+    const data = await res.json();
+    if (data.valid) {
+      sessionStorage.setItem('mba_group', JSON.stringify({ name: data.groupName, code: password }));
+      const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none';
+    } else {
+      errEl.textContent = data.error || 'Nieprawidłowe hasło.';
+      btn.disabled = false; btn.textContent = 'Wejdź →';
+    }
+  } catch(e) {
+    errEl.textContent = 'Błąd połączenia. Spróbuj ponownie.';
+    btn.disabled = false; btn.textContent = 'Wejdź →';
+  }
+}
+
+function getGroupName() {
+  try { const g = sessionStorage.getItem('mba_group'); if (g) return JSON.parse(g).name || ''; } catch(e) {}
+  return '';
+}
+
 </script>
 </body>
 </html>
