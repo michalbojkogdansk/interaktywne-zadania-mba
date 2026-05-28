@@ -572,7 +572,6 @@ async function verifyGroupGate() {
     if (data.valid) {
       _mbaGroupName = data.groupName;
       const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none';
-      const nexo = document.getElementById('access-modal'); if(nexo) { nexo.style.display='flex'; }
     } else {
       errEl.textContent = data.error || 'Nieprawidłowe hasło.';
       btn.disabled = false; btn.textContent = 'Wejdź →';
