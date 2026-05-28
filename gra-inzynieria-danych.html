@@ -473,17 +473,21 @@
 </div>
 
 
-<!-- NEXO ACCESS MODAL (shown after group gate) -->
-<div class="modal-overlay" id="access-modal" style="display:none;">
-  <div class="modal-box">
-    <div class="lock-icon">🔒</div>
-    <h2>Kod dostępu</h2>
-    <p>Materiały do gry są dostępne wyłącznie dla uczestników zajęć.<br>Wpisz hasło otrzymane od prowadzącego.</p>
-    <input type="text" id="access-input" placeholder="XXXXXXXXX" maxlength="12"
-           oninput="this.value=this.value.toUpperCase()"
-           onkeydown="if(event.key==='Enter') verifyAccess()">
-    <div class="modal-error" id="access-error"></div>
-    <button class="btn btn-primary" id="access-btn" onclick="verifyAccess()" style="width:100%">Wejdź do materiałów →</button>
+<!-- NEXO ACCESS MODAL -->
+<div id="access-modal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#F0EDE7;z-index:9998;display:none;align-items:center;justify-content:center;font-family:Inter,sans-serif;">
+  <div style="background:#fff;border:1.5px solid #D0CBC4;padding:48px 40px;max-width:420px;width:90%;box-sizing:border-box;">
+    <p style="font-size:11px;font-weight:700;letter-spacing:1.8px;color:#9b8f84;text-transform:uppercase;margin:0 0 12px;">Gra: Inżynieria Danych</p>
+    <h2 style="font-size:1.6rem;font-weight:800;margin:0 0 8px;color:#1a1a1a;font-family:Inter,sans-serif;">Hasło do bazy danych</h2>
+    <p style="color:#666;margin:0 0 28px;font-size:0.95rem;line-height:1.55;">Wpisz hasło dostępu do bazy NEXO Retail, aby ujawnić connection string.</p>
+    <input type="text" id="access-input" placeholder="XXXXXXXXX" maxlength="20"
+      style="width:100%;box-sizing:border-box;padding:13px 14px;border:1.5px solid #D0CBC4;font-size:1rem;font-family:Inter,sans-serif;background:#fff;outline:none;margin-bottom:10px;border-radius:0;"
+      oninput="this.value=this.value.toUpperCase()"
+      onkeydown="if(event.key==='Enter') verifyAccess()">
+    <div id="access-error" style="color:#c0392b;font-size:0.88rem;min-height:18px;margin-bottom:14px;"></div>
+    <button id="access-btn" onclick="verifyAccess()"
+      style="width:100%;padding:14px;background:#4A8F8A;color:#fff;border:none;font-size:1rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;letter-spacing:0.3px;border-radius:0;">
+      Wejdź do materiałów →
+    </button>
   </div>
 </div>
 <div class="page-header">
@@ -568,8 +572,7 @@ async function verifyGroupGate() {
     if (data.valid) {
       _mbaGroupName = data.groupName;
       const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none';
-      // Pokaż drugą bramkę: hasło nexo
-      const nexo = document.getElementById('access-modal'); if(nexo) nexo.style.display='flex';
+      const nexo = document.getElementById('access-modal'); if(nexo) { nexo.style.display='flex'; }
     } else {
       errEl.textContent = data.error || 'Nieprawidłowe hasło.';
       btn.disabled = false; btn.textContent = 'Wejdź →';
@@ -580,37 +583,34 @@ async function verifyGroupGate() {
   }
 }
 
-function getGroupName() { return _mbaGroupName; }
-
-
 async function verifyAccess() {
+  const input = document.getElementById('access-input');
+  const code = (input ? input.value : '').trim();
   const btn = document.getElementById('access-btn');
   const errEl = document.getElementById('access-error');
-  const code = document.getElementById('access-input').value.trim().toUpperCase();
-  if (!code) { errEl.textContent = 'Wpisz hasło dostępu.'; return; }
-  btn.disabled = true;
-  btn.textContent = 'Sprawdzam…';
-  errEl.textContent = '';
+  if (!code) { errEl.textContent = 'Wpisz hasło.'; return; }
+  btn.disabled = true; btn.textContent = 'Sprawdzam...'; errEl.textContent = '';
   try {
-    const res = await fetch(WORKER + '/verify-nexo', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch('https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev/verify-nexo', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code })
     });
     const data = await res.json();
     if (data.valid) {
-      document.getElementById('access-modal').style.display = 'none';
+      const modal = document.getElementById('access-modal'); if(modal) modal.style.display='none';
     } else {
-      errEl.textContent = 'Nieprawidłowe hasło. Spróbuj ponownie.';
-      btn.disabled = false;
-      btn.textContent = 'Wejdź do materiałów →';
+      errEl.textContent = data.error || 'Nieprawidłowe hasło.';
+      btn.disabled = false; btn.textContent = 'Wejdź do materiałów →';
     }
   } catch(e) {
-    errEl.textContent = 'Błąd połączenia. Odśwież stronę.';
-    btn.disabled = false;
-    btn.textContent = 'Wejdź do materiałów →';
+    errEl.textContent = 'Błąd połączenia. Spróbuj ponownie.';
+    btn.disabled = false; btn.textContent = 'Wejdź do materiałów →';
   }
 }
+
+function getGroupName() { return _mbaGroupName; }
+
+
 
 const MISSIONS = [
   {
