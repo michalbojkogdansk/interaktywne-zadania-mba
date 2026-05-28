@@ -510,7 +510,23 @@
   /* ════════════════════════════════════════════════════════════════════════ */
 </style>
 </head>
-<body>
+<body><!-- MBA GROUP GATE OVERLAY -->
+<div id="mba-group-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#F0EDE7;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;">
+  <div style="background:#fff;border:1.5px solid #D0CBC4;padding:48px 40px;max-width:420px;width:90%;box-sizing:border-box;">
+    <p style="font-size:11px;font-weight:700;letter-spacing:1.8px;color:#9b8f84;text-transform:uppercase;margin:0 0 12px;">MBA Platform</p>
+    <h2 style="font-size:1.6rem;font-weight:800;margin:0 0 8px;color:#1a1a1a;font-family:Inter,sans-serif;">Dostęp do ćwiczenia</h2>
+    <p style="color:#666;margin:0 0 28px;font-size:0.95rem;line-height:1.55;">Wpisz hasło swojej grupy, aby kontynuować.</p>
+    <input type="text" id="mba-gate-input" placeholder="Hasło grupy..." autocomplete="off"
+      style="width:100%;box-sizing:border-box;padding:13px 14px;border:1.5px solid #D0CBC4;font-size:1rem;font-family:Inter,sans-serif;background:#fff;outline:none;margin-bottom:10px;border-radius:0;"
+      onkeydown="if(event.key==='Enter')verifyGroupGate();" />
+    <div id="mba-gate-error" style="color:#c0392b;font-size:0.88rem;min-height:18px;margin-bottom:14px;"></div>
+    <button id="mba-gate-btn" onclick="verifyGroupGate()"
+      style="width:100%;padding:14px;background:#4A8F8A;color:#fff;border:none;font-size:1rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;letter-spacing:0.3px;border-radius:0;">
+      Wejdź →
+    </button>
+  </div>
+</div>
+
 <nav class="site-nav">
   <div class="nav-links">
     <a class="nav-link" href="index.html">🏠 <span class="nav-label">MBA 2026</span></a>
@@ -930,14 +946,15 @@ ${audit ? `## 🔍 Data Audit\n\n${audit}\n` : '> Brak Data Audit.'}`;
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: `📊 Korelacja Danych — ${nick} — ${new Date().toLocaleDateString('pl-PL')}`,
-          body,
+          title: `📊 Korelacja Danych — ${nick}${getGroupName() ? ' — ' + getGroupName() : ''} — ${new Date().toLocaleDateString('pl-PL')}`,
+          body: body + (getGroupName() ? '\n\n---\n**Grupa:** ' + getGroupName() : ''),
           labels: ['korelacja-danych']
         })
       });
 
     if (res.ok) {
-      showSuccess(nick, ans, audit, true);
+      const _kData = await res.json();
+      showSuccess(nick, ans, audit, _kData.number || true);
     } else {
       const err = await res.json();
       showError(`GitHub odpowiedział błędem: ${err.message || res.status}`);
@@ -959,8 +976,9 @@ function showSuccess(nick, ans, audit, saved) {
      &nbsp;|&nbsp; Pewność: ${confMap[a.confidence]}`
   ).join('<br><br>');
 
+  const _kRef = typeof saved === 'number' ? ` · Potwierdzenie: <strong>#${saved}</strong>` : '';
   document.getElementById('successMsg').innerHTML = saved
-    ? `Twoje odpowiedzi zostały zapisane w repozytorium GitHub jako <strong style="color:var(--c3)">${nick}</strong>. Sprawdzisz je na zajęciach! 🎉`
+    ? `Twoje odpowiedzi zostały zapisane w repozytorium GitHub jako <strong style="color:var(--c3)">${nick}</strong>${_kRef}. Sprawdzisz je na zajęciach! 🎉`
     : `Twoje odpowiedzi zostały przygotowane jako <strong style="color:var(--c3)">${nick}</strong>. Prowadzący skonfiguruje zapis przed zajęciami.`;
 
   document.getElementById('answerSummary').innerHTML = summaryLines;
@@ -971,6 +989,45 @@ function showError(msg) {
   document.getElementById('errorMsg').textContent = msg;
   showScreen('error');
 }
+// ─── GROUP GATE ───────────────────────────────────────────────────────────────
+(function() {
+  try {
+    const g = sessionStorage.getItem('mba_group');
+    if (g) { const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none'; }
+  } catch(e) {}
+})();
+
+async function verifyGroupGate() {
+  const input = document.getElementById('mba-gate-input');
+  const password = (input ? input.value : '').trim();
+  const btn = document.getElementById('mba-gate-btn');
+  const errEl = document.getElementById('mba-gate-error');
+  if (!password) { errEl.textContent = 'Wpisz hasło grupy.'; return; }
+  btn.disabled = true; btn.textContent = 'Sprawdzam...'; errEl.textContent = '';
+  try {
+    const res = await fetch('https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev/verify-group', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+    const data = await res.json();
+    if (data.valid) {
+      sessionStorage.setItem('mba_group', JSON.stringify({ name: data.groupName, code: password }));
+      const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none';
+    } else {
+      errEl.textContent = data.error || 'Nieprawidłowe hasło.';
+      btn.disabled = false; btn.textContent = 'Wejdź →';
+    }
+  } catch(e) {
+    errEl.textContent = 'Błąd połączenia. Spróbuj ponownie.';
+    btn.disabled = false; btn.textContent = 'Wejdź →';
+  }
+}
+
+function getGroupName() {
+  try { const g = sessionStorage.getItem('mba_group'); if (g) return JSON.parse(g).name || ''; } catch(e) {}
+  return '';
+}
+
 </script>
 </body>
 </html>
