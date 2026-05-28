@@ -579,7 +579,7 @@ ${a.text}
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        code: accessCode,
+        code: _mbaGroupPassword,
         title: `📝 Test Wiedzy — ${fname} ${lname}${getGroupName() ? ' — ' + getGroupName() : ''} — ${now}`,
         body: body + (getGroupName() ? '\n\n---\n**Grupa:** ' + getGroupName() : ''),
         labels: ['test-wiedzy'],
@@ -619,6 +619,7 @@ function showConfirmation(fname, lname, answers, issueNum) {
 }
 // ─── GROUP GATE ───────────────────────────────────────────────────────────────
 let _mbaGroupName = '';
+let _mbaGroupPassword = '';
 
 async function verifyGroupGate() {
   const input = document.getElementById('mba-gate-input');
@@ -635,6 +636,7 @@ async function verifyGroupGate() {
     const data = await res.json();
     if (data.valid) {
       _mbaGroupName = data.groupName;
+      _mbaGroupPassword = input.value.trim().toUpperCase();
       const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none';
     } else {
       errEl.textContent = data.error || 'Nieprawidłowe hasło.';
