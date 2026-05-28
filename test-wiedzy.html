@@ -552,7 +552,7 @@ async function submitTest() {
 
   const fname = document.getElementById('first-name').value.trim();
   const lname = document.getElementById('last-name').value.trim();
-  const group = document.getElementById('group-name').value.trim();
+  const group = getGroupName() || '';
   const now = new Date().toLocaleDateString('pl-PL');
 
   const answers = QUESTIONS.map(q => ({
