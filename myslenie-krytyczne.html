@@ -520,7 +520,8 @@
             </div>
           </div>
 
-          <label>Twój pseudonim (widoczny przy wynikach)</label>
+          <label>Twój pseudonim / ksywa</label>
+          <p style="margin:4px 0 10px;font-size:0.82rem;color:#888;">Użyj pseudonimu — nie podawaj imienia i nazwiska.</p>
           <input type="text" id="nickname" placeholder="np. MarketingMike, DataDaria..." maxlength="30">
           <div style="margin-top:16px;">
             <button class="btn btn-primary" style="width:100%" onclick="startQuiz()">▶ Zaczynam test</button>
@@ -999,12 +1000,7 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     // ─── GROUP GATE ───────────────────────────────────────────────────────────────
-(function() {
-  try {
-    const g = sessionStorage.getItem('mba_group');
-    if (g) { const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none'; }
-  } catch(e) {}
-})();
+let _mbaGroupName = '';
 
 async function verifyGroupGate() {
   const input = document.getElementById('mba-gate-input');
@@ -1020,7 +1016,7 @@ async function verifyGroupGate() {
     });
     const data = await res.json();
     if (data.valid) {
-      sessionStorage.setItem('mba_group', JSON.stringify({ name: data.groupName, code: password }));
+      _mbaGroupName = data.groupName;
       const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none';
     } else {
       errEl.textContent = data.error || 'Nieprawidłowe hasło.';
@@ -1032,10 +1028,7 @@ async function verifyGroupGate() {
   }
 }
 
-function getGroupName() {
-  try { const g = sessionStorage.getItem('mba_group'); if (g) return JSON.parse(g).name || ''; } catch(e) {}
-  return '';
-}
+function getGroupName() { return _mbaGroupName; }
 
 </script>
 </body>

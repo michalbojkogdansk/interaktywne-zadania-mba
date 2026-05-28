@@ -810,7 +810,8 @@
     <p style="font-size:0.88rem; color:var(--text-sec); margin-bottom:16px;">Podejmiesz <strong>6 kluczowych decyzji</strong>. Każda wpłynie na następną. Na końcu AI przeanalizuje Twoją strategię i pokaże możliwe wyniki. <strong>Nie ma jednej poprawnej ścieżki</strong> — liczy się spójność i uzasadnienie.</p>
 
     <div class="nickname-row">
-      <input type="text" id="nicknameInput" placeholder="Twój pseudonim (np. Marek_CDO)" maxlength="30" />
+      <input type="text" id="nicknameInput" placeholder="Twój pseudonim / ksywa (np. Marek_CDO)" maxlength="30" />
+      <p style="margin:6px 0 0;font-size:0.82rem;color:#888;">Użyj pseudonimu — nie podawaj imienia i nazwiska.</p>
       <button class="btn btn-primary" onclick="startGame()" id="startBtn" disabled>Rozpocznij →</button>
     </div>
     <p style="font-size:0.78rem; color:var(--text-sec); margin-top:6px;">Pseudonim jest widoczny tylko dla wykładowcy, nie dla innych studentów.</p>
@@ -1834,12 +1835,7 @@ window.addEventListener('load', () => {
   }
 });
 // ─── GROUP GATE ───────────────────────────────────────────────────────────────
-(function() {
-  try {
-    const g = sessionStorage.getItem('mba_group');
-    if (g) { const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none'; }
-  } catch(e) {}
-})();
+let _mbaGroupName = '';
 
 async function verifyGroupGate() {
   const input = document.getElementById('mba-gate-input');
@@ -1855,7 +1851,7 @@ async function verifyGroupGate() {
     });
     const data = await res.json();
     if (data.valid) {
-      sessionStorage.setItem('mba_group', JSON.stringify({ name: data.groupName, code: password }));
+      _mbaGroupName = data.groupName;
       const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none';
     } else {
       errEl.textContent = data.error || 'Nieprawidłowe hasło.';
@@ -1867,10 +1863,7 @@ async function verifyGroupGate() {
   }
 }
 
-function getGroupName() {
-  try { const g = sessionStorage.getItem('mba_group'); if (g) return JSON.parse(g).name || ''; } catch(e) {}
-  return '';
-}
+function getGroupName() { return _mbaGroupName; }
 
 </script>
 </body>
