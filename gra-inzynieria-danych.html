@@ -472,6 +472,20 @@
   </div>
 </div>
 
+
+<!-- NEXO ACCESS MODAL (shown after group gate) -->
+<div class="modal-overlay" id="access-modal" style="display:none;">
+  <div class="modal-box">
+    <div class="lock-icon">🔒</div>
+    <h2>Kod dostępu</h2>
+    <p>Materiały do gry są dostępne wyłącznie dla uczestników zajęć.<br>Wpisz hasło otrzymane od prowadzącego.</p>
+    <input type="text" id="access-input" placeholder="XXXXXXXXX" maxlength="12"
+           oninput="this.value=this.value.toUpperCase()"
+           onkeydown="if(event.key==='Enter') verifyAccess()">
+    <div class="modal-error" id="access-error"></div>
+    <button class="btn btn-primary" id="access-btn" onclick="verifyAccess()" style="width:100%">Wejdź do materiałów →</button>
+  </div>
+</div>
 <div class="page-header">
   <div class="label">Ćwiczenie 05 · MBA 2026</div>
   <h1>🗄️ Gra: Inżynieria Danych Biznesowych</h1>
@@ -554,6 +568,8 @@ async function verifyGroupGate() {
     if (data.valid) {
       _mbaGroupName = data.groupName;
       const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none';
+      // Pokaż drugą bramkę: hasło nexo
+      const nexo = document.getElementById('access-modal'); if(nexo) nexo.style.display='flex';
     } else {
       errEl.textContent = data.error || 'Nieprawidłowe hasło.';
       btn.disabled = false; btn.textContent = 'Wejdź →';
@@ -565,6 +581,36 @@ async function verifyGroupGate() {
 }
 
 function getGroupName() { return _mbaGroupName; }
+
+
+async function verifyAccess() {
+  const btn = document.getElementById('access-btn');
+  const errEl = document.getElementById('access-error');
+  const code = document.getElementById('access-input').value.trim().toUpperCase();
+  if (!code) { errEl.textContent = 'Wpisz hasło dostępu.'; return; }
+  btn.disabled = true;
+  btn.textContent = 'Sprawdzam…';
+  errEl.textContent = '';
+  try {
+    const res = await fetch(WORKER + '/verify-nexo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if (data.valid) {
+      document.getElementById('access-modal').style.display = 'none';
+    } else {
+      errEl.textContent = 'Nieprawidłowe hasło. Spróbuj ponownie.';
+      btn.disabled = false;
+      btn.textContent = 'Wejdź do materiałów →';
+    }
+  } catch(e) {
+    errEl.textContent = 'Błąd połączenia. Odśwież stronę.';
+    btn.disabled = false;
+    btn.textContent = 'Wejdź do materiałów →';
+  }
+}
 
 const MISSIONS = [
   {
