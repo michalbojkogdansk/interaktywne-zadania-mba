@@ -389,19 +389,7 @@
 </nav>
 
 
-<!-- ── Modal: kod dostępu ─────────────────────────────────────────── -->
-<div class="modal-overlay" id="access-modal">
-  <div class="modal-box">
-    <div class="lock-icon">🔒</div>
-    <h2>Kod dostępu</h2>
-    <p>Ten test jest dostępny wyłącznie dla uczestników zajęć.<br>Wpisz kod otrzymany od prowadzącego.</p>
-    <input type="text" id="access-input" placeholder="XXXXXX" maxlength="10"
-           oninput="this.value=this.value.toUpperCase()"
-           onkeydown="if(event.key==='Enter') verifyAccess()">
-    <div class="modal-error" id="access-error"></div>
-    <button class="btn btn-primary" id="access-btn" onclick="verifyAccess()" style="width:100%">Wejdź do testu →</button>
-  </div>
-</div>
+
 
 <!-- ── Nagłówek ───────────────────────────────────────────────────── -->
 <div class="page-header">
@@ -418,6 +406,7 @@
   <!-- Dane studenta -->
   <div class="card" id="student-card">
     <h2>Dane uczestnika</h2>
+    <p style="margin:0 0 18px;font-size:0.88rem;color:#c0392b;font-weight:600;">⚠ Podaj prawdziwe imię i nazwisko — jest wymagane do zaliczenia przedmiotu.</p>
     <div class="form-row">
       <label for="first-name">Imię</label>
       <input type="text" id="first-name" placeholder="np. Jan" oninput="checkReady()">
@@ -426,10 +415,7 @@
       <label for="last-name">Nazwisko</label>
       <input type="text" id="last-name" placeholder="np. Kowalski" oninput="checkReady()">
     </div>
-    <div class="form-row" style="margin-bottom:0">
-      <label for="group-name">Grupa / Rok</label>
-      <input type="text" id="group-name" placeholder="np. MBA 2025/2026">
-    </div>
+
   </div>
 
   <!-- ── Pytanie 1 ── -->
@@ -521,43 +507,7 @@ const QUESTIONS = [
 // ─────────────────────────────────────────────
 // WERYFIKACJA KODU DOSTĘPU
 // ─────────────────────────────────────────────
-async function verifyAccess() {
-  const btn = document.getElementById('access-btn');
-  const errEl = document.getElementById('access-error');
-  const code = document.getElementById('access-input').value.trim().toUpperCase();
 
-  if (!code) { errEl.textContent = 'Wpisz kod dostępu.'; return; }
-
-  btn.disabled = true;
-  btn.textContent = 'Sprawdzam…';
-  errEl.textContent = '';
-
-  try {
-    const res = await fetch(WORKER + '/verify-access', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code })
-    });
-    const data = await res.json();
-
-    if (data.valid) {
-      accessCode = code;
-      document.getElementById('access-modal').style.display = 'none';
-    } else {
-      errEl.textContent = 'Nieprawidłowy kod. Spróbuj ponownie.';
-      btn.disabled = false;
-      btn.textContent = 'Wejdź do testu →';
-    }
-  } catch(e) {
-    errEl.textContent = 'Błąd połączenia. Odśwież stronę.';
-    btn.disabled = false;
-    btn.textContent = 'Wejdź do testu →';
-  }
-}
-
-// ─────────────────────────────────────────────
-// LICZNIK SŁÓW + PROGRESS
-// ─────────────────────────────────────────────
 function countWords(text) {
   return text.trim().split(/\s+/).filter(w => w.length > 0).length;
 }
@@ -668,12 +618,7 @@ function showConfirmation(fname, lname, answers, issueNum) {
   `).join('');
 }
 // ─── GROUP GATE ───────────────────────────────────────────────────────────────
-(function() {
-  try {
-    const g = sessionStorage.getItem('mba_group');
-    if (g) { const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none'; }
-  } catch(e) {}
-})();
+let _mbaGroupName = '';
 
 async function verifyGroupGate() {
   const input = document.getElementById('mba-gate-input');
@@ -689,7 +634,7 @@ async function verifyGroupGate() {
     });
     const data = await res.json();
     if (data.valid) {
-      sessionStorage.setItem('mba_group', JSON.stringify({ name: data.groupName, code: password }));
+      _mbaGroupName = data.groupName;
       const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none';
     } else {
       errEl.textContent = data.error || 'Nieprawidłowe hasło.';
@@ -701,10 +646,7 @@ async function verifyGroupGate() {
   }
 }
 
-function getGroupName() {
-  try { const g = sessionStorage.getItem('mba_group'); if (g) return JSON.parse(g).name || ''; } catch(e) {}
-  return '';
-}
+function getGroupName() { return _mbaGroupName; }
 
 </script>
 </body>

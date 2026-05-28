@@ -81,7 +81,7 @@
         }
         .task-card:hover { background: var(--accent-light); }
 
-        /* Last card spans full row */
+        /* 5th card spans full row */
         .task-card.test { grid-column: 1 / -1; }
 
         .task-number {
@@ -145,7 +145,6 @@
         .task-card.simulation::before  { background: #4A5A8F; }
         .task-card.darkdata::before    { background: #8A4A7A; }
         .task-card.test::before        { background: #8A6A2A; }
-        .task-card.dataeng::before     { background: #2A6A8A; }
 
         /* 5th card inner layout: horizontal on wide screens */
         .task-card.test .task-inner {
@@ -158,32 +157,6 @@
         @media (max-width: 600px) {
             .task-card.test .task-inner { flex-direction: column; gap: 0; }
         }
-
-        /* ── Tech icons ── */
-        .tech-icons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 0;
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
-            margin-bottom: 16px;
-        }
-        .tech-icon-pill {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg);
-            border: 1px solid var(--border-dark);
-            border-radius: 50%;
-            padding: 5px;
-            width: 28px;
-            height: 28px;
-            transition: border-color 0.15s;
-        }
-        .task-card:hover .tech-icon-pill { border-color: var(--accent); }
-        .tech-icon-pill img,
-        .tech-icon-pill svg { width: 16px; height: 16px; display: block; }
 
         /* ── Footer ── */
         .footer {
@@ -205,73 +178,15 @@
             body { padding: 24px 16px 48px; }
             .task-card.test { grid-column: auto; }
         }
-    
-  
-
     </style>
-<style>
-  /* ═══ SITE-NAV (shared) ════════════════════════════════════════════════ */
-  .site-nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 999;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    background: rgba(255,255,255,0.97);
-    border-bottom: 1px solid rgba(100,116,139,0.18);
-    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
-  }
-  .site-nav .nav-links {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.15rem;
-    padding: 6px 1rem;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .site-nav .nav-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.3rem 0.65rem;
-    border-radius: 8px;
-    font-size: 0.78rem;
-    font-weight: 500;
-    white-space: nowrap;
-    text-decoration: none;
-    color: #334155;
-    transition: background 0.15s, color 0.15s;
-  }
-  .site-nav .nav-link:hover  { background: rgba(59,130,246,0.10); color: #2563eb; }
-  .site-nav .nav-link.active { background: rgba(59,130,246,0.14); color: #2563eb; font-weight: 700; }
-  @media (max-width: 560px) {
-    .site-nav .nav-link .nav-label { display: none; }
-    .site-nav .nav-link { padding: 0.3rem 0.45rem; }
-  }
-  /* ════════════════════════════════════════════════════════════════════════ */
-</style>
-<style>body { padding-top: 52px !important; }</style>
 </head>
 <body>
-<nav class="site-nav">
-  <div class="nav-links">
-    <a class="nav-link active" href="index.html">🏠 <span class="nav-label">MBA 2026</span></a>
-    <a class="nav-link" href="korelacja-danych.html">🔗 <span class="nav-label">01 · Korelacja</span></a>
-    <a class="nav-link" href="myslenie-krytyczne.html">🧠 <span class="nav-label">02 · Myślenie</span></a>
-    <a class="nav-link" href="symulacja-transformacja.html">🎮 <span class="nav-label">03 · Symulacja</span></a>
-    <a class="nav-link" href="ciemne-dane.html">🌑 <span class="nav-label">04 · Ciemne Dane</span></a>
-    <a class="nav-link" href="gra-inzynieria-danych.html">🤖 <span class="nav-label">05 · Inżynieria</span></a>
-    <a class="nav-link" href="test-wiedzy.html">✅ <span class="nav-label">Zadanie końcowe</span></a>
-  </div>
-</nav>
-
     <div class="container">
 
         <div class="header">
             <div class="header-label">Platforma edukacyjna · MBA 2026</div>
             <h1>Interaktywne Zadania MBA</h1>
-            <p>Wybierz ćwiczenie. Każde jest anonimowe — potrzebujesz tylko pseudonimu.</p>
+            <p>Wybierz ćwiczenie. Do zadań 01–05 użyj pseudonimu lub ksywy.</p>
         </div>
 
         <div class="tasks-grid">
@@ -311,10 +226,6 @@
                     <span class="task-badge">6 decyzji</span>
                     <span class="task-badge badge-ai">🤖 AI analiza</span>
                 </div>
-                <div class="tech-icons">
-                    <span class="tech-icon-pill" title="Meta Llama AI"><img src="https://cdn.simpleicons.org/meta/0467DF" width="16" height="16" alt="Meta Llama AI"></span>
-                    <span class="tech-icon-pill" title="Cloudflare Workers"><img src="https://cdn.simpleicons.org/cloudflare/F48120" width="16" height="16" alt="Cloudflare Workers"></span>
-                </div>
                 <div class="task-arrow">Rozpocznij →</div>
             </a>
 
@@ -331,38 +242,14 @@
                 <div class="task-arrow">Rozpocznij →</div>
             </a>
 
-
-            <a href="gra-inzynieria-danych.html" class="task-card dataeng">
-                <div class="task-number">Ćwiczenie 05</div>
-                <span class="task-icon">🗄️</span>
-                <div class="task-title">Gra: Inżynieria Danych Biznesowych</div>
-                <div class="task-desc">Wciel się w analityka danych firmy NEXO Retail. Uruchom agenta AI, połącz się z bazą danych i przez 5 misji wyciągnij maksymalne ROI — odkryj dark data, przetestuj Data Mesh i znajdź niespodziewane korelacje.</div>
-                <div class="task-meta">
-                    <span class="task-badge">⏱ ~4h</span>
-                    <span class="task-badge">5 misji</span>
-                    <span class="task-badge badge-ai">🤖 Agent AI</span>
-                    <span class="task-badge badge-locked">🔒 Kod dostępu</span>
-                </div>
-                <div class="tech-icons">
-                    <span class="tech-icon-pill" title="Claude (Anthropic)"><img src="https://cdn.simpleicons.org/anthropic/D97757" width="16" height="16" alt="Claude Anthropic"></span>
-                    <span class="tech-icon-pill" title="PostgreSQL"><img src="https://cdn.simpleicons.org/postgresql/4169E1" width="16" height="16" alt="PostgreSQL"></span>
-                    <span class="tech-icon-pill" title="Neon Serverless Postgres">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="16" height="16" fill="none">
-                            <path fill="#00E599" d="M27.542 0V28L16.795 18.492V27.815H0V0ZM3.376 24.439H13.42V11.084l10.747 9.508V3.382l-20.79-.005z"/>
-                        </svg>
-                    </span>
-                    <span class="tech-icon-pill" title="Cloudflare Workers"><img src="https://cdn.simpleicons.org/cloudflare/F48120" width="16" height="16" alt="Cloudflare Workers"></span>
-                </div>
-                <div class="task-arrow">Uruchom grę →</div>
-            </a>
-
             <a href="test-wiedzy.html" class="task-card test">
                 <div class="task-inner">
                     <div class="task-left">
+                        <div class="task-number">Ćwiczenie 05</div>
                         <span class="task-icon">📝</span>
                     </div>
                     <div class="task-right">
-                        <div class="task-title">Zadanie końcowe</div>
+                        <div class="task-title">Test Wiedzy</div>
                         <div class="task-desc">Sprawdzian zamknięty dla uczestników zajęć. Wyniki są poufne i widoczne wyłącznie dla prowadzącego. Do wejścia potrzebujesz kodu otrzymanego na zajęciach.</div>
                         <div class="task-meta">
                             <span class="task-badge">⏱ ~15 min</span>
