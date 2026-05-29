@@ -30,11 +30,43 @@ export default {
       }
     }
 
+    // ─── Rate limiting for admin auth (H1) ──────────────────────────────────
+    // 5 failed attempts per IP → 15-minute block (stored in KV with TTL)
+    async function checkRateLimit(ip) {
+      const kvKey = `rl:${ip}`;
+      const record = await env.MBA_GROUPS.get(kvKey, 'json');
+      if (record && record.blockedUntil && Date.now() < record.blockedUntil) {
+        const secsLeft = Math.ceil((record.blockedUntil - Date.now()) / 1000);
+        return { blocked: true, secsLeft };
+      }
+      return { blocked: false, attempts: record ? record.attempts : 0 };
+    }
+    async function recordFailedAttempt(ip) {
+      const kvKey = `rl:${ip}`;
+      const record = await env.MBA_GROUPS.get(kvKey, 'json') || { attempts: 0 };
+      const attempts = (record.attempts || 0) + 1;
+      if (attempts >= 5) {
+        await env.MBA_GROUPS.put(kvKey, JSON.stringify({ attempts, blockedUntil: Date.now() + 15 * 60 * 1000 }), { expirationTtl: 900 });
+      } else {
+        await env.MBA_GROUPS.put(kvKey, JSON.stringify({ attempts }), { expirationTtl: 900 });
+      }
+    }
+    async function clearRateLimit(ip) {
+      await env.MBA_GROUPS.delete(`rl:${ip}`);
+    }
+
     // ─── GET routes ───────────────────────────────────────────────────────────
     if (request.method === 'GET') {
       if (path === '/admin/list-groups') {
         const adminKey = request.headers.get('X-Admin-Key');
-        if (adminKey !== env.ADMIN_KEY) return err('Unauthorized', 403);
+        const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+        const rl = await checkRateLimit(ip);
+        if (rl.blocked) return err(`Za dużo nieudanych prób. Spróbuj za ${rl.secsLeft}s.`, 429);
+        if (adminKey !== env.ADMIN_KEY) {
+          await recordFailedAttempt(ip);
+          return err('Unauthorized', 403);
+        }
+        await clearRateLimit(ip);
         const list = await env.MBA_GROUPS.list();
         const groups = await Promise.all(
           list.keys.map(async (key) => {
@@ -72,7 +104,14 @@ export default {
       // ─── /admin/create-group ──────────────────────────────────────────────
       if (path === '/admin/create-group') {
         const adminKey = request.headers.get('X-Admin-Key') || body.adminKey;
-        if (adminKey !== env.ADMIN_KEY) return err('Unauthorized', 403);
+        const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+        const rl = await checkRateLimit(ip);
+        if (rl.blocked) return err(`Za dużo nieudanych prób. Spróbuj za ${rl.secsLeft}s.`, 429);
+        if (adminKey !== env.ADMIN_KEY) {
+          await recordFailedAttempt(ip);
+          return err('Unauthorized', 403);
+        }
+        await clearRateLimit(ip);
         const { password, name, startDate, endDate } = body;
         if (!password || !name || !startDate || !endDate)
           return err('Wymagane pola: password, name, startDate, endDate');
@@ -87,7 +126,14 @@ export default {
       // ─── /admin/toggle-group ──────────────────────────────────────────────
       if (path === '/admin/toggle-group') {
         const adminKey = request.headers.get('X-Admin-Key') || body.adminKey;
-        if (adminKey !== env.ADMIN_KEY) return err('Unauthorized', 403);
+        const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+        const rl = await checkRateLimit(ip);
+        if (rl.blocked) return err(`Za dużo nieudanych prób. Spróbuj za ${rl.secsLeft}s.`, 429);
+        if (adminKey !== env.ADMIN_KEY) {
+          await recordFailedAttempt(ip);
+          return err('Unauthorized', 403);
+        }
+        await clearRateLimit(ip);
         const { password, active } = body;
         const group = await env.MBA_GROUPS.get(password, 'json');
         if (!group) return err('Grupa nie istnieje', 404);
@@ -99,7 +145,14 @@ export default {
       // ─── /admin/delete-group ──────────────────────────────────────────────
       if (path === '/admin/delete-group') {
         const adminKey = request.headers.get('X-Admin-Key') || body.adminKey;
-        if (adminKey !== env.ADMIN_KEY) return err('Unauthorized', 403);
+        const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+        const rl = await checkRateLimit(ip);
+        if (rl.blocked) return err(`Za dużo nieudanych prób. Spróbuj za ${rl.secsLeft}s.`, 429);
+        if (adminKey !== env.ADMIN_KEY) {
+          await recordFailedAttempt(ip);
+          return err('Unauthorized', 403);
+        }
+        await clearRateLimit(ip);
         const { password, confirm_name } = body;
         if (!confirm_name) return err('confirm_name required', 400);
         // Verify confirm_name matches stored group name
