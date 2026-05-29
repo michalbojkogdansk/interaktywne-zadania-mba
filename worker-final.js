@@ -19,6 +19,17 @@ export default {
     const ok  = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: cors });
     const err = (msg, status = 400)  => new Response(JSON.stringify({ error: msg }), { status, headers: cors });
 
+    // ─── Origin guard for admin routes ──────────────────────────────────────
+    if (path.startsWith('/admin/')) {
+      const origin = request.headers.get('Origin') || '';
+      const allowedOrigins = ['https://michalbojkogdansk.github.io'];
+      if (!allowedOrigins.includes(origin)) {
+        return new Response(JSON.stringify({ error: 'Forbidden' }), {
+          status: 403, headers: cors
+        });
+      }
+    }
+
     // ─── GET routes ───────────────────────────────────────────────────────────
     if (request.method === 'GET') {
       if (path === '/admin/list-groups') {
@@ -89,7 +100,12 @@ export default {
       if (path === '/admin/delete-group') {
         const adminKey = request.headers.get('X-Admin-Key') || body.adminKey;
         if (adminKey !== env.ADMIN_KEY) return err('Unauthorized', 403);
-        const { password } = body;
+        const { password, confirm_name } = body;
+        if (!confirm_name) return err('confirm_name required', 400);
+        // Verify confirm_name matches stored group name
+        const stored = await env.MBA_GROUPS.get(password, 'json');
+        if (!stored) return err('Group not found', 404);
+        if (stored.name !== confirm_name) return err('confirm_name mismatch', 400);
         await env.MBA_GROUPS.delete(password);
         return ok({ success: true });
       }
@@ -159,10 +175,32 @@ export default {
         return new Response(JSON.stringify(repoData), { status: repoResponse.status, headers: cors });
       }
 
-      // ─── /private-issue ───────────────────────────────────────────────────
+      // ─── /verify-nexo ─────────────────────────────────────────────────────
+      if (path === '/verify-nexo') {
+        const { code } = body;
+        const valid = !!(code && code === env.NEXO_CODE);
+        return new Response(JSON.stringify({ valid }), { headers: cors });
+      }
+
+      // ─── /get-db-connection ───────────────────────────────────────────────
+      if (path === '/get-db-connection') {
+        const { code } = body;
+        const valid = !!(code && code === env.NEXO_CODE);
+        if (!valid) return new Response(JSON.stringify({ valid: false, error: 'Nieprawidłowe hasło.' }), { headers: cors });
+        const connectionString = env.DB_CONNECTION_STRING || '';
+        return new Response(JSON.stringify({ valid: true, connectionString }), { headers: cors });
+      }
+
+            // ─── /private-issue ───────────────────────────────────────────────────
       if (path === '/private-issue') {
         const { code, ...issueData } = body;
-        if (code !== env.ACCESS_CODE) return err('Nieprawidłowy kod dostępu', 403);
+        // Akceptuj hasło grupy z KV lub legacy ACCESS_CODE
+        let authorized = (code && code === env.ACCESS_CODE);
+        if (!authorized && code && env.MBA_GROUPS) {
+          const groupData = await env.MBA_GROUPS.get(code);
+          authorized = groupData !== null;
+        }
+        if (!authorized) return err('Nieprawidłowy kod dostępu', 403);
         const response = await fetch('https://api.github.com/repos/michalbojkogdansk/mba-wyniki-prywatne/issues', {
           method: 'POST',
           headers: {

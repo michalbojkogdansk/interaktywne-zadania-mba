@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev; frame-ancestors 'none';">
 <title>MBA Platform — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -117,7 +118,10 @@
           </div>
           <div>
             <label>Hasło dostępu</label>
-            <input type="text" id="new-password" placeholder="np. MBA-ZWA-2026" autocomplete="off" />
+            <div style="position:relative;display:flex;align-items:center;">
+              <input type="password" id="new-password" placeholder="np. MBA-ZWA-2026" autocomplete="new-password" style="width:100%;padding-right:44px;" />
+              <button type="button" onclick="togglePassVis()" title="Pokaż/ukryj" style="position:absolute;right:0;top:0;bottom:0;width:40px;background:none;border:none;cursor:pointer;font-size:16px;color:#666;" id="pass-eye">👁</button>
+            </div>
           </div>
         </div>
         <div class="form-row" style="margin-top:16px;">
@@ -153,6 +157,13 @@
 
 <script>
 const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
+
+function togglePassVis() {
+  const inp = document.getElementById('new-password');
+  const eye = document.getElementById('pass-eye');
+  if (inp.type === 'password') { inp.type = 'text'; eye.textContent = '🙈'; }
+  else { inp.type = 'password'; eye.textContent = '👁'; }
+}
 let ADMIN_KEY = '';
 
 function doLogin() {
@@ -160,15 +171,13 @@ function doLogin() {
   if (!key) return;
   // Test the key by listing groups
   ADMIN_KEY = key;
-  sessionStorage.setItem('mba_admin_key', key);
   loadGroups().then(ok => {
     if (ok) {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('main-screen').style.display = 'block';
     } else {
       ADMIN_KEY = '';
-      sessionStorage.removeItem('mba_admin_key');
-      const err = document.getElementById('login-error');
+          const err = document.getElementById('login-error');
       err.style.display = 'block';
       err.textContent = 'Nieprawidłowy klucz administratora.';
     }
@@ -177,7 +186,6 @@ function doLogin() {
 
 function doLogout() {
   ADMIN_KEY = '';
-  sessionStorage.removeItem('mba_admin_key');
   document.getElementById('main-screen').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('admin-key-input').value = '';
@@ -208,7 +216,45 @@ function getStatus(g) {
   return { label: 'Aktywna', cls: 'badge-active' };
 }
 
+// In-memory store for full passwords (never put in DOM directly)
+let _groupsData = [];
+
+function maskPassword(pw) {
+  // Keep prefix segments, mask last segment: MBA-GR1-2026 -> MBA-GR1-****
+  const parts = pw.split('-');
+  if (parts.length >= 2) {
+    parts[parts.length - 1] = '****';
+    return parts.join('-');
+  }
+  return '****';
+}
+
+function revealPassword(idx) {
+  const g = _groupsData[idx];
+  if (!g) return;
+  const span = document.getElementById('pwd-' + idx);
+  span.textContent = g.password;
+  span.style.color = '#c0392b';
+  const btn = document.getElementById('rev-btn-' + idx);
+  btn.disabled = true;
+  btn.textContent = '5s';
+  let t = 5;
+  const iv = setInterval(() => {
+    t--;
+    if (t <= 0) {
+      clearInterval(iv);
+      span.textContent = maskPassword(g.password);
+      span.style.color = '';
+      btn.disabled = false;
+      btn.textContent = 'Pokaż';
+    } else {
+      btn.textContent = t + 's';
+    }
+  }, 1000);
+}
+
 function renderGroups(groups) {
+  _groupsData = groups; // store full data in memory
   const c = document.getElementById('groups-container');
   if (!groups.length) {
     c.innerHTML = '<div class="empty-state">Brak grup. Utwórz pierwszą grupę powyżej.</div>';
@@ -229,20 +275,24 @@ function renderGroups(groups) {
       <th>Status</th>
       <th>Akcje</th>
     </tr></thead><tbody>`;
-  for (const g of groups) {
+  for (let i = 0; i < groups.length; i++) {
+    const g = groups[i];
     const st = getStatus(g);
     html += `<tr>
       <td><strong>${g.name}</strong></td>
-      <td><span class="code-pill">${g.password}</span></td>
+      <td style="white-space:nowrap;">
+        <span class="code-pill" id="pwd-${i}">${maskPassword(g.password)}</span>
+        <button class="btn btn-ghost btn-sm" id="rev-btn-${i}" onclick="revealPassword(${i})" style="margin-left:6px;font-size:11px;padding:2px 8px;">Pokaż</button>
+      </td>
       <td>${g.startDate}</td>
       <td>${g.endDate}</td>
       <td><span class="badge ${st.cls}">${st.label}</span></td>
       <td style="white-space:nowrap;display:flex;gap:8px;">
         ${g.active
-          ? `<button class="btn btn-ghost btn-sm" onclick="toggleGroup('${g.password}',false)">Wyłącz</button>`
-          : `<button class="btn btn-primary btn-sm" onclick="toggleGroup('${g.password}',true)">Włącz</button>`
+          ? `<button class="btn btn-ghost btn-sm" onclick="toggleGroup(${i},false)">Wyłącz</button>`
+          : `<button class="btn btn-primary btn-sm" onclick="toggleGroup(${i},true)">Włącz</button>`
         }
-        <button class="btn btn-danger btn-sm" onclick="deleteGroup('${g.password}','${g.name}')">Usuń</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteGroup(${i})">Usuń</button>
       </td>
     </tr>`;
   }
@@ -286,7 +336,10 @@ async function createGroup() {
   }
 }
 
-async function toggleGroup(password, active) {
+async function toggleGroup(idx, active) {
+  const g = _groupsData[idx];
+  if (!g) return;
+  const password = g.password;
   try {
     await fetch(WORKER + '/admin/toggle-group', {
       method: 'POST',
@@ -297,19 +350,24 @@ async function toggleGroup(password, active) {
   } catch(e) { alert('Błąd połączenia.'); }
 }
 
-async function deleteGroup(password, name) {
-  if (!confirm(`Usuń grupę "${name}"?\n\nTa operacja jest nieodwracalna.`)) return;
+async function deleteGroup(idx) {
+  const g = _groupsData[idx];
+  if (!g) return;
+  const typed = prompt(`Aby potwierdzić usunięcie grupy "${g.name}", wpisz jej nazwę:`);
+  if (typed === null) return; // cancelled
+  if (typed.trim() !== g.name) { alert('Nazwa nie zgadza się. Anulowano.'); return; }
   try {
-    await fetch(WORKER + '/admin/delete-group', {
+    const res = await fetch(WORKER + '/admin/delete-group', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY },
-      body: JSON.stringify({ password })
+      body: JSON.stringify({ password: g.password, confirm_name: typed.trim() })
     });
+    const data = await res.json();
+    if (!res.ok) { alert('Błąd: ' + (data.error || res.status)); return; }
     loadGroups();
   } catch(e) { alert('Błąd połączenia.'); }
 }
 
-// Auto-login from sessionStorage
 window.addEventListener('load', () => {
   // Set default dates: today and today+21 days
   const today = new Date();
@@ -318,20 +376,7 @@ window.addEventListener('load', () => {
   const fmt = d => d.toISOString().slice(0,10);
   document.getElementById('new-start').value = fmt(today);
   document.getElementById('new-end').value = fmt(later);
-
-  const saved = sessionStorage.getItem('mba_admin_key');
-  if (saved) {
-    ADMIN_KEY = saved;
-    loadGroups().then(ok => {
-      if (ok) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('main-screen').style.display = 'block';
-      } else {
-        ADMIN_KEY = '';
-        sessionStorage.removeItem('mba_admin_key');
-      }
-    });
-  }
+  // Auto-login removed for security (C1) — no sessionStorage
 });
 </script>
 </body>
