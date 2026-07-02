@@ -38,61 +38,6 @@
             min-height: 100vh;
         }
 
-        /* ── Top nav ── */
-        .topnav {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .topnav-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-        }
-        .topnav-brand {
-            font-size: 15px;
-            font-weight: 800;
-            letter-spacing: -0.01em;
-            color: var(--text);
-            padding: 16px 0;
-            margin-right: 36px;
-            white-space: nowrap;
-            text-decoration: none;
-            flex-shrink: 0;
-        }
-        .topnav-brand span { color: var(--accent); }
-        .topnav-cats {
-            display: flex;
-            align-items: stretch;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .topnav-cats::-webkit-scrollbar { display: none; }
-        .topnav-cat {
-            padding: 0 16px;
-            height: 56px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-            white-space: nowrap;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: color 0.12s, border-color 0.12s;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-        }
-        .topnav-cat:hover { color: var(--text); border-bottom-color: var(--border-dark); }
-        .topnav-cat.active {
-            color: var(--text);
-            font-weight: 700;
-            border-bottom-color: var(--text);
-        }
-
         /* ── Page hero ── */
         .hero {
             background: var(--surface);
@@ -413,20 +358,6 @@
     </style>
 </head>
 <body>
-
-    <nav class="topnav">
-        <div class="topnav-inner">
-            <a class="topnav-brand" href="index.html">Platforma<span> MBA</span></a>
-            <div class="topnav-cats">
-                <a class="topnav-cat active" href="#">Wszystkie ćwiczenia</a>
-                <a class="topnav-cat" href="#">Dane i analityka</a>
-                <a class="topnav-cat" href="#">Myślenie krytyczne</a>
-                <a class="topnav-cat" href="#">Transformacja cyfrowa</a>
-                <a class="topnav-cat" href="#">Inżynieria danych</a>
-                <a class="topnav-cat" href="#">Zaliczenie</a>
-            </div>
-        </div>
-    </nav>
 
     <section class="hero">
         <div class="hero-inner">
