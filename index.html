@@ -386,8 +386,21 @@
         .login-btn:disabled { opacity:0.6; cursor:not-allowed; }
 
         /* Card locked state */
-        .card.locked { opacity:0.45; pointer-events:none; cursor:default; }
+        .card.locked { opacity:0.38; pointer-events:none; cursor:default; filter:grayscale(60%); }
         .card.locked:hover { box-shadow:none; transform:none; }
+        .final-card.locked {
+            opacity:0.38; pointer-events:none; cursor:default;
+            filter:grayscale(60%);
+            position:relative;
+        }
+        .final-card.locked::after {
+            content:'🔒 Brak dostępu';
+            position:absolute; inset:0;
+            display:flex; align-items:center; justify-content:center;
+            font-size:0.9rem; font-weight:700; letter-spacing:0.06em;
+            color:rgba(255,255,255,0.7);
+            text-transform:uppercase;
+        }
         .session-bar {
             background:#fff; border-bottom:1px solid #D1D7DC;
             padding:9px 24px; font-size:0.8rem; color:#6A6F73;
