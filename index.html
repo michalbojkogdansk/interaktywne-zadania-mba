@@ -355,9 +355,74 @@
             .final-thumb { width: 100%; height: 100px; }
             .final-body { padding: 20px 18px; }
         }
+
+        /* ── Login modal ── */
+        .login-overlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.55); z-index:500;
+            align-items:center; justify-content:center;
+        }
+        .login-overlay.open { display:flex; }
+        .login-box {
+            background:#fff; border:1px solid #D1D7DC;
+            padding:40px 36px; max-width:400px; width:90%;
+            box-shadow:0 8px 32px rgba(0,0,0,0.18);
+        }
+        .login-box h2 { font-size:1.4rem; font-weight:800; margin-bottom:6px; color:#1C1D1F; }
+        .login-box p  { font-size:0.88rem; color:#6A6F73; margin-bottom:24px; line-height:1.5; }
+        .login-input {
+            width:100%; padding:11px 13px; border:1.5px solid #D1D7DC;
+            font-size:0.95rem; font-family:Inter,sans-serif;
+            outline:none; border-radius:0; margin-bottom:4px;
+        }
+        .login-input:focus { border-color:#5624D0; }
+        .login-error { font-size:0.8rem; color:#c0392b; margin-bottom:12px; min-height:18px; }
+        .login-btn {
+            width:100%; padding:12px; background:#5624D0; color:#fff;
+            border:none; font-size:0.9rem; font-weight:700; font-family:Inter,sans-serif;
+            cursor:pointer; letter-spacing:0.03em;
+        }
+        .login-btn:hover { background:#401B9C; }
+        .login-btn:disabled { opacity:0.6; cursor:not-allowed; }
+
+        /* Card locked state */
+        .card.locked { opacity:0.45; pointer-events:none; cursor:default; }
+        .card.locked:hover { box-shadow:none; transform:none; }
+        .session-bar {
+            background:#fff; border-bottom:1px solid #D1D7DC;
+            padding:9px 24px; font-size:0.8rem; color:#6A6F73;
+            display:flex; align-items:center; justify-content:space-between;
+            max-width:1200px; margin:0 auto;
+        }
+        .session-bar strong { color:#1C1D1F; }
+        .session-logout { font-size:0.78rem; color:#5624D0; cursor:pointer; background:none; border:none; font-family:Inter,sans-serif; font-weight:600; }
+        .session-logout:hover { text-decoration:underline; }
+        .session-wrap { background:#fff; border-bottom:1px solid #D1D7DC; }
     </style>
 </head>
 <body>
+
+<!-- ── Login modal ── -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <h2>Dostęp do platformy</h2>
+    <p>Wprowadź hasło swojej grupy, aby uzyskać dostęp do ćwiczeń.</p>
+    <input class="login-input" type="password" id="student-password"
+      placeholder="Hasło grupy..." autocomplete="off"
+      onkeydown="if(event.key==='Enter')doStudentLogin();" />
+    <div class="login-error" id="login-error-msg"></div>
+    <button class="login-btn" id="login-btn" onclick="doStudentLogin()">Zaloguj →</button>
+  </div>
+</div>
+
+<!-- ── Session bar (shown when logged in) ── -->
+<div class="session-wrap" id="session-wrap" style="display:none;">
+  <div class="session-bar">
+    <span>Zalogowany jako: <strong id="session-group-name"></strong></span>
+    <button class="session-logout" onclick="doStudentLogout()">Wyloguj</button>
+  </div>
+</div>
+
 
     <section class="hero">
         <div class="hero-inner">
@@ -485,5 +550,103 @@
 
     </main>
 
+
+<script>
+(function() {
+  const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
+  const SESSION_KEY = 'mba_session';
+  const EX_MAP = {
+    'korelacja-danych.html':        '01',
+    'myslenie-krytyczne.html':      '02',
+    'symulacja-transformacja.html': '03',
+    'ciemne-dane.html':             '04',
+    'gra-inzynieria-danych.html':   '05',
+    'test-wiedzy.html':             'test'
+  };
+
+  function saveSession(password, groupName, allowedExercises) {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ password, groupName, allowedExercises }));
+  }
+  function loadSession() {
+    try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e) { return null; }
+  }
+  function clearSession() {
+    sessionStorage.removeItem(SESSION_KEY);
+  }
+
+  function applySession(session) {
+    const allowed = session.allowedExercises; // null = all, array = specific
+
+    // Show session bar
+    document.getElementById('session-wrap').style.display = '';
+    document.getElementById('session-group-name').textContent = session.groupName;
+
+    // Lock cards not in allowedExercises
+    document.querySelectorAll('.card[href]').forEach(card => {
+      const href = card.getAttribute('href');
+      const ex = EX_MAP[href];
+      if (allowed !== null && ex && !allowed.includes(ex)) {
+        card.classList.add('locked');
+        card.removeAttribute('href');
+      }
+    });
+
+    // Final exam card
+    const finalCard = document.querySelector('.final-card');
+    if (finalCard) {
+      const ex = 'test';
+      if (allowed !== null && !allowed.includes(ex)) {
+        finalCard.classList.add('locked');
+        finalCard.removeAttribute('href');
+      }
+    }
+  }
+
+  async function doStudentLogin() {
+    const pw = document.getElementById('student-password').value.trim();
+    const errEl = document.getElementById('login-error-msg');
+    const btn = document.getElementById('login-btn');
+    if (!pw) { errEl.textContent = 'Wprowadź hasło grupy.'; return; }
+    btn.disabled = true; btn.textContent = 'Sprawdzam...';
+    errEl.textContent = '';
+    try {
+      const res = await fetch(WORKER + '/verify-group', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw })
+      });
+      const data = await res.json();
+      if (data.valid) {
+        saveSession(pw, data.groupName, data.allowedExercises ?? null);
+        document.getElementById('login-overlay').classList.remove('open');
+        applySession({ groupName: data.groupName, allowedExercises: data.allowedExercises ?? null });
+      } else {
+        errEl.textContent = data.error || 'Nieprawidłowe hasło.';
+      }
+    } catch(e) {
+      errEl.textContent = 'Błąd połączenia. Spróbuj ponownie.';
+    }
+    btn.disabled = false; btn.textContent = 'Zaloguj →';
+  }
+
+  function doStudentLogout() {
+    clearSession();
+    location.reload();
+  }
+
+  window.doStudentLogin = doStudentLogin;
+  window.doStudentLogout = doStudentLogout;
+
+  // On load: check session
+  window.addEventListener('DOMContentLoaded', function() {
+    const session = loadSession();
+    if (session) {
+      applySession(session);
+    } else {
+      document.getElementById('login-overlay').classList.add('open');
+    }
+  });
+})();
+</script>
 </body>
 </html>
