@@ -2,166 +2,387 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev; frame-ancestors 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev; frame-ancestors 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interaktywne Zadania MBA</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAIAEBAAAAAAIAD4AQAAJgAAACAgAAAAACAA1AAAAB4CAACJUE5HDQoaCgAAAA1JSERSAAAAEAAAABAIAgAAAJCRaDYAAAG/SURBVHiclZK9a1RREMVn5s6972PfbkheEUUsBfUPELWyVggoSEQCClY2oqViIVgogggiFgGrRCUhggqBtQvIStAqiR9kDQq6y6Y1RR68fXfG4q2bJVHUaab5nTlzzx08fu8O/E9x2fAfUB0UFCJ/FRAiInI5PglDBBBVUd3GIQARIUDX+7wo2IskYTh57kLA1llriXbO3sgyNmbm7eKj1ws9h8i6yLnV9c7C6se0Ui3EA4BByovCGDpz6AgAWDaqygAgqoboQ7s1OjTUXO/UV16lSYKAWTcX0QcT55db3w7s3mOQAIBKgWNurDVvzb+8Oz5x9vBRaziwdu9IOnvxUlpNrs3NMBECACj3Fx2pJPWVpVoUXT0xdmz/wfry0vWxk5867StPp2thiIgK2nP4laxPk+qbz83xh/drUXTz1Onb8y8uP5kKmNmYPtZz8CKiKiJxEGxk2Y3nz/aN7mqsNYfjStd7US2BLQdDFDunql4kdm4zz999/TIcV0REVXEAYET0Io8XG+/brdA5VRVVgxg750UQgBCLEmh9j5zD8vh+ZJsB28g53fHTZfUB7kekv7uLwQxLYOvRf0K3AT8BMTrRb1ItzzgAAAAASUVORK5CYIKJUE5HDQoaCgAAAA1JSERSAAAAIAAAACAIAgAAAPwY7aMAAACbSURBVHicY/Tq72KgJWCiqemjFoxaQBXAgszZWlBKLXO9J3RDGMMsiNAA3JvEAFzBi88HxEcJHpXYLYC7nRg74Gqw+hinD4i0A7/p+Cwgxg6CphOwAM0OZGuQufjTAuFkiqwfYiiyTQRTGr5kimYKmulEJmISMhqyicRnEdJyMsRckjIgyUUFSaaTYwGpYOhbwDja8Bq1YPBbAAC56TpxMMo/8wAAAABJRU5ErkJggg==">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
         :root {
-            --bg:           #F0EDE7;
+            --bg:           #FFFFFF;
+            --bg-page:      #F7F9FA;
             --surface:      #FFFFFF;
-            --border:       #D8D2C8;
-            --border-dark:  #B8B2A8;
-            --text:         #1A1A1A;
-            --text-muted:   #6B6560;
-            --accent:       #4A8F8A;
-            --accent-dark:  #357570;
-            --accent-light: #EAF4F3;
+            --border:       #D1D7DC;
+            --border-dark:  #B8B4B0;
+            --text:         #1C1D1F;
+            --text-muted:   #6A6F73;
+            --accent:       #5624D0;
+            --accent-hover: #401B9C;
+            --accent-light: #F0EBFF;
+            --star:         #E59819;
+
+            --thumb-01: #2D5A87;
+            --thumb-02: #7A3B69;
+            --thumb-03: #3D6B4F;
+            --thumb-04: #8A4A20;
+            --thumb-05: #4A4A8A;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg);
+            background: var(--bg-page);
             color: var(--text);
             min-height: 100vh;
-            padding: 40px 20px 60px;
         }
 
-        .container { max-width: 880px; margin: 0 auto; }
-
-        /* ── Header ── */
-        .header {
-            border-bottom: 2px solid var(--text);
-            padding-bottom: 24px;
-            margin-bottom: 48px;
+        /* ── Top nav ── */
+        .topnav {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .header-label {
+        .topnav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+        }
+        .topnav-brand {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            color: var(--text);
+            padding: 16px 0;
+            margin-right: 36px;
+            white-space: nowrap;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .topnav-brand span { color: var(--accent); }
+        .topnav-cats {
+            display: flex;
+            align-items: stretch;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .topnav-cats::-webkit-scrollbar { display: none; }
+        .topnav-cat {
+            padding: 0 16px;
+            height: 56px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            white-space: nowrap;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: color 0.12s, border-color 0.12s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        .topnav-cat:hover { color: var(--text); border-bottom-color: var(--border-dark); }
+        .topnav-cat.active {
+            color: var(--text);
+            font-weight: 700;
+            border-bottom-color: var(--text);
+        }
+
+        /* ── Page hero ── */
+        .hero {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 32px 0 28px;
+        }
+        .hero-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .hero-eyebrow {
             font-size: 11px;
             font-weight: 700;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             color: var(--text-muted);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
-        .header h1 {
-            font-size: clamp(2rem, 5vw, 3.2rem);
-            font-weight: 900;
-            line-height: 1.1;
+        .hero h1 {
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            font-weight: 800;
+            line-height: 1.15;
             letter-spacing: -0.02em;
             color: var(--text);
-            margin-bottom: 14px;
         }
-        .header p {
-            font-size: 1.05rem;
+
+        /* ── Main container ── */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 36px 24px 72px;
+        }
+
+        /* ── Section heading ── */
+        .section-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .section-head h2 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .section-head span {
+            font-size: 0.78rem;
+            font-weight: 600;
             color: var(--text-muted);
-            font-weight: 400;
-            line-height: 1.6;
+            letter-spacing: 0.03em;
         }
 
-        /* ── Grid ── */
-        .tasks-grid {
+        /* ── Card grid ── */
+        .cards-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
         }
 
-        .task-card {
+        /* ── Course card ── */
+        .card {
             background: var(--surface);
-            padding: 32px 28px;
+            border: 1px solid var(--border);
             text-decoration: none;
             color: inherit;
             display: flex;
             flex-direction: column;
-            transition: background 0.15s;
+            transition: box-shadow 0.15s, transform 0.12s;
             position: relative;
         }
-        .task-card:hover { background: var(--accent-light); }
+        .card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+            z-index: 1;
+        }
 
-        /* 5th card spans full row */
-        .task-card.test { grid-column: 1 / -1; }
-
-        .task-number {
-            font-size: 11px;
+        /* Card thumbnail */
+        .card-thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: flex-end;
+            padding: 10px 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-thumb-bg {
+            position: absolute;
+            inset: 0;
+        }
+        .card-thumb-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.15;
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(255,255,255,0.6) 0px,
+                rgba(255,255,255,0.6) 1px,
+                transparent 1px,
+                transparent 12px
+            );
+        }
+        .card-thumb-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, transparent 30%, rgba(0,0,0,0.32) 100%);
+        }
+        .card-thumb-num {
+            position: relative;
+            z-index: 1;
+            font-size: 10px;
             font-weight: 700;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 16px;
+            color: rgba(255,255,255,0.72);
         }
-        .task-icon { font-size: 2rem; margin-bottom: 14px; display: block; }
-        .task-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--text);
-            margin-bottom: 10px;
-            line-height: 1.2;
+        .card-thumb-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -58%);
+            font-size: 2.2rem;
+            z-index: 1;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
         }
-        .task-desc {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            line-height: 1.6;
+
+        .card-thumb-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .card-01 .card-thumb-bg { background: var(--thumb-01); }
+        .card-02 .card-thumb-bg { background: var(--thumb-02); }
+        .card-03 .card-thumb-bg { background: var(--thumb-03); }
+        .card-04 .card-thumb-bg { background: var(--thumb-04); }
+        .card-05 .card-thumb-bg { background: var(--thumb-05); }
+
+        /* Card body */
+        .card-body {
+            padding: 12px 14px 16px;
+            display: flex;
+            flex-direction: column;
             flex: 1;
-            margin-bottom: 20px;
         }
-        .task-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-        .task-badge {
-            padding: 4px 10px;
-            border: 1px solid var(--border-dark);
-            font-size: 0.72rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            background: var(--bg);
-            letter-spacing: 0.02em;
-        }
-        .task-badge.badge-ai { border-color: var(--accent); color: var(--accent-dark); background: var(--accent-light); }
-        .task-badge.badge-new { border-color: #357570; color: #357570; background: #EAF4F3; }
-        .task-badge.badge-locked { border-color: #8A6A2A; color: #8A6A2A; background: #FAF5EC; }
-
-        .task-arrow {
-            font-size: 0.85rem;
+        .card-title {
+            font-size: 0.88rem;
             font-weight: 700;
-            color: var(--accent);
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
+            color: var(--text);
+            line-height: 1.3;
+            margin-bottom: 6px;
+        }
+        .card-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            flex: 1;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta {
             display: flex;
             align-items: center;
             gap: 6px;
+            flex-wrap: wrap;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+            margin-top: auto;
         }
-        .task-card:hover .task-arrow { color: var(--accent-dark); }
+        .meta-pill {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .meta-pill.ai {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .meta-sep { color: var(--border-dark); font-size: 0.7rem; }
 
-        /* Accent bar */
-        .task-card::before {
+        /* ── Final test card ── */
+        .final-section { margin-top: 0; }
+        .final-card {
+            background: #1C1D1F;
+            text-decoration: none;
+            color: #FFFFFF;
+            display: flex;
+            align-items: stretch;
+            transition: opacity 0.15s;
+            position: relative;
+            overflow: hidden;
+            border: none;
+        }
+        .final-card:hover { opacity: 0.92; }
+        .final-card::before {
             content: '';
             position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
+            inset: 0;
+            background: repeating-linear-gradient(
+                -45deg,
+                rgba(255,255,255,0.025) 0px,
+                rgba(255,255,255,0.025) 1px,
+                transparent 1px,
+                transparent 18px
+            );
+            pointer-events: none;
         }
-        .task-card.correlation::before { background: var(--accent); }
-        .task-card.critical::before    { background: #B05A2A; }
-        .task-card.simulation::before  { background: #4A5A8F; }
-        .task-card.darkdata::before    { background: #8A4A7A; }
-        .task-card.test::before        { background: #8A6A2A; }
-
-        /* 5th card inner layout: horizontal on wide screens */
-        .task-card.test .task-inner {
+        .final-thumb {
+            width: 260px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #2D2080 0%, #1A1260 100%);
             display: flex;
-            align-items: flex-start;
-            gap: 32px;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.6rem;
         }
-        .task-card.test .task-left { flex-shrink: 0; }
-        .task-card.test .task-right { flex: 1; }
-        @media (max-width: 600px) {
-            .task-card.test .task-inner { flex-direction: column; gap: 0; }
+        .final-body {
+            padding: 32px 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .final-eyebrow {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #C0C4FC;
+            margin-bottom: 8px;
+        }
+        .final-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            margin-bottom: 8px;
+        }
+        .final-desc {
+            font-size: 0.88rem;
+            color: #9A9590;
+            line-height: 1.65;
+            max-width: 480px;
+            margin-bottom: 18px;
+        }
+        .final-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .final-pill {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+        }
+        .final-cta {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            padding-right: 36px;
+            flex-shrink: 0;
+        }
+        .cta-btn {
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            padding: 11px 20px;
+            white-space: nowrap;
+            border: none;
         }
 
         /* ── Footer ── */
         .footer {
-            border-top: 1px solid var(--border-dark);
+            border-top: 1px solid var(--border);
             margin-top: 48px;
             padding-top: 20px;
             display: flex;
@@ -170,112 +391,162 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .footer-left { font-size: 0.8rem; color: var(--text-muted); }
-        .footer-right { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+        .footer-left { font-size: 0.78rem; color: var(--text-muted); }
+        .footer-right { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
 
-        @media (max-width: 640px) {
-            .tasks-grid { grid-template-columns: 1fr; }
-            .header h1 { font-size: 2rem; }
-            body { padding: 24px 16px 48px; }
-            .task-card.test { grid-column: auto; }
+        /* ── Responsive ── */
+        @media (max-width: 1100px) {
+            .cards-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 760px) {
+            .cards-grid { grid-template-columns: repeat(2, 1fr); }
+            .final-thumb { width: 160px; font-size: 2.6rem; }
+            .final-title { font-size: 1.2rem; }
+            .final-cta { display: none; }
+        }
+        @media (max-width: 520px) {
+            .cards-grid { grid-template-columns: 1fr; }
+            .final-card { flex-direction: column; }
+            .final-thumb { width: 100%; height: 100px; }
+            .final-body { padding: 20px 18px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
 
-        <div class="header">
-            <div class="header-label">Platforma edukacyjna · MBA 2026</div>
+    <nav class="topnav">
+        <div class="topnav-inner">
+            <a class="topnav-brand" href="index.html">Platforma<span> MBA</span></a>
+            <div class="topnav-cats">
+                <a class="topnav-cat active" href="#">Wszystkie ćwiczenia</a>
+                <a class="topnav-cat" href="#">Dane i analityka</a>
+                <a class="topnav-cat" href="#">Myślenie krytyczne</a>
+                <a class="topnav-cat" href="#">Transformacja cyfrowa</a>
+                <a class="topnav-cat" href="#">Inżynieria danych</a>
+                <a class="topnav-cat" href="#">Zaliczenie</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-eyebrow">Platforma edukacyjna · MBA 2026</div>
             <h1>Interaktywne Zadania MBA</h1>
-            <p>Wybierz ćwiczenie. Do zadań 01–05 użyj pseudonimu lub ksywy.</p>
+        </div>
+    </section>
+
+    <main class="main">
+
+        <div class="section-head">
+            <h2>Ćwiczenia</h2>
+            <span>5 modułów</span>
         </div>
 
-        <div class="tasks-grid">
+        <div class="cards-grid">
 
-            <a href="korelacja-danych.html" class="task-card correlation">
-                <div class="task-number">Ćwiczenie 01</div>
-                <span class="task-icon">📊</span>
-                <div class="task-title">Korelacja Danych</div>
-                <div class="task-desc">Czy potrafisz wyczuć, które dane biznesowe są ze sobą powiązane? Sprawdź swoją intuicję o korelacjach w świecie SaaS, CRM i BI.</div>
-                <div class="task-meta">
-                    <span class="task-badge">⏱ ~15 min</span>
-                    <span class="task-badge">5 pytań</span>
+            <a href="korelacja-danych.html" class="card card-01">
+                <div class="card-thumb">
+                    <div class="card-thumb-bg"></div>
+                    <span class="card-thumb-icon">📊</span>
+                    <span class="card-thumb-num">Ćwiczenie 01</span>
                 </div>
-                <div class="task-arrow">Rozpocznij →</div>
-            </a>
-
-            <a href="myslenie-krytyczne.html" class="task-card critical">
-                <div class="task-number">Ćwiczenie 02</div>
-                <span class="task-icon">🧠</span>
-                <div class="task-title">Myślenie Krytyczne</div>
-                <div class="task-desc">Od łatwych do trudnych — 10 pułapek logicznych, z którymi mierzy się każdy menedżer. Błędy poznawcze, fałszywe wnioski, manipulacja danymi.</div>
-                <div class="task-meta">
-                    <span class="task-badge">⏱ ~15 min</span>
-                    <span class="task-badge">10 pytań</span>
-                    <span class="task-badge">📈 Rosnąca trudność</span>
-                </div>
-                <div class="task-arrow">Rozpocznij →</div>
-            </a>
-
-            <a href="symulacja-transformacja.html" class="task-card simulation">
-                <div class="task-number">Ćwiczenie 03</div>
-                <span class="task-icon">🏭</span>
-                <div class="task-title">Symulacja: Transformacja Cyfrowa</div>
-                <div class="task-desc">Wciel się w CDO firmy produkcyjnej. Podejmij 6 decyzji strategicznych — dane, AI, ludzie, technologia. Na końcu Llama AI przeanalizuje Twoją strategię.</div>
-                <div class="task-meta">
-                    <span class="task-badge">⏱ ~30 min</span>
-                    <span class="task-badge">6 decyzji</span>
-                    <span class="task-badge badge-ai">🤖 AI analiza</span>
-                </div>
-                <div class="task-arrow">Rozpocznij →</div>
-            </a>
-
-            <a href="ciemne-dane.html" class="task-card darkdata">
-                <div class="task-number">Ćwiczenie 04</div>
-                <span class="task-icon">🔦</span>
-                <div class="task-title">Audyt Ciemnych Danych</div>
-                <div class="task-desc">Wciel się w konsultanta danych w Nordia S.A. Oceń 12 zbiorów danych — które to dark data, ile kosztują i co z nimi zrobić. Żywy ticker kosztów.</div>
-                <div class="task-meta">
-                    <span class="task-badge">⏱ ~25 min</span>
-                    <span class="task-badge">12 zbiorów danych</span>
-                    
-                </div>
-                <div class="task-arrow">Rozpocznij →</div>
-            </a>
-
-            
-
-
-            
-
-
-<a href="gra-inzynieria-danych.html" class="task-card simulation">
-                <div class="task-number">Ćwiczenie 05</div>
-                <span class="task-icon">⚙️</span>
-                <div class="task-title">Gra: Inżynieria Danych</div>
-                <div class="task-desc">Zaprojektuj architekturę danych dla firmy produkcyjnej. Podejmij decyzje o pipeline'ach, jakości danych i integracji systemów w roli Data Engineer.</div>
-                <div class="task-meta">
-                    <span class="task-badge">⏱ ~4 godziny</span>
-                    <span class="task-badge">Decyzje strategiczne</span>
-                </div>
-                <div class="task-arrow">Rozpocznij →</div>
-            </a>
-<a href="test-wiedzy.html" class="task-card test">
-                <div class="task-inner">
-                    <div class="task-left">
-                        <div class="task-number">Zaliczenie końcowe</div>
-                        <span class="task-icon">📝</span>
+                <div class="card-body">
+                    <div class="card-title">Korelacja Danych</div>
+                    <div class="card-desc">Sprawdź intuicję o korelacjach w świecie SaaS, CRM i BI.</div>
+                    <div class="card-meta">
+                        <span class="meta-pill">⏱ 15 min</span>
+                        <span class="meta-sep">·</span>
+                        <span class="meta-pill">5 pytań</span>
                     </div>
-                    <div class="task-right">
-                        <div class="task-title">Test Wiedzy</div>
-                        <div class="task-desc">Sprawdzian zamknięty dla uczestników zajęć. Wyniki są poufne i widoczne wyłącznie dla prowadzącego. Do wejścia potrzebujesz hasła grupy.</div>
-                        <div class="task-meta">
-                            <span class="task-badge">⏱ ~15 min</span>
-                            
-                            <span class="task-badge">📋 Wyniki poufne</span>
-                        </div>
-                        <div class="task-arrow">Rozpocznij →</div>
+                </div>
+            </a>
+
+            <a href="myslenie-krytyczne.html" class="card card-02">
+                <div class="card-thumb">
+                    <img class="card-thumb-img" src="images/thumb-02.png" alt="Myślenie krytyczne">
+                    <span class="card-thumb-num">Ćwiczenie 02</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Myślenie Krytyczne</div>
+                    <div class="card-desc">10 pułapek logicznych każdego menedżera. Błędy poznawcze, fałszywe wnioski, manipulacja danymi.</div>
+                    <div class="card-meta">
+                        <span class="meta-pill">⏱ 15 min</span>
+                        <span class="meta-sep">·</span>
+                        <span class="meta-pill">10 pytań</span>
                     </div>
+                </div>
+            </a>
+
+            <a href="symulacja-transformacja.html" class="card card-03">
+                <div class="card-thumb">
+                    <div class="card-thumb-bg"></div>
+                    <span class="card-thumb-icon">🏭</span>
+                    <span class="card-thumb-num">Ćwiczenie 03</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Symulacja: Transformacja Cyfrowa</div>
+                    <div class="card-desc">Wciel się w CDO. 6 decyzji strategicznych, AI przeanalizuje Twoją strategię.</div>
+                    <div class="card-meta">
+                        <span class="meta-pill">⏱ 30 min</span>
+                        <span class="meta-sep">·</span>
+                        <span class="meta-pill ai">🤖 AI analiza</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="ciemne-dane.html" class="card card-04">
+                <div class="card-thumb">
+                    <div class="card-thumb-bg"></div>
+                    <span class="card-thumb-icon">🔦</span>
+                    <span class="card-thumb-num">Ćwiczenie 04</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Audyt Ciemnych Danych</div>
+                    <div class="card-desc">Konsultant danych w Nordia S.A. Oceń 12 zbiorów — dark data, koszty, decyzje.</div>
+                    <div class="card-meta">
+                        <span class="meta-pill">⏱ 25 min</span>
+                        <span class="meta-sep">·</span>
+                        <span class="meta-pill">Ticker kosztów</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="gra-inzynieria-danych.html" class="card card-05">
+                <div class="card-thumb">
+                    <div class="card-thumb-bg"></div>
+                    <span class="card-thumb-icon">⚙️</span>
+                    <span class="card-thumb-num">Ćwiczenie 05</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Gra: Inżynieria Danych Biznesowych</div>
+                    <div class="card-desc">Zaprojektuj architekturę danych w roli Data Engineer.</div>
+                    <div class="card-meta">
+                        <span class="meta-pill">⏱ ~4 godz.</span>
+                        <span class="meta-sep">·</span>
+                        <span class="meta-pill">Strategiczne</span>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+
+        <div class="final-section">
+            <div class="section-head">
+                <h2>Zaliczenie</h2>
+            </div>
+            <a href="test-wiedzy.html" class="final-card">
+                <div class="final-thumb">📝</div>
+                <div class="final-body">
+                    <div class="final-eyebrow">Zaliczenie końcowe</div>
+                    <div class="final-title">Test Wiedzy</div>
+                    <div class="final-desc">Sprawdzian zamknięty dla uczestników zajęć. Wyniki są poufne i widoczne wyłącznie dla prowadzącego. Do wejścia potrzebujesz hasła grupy.</div>
+                    <div class="final-meta">
+                        <span class="final-pill">⏱ ~15 min</span>
+                        <span class="final-pill">📋 Wyniki poufne</span>
+                    </div>
+                </div>
+                <div class="final-cta">
+                    <div class="cta-btn">Przejdź do testu →</div>
                 </div>
             </a>
         </div>
@@ -285,6 +556,7 @@
             <div class="footer-right">MBA · Zarządzanie Cyfrowe</div>
         </div>
 
-    </div>
+    </main>
+
 </body>
 </html>
