@@ -167,6 +167,35 @@
   /* ════════════════════════════════════════════════════════════════════════ */
 </style>
 <style>body { padding-top: 52px !important; }</style>
+<script>
+(function(){
+  var SESSION_KEY = 'mba_session';
+  try {
+    var session = JSON.parse(sessionStorage.getItem(SESSION_KEY));
+    if (session && session.password) {
+      // Inject a style to immediately hide the gate overlay before page renders
+      var style = document.createElement('style');
+      style.textContent = '#mba-group-gate { display: none !important; }';
+      document.head.appendChild(style);
+      // After DOM ready: fill input, call verify, remove the style hide
+      document.addEventListener('DOMContentLoaded', function() {
+        var input = document.getElementById('mba-gate-input');
+        if (input) {
+          input.value = session.password;
+          // Remove our forced hide, let verifyGroupGate do its thing
+          style.remove();
+          if (typeof verifyGroupGate === 'function') {
+            verifyGroupGate();
+          }
+        } else {
+          // gate input not found — gate already hidden, nothing to do
+          style.remove();
+        }
+      });
+    }
+  } catch(e) {}
+})();
+</script>
 </head>
 <body><!-- MBA GROUP GATE OVERLAY -->
 <div id="mba-group-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#F0EDE7;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;">
@@ -773,24 +802,5 @@ function getGroupName() { return _mbaGroupName; }
 
 </script>
 
-<script>
-(function(){
-  const SESSION_KEY = 'mba_session';
-  function getSession() { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e) { return null; } }
-
-  // Auto-bypass gate if valid session exists
-  const session = getSession();
-  if (session && session.password) {
-    const gate = document.getElementById('mba-group-gate') || document.getElementById('access-modal');
-    const input = document.getElementById('mba-gate-input') || document.querySelector('#access-modal input[type=text], #access-modal input[type=password]');
-    if (input) input.value = session.password;
-    // Trigger verification after page is ready
-    window.addEventListener('DOMContentLoaded', function() {
-      const fn = window.verifyGroupGate || window.checkAccess || window.verifyAccess;
-      if (fn) { fn(); }
-    });
-  }
-})();
-</script>
 </body>
 </html>
