@@ -14,13 +14,11 @@
   #login-screen { display:flex; align-items:center; justify-content:center; min-height:100vh; }
   .login-box { background:var(--card); border:1.5px solid var(--border); padding:48px 40px; max-width:420px; width:90%; }
   .login-box h1 { font-size:1.6rem; font-weight:800; margin-bottom:8px; }
-  .login-box p { color:var(--sec); margin-bottom:28px; font-size:0.95rem; }
   .badge-label { font-size:11px; font-weight:700; letter-spacing:1.8px; text-transform:uppercase; color:#9b8f84; margin-bottom:12px; }
 
   #main-screen { display:none; }
   .top-bar { background:var(--card); border-bottom:1.5px solid var(--border); padding:16px 32px; display:flex; justify-content:space-between; align-items:center; }
   .top-bar h1 { font-size:1.1rem; font-weight:800; }
-  .top-bar span { color:var(--sec); font-size:0.88rem; }
   .container { max-width:1000px; margin:0 auto; padding:32px 24px; }
 
   .panel { background:var(--card); border:1.5px solid var(--border); margin-bottom:24px; }
@@ -28,8 +26,8 @@
   .panel-head h2 { font-size:1rem; font-weight:800; }
   .panel-body { padding:24px; }
 
-  label { display:block; font-size:0.82rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:var(--sec); margin-bottom:6px; margin-top:16px; }
-  label:first-child { margin-top:0; }
+  .field-label { display:block; font-size:0.82rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:var(--sec); margin-bottom:6px; margin-top:16px; }
+  .field-label:first-child { margin-top:0; }
   input[type="text"], input[type="date"], input[type="password"] {
     width:100%; padding:11px 13px; border:1.5px solid var(--border); font-size:0.95rem; font-family:Inter,sans-serif;
     background:#fff; outline:none; border-radius:0;
@@ -37,22 +35,52 @@
   input:focus { border-color:var(--accent); }
   .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 
-  /* Exercise checkboxes */
-  .exercises-grid {
-    display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;
+  /* Exercise checkboxes — grid of equal-width buttons */
+  .ex-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 4px;
   }
-  .ex-check {
-    display:flex; align-items:center; gap:6px;
-    background:var(--bg); border:1.5px solid var(--border);
-    padding:7px 12px; cursor:pointer; user-select:none;
-    font-size:0.82rem; font-weight:600;
-    transition: border-color 0.12s, background 0.12s;
+  .ex-item {
+    position: relative;
   }
-  .ex-check input[type=checkbox] { display:none; }
-  .ex-check.checked { border-color:var(--accent); background:#e8f4f3; color:var(--accent); }
-  .ex-check-all {
-    font-size:0.75rem; font-weight:700; color:var(--sec);
-    cursor:pointer; text-decoration:underline; margin-top:6px; display:inline-block;
+  .ex-item input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+  .ex-item label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 9px 8px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--sec);
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.1s, background 0.1s, color 0.1s;
+    line-height: 1.3;
+    min-height: 42px;
+  }
+  .ex-item input[type="checkbox"]:checked + label {
+    border-color: var(--accent);
+    background: #e8f4f3;
+    color: var(--accent);
+  }
+  .ex-item label:hover {
+    border-color: var(--accent);
+  }
+  .ex-toggle-all {
+    font-size: 0.75rem; font-weight: 600; color: var(--accent);
+    cursor: pointer; background: none; border: none;
+    font-family: Inter, sans-serif; padding: 0;
+    margin-top: 8px; display: inline-block; text-decoration: underline;
   }
 
   .btn { padding:11px 20px; font-size:0.9rem; font-weight:700; font-family:Inter,sans-serif; cursor:pointer; border:none; border-radius:0; letter-spacing:0.3px; }
@@ -77,7 +105,6 @@
   .badge-future   { background:#fef9e7; color:#e67e22; border:1px solid #e67e22; }
   .badge-expired  { background:#f5f5f5; color:#999; border:1px solid #ccc; }
 
-  /* Exercise pills in table */
   .ex-pills { display:flex; gap:4px; flex-wrap:wrap; }
   .ex-pill { font-size:0.68rem; font-weight:700; padding:2px 7px; background:#e8f4f3; color:var(--accent); border:1px solid var(--accent); }
   .ex-pill-all { background:#f0f0f0; color:#666; border-color:#ccc; }
@@ -91,10 +118,9 @@
   .logout-btn { font-size:0.82rem; color:var(--sec); cursor:pointer; background:none; border:none; font-family:Inter,sans-serif; }
   .logout-btn:hover { color:var(--text); }
 
-  /* Edit modal */
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:200; align-items:center; justify-content:center; }
   .modal-overlay.open { display:flex; }
-  .modal-box { background:#fff; border:1.5px solid var(--border); padding:32px; max-width:480px; width:90%; }
+  .modal-box { background:#fff; border:1.5px solid var(--border); padding:32px; max-width:460px; width:90%; }
   .modal-box h3 { font-size:1.1rem; font-weight:800; margin-bottom:20px; }
   .modal-actions { display:flex; gap:12px; margin-top:24px; justify-content:flex-end; }
 </style>
@@ -105,8 +131,8 @@
   <div class="login-box">
     <p class="badge-label">MBA Platform</p>
     <h1>Panel Administratora</h1>
-    <p style="margin-top:4px;margin-bottom:28px;">Wprowadź klucz administratora, aby kontynuować.</p>
-    <label>Klucz administratora</label>
+    <p style="color:#666;margin-top:4px;margin-bottom:28px;font-size:0.95rem;">Wprowadź klucz administratora, aby kontynuować.</p>
+    <span class="field-label">Klucz administratora</span>
     <input type="password" id="admin-key-input" placeholder="ADMIN-MBA-..." autocomplete="off"
       onkeydown="if(event.key==='Enter')doLogin();" />
     <div id="login-error" class="alert alert-err" style="display:none;"></div>
@@ -119,55 +145,52 @@
     <h1>MBA Platform · Panel Administratora</h1>
     <button class="logout-btn" onclick="doLogout()">Wyloguj</button>
   </div>
-
   <div class="container">
 
-    <!-- Create Group -->
     <div class="panel">
       <div class="panel-head"><h2>Nowa Grupa</h2></div>
       <div class="panel-body">
         <div class="form-row">
           <div>
-            <label>Nazwa grupy</label>
+            <span class="field-label">Nazwa grupy</span>
             <input type="text" id="new-name" placeholder="np. Zarządzanie Weekend A" />
           </div>
           <div>
-            <label>Hasło dostępu</label>
+            <span class="field-label">Hasło dostępu</span>
             <div style="position:relative;display:flex;align-items:center;">
               <input type="password" id="new-password" placeholder="np. MBA-ZWA-2026" autocomplete="new-password" style="width:100%;padding-right:44px;" />
-              <button type="button" onclick="togglePassVis('new-password','pass-eye')" title="Pokaż/ukryj"
+              <button type="button" onclick="togglePassVis('new-password','pass-eye')"
                 style="position:absolute;right:0;top:0;bottom:0;width:40px;background:none;border:none;cursor:pointer;font-size:16px;color:#666;" id="pass-eye">👁</button>
             </div>
           </div>
         </div>
         <div class="form-row" style="margin-top:16px;">
           <div>
-            <label>Data rozpoczęcia</label>
+            <span class="field-label">Data rozpoczęcia</span>
             <input type="date" id="new-start" />
           </div>
           <div>
-            <label>Data zakończenia dostępu</label>
+            <span class="field-label">Data zakończenia dostępu</span>
             <input type="date" id="new-end" />
           </div>
         </div>
         <div style="margin-top:16px;">
-          <label>Dostęp do ćwiczeń</label>
-          <div class="exercises-grid" id="new-exercises">
-            <label class="ex-check checked" data-ex="01"><input type="checkbox" checked>Ćw. 01 — Korelacja</label>
-            <label class="ex-check checked" data-ex="02"><input type="checkbox" checked>Ćw. 02 — Myślenie krit.</label>
-            <label class="ex-check checked" data-ex="03"><input type="checkbox" checked>Ćw. 03 — Transformacja</label>
-            <label class="ex-check checked" data-ex="04"><input type="checkbox" checked>Ćw. 04 — Ciemne dane</label>
-            <label class="ex-check checked" data-ex="05"><input type="checkbox" checked>Ćw. 05 — Inżynieria</label>
-            <label class="ex-check checked" data-ex="test"><input type="checkbox" checked>Test końcowy</label>
+          <span class="field-label">Dostęp do ćwiczeń</span>
+          <div class="ex-grid" id="new-exercises">
+            <div class="ex-item"><input type="checkbox" id="n01" value="01" checked><label for="n01">Ćw. 01 — Korelacja</label></div>
+            <div class="ex-item"><input type="checkbox" id="n02" value="02" checked><label for="n02">Ćw. 02 — Myślenie krit.</label></div>
+            <div class="ex-item"><input type="checkbox" id="n03" value="03" checked><label for="n03">Ćw. 03 — Transformacja</label></div>
+            <div class="ex-item"><input type="checkbox" id="n04" value="04" checked><label for="n04">Ćw. 04 — Ciemne dane</label></div>
+            <div class="ex-item"><input type="checkbox" id="n05" value="05" checked><label for="n05">Ćw. 05 — Inżynieria</label></div>
+            <div class="ex-item"><input type="checkbox" id="ntest" value="test" checked><label for="ntest">Test końcowy</label></div>
           </div>
-          <span class="ex-check-all" onclick="toggleAllExercises('new-exercises')">zaznacz / odznacz wszystkie</span>
+          <button class="ex-toggle-all" onclick="toggleAll('new-exercises')">zaznacz / odznacz wszystkie</button>
         </div>
         <div id="create-msg"></div>
         <button class="btn btn-primary" style="margin-top:20px;" onclick="createGroup()">Utwórz grupę →</button>
       </div>
     </div>
 
-    <!-- Groups List -->
     <div class="panel">
       <div class="panel-head">
         <h2>Grupy</h2>
@@ -181,22 +204,22 @@
   </div>
 </div>
 
-<!-- Edit exercises modal -->
+<!-- Edit modal -->
 <div class="modal-overlay" id="edit-modal">
   <div class="modal-box">
-    <h3 id="edit-modal-title">Edytuj dostęp</h3>
-    <div class="exercises-grid" id="edit-exercises">
-      <label class="ex-check" data-ex="01"><input type="checkbox">Ćw. 01 — Korelacja</label>
-      <label class="ex-check" data-ex="02"><input type="checkbox">Ćw. 02 — Myślenie krit.</label>
-      <label class="ex-check" data-ex="03"><input type="checkbox">Ćw. 03 — Transformacja</label>
-      <label class="ex-check" data-ex="04"><input type="checkbox">Ćw. 04 — Ciemne dane</label>
-      <label class="ex-check" data-ex="05"><input type="checkbox">Ćw. 05 — Inżynieria</label>
-      <label class="ex-check" data-ex="test"><input type="checkbox">Test końcowy</label>
+    <h3 id="edit-modal-title">Dostęp do ćwiczeń</h3>
+    <div class="ex-grid" id="edit-exercises">
+      <div class="ex-item"><input type="checkbox" id="e01" value="01"><label for="e01">Ćw. 01 — Korelacja</label></div>
+      <div class="ex-item"><input type="checkbox" id="e02" value="02"><label for="e02">Ćw. 02 — Myślenie krit.</label></div>
+      <div class="ex-item"><input type="checkbox" id="e03" value="03"><label for="e03">Ćw. 03 — Transformacja</label></div>
+      <div class="ex-item"><input type="checkbox" id="e04" value="04"><label for="e04">Ćw. 04 — Ciemne dane</label></div>
+      <div class="ex-item"><input type="checkbox" id="e05" value="05"><label for="e05">Ćw. 05 — Inżynieria</label></div>
+      <div class="ex-item"><input type="checkbox" id="etest" value="test"><label for="etest">Test końcowy</label></div>
     </div>
-    <span class="ex-check-all" onclick="toggleAllExercises('edit-exercises')">zaznacz / odznacz wszystkie</span>
+    <button class="ex-toggle-all" onclick="toggleAll('edit-exercises')">zaznacz / odznacz wszystkie</button>
     <div id="edit-msg"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" onclick="closeEditModal()">Anuluj</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Anuluj</button>
       <button class="btn btn-primary btn-sm" onclick="saveExercises()">Zapisz →</button>
     </div>
   </div>
@@ -204,58 +227,32 @@
 
 <script>
 const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
-const ALL_EXERCISES = ['01','02','03','04','05','test'];
-let ADMIN_KEY = '';
-let _groupsData = [];
-let _editIdx = null;
+const ALL_EX = ['01','02','03','04','05','test'];
+let ADMIN_KEY = '', _groups = [], _editIdx = null;
 
-function togglePassVis(inputId, btnId) {
-  const inp = document.getElementById(inputId);
-  const btn = document.getElementById(btnId);
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+function togglePassVis(id, btnId) {
+  const i = document.getElementById(id), b = document.getElementById(btnId);
+  i.type = i.type === 'password' ? 'text' : 'password';
+  b.textContent = i.type === 'password' ? '👁' : '🙈';
 }
 
-// ── Exercise checkbox toggle ─────────────────────────────────────────────────
-document.addEventListener('click', function(e) {
-  const lbl = e.target.closest('.ex-check');
-  if (!lbl) return;
-  lbl.classList.toggle('checked');
-  const cb = lbl.querySelector('input[type=checkbox]');
-  if (cb) cb.checked = lbl.classList.contains('checked');
-});
-
-function toggleAllExercises(containerId) {
-  const container = document.getElementById(containerId);
-  const labels = container.querySelectorAll('.ex-check');
-  const allChecked = Array.from(labels).every(l => l.classList.contains('checked'));
-  labels.forEach(l => {
-    l.classList.toggle('checked', !allChecked);
-    const cb = l.querySelector('input[type=checkbox]');
-    if (cb) cb.checked = !allChecked;
-  });
+function toggleAll(containerId) {
+  const cbs = document.querySelectorAll('#'+containerId+' input[type=checkbox]');
+  const allChecked = Array.from(cbs).every(c => c.checked);
+  cbs.forEach(c => { c.checked = !allChecked; });
 }
 
-function getSelectedExercises(containerId) {
-  const container = document.getElementById(containerId);
-  const checked = Array.from(container.querySelectorAll('.ex-check.checked')).map(l => l.dataset.ex);
-  // If all selected, store null (= full access)
-  if (checked.length === ALL_EXERCISES.length) return null;
-  return checked.length ? checked : [];
+function getSelected(containerId) {
+  const cbs = document.querySelectorAll('#'+containerId+' input[type=checkbox]:checked');
+  const vals = Array.from(cbs).map(c => c.value);
+  return vals.length === ALL_EX.length ? null : vals;
 }
 
-function setExerciseCheckboxes(containerId, allowedExercises) {
-  const container = document.getElementById(containerId);
-  const labels = container.querySelectorAll('.ex-check');
-  labels.forEach(l => {
-    const active = allowedExercises === null || allowedExercises.includes(l.dataset.ex);
-    l.classList.toggle('checked', active);
-    const cb = l.querySelector('input[type=checkbox]');
-    if (cb) cb.checked = active;
-  });
+function setSelected(containerId, allowed) {
+  const cbs = document.querySelectorAll('#'+containerId+' input[type=checkbox]');
+  cbs.forEach(cb => { cb.checked = allowed === null || allowed.includes(cb.value); });
 }
 
-// ── Auth ─────────────────────────────────────────────────────────────────────
 function doLogin() {
   const key = document.getElementById('admin-key-input').value.trim();
   if (!key) return;
@@ -267,8 +264,7 @@ function doLogin() {
     } else {
       ADMIN_KEY = '';
       const el = document.getElementById('login-error');
-      el.style.display = 'block';
-      el.textContent = 'Nieprawidłowy klucz administratora.';
+      el.style.display = 'block'; el.textContent = 'Nieprawidłowy klucz administratora.';
     }
   });
 }
@@ -280,10 +276,9 @@ function doLogout() {
   document.getElementById('admin-key-input').value = '';
 }
 
-// ── Load & render groups ──────────────────────────────────────────────────────
 async function loadGroups() {
   try {
-    const res = await fetch(WORKER + '/admin/list-groups', { headers: { 'X-Admin-Key': ADMIN_KEY } });
+    const res = await fetch(WORKER+'/admin/list-groups', { headers: { 'X-Admin-Key': ADMIN_KEY } });
     if (!res.ok) return false;
     const data = await res.json();
     renderGroups(data.groups || []);
@@ -292,178 +287,161 @@ async function loadGroups() {
 }
 
 function getStatus(g) {
-  const now = new Date(), start = new Date(g.startDate+'T00:00:00'), end = new Date(g.endDate+'T23:59:59');
-  if (!g.active)   return { label:'Wyłączona', cls:'badge-inactive' };
-  if (now < start) return { label:'Przyszła',  cls:'badge-future'  };
-  if (now > end)   return { label:'Wygasła',   cls:'badge-expired' };
+  const now = new Date(), s = new Date(g.startDate+'T00:00:00'), e = new Date(g.endDate+'T23:59:59');
+  if (!g.active)  return { label:'Wyłączona', cls:'badge-inactive' };
+  if (now < s)    return { label:'Przyszła',  cls:'badge-future'  };
+  if (now > e)    return { label:'Wygasła',   cls:'badge-expired' };
   return { label:'Aktywna', cls:'badge-active' };
 }
 
-function maskPassword(pw) {
-  const parts = pw.split('-');
-  if (parts.length >= 2) { parts[parts.length-1] = '****'; return parts.join('-'); }
+function maskPw(pw) {
+  const p = pw.split('-');
+  if (p.length >= 2) { p[p.length-1]='****'; return p.join('-'); }
   return '****';
 }
 
-function revealPassword(idx) {
-  const g = _groupsData[idx]; if (!g) return;
-  const span = document.getElementById('pwd-'+idx);
-  const btn  = document.getElementById('rev-btn-'+idx);
+function revealPw(idx) {
+  const g = _groups[idx]; if (!g) return;
+  const span = document.getElementById('pwd-'+idx), btn = document.getElementById('rbtn-'+idx);
   span.textContent = g.password; span.style.color = '#c0392b';
   btn.disabled = true; btn.textContent = '5s';
   let t = 5;
   const iv = setInterval(() => {
-    t--;
-    if (t <= 0) { clearInterval(iv); span.textContent = maskPassword(g.password); span.style.color=''; btn.disabled=false; btn.textContent='Pokaż'; }
+    if (--t <= 0) { clearInterval(iv); span.textContent=maskPw(g.password); span.style.color=''; btn.disabled=false; btn.textContent='Pokaż'; }
     else btn.textContent = t+'s';
   }, 1000);
 }
 
-function renderExPills(allowedExercises) {
-  if (allowedExercises === null) return '<span class="ex-pill ex-pill-all">Wszystkie</span>';
-  if (!allowedExercises.length)  return '<span style="color:#999;font-size:0.75rem;">Brak dostępu</span>';
-  return allowedExercises.map(ex => `<span class="ex-pill">${ex === 'test' ? 'Test' : 'Ćw. '+ex}</span>`).join('');
+function exPills(allowed) {
+  if (allowed === null || allowed === undefined) return '<span class="ex-pill ex-pill-all">Wszystkie</span>';
+  if (!allowed.length) return '<span style="color:#999;font-size:0.75rem;">Brak</span>';
+  return allowed.map(ex => `<span class="ex-pill">${ex==='test'?'Test':'Ćw. '+ex}</span>`).join('');
 }
 
 function renderGroups(groups) {
-  _groupsData = groups;
+  _groups = groups;
   const c = document.getElementById('groups-container');
-  if (!groups.length) { c.innerHTML = '<div class="empty-state">Brak grup. Utwórz pierwszą grupę powyżej.</div>'; return; }
-  groups.sort((a,b) => {
-    const order = {'Aktywna':0,'Przyszła':1,'Wyłączona':2,'Wygasła':3};
-    return (order[getStatus(a).label]||9)-(order[getStatus(b).label]||9);
-  });
-  let html = `<table class="groups-table"><thead><tr>
-    <th>Nazwa grupy</th><th>Hasło</th><th>Od</th><th>Do</th>
-    <th>Ćwiczenia</th><th>Status</th><th>Akcje</th>
+  if (!groups.length) { c.innerHTML='<div class="empty-state">Brak grup.</div>'; return; }
+  const order = {'Aktywna':0,'Przyszła':1,'Wyłączona':2,'Wygasła':3};
+  groups.sort((a,b) => (order[getStatus(a).label]||9)-(order[getStatus(b).label]||9));
+  let h = `<table class="groups-table"><thead><tr>
+    <th>Nazwa</th><th>Hasło</th><th>Od</th><th>Do</th><th>Ćwiczenia</th><th>Status</th><th>Akcje</th>
   </tr></thead><tbody>`;
-  for (let i = 0; i < groups.length; i++) {
-    const g = groups[i]; const st = getStatus(g);
-    html += `<tr>
+  groups.forEach((g,i) => {
+    const st = getStatus(g);
+    h += `<tr>
       <td><strong>${g.name}</strong></td>
-      <td style="white-space:nowrap;">
-        <span class="code-pill" id="pwd-${i}">${maskPassword(g.password)}</span>
-        <button class="btn btn-ghost btn-sm" id="rev-btn-${i}" onclick="revealPassword(${i})" style="margin-left:6px;font-size:11px;padding:2px 8px;">Pokaż</button>
+      <td style="white-space:nowrap">
+        <span class="code-pill" id="pwd-${i}">${maskPw(g.password)}</span>
+        <button class="btn btn-ghost btn-sm" id="rbtn-${i}" onclick="revealPw(${i})" style="margin-left:6px;font-size:11px;padding:2px 8px;">Pokaż</button>
       </td>
-      <td>${g.startDate}</td>
-      <td>${g.endDate}</td>
-      <td><div class="ex-pills">${renderExPills(g.allowedExercises ?? null)}</div></td>
+      <td>${g.startDate}</td><td>${g.endDate}</td>
+      <td><div class="ex-pills">${exPills(g.allowedExercises ?? null)}</div></td>
       <td><span class="badge ${st.cls}">${st.label}</span></td>
-      <td style="white-space:nowrap;display:flex;gap:6px;align-items:center;">
-        <button class="btn btn-ghost btn-sm" onclick="openEditModal(${i})">Ćwiczenia</button>
+      <td style="white-space:nowrap;display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm" onclick="openModal(${i})">Ćwiczenia</button>
         ${g.active
           ? `<button class="btn btn-ghost btn-sm" onclick="toggleGroup(${i},false)">Wyłącz</button>`
           : `<button class="btn btn-primary btn-sm" onclick="toggleGroup(${i},true)">Włącz</button>`}
         <button class="btn btn-danger btn-sm" onclick="deleteGroup(${i})">Usuń</button>
       </td>
     </tr>`;
-  }
-  html += '</tbody></table>';
-  c.innerHTML = html;
+  });
+  h += '</tbody></table>';
+  c.innerHTML = h;
 }
 
-// ── Create group ──────────────────────────────────────────────────────────────
 async function createGroup() {
-  const name  = document.getElementById('new-name').value.trim();
-  const pass  = document.getElementById('new-password').value.trim();
-  const start = document.getElementById('new-start').value;
-  const end   = document.getElementById('new-end').value;
-  const msg   = document.getElementById('create-msg');
-  const allowedExercises = getSelectedExercises('new-exercises');
-  if (!name || !pass || !start || !end) { msg.innerHTML='<div class="alert alert-err">Wypełnij wszystkie pola.</div>'; return; }
-  if (end < start) { msg.innerHTML='<div class="alert alert-err">Data zakończenia musi być późniejsza.</div>'; return; }
+  const name=document.getElementById('new-name').value.trim();
+  const pass=document.getElementById('new-password').value.trim();
+  const start=document.getElementById('new-start').value;
+  const end=document.getElementById('new-end').value;
+  const msg=document.getElementById('create-msg');
+  const allowedExercises=getSelected('new-exercises');
+  if (!name||!pass||!start||!end) { msg.innerHTML='<div class="alert alert-err">Wypełnij wszystkie pola.</div>'; return; }
+  if (end<start) { msg.innerHTML='<div class="alert alert-err">Data zakończenia musi być późniejsza.</div>'; return; }
   try {
-    const res = await fetch(WORKER+'/admin/create-group', {
-      method:'POST', headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},
-      body: JSON.stringify({ name, password:pass, startDate:start, endDate:end, allowedExercises })
+    const res = await fetch(WORKER+'/admin/create-group',{
+      method:'POST',headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},
+      body:JSON.stringify({name,password:pass,startDate:start,endDate:end,allowedExercises})
     });
-    const data = await res.json();
+    const data=await res.json();
     if (data.success) {
-      msg.innerHTML = `<div class="alert alert-ok">✓ Grupa "${name}" utworzona.</div>`;
+      msg.innerHTML=`<div class="alert alert-ok">✓ Grupa "${name}" utworzona.</div>`;
       document.getElementById('new-name').value='';
       document.getElementById('new-password').value='';
       loadGroups();
     } else {
-      msg.innerHTML = `<div class="alert alert-err">${data.error||'Błąd tworzenia grupy.'}</div>`;
+      msg.innerHTML=`<div class="alert alert-err">${data.error||'Błąd.'}</div>`;
     }
   } catch(e) { msg.innerHTML='<div class="alert alert-err">Błąd połączenia.</div>'; }
 }
 
-// ── Toggle group ──────────────────────────────────────────────────────────────
-async function toggleGroup(idx, active) {
-  const g = _groupsData[idx]; if (!g) return;
+async function toggleGroup(idx,active) {
+  const g=_groups[idx]; if (!g) return;
   try {
-    await fetch(WORKER+'/admin/toggle-group', {
-      method:'POST', headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},
-      body: JSON.stringify({ password:g.password, active })
+    await fetch(WORKER+'/admin/toggle-group',{
+      method:'POST',headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},
+      body:JSON.stringify({password:g.password,active})
     });
     loadGroups();
-  } catch(e) { alert('Błąd połączenia.'); }
+  } catch(e){alert('Błąd połączenia.');}
 }
 
-// ── Delete group ──────────────────────────────────────────────────────────────
 async function deleteGroup(idx) {
-  const g = _groupsData[idx]; if (!g) return;
-  const typed = prompt(`Aby potwierdzić usunięcie grupy "${g.name}", wpisz jej nazwę:`);
-  if (typed === null) return;
-  if (typed.trim() !== g.name) { alert('Nazwa nie zgadza się. Anulowano.'); return; }
+  const g=_groups[idx]; if (!g) return;
+  const typed=prompt(`Aby potwierdzić usunięcie grupy "${g.name}", wpisz jej nazwę:`);
+  if (typed===null) return;
+  if (typed.trim()!==g.name){alert('Nazwa nie zgadza się.');return;}
   try {
-    const res = await fetch(WORKER+'/admin/delete-group', {
-      method:'POST', headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},
-      body: JSON.stringify({ password:g.password, confirm_name:typed.trim() })
+    const res=await fetch(WORKER+'/admin/delete-group',{
+      method:'POST',headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},
+      body:JSON.stringify({password:g.password,confirm_name:typed.trim()})
     });
-    const data = await res.json();
-    if (!res.ok) { alert('Błąd: '+(data.error||res.status)); return; }
+    const data=await res.json();
+    if (!res.ok){alert('Błąd: '+(data.error||res.status));return;}
     loadGroups();
-  } catch(e) { alert('Błąd połączenia.'); }
+  } catch(e){alert('Błąd połączenia.');}
 }
 
-// ── Edit exercises modal ──────────────────────────────────────────────────────
-function openEditModal(idx) {
-  _editIdx = idx;
-  const g = _groupsData[idx];
-  document.getElementById('edit-modal-title').textContent = `Dostęp do ćwiczeń — ${g.name}`;
-  setExerciseCheckboxes('edit-exercises', g.allowedExercises ?? null);
-  document.getElementById('edit-msg').innerHTML = '';
+function openModal(idx) {
+  _editIdx=idx;
+  const g=_groups[idx];
+  document.getElementById('edit-modal-title').textContent='Dostęp do ćwiczeń — '+g.name;
+  setSelected('edit-exercises', g.allowedExercises??null);
+  document.getElementById('edit-msg').innerHTML='';
   document.getElementById('edit-modal').classList.add('open');
 }
 
-function closeEditModal() {
+function closeModal() {
   document.getElementById('edit-modal').classList.remove('open');
-  _editIdx = null;
+  _editIdx=null;
 }
 
 async function saveExercises() {
-  if (_editIdx === null) return;
-  const g = _groupsData[_editIdx];
-  const allowedExercises = getSelectedExercises('edit-exercises');
-  const msg = document.getElementById('edit-msg');
+  if (_editIdx===null) return;
+  const g=_groups[_editIdx];
+  const allowedExercises=getSelected('edit-exercises');
+  const msg=document.getElementById('edit-msg');
   try {
-    const res = await fetch(WORKER+'/admin/update-group', {
-      method:'POST', headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},
-      body: JSON.stringify({ password:g.password, allowedExercises })
+    const res=await fetch(WORKER+'/admin/update-group',{
+      method:'POST',headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},
+      body:JSON.stringify({password:g.password,allowedExercises})
     });
-    const data = await res.json();
-    if (data.success) {
-      closeEditModal();
-      loadGroups();
-    } else {
-      msg.innerHTML = `<div class="alert alert-err" style="margin-top:12px;">${data.error||'Błąd zapisu.'}</div>`;
-    }
-  } catch(e) { msg.innerHTML='<div class="alert alert-err" style="margin-top:12px;">Błąd połączenia.</div>'; }
+    const data=await res.json();
+    if (data.success){closeModal();loadGroups();}
+    else msg.innerHTML=`<div class="alert alert-err" style="margin-top:12px;">${data.error||'Błąd.'}</div>`;
+  } catch(e){msg.innerHTML='<div class="alert alert-err" style="margin-top:12px;">Błąd połączenia.</div>';}
 }
 
-// Close modal on overlay click
-document.getElementById('edit-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeEditModal();
-});
+document.getElementById('edit-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
-window.addEventListener('load', () => {
-  const today = new Date(), later = new Date(today);
+window.addEventListener('load',()=>{
+  const today=new Date(), later=new Date(today);
   later.setDate(later.getDate()+21);
-  const fmt = d => d.toISOString().slice(0,10);
-  document.getElementById('new-start').value = fmt(today);
-  document.getElementById('new-end').value = fmt(later);
+  const fmt=d=>d.toISOString().slice(0,10);
+  document.getElementById('new-start').value=fmt(today);
+  document.getElementById('new-end').value=fmt(later);
 });
 </script>
 </body>
