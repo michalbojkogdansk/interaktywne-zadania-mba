@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #F0EDE7;
+    --bg: #FFFFFF;
     --surface: #FFFFFF;
     --border: #D8D2C8;
     --border-dark: #B8B2A8;
@@ -399,7 +399,47 @@
     .theory-grid { grid-template-columns: 1fr; }
     .footer { padding: 18px 20px; }
   }
-</style>
+
+  /* ── MBA Topbar ── */
+  .mba-topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 9990;
+    background: #fff; border-bottom: 1px solid #D1D7DC;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; height: 52px;
+    font-family: 'Inter', sans-serif;
+  }
+  .mba-topbar-left {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .mba-topbar-back {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.82rem; font-weight: 700; color: #1C1D1F;
+    text-decoration: none; letter-spacing: 0.01em;
+  }
+  .mba-topbar-back:hover { color: #5624D0; }
+  .mba-topbar-back svg { flex-shrink: 0; }
+  .mba-topbar-divider {
+    width: 1px; height: 20px; background: #D1D7DC;
+  }
+  .mba-topbar-title {
+    font-size: 0.85rem; font-weight: 700; color: #1C1D1F;
+  }
+  .mba-topbar-right {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .mba-topbar-group {
+    font-size: 0.78rem; color: #6A6F73; font-weight: 500;
+  }
+  .mba-topbar-group strong { color: #1C1D1F; font-weight: 700; }
+  .mba-topbar-logout {
+    font-size: 0.75rem; font-weight: 600; color: #5624D0;
+    cursor: pointer; background: none; border: none;
+    font-family: 'Inter', sans-serif; padding: 0;
+  }
+  .mba-topbar-logout:hover { text-decoration: underline; }
+  body { padding-top: 52px; }
+
+  </style>
 <style>
   /* ═══ SITE-NAV (shared) ════════════════════════════════════════════════ */
   .site-nav {
@@ -473,6 +513,24 @@
 </script>
 </head>
 <body>
+
+<div class="mba-topbar" id="mba-topbar">
+  <div class="mba-topbar-left">
+    <a class="mba-topbar-back" href="index.html">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7L9 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Platforma MBA
+    </a>
+    <div class="mba-topbar-divider"></div>
+    <div class="mba-topbar-title" id="mba-topbar-title"></div>
+  </div>
+  <div class="mba-topbar-right">
+    <div class="mba-topbar-group" id="mba-topbar-group" style="display:none">
+      Grupa: <strong id="mba-topbar-groupname"></strong>
+    </div>
+    <button class="mba-topbar-logout" id="mba-topbar-logout" style="display:none" onclick="mbaClearSession()">Wyloguj</button>
+  </div>
+</div>
+
 <nav class="site-nav">
   <div class="nav-links">
     <a class="nav-link" href="index.html">🏠 <span class="nav-label">MBA 2026</span></a>
@@ -486,7 +544,7 @@
 </nav>
 
 <!-- MBA GROUP GATE OVERLAY -->
-<div id="mba-group-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#F0EDE7;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;">
+<div id="mba-group-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#FFFFFF;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;">
   <div style="background:#fff;border:1.5px solid #D0CBC4;padding:48px 40px;max-width:420px;width:90%;box-sizing:border-box;">
     <p style="font-size:11px;font-weight:700;letter-spacing:1.8px;color:#9b8f84;text-transform:uppercase;margin:0 0 12px;">Platforma MBA</p>
     <h2 style="font-size:1.6rem;font-weight:800;margin:0 0 8px;color:#1a1a1a;font-family:Inter,sans-serif;">Dostęp do ćwiczenia</h2>
@@ -504,7 +562,7 @@
 
 
 <!-- NEXO ACCESS MODAL -->
-<div id="access-modal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#F0EDE7;z-index:9998;display:none;align-items:center;justify-content:center;font-family:Inter,sans-serif;">
+<div id="access-modal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#FFFFFF;z-index:9998;display:none;align-items:center;justify-content:center;font-family:Inter,sans-serif;">
   <div style="background:#fff;border:1.5px solid #D0CBC4;padding:48px 40px;max-width:420px;width:90%;box-sizing:border-box;">
     <p style="font-size:11px;font-weight:700;letter-spacing:1.8px;color:#9b8f84;text-transform:uppercase;margin:0 0 12px;">Gra: Inżynieria Danych</p>
     <h2 style="font-size:1.6rem;font-weight:800;margin:0 0 8px;color:#1a1a1a;font-family:Inter,sans-serif;">Hasło do bazy danych</h2>
@@ -1296,6 +1354,38 @@ function copyDbString() {
 }
 
 showMission(0);
+</script>
+
+
+<script>
+(function(){
+  var SESSION_KEY = 'mba_session';
+  function mbaClearSession() {
+    sessionStorage.removeItem(SESSION_KEY);
+    window.location.href = 'index.html';
+  }
+  window.mbaClearSession = mbaClearSession;
+
+  // Set title from <title> tag
+  var titleEl = document.getElementById('mba-topbar-title');
+  if (titleEl) {
+    var t = document.title.replace('MBA — ','').replace(' — MBA','').replace('MBA Quiz: ','').replace('MBA | ','');
+    titleEl.textContent = t;
+  }
+
+  // Show group name if session exists
+  try {
+    var session = JSON.parse(sessionStorage.getItem(SESSION_KEY));
+    if (session && session.groupName) {
+      var grp = document.getElementById('mba-topbar-group');
+      var grpName = document.getElementById('mba-topbar-groupname');
+      var logout = document.getElementById('mba-topbar-logout');
+      if (grp) grp.style.display = '';
+      if (grpName) grpName.textContent = session.groupName;
+      if (logout) logout.style.display = '';
+    }
+  } catch(e) {}
+})();
 </script>
 
 </body>
