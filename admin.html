@@ -93,11 +93,17 @@
   .btn-sm { padding:7px 14px; font-size:0.82rem; }
   .btn:disabled { opacity:0.5; cursor:not-allowed; }
 
-  .groups-table { width:100%; border-collapse:collapse; font-size:0.88rem; }
-  .groups-table th { text-align:left; padding:10px 14px; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--sec); border-bottom:1.5px solid var(--border); white-space:nowrap; }
-  .groups-table td { padding:11px 14px; border-bottom:1px solid #ece8e2; vertical-align:middle; }
-  .groups-table tr:last-child td { border-bottom:none; }
-  .groups-table tr:hover td { background:#faf9f7; }
+  /* Group cards */
+  .group-card { border-bottom: 1px solid var(--border); padding: 18px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .group-card:last-child { border-bottom: none; }
+  .group-card:hover { background: #faf9f7; }
+  .group-info { flex: 1; min-width: 160px; }
+  .group-name { font-size: 0.95rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+  .group-dates { font-size: 0.78rem; color: var(--sec); }
+  .group-pw-wrap { display: flex; align-items: center; gap: 6px; min-width: 160px; }
+  .group-ex-wrap { display: flex; gap: 4px; flex-wrap: wrap; min-width: 120px; }
+  .group-status-wrap { min-width: 80px; }
+  .group-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
   .badge { display:inline-block; padding:3px 10px; font-size:0.72rem; font-weight:700; }
   .badge-active   { background:#e8f5f4; color:var(--accent); border:1px solid var(--accent); }
@@ -321,33 +327,32 @@ function exPills(allowed) {
 function renderGroups(groups) {
   _groups = groups;
   const c = document.getElementById('groups-container');
-  if (!groups.length) { c.innerHTML='<div class="empty-state">Brak grup.</div>'; return; }
+  if (!groups.length) { c.innerHTML='<div class="empty-state">Brak grup. Utwórz pierwszą grupę powyżej.</div>'; return; }
   const order = {'Aktywna':0,'Przyszła':1,'Wyłączona':2,'Wygasła':3};
   groups.sort((a,b) => (order[getStatus(a).label]||9)-(order[getStatus(b).label]||9));
-  let h = `<table class="groups-table"><thead><tr>
-    <th>Nazwa</th><th>Hasło</th><th>Od</th><th>Do</th><th>Ćwiczenia</th><th>Status</th><th>Akcje</th>
-  </tr></thead><tbody>`;
+  let h = '';
   groups.forEach((g,i) => {
     const st = getStatus(g);
-    h += `<tr>
-      <td><strong>${g.name}</strong></td>
-      <td style="white-space:nowrap">
+    h += `<div class="group-card">
+      <div class="group-info">
+        <div class="group-name">${g.name}</div>
+        <div class="group-dates">${g.startDate} → ${g.endDate}</div>
+      </div>
+      <div class="group-pw-wrap">
         <span class="code-pill" id="pwd-${i}">${maskPw(g.password)}</span>
-        <button class="btn btn-ghost btn-sm" id="rbtn-${i}" onclick="revealPw(${i})" style="margin-left:6px;font-size:11px;padding:2px 8px;">Pokaż</button>
-      </td>
-      <td>${g.startDate}</td><td>${g.endDate}</td>
-      <td><div class="ex-pills">${exPills(g.allowedExercises ?? null)}</div></td>
-      <td><span class="badge ${st.cls}">${st.label}</span></td>
-      <td style="white-space:nowrap;display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm" id="rbtn-${i}" onclick="revealPw(${i})" style="font-size:11px;padding:2px 8px;">Pokaż</button>
+      </div>
+      <div class="group-ex-wrap">${exPills(g.allowedExercises ?? null)}</div>
+      <div class="group-status-wrap"><span class="badge ${st.cls}">${st.label}</span></div>
+      <div class="group-actions">
         <button class="btn btn-ghost btn-sm" onclick="openModal(${i})">Ćwiczenia</button>
         ${g.active
           ? `<button class="btn btn-ghost btn-sm" onclick="toggleGroup(${i},false)">Wyłącz</button>`
           : `<button class="btn btn-primary btn-sm" onclick="toggleGroup(${i},true)">Włącz</button>`}
         <button class="btn btn-danger btn-sm" onclick="deleteGroup(${i})">Usuń</button>
-      </td>
-    </tr>`;
+      </div>
+    </div>`;
   });
-  h += '</tbody></table>';
   c.innerHTML = h;
 }
 
