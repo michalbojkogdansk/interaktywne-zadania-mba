@@ -671,11 +671,57 @@ async function saveResult(correct, pct, cats) {
   const session = (() => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e){return null;} })();
   const groupName = session ? session.groupName : 'Nieznana';
   const password  = session ? session.password  : '';
-  const body = `## Test Predyspozycji — Wyniki\n\n**Ksywa:** ${nickname}  \n**Grupa:** ${groupName}  \n**Wynik ogólny:** ${correct}/15 (${pct}%)  \n\n| Kategoria | Wynik |\n|---|---|\n| Językowe | ${cats.j.right}/${cats.j.total} |\n| Matematyczne | ${cats.m.right}/${cats.m.total} |\n| Werbalne | ${cats.w.right}/${cats.w.total} |\n\n**Data:** ${new Date().toLocaleString('pl-PL')}`;
+
+  // Build per-question detail table
+  const level = pct >= 80 ? 'Wysoki poziom predyspozycji' : pct >= 55 ? 'Dobry poziom predyspozycji' : 'Obszary do rozwoju';
+  const diffMap = { easy: 'Łatwe', medium: 'Średnie', hard: 'Trudne' };
+  const catMap  = { j: 'Skojarzenia', m: 'Matematyczne', w: 'Werbalne' };
+
+  let detailRows = '';
+  QUIZ.forEach((q, i) => {
+    const ad = answerData[i];
+    const isOk = ad && ad.correct;
+    const chosen  = answers[i] !== null ? q.options[answers[i]] : '(brak)';
+    const correct_opt = (ad && ad.correctIndex !== null) ? q.options[ad.correctIndex] : '?';
+    const cat = catMap[q.id[0]] || q.id[0];
+    const diff = diffMap[q.diff] || q.diff;
+    const qText = q.question || q.statement || '';
+    detailRows += `| ${i+1} | ${cat} | ${diff} | ${qText.substring(0,60)}${qText.length>60?'...':''} | ${chosen} | ${correct_opt} | ${isOk ? 'TAK' : 'NIE'} |\n`;
+  });
+
+  const body = [
+    '## Test Predyspozycji — Wyniki',
+    '',
+    `**Ksywa:** ${nickname}`,
+    `**Grupa:** ${groupName}`,
+    `**Data:** ${new Date().toLocaleString('pl-PL')}`,
+    '',
+    '### Wynik ogólny',
+    '',
+    `**${correct}/20 (${pct}%) — ${level}**`,
+    '',
+    '| Kategoria | Wynik | Procent |',
+    '|---|---|---|',
+    `| Skojarzenia | ${cats.j.right}/${cats.j.total} | ${Math.round(cats.j.right/cats.j.total*100)}% |`,
+    `| Matematyczne | ${cats.m.right}/${cats.m.total} | ${Math.round(cats.m.right/cats.m.total*100)}% |`,
+    `| Werbalne | ${cats.w.right}/${cats.w.total} | ${Math.round(cats.w.right/cats.w.total*100)}% |`,
+    '',
+    '### Szczegóły — odpowiedzi',
+    '',
+    '| Nr | Kategoria | Trudność | Pytanie | Odpowiedź studenta | Poprawna | OK? |',
+    '|---|---|---|---|---|---|---|',
+    detailRows.trim(),
+  ].join('\n');
+
   try {
     await fetch(WORKER, {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ title: `[Predyspozycje] ${nickname} — ${groupName} — ${pct}%`, body, labels: ['predyspozycje'], code: password })
+      body: JSON.stringify({
+        title: `[Predyspozycje] ${nickname} — ${groupName} — ${correct}/20 (${pct}%)`,
+        body,
+        labels: ['predyspozycje'],
+        code: password
+      })
     });
   } catch(e) { console.warn('Issue save failed', e); }
 }
