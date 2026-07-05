@@ -1,0 +1,998 @@
+{
+  "jezykowe": [
+    {
+      "id": "j01",
+      "diff": "easy",
+      "question": "Dzień — noc, lato — ?",
+      "options": [
+        "wiosna",
+        "zima",
+        "jesień",
+        "ciepło"
+      ]
+    },
+    {
+      "id": "j02",
+      "diff": "easy",
+      "question": "Ptak — gniazdo, ryba — ?",
+      "options": [
+        "woda",
+        "staw",
+        "rzeka",
+        "skrzela"
+      ]
+    },
+    {
+      "id": "j03",
+      "diff": "easy",
+      "question": "Nóż — kroić, ołówek — ?",
+      "options": [
+        "rysować",
+        "pisać",
+        "malować",
+        "kreślić"
+      ]
+    },
+    {
+      "id": "j04",
+      "diff": "easy",
+      "question": "Lekarz — szpital, nauczyciel — ?",
+      "options": [
+        "biblioteka",
+        "szkoła",
+        "biuro",
+        "uczelnia"
+      ]
+    },
+    {
+      "id": "j05",
+      "diff": "easy",
+      "question": "Auto — garaż, samolot — ?",
+      "options": [
+        "lotnisko",
+        "hangar",
+        "niebo",
+        "terminal"
+      ]
+    },
+    {
+      "id": "j06",
+      "diff": "easy",
+      "question": "Ogień — gorący, lód — ?",
+      "options": [
+        "twardy",
+        "mokry",
+        "zimny",
+        "biały"
+      ]
+    },
+    {
+      "id": "j07",
+      "diff": "easy",
+      "question": "Jabłko — owoc, marchew — ?",
+      "options": [
+        "roślina",
+        "warzywo",
+        "korzeń",
+        "jedzenie"
+      ]
+    },
+    {
+      "id": "j08",
+      "diff": "easy",
+      "question": "Księżyc — noc, słońce — ?",
+      "options": [
+        "ciepło",
+        "dzień",
+        "niebo",
+        "gwiazda"
+      ]
+    },
+    {
+      "id": "j09",
+      "diff": "easy",
+      "question": "Pies — szczekać, kot — ?",
+      "options": [
+        "wyć",
+        "miauczeć",
+        "skrzeczeć",
+        "chrumkać"
+      ]
+    },
+    {
+      "id": "j10",
+      "diff": "easy",
+      "question": "Woda — pić, chleb — ?",
+      "options": [
+        "kroić",
+        "jeść",
+        "kupować",
+        "piec"
+      ]
+    },
+    {
+      "id": "j11",
+      "diff": "medium",
+      "question": "Biblioteka — książki, muzeum — ?",
+      "options": [
+        "obrazy",
+        "eksponaty",
+        "zwiedzający",
+        "historia"
+      ]
+    },
+    {
+      "id": "j12",
+      "diff": "medium",
+      "question": "Głodny — jeść, zmęczony — ?",
+      "options": [
+        "siedzieć",
+        "spać",
+        "odpoczywać",
+        "leżeć"
+      ]
+    },
+    {
+      "id": "j13",
+      "diff": "medium",
+      "question": "Słowa — zdanie, nuty — ?",
+      "options": [
+        "dźwięki",
+        "melodia",
+        "muzyka",
+        "utwór"
+      ]
+    },
+    {
+      "id": "j14",
+      "diff": "medium",
+      "question": "Kapitan — statek, pilot — ?",
+      "options": [
+        "lotnisko",
+        "pasażerowie",
+        "samolot",
+        "kabina"
+      ]
+    },
+    {
+      "id": "j15",
+      "diff": "medium",
+      "question": "Zegar — czas, termometr — ?",
+      "options": [
+        "pogoda",
+        "ciepło",
+        "temperaturę",
+        "gorączkę"
+      ]
+    },
+    {
+      "id": "j16",
+      "diff": "medium",
+      "question": "Radość — śmiech, smutek — ?",
+      "options": [
+        "cisza",
+        "płacz",
+        "milczenie",
+        "westchnienie"
+      ]
+    },
+    {
+      "id": "j17",
+      "diff": "medium",
+      "question": "Malarz — pędzel, rzeźbiarz — ?",
+      "options": [
+        "glina",
+        "dłuto",
+        "kamień",
+        "forma"
+      ]
+    },
+    {
+      "id": "j18",
+      "diff": "medium",
+      "question": "Słońce — energia, wiatr — ?",
+      "options": [
+        "ruch",
+        "prąd",
+        "moc",
+        "turbina"
+      ]
+    },
+    {
+      "id": "j19",
+      "diff": "medium",
+      "question": "Król — korona, żołnierz — ?",
+      "options": [
+        "mundur",
+        "hełm",
+        "broń",
+        "odznaczenie"
+      ]
+    },
+    {
+      "id": "j20",
+      "diff": "medium",
+      "question": "Pytanie — odpowiedź, problem — ?",
+      "options": [
+        "trudność",
+        "analiza",
+        "rozwiązanie",
+        "wyzwanie"
+      ]
+    },
+    {
+      "id": "j21",
+      "diff": "hard",
+      "question": "Nasienie — drzewo, pomysł — ?",
+      "options": [
+        "myśl",
+        "projekt",
+        "innowacja",
+        "wynalazek"
+      ]
+    },
+    {
+      "id": "j22",
+      "diff": "hard",
+      "question": "Słownik — znaczenia, mapa — ?",
+      "options": [
+        "drogi",
+        "miejsca",
+        "odległości",
+        "kierunki"
+      ]
+    },
+    {
+      "id": "j23",
+      "diff": "hard",
+      "question": "Śmiech — komedia, łzy — ?",
+      "options": [
+        "dramat",
+        "smutek",
+        "tragedia",
+        "melodramat"
+      ]
+    },
+    {
+      "id": "j24",
+      "diff": "hard",
+      "question": "Oko — widzieć, serce — ?",
+      "options": [
+        "bić",
+        "kochać",
+        "czuć",
+        "pompować"
+      ]
+    },
+    {
+      "id": "j25",
+      "diff": "hard",
+      "question": "Chaos — porządek, konflikt — ?",
+      "options": [
+        "spokój",
+        "zgoda",
+        "pokój",
+        "harmonia"
+      ]
+    },
+    {
+      "id": "j26",
+      "diff": "hard",
+      "question": "Skrzypce — smyczek, gitara — ?",
+      "options": [
+        "struny",
+        "kostka",
+        "gryf",
+        "pudło"
+      ]
+    },
+    {
+      "id": "j27",
+      "diff": "hard",
+      "question": "Pamięć — przeszłość, wyobraźnia — ?",
+      "options": [
+        "marzenia",
+        "przyszłość",
+        "twórczość",
+        "możliwości"
+      ]
+    },
+    {
+      "id": "j28",
+      "diff": "hard",
+      "question": "Prawo — obowiązek, wolność — ?",
+      "options": [
+        "wybór",
+        "odpowiedzialność",
+        "niezależność",
+        "przywilej"
+      ]
+    },
+    {
+      "id": "j29",
+      "diff": "hard",
+      "question": "Ziarna — mąka, winogrona — ?",
+      "options": [
+        "moszcz",
+        "wino",
+        "sok",
+        "ocet"
+      ]
+    },
+    {
+      "id": "j30",
+      "diff": "hard",
+      "question": "Cisza — dźwięk, ciemność — ?",
+      "options": [
+        "noc",
+        "cień",
+        "światło",
+        "zmrok"
+      ]
+    }
+  ],
+  "matematyczne": [
+    {
+      "id": "m01",
+      "diff": "easy",
+      "question": "W koszyku jest 12 jabłek. Zjadłeś 4, a dostałeś jeszcze 7. Ile jabłek masz teraz?",
+      "options": [
+        "13",
+        "14",
+        "15",
+        "16"
+      ]
+    },
+    {
+      "id": "m02",
+      "diff": "easy",
+      "question": "Bilet kosztuje 8 zł. Kupiłeś 5 biletów. Ile zapłaciłeś?",
+      "options": [
+        "35 zł",
+        "40 zł",
+        "45 zł",
+        "48 zł"
+      ]
+    },
+    {
+      "id": "m03",
+      "diff": "easy",
+      "question": "Masz 50 zł. Wydałeś 23 zł. Ile Ci zostało?",
+      "options": [
+        "25 zł",
+        "27 zł",
+        "28 zł",
+        "30 zł"
+      ]
+    },
+    {
+      "id": "m04",
+      "diff": "easy",
+      "question": "W klasie jest 30 uczniów. Połowa to dziewczynki. Ile jest chłopców?",
+      "options": [
+        "10",
+        "12",
+        "15",
+        "18"
+      ]
+    },
+    {
+      "id": "m05",
+      "diff": "easy",
+      "question": "Pizza jest podzielona na 8 kawałków. Zjadłeś 3 kawałki. Ile zostało?",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "3"
+      ]
+    },
+    {
+      "id": "m06",
+      "diff": "easy",
+      "question": "Pociąg jedzie 2 godziny z prędkością 80 km/h. Ile kilometrów przejechał?",
+      "options": [
+        "120",
+        "140",
+        "160",
+        "180"
+      ]
+    },
+    {
+      "id": "m07",
+      "diff": "easy",
+      "question": "Sklep daje każdemu klientowi kartę z 10 punktami. Zebrałeś 5 kart. Ile masz punktów?",
+      "options": [
+        "40",
+        "45",
+        "50",
+        "55"
+      ]
+    },
+    {
+      "id": "m08",
+      "diff": "easy",
+      "question": "Masz 3 pudełka. W każdym są 4 kredki. Ile kredek masz łącznie?",
+      "options": [
+        "8",
+        "10",
+        "12",
+        "14"
+      ]
+    },
+    {
+      "id": "m09",
+      "diff": "easy",
+      "question": "Herbata kosztuje 6 zł, ciasto 9 zł. Ile zapłacisz za jedno i drugie?",
+      "options": [
+        "13 zł",
+        "14 zł",
+        "15 zł",
+        "16 zł"
+      ]
+    },
+    {
+      "id": "m10",
+      "diff": "easy",
+      "question": "W drużynie jest 11 zawodników. 3 dostało żółtą kartkę. Ilu nie dostało?",
+      "options": [
+        "6",
+        "7",
+        "8",
+        "9"
+      ]
+    },
+    {
+      "id": "m11",
+      "diff": "medium",
+      "question": "Koszulka kosztuje 60 zł. Jest na niej rabat 10%. Ile zapłacisz?",
+      "options": [
+        "50 zł",
+        "52 zł",
+        "54 zł",
+        "56 zł"
+      ]
+    },
+    {
+      "id": "m12",
+      "diff": "medium",
+      "question": "Na przyjęcie przyszło 20 gości. 25% z nich to dzieci. Ile dzieci przyszło?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ]
+    },
+    {
+      "id": "m13",
+      "diff": "medium",
+      "question": "Auto zużywa 8 litrów na 100 km. Ile litrów potrzeba na 250 km?",
+      "options": [
+        "18",
+        "20",
+        "22",
+        "24"
+      ]
+    },
+    {
+      "id": "m14",
+      "diff": "medium",
+      "question": "Masz 120 zł i chcesz podzielić je równo między 4 osoby. Ile dostanie każda?",
+      "options": [
+        "25 zł",
+        "28 zł",
+        "30 zł",
+        "32 zł"
+      ]
+    },
+    {
+      "id": "m15",
+      "diff": "medium",
+      "question": "Sklep sprzedaje 3 jogurty za 9 zł. Ile kosztuje 7 jogurtów?",
+      "options": [
+        "18 zł",
+        "19 zł",
+        "21 zł",
+        "24 zł"
+      ]
+    },
+    {
+      "id": "m16",
+      "diff": "medium",
+      "question": "Cena wzrosła z 40 zł do 50 zł. O ile procent wzrosła?",
+      "options": [
+        "10%",
+        "20%",
+        "25%",
+        "30%"
+      ]
+    },
+    {
+      "id": "m17",
+      "diff": "medium",
+      "question": "Praca zajmuje 6 godzin. Zacząłeś o 9:00. O której skończysz?",
+      "options": [
+        "14:00",
+        "15:00",
+        "16:00",
+        "17:00"
+      ]
+    },
+    {
+      "id": "m18",
+      "diff": "medium",
+      "question": "W magazynie jest 200 paczek. Wysłano 35% z nich. Ile paczek zostało?",
+      "options": [
+        "120",
+        "125",
+        "130",
+        "140"
+      ]
+    },
+    {
+      "id": "m19",
+      "diff": "medium",
+      "question": "Jeśli 4 robotników buduje ścianę w 12 dni, ile dni zajmie to 6 robotnikom?",
+      "options": [
+        "6",
+        "7",
+        "8",
+        "9"
+      ]
+    },
+    {
+      "id": "m20",
+      "diff": "medium",
+      "question": "Kupiłeś produkt za 80 zł i sprzedałeś za 100 zł. Ile procent zysku zarobiłeś?",
+      "options": [
+        "15%",
+        "20%",
+        "25%",
+        "30%"
+      ]
+    },
+    {
+      "id": "m21",
+      "diff": "hard",
+      "question": "Sklep daje 20% rabatu, a do tego dodatkowe 10% zniżki na przecenione produkty. Produkt kosztuje 100 zł. Ile zapłacisz?",
+      "options": [
+        "68 zł",
+        "70 zł",
+        "72 zł",
+        "75 zł"
+      ]
+    },
+    {
+      "id": "m22",
+      "diff": "hard",
+      "question": "Firma miała 80 pracowników. Zatrudniła 25% więcej, a potem zwolniła 10 osób. Ilu pracowników ma teraz?",
+      "options": [
+        "88",
+        "90",
+        "92",
+        "95"
+      ]
+    },
+    {
+      "id": "m23",
+      "diff": "hard",
+      "question": "Cena produktu wzrosła o 20%, a następnie spadła o 20%. Jaka jest zmiana netto?",
+      "options": [
+        "0%",
+        "-4%",
+        "+4%",
+        "-2%"
+      ]
+    },
+    {
+      "id": "m24",
+      "diff": "hard",
+      "question": "Pociąg A jedzie 120 km/h, pociąg B jedzie 80 km/h w tym samym kierunku. B wyruszył godzinę wcześniej. Po ilu godzinach A dogoni B?",
+      "options": [
+        "1 godz.",
+        "2 godz.",
+        "3 godz.",
+        "4 godz."
+      ]
+    },
+    {
+      "id": "m25",
+      "diff": "hard",
+      "question": "Trzy osoby składają się na prezent. Ania dała 30 zł, Bartek dwa razy więcej niż Ania, Celina tyle samo co Ania i Bartek razem. Ile kosztował prezent?",
+      "options": [
+        "150 zł",
+        "160 zł",
+        "170 zł",
+        "180 zł"
+      ]
+    },
+    {
+      "id": "m26",
+      "diff": "hard",
+      "question": "W sklepie: kup 3, zapłać za 2. Jeden produkt kosztuje 15 zł. Ile zapłacisz za 6 sztuk?",
+      "options": [
+        "50 zł",
+        "55 zł",
+        "60 zł",
+        "65 zł"
+      ]
+    },
+    {
+      "id": "m27",
+      "diff": "hard",
+      "question": "Zbiornik wypełnia się w 4 godziny przez jeden kran, a opróżnia w 6 godzin przez odpływ. Ile godzin wypełni się przy otwartym odpływie?",
+      "options": [
+        "8",
+        "10",
+        "12",
+        "14"
+      ]
+    },
+    {
+      "id": "m28",
+      "diff": "hard",
+      "question": "Sklep podniósł cenę o 50%, a potem obniżył o 50%. Produkt kosztował 80 zł. Ile kosztuje teraz?",
+      "options": [
+        "60 zł",
+        "65 zł",
+        "70 zł",
+        "80 zł"
+      ]
+    },
+    {
+      "id": "m29",
+      "diff": "hard",
+      "question": "Firma zarabia 5 000 zł tygodniowo. Koszty stałe to 2 000 zł, a zmienne to 40% przychodu. Ile wynosi tygodniowy zysk?",
+      "options": [
+        "800 zł",
+        "900 zł",
+        "1000 zł",
+        "1100 zł"
+      ]
+    },
+    {
+      "id": "m30",
+      "diff": "hard",
+      "question": "Masz 3 worki z kulkami. Każdy worek ma 3 razy więcej kulek niż poprzedni. W pierwszym jest 4 kulki. Ile kulek łącznie?",
+      "options": [
+        "36",
+        "40",
+        "48",
+        "52"
+      ]
+    }
+  ],
+  "werbalne": [
+    {
+      "id": "w01",
+      "diff": "easy",
+      "passage": "Firma Omega zatrudnia 500 pracowników. Główna siedziba mieści się w Warszawie. Firma działa na rynku od 15 lat i specjalizuje się w produkcji oprogramowania dla sektora finansowego.",
+      "statement": "Firma Omega ma ponad 10 lat doświadczenia na rynku.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w02",
+      "diff": "easy",
+      "passage": "W badaniu wzięło udział 200 studentów. 50% stwierdziło, że preferuje naukę online. Spośród nich 40% korzystało z platform e-learningowych przed pandemią.",
+      "statement": "Co najmniej połowa wszystkich badanych studentów preferuje naukę online.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w03",
+      "diff": "easy",
+      "passage": "Kawiarnia 'Złoty Kubek' jest otwarta od poniedziałku do soboty w godzinach 8:00–20:00. W niedzielę lokal jest zamknięty.",
+      "statement": "W niedzielę o godzinie 10:00 kawiarnia 'Złoty Kubek' jest otwarta.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w04",
+      "diff": "easy",
+      "passage": "Program dopłat przyznaje 500 zł osobom fizycznym kupującym rower elektryczny. Program trwa do końca roku lub do wyczerpania budżetu. Budżet programu wynosi 1 000 000 zł.",
+      "statement": "Program może zakończyć się przed końcem roku.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w05",
+      "diff": "easy",
+      "passage": "Muzeum jest otwarte we wszystkie dni tygodnia z wyjątkiem poniedziałków. Bilet normalny kosztuje 20 zł, ulgowy 12 zł.",
+      "statement": "W poniedziałek można kupić bilet ulgowy do muzeum.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w06",
+      "diff": "easy",
+      "passage": "Pracownicy spędzają średnio 1 godzinę dziennie na sprawdzaniu e-maili. Firma pracuje 5 dni w tygodniu.",
+      "statement": "Pracownik poświęca 5 godzin tygodniowo na e-maile.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w07",
+      "diff": "easy",
+      "passage": "Sklep jest otwarty od 9:00 do 21:00 przez 7 dni w tygodniu. Pracownicy zmieniają się co 8 godzin.",
+      "statement": "Sklep jest zamknięty w sobotę.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w08",
+      "diff": "easy",
+      "passage": "Program lojalnościowy daje 1 punkt za każde wydane 5 zł. 50 punktów można wymienić na rabat 10 zł.",
+      "statement": "Wydając 100 zł, zbierzesz wystarczająco punktów, żeby dostać rabat 10 zł.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w09",
+      "diff": "easy",
+      "passage": "Konferencja trwa 3 dni i odbywa się w hotelu. Udział w każdym dniu kosztuje 150 zł. Całkowity koszt udziału wynosi 450 zł.",
+      "statement": "Uczestnik, który weźmie udział we wszystkich dniach, zapłaci 450 zł.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w10",
+      "diff": "easy",
+      "passage": "Nowa ustawa dotyczy firm zatrudniających powyżej 50 pracowników. Firmy muszą dostosować się do wymogów do końca roku.",
+      "statement": "Firma zatrudniająca 30 pracowników musi dostosować się do nowej ustawy.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w11",
+      "diff": "medium",
+      "passage": "W ankiecie 60% pracowników oceniło warunki pracy jako dobre lub bardzo dobre. W poprzednim roku wskaźnik ten wynosił 45%.",
+      "statement": "Więcej pracowników jest zadowolonych z pracy niż niezadowolonych.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w12",
+      "diff": "medium",
+      "passage": "Firma sprzedaje produkt za 80 zł. Koszty produkcji wynoszą 50 zł za sztukę. W ciągu miesiąca sprzedano 200 sztuk.",
+      "statement": "Firma zarobiła w tym miesiącu ponad 5 000 zł zysku.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w13",
+      "diff": "medium",
+      "passage": "Autobus linii 12 kursuje co 15 minut między 6:00 a 22:00. Ostatni kurs wyjeżdża o 22:00.",
+      "statement": "Między godziną 18:00 a 19:00 przejeżdżają dokładnie 4 autobusy linii 12.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w14",
+      "diff": "medium",
+      "passage": "Badanie przeprowadzono tylko wśród osób, które dobrowolnie zgłosiły się do udziału. Wyniki pokazują, że 80% jest zadowolonych z usługi.",
+      "statement": "Wyniki badania są reprezentatywne dla wszystkich klientów firmy.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w15",
+      "diff": "medium",
+      "passage": "Firma A ma 300 klientów i rośnie o 10% rocznie. Firma B ma 400 klientów i rośnie o 5% rocznie.",
+      "statement": "Za 2 lata firma A będzie miała więcej klientów niż firma B.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w16",
+      "diff": "medium",
+      "passage": "Pracownik ze stażem do 5 lat ma 20 dni urlopu. Ze stażem powyżej 5 lat ma 26 dni. Marek pracuje w firmie od 3 lat.",
+      "statement": "Marek ma prawo do 26 dni urlopu.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w17",
+      "diff": "medium",
+      "passage": "Startup zebrał 400 000 zł. Planuje wydać 50% na rozwój produktu, 30% na marketing i 20% na koszty biura.",
+      "statement": "Na marketing startup przeznaczy więcej niż na koszty biura.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w18",
+      "diff": "medium",
+      "passage": "Sklep internetowy obsługuje zamówienia przez 7 dni w tygodniu. Czas dostawy wynosi 2–4 dni robocze. Zamówienie złożono w piątek.",
+      "statement": "Zamówienie złożone w piątek dotrze najpóźniej w następną środę.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w19",
+      "diff": "medium",
+      "passage": "Raport wykazał wzrost sprzedaży o 15% w porównaniu do ubiegłego roku. Ubiegłoroczna sprzedaż wynosiła 200 000 zł.",
+      "statement": "Tegoroczna sprzedaż wynosi 230 000 zł.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w20",
+      "diff": "medium",
+      "passage": "Konferencja odbędzie się 20 marca. Rejestracja zamyka się 5 marca. Osoby zarejestrowane do 28 lutego płacą 200 zł, pozostałe 300 zł.",
+      "statement": "Osoba rejestrująca się 1 marca zapłaci 200 zł.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w21",
+      "diff": "hard",
+      "passage": "Badanie wykazało, że osoby ćwiczące 3 razy w tygodniu mają o 30% lepsze wyniki w testach koncentracji niż osoby niećwiczące.",
+      "statement": "Ćwiczenia fizyczne powodują lepszą koncentrację.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w22",
+      "diff": "hard",
+      "passage": "W głosowaniu wzięło udział 80% akcjonariuszy. Spośród głosujących 70% było 'za'. Decyzja wymaga zgody ponad 50% wszystkich akcjonariuszy.",
+      "statement": "Decyzja uzyskała wymaganą większość.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w23",
+      "diff": "hard",
+      "passage": "Firma X twierdzi, że jej produkt oszczędza 40% energii. Niezależne testy wykazały oszczędność 25–30% w normalnych warunkach użytkowania.",
+      "statement": "Niezależne testy potwierdziły deklaracje producenta.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w24",
+      "diff": "hard",
+      "passage": "Projekt miał trwać 12 miesięcy i kosztować 600 000 zł. Po 6 miesiącach wykonano 40% prac i wydano 360 000 zł, czyli 60% budżetu.",
+      "statement": "Projekt jest zagrożony przekroczeniem budżetu.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w25",
+      "diff": "hard",
+      "passage": "Ankieta przeprowadzona wśród 500 klientów wykazała, że 72% jest zadowolonych. Odpowiedzi udzieliło 60% wysłanych zaproszeń.",
+      "statement": "Ponad połowa wszystkich zaproszonych klientów jest zadowolona.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w26",
+      "diff": "hard",
+      "passage": "Ceny mieszkań w mieście wzrosły o 12% w ciągu roku. Przeciętna pensja wzrosła o 6% w tym samym czasie.",
+      "statement": "Mieszkania stały się mniej dostępne dla przeciętnego mieszkańca.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w27",
+      "diff": "hard",
+      "passage": "Firma zatrudnia 120 osób. 30 pracuje w dziale IT, 40 w sprzedaży, reszta w administracji. Dział IT planuje zatrudnić 10 dodatkowych osób.",
+      "statement": "Po nowym zatrudnieniu w IT, więcej pracowników będzie w IT niż w administracji.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w28",
+      "diff": "hard",
+      "passage": "Zgodnie z regulaminem, kara za spóźnienie powyżej 15 minut wynosi 50 zł. Kara za nieobecność wynosi 200 zł. Jan spóźnił się 10 minut.",
+      "statement": "Jan zostanie ukarany grzywną 50 zł.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w29",
+      "diff": "hard",
+      "passage": "W 2020 roku 35% populacji miasta stanowiły osoby powyżej 60 lat. W 2010 roku odsetek ten wynosił 28%. Populacja miasta w 2020 roku wynosiła 100 000 osób.",
+      "statement": "W 2020 roku w mieście żyło więcej osób powyżej 60 lat niż w 2010 roku.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    },
+    {
+      "id": "w30",
+      "diff": "hard",
+      "passage": "Zgodnie z umową, dostawca zobowiązał się dostarczyć towar do 30 dni od złożenia zamówienia. Zamówienie złożono 1 marca. Towar dotarł 28 marca.",
+      "statement": "Dostawca wywiązał się z umowy terminowo.",
+      "options": [
+        "Prawda",
+        "Fałsz",
+        "Trudno stwierdzić"
+      ]
+    }
+  ]
+}
