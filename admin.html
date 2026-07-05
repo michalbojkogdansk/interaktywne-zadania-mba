@@ -267,6 +267,7 @@ function doLogin() {
   ADMIN_KEY = key;
   loadGroups().then(ok => {
     if (ok) {
+      try { sessionStorage.setItem('mba_admin_key', key); } catch(e) {}
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('main-screen').style.display = 'block';
     } else {
@@ -279,6 +280,7 @@ function doLogin() {
 
 function doLogout() {
   ADMIN_KEY = '';
+  try { sessionStorage.removeItem('mba_admin_key'); } catch(e) {}
   document.getElementById('main-screen').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('admin-key-input').value = '';
@@ -514,6 +516,24 @@ document.getElementById('date-modal').addEventListener('click', function(e) {
   if (e.target === this) closeDateModal();
 });
 
+
+// Auto-login if session exists
+(function() {
+  try {
+    var saved = sessionStorage.getItem('mba_admin_key');
+    if (!saved) return;
+    ADMIN_KEY = saved;
+    loadGroups().then(function(ok) {
+      if (ok) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-screen').style.display = 'block';
+      } else {
+        ADMIN_KEY = '';
+        sessionStorage.removeItem('mba_admin_key');
+      }
+    });
+  } catch(e) {}
+})();
 </script>
 </body>
 </html>
