@@ -158,6 +158,35 @@
   } catch(e){}
 })();
 </script>
+<script>
+(function(){
+  var KSYWA_KEY = 'mba_ksywa';
+  function getKsywa() { try { return localStorage.getItem(KSYWA_KEY) || ''; } catch(e) { return ''; } }
+  function saveKsywa(v) { try { localStorage.setItem(KSYWA_KEY, v); } catch(e) {} }
+  window.mbaGetKsywa = getKsywa;
+  window.mbaSaveKsywa = saveKsywa;
+  document.addEventListener('DOMContentLoaded', function() {
+    var saved = getKsywa();
+    if (!saved) return;
+    // Fill any nickname/ksywa input found on page
+    var candidates = [
+      document.getElementById('nickname-input'),
+      document.getElementById('ksywa-input'),
+      document.getElementById('nick-input'),
+      document.querySelector('input[placeholder*="ksyw"]'),
+      document.querySelector('input[placeholder*="pseudonim"]'),
+      document.querySelector('input[placeholder*="Panda"]')
+    ];
+    candidates.forEach(function(el) { if (el && !el.value) el.value = saved; });
+    // Save ksywa when user changes the field
+    candidates.forEach(function(el) {
+      if (!el) return;
+      el.addEventListener('change', function() { if (el.value.trim()) saveKsywa(el.value.trim()); });
+      el.addEventListener('blur',   function() { if (el.value.trim()) saveKsywa(el.value.trim()); });
+    });
+  });
+})();
+</script>
 </head>
 <body>
 
