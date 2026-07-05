@@ -693,7 +693,13 @@
     }
   });
 
-  // ── Periodic permission poll (every 2 minutes) ───────────────────────────
+  // ── Periodic permission poll (every 30 seconds) ─────────────────────────
+  function allowedChanged(a, b) {
+    // null means all — treat as sorted array comparison
+    const toSorted = x => x === null ? null : [...x].sort().join(',');
+    return toSorted(a) !== toSorted(b);
+  }
+
   setInterval(async function() {
     const session = loadSession();
     if (!session || !session.password) return;
@@ -705,15 +711,14 @@
       const data = await res.json();
       if (!data.valid) { clearSession(); location.reload(); return; }
       const newAllowed = data.allowedExercises ?? null;
-      const oldAllowed = session.allowedExercises;
-      const changed = JSON.stringify(newAllowed) !== JSON.stringify(oldAllowed);
-      if (changed) {
+      const oldAllowed = session.allowedExercises ?? null;
+      if (allowedChanged(oldAllowed, newAllowed)) {
         saveSession(session.password, data.groupName, newAllowed);
         document.getElementById('refresh-banner').style.display = '';
         applySession({ groupName: data.groupName, allowedExercises: newAllowed });
       }
     } catch(e) {}
-  }, 2 * 60 * 1000);
+  }, 30 * 1000);
 
   async function doStudentLogin() {
     const pw = document.getElementById('student-password').value.trim();
