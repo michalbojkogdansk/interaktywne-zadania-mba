@@ -660,12 +660,15 @@
   // ── Live permission check on card click ──────────────────────────────────
   // Always re-verify with Worker before navigating to an exercise
   document.addEventListener('click', async function(e) {
-    const card = e.target.closest('.card[href], .final-card[href]');
+    // Match cards with href OR data-href (locked cards lose href but keep data-href)
+    const card = e.target.closest('.card, .final-card');
     if (!card) return;
+    const href = card.getAttribute('href') || card.dataset.href;
+    if (!href) return;
+
     const session = loadSession();
     if (!session || !session.password) return; // no session — gate will handle it
-    const href = card.getAttribute('href');
-    if (!href) return;
+
     e.preventDefault();
     try {
       const res = await fetch(WORKER + '/verify-group', {
@@ -673,23 +676,23 @@
         body: JSON.stringify({ password: session.password })
       });
       const data = await res.json();
-      if (!data.valid) {
-        clearSession(); location.reload(); return;
-      }
-      // Update session with fresh permissions
-      saveSession(session.password, data.groupName, data.allowedExercises ?? null);
+      if (!data.valid) { clearSession(); location.reload(); return; }
+
+      const newAllowed = data.allowedExercises ?? null;
+      saveSession(session.password, data.groupName, newAllowed);
+
       const ex = EX_MAP[href];
-      const allowed = data.allowedExercises;
-      if (allowed !== null && ex && !allowed.includes(ex)) {
-        // Access revoked for this exercise
-        document.getElementById('refresh-banner').style.display = '';
-        applySession({ groupName: data.groupName, allowedExercises: allowed });
+      if (newAllowed !== null && ex && !newAllowed.includes(ex)) {
+        // Access denied — show banner and update UI
+        const banner = document.getElementById('refresh-banner');
+        if (banner) banner.style.display = '';
+        applySession({ groupName: data.groupName, allowedExercises: newAllowed });
         return;
       }
       window.location.href = href;
     } catch(err) {
-      // On network error, navigate anyway
-      window.location.href = href;
+      // Network error — navigate anyway if card had href
+      if (card.getAttribute('href')) window.location.href = href;
     }
   });
 
@@ -714,7 +717,8 @@
       const oldAllowed = session.allowedExercises ?? null;
       if (allowedChanged(oldAllowed, newAllowed)) {
         saveSession(session.password, data.groupName, newAllowed);
-        document.getElementById('refresh-banner').style.display = '';
+        const banner = document.getElementById('refresh-banner');
+        if (banner) banner.style.display = '';
         applySession({ groupName: data.groupName, allowedExercises: newAllowed });
       }
     } catch(e) {}
