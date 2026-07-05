@@ -299,9 +299,18 @@
 
 <!-- SCREEN: QUIZ -->
 <div id="screen-quiz" class="screen">
+  <div class="timer-wrap" id="timer-wrap" style="display:none;">
+    <div class="timer-meta">
+      <span id="timer-msg" class="timer-msg"></span>
+      <span>Pytanie <strong id="q-current-t">1</strong> / <strong>20</strong></span>
+    </div>
+    <div class="timer-bar-outer">
+      <div class="timer-bar-inner" id="timer-bar" style="width:100%"></div>
+    </div>
+  </div>
   <div class="progress-wrap">
     <div class="progress-meta">
-      <span>Pytanie <strong id="q-current">1</strong> z <strong>15</strong></span>
+      <span>Pytanie <strong id="q-current">1</strong> z <strong>20</strong></span>
       <span id="q-cat-label"></span>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
@@ -384,20 +393,32 @@ async function loadBank() {
 const ALL_EX = ['01','02','03','04','05','test','predyspozycje'];
 let QUIZ = [], answers = [], answerData = [], currentQ = 0, nickname = '';
 
+const TOTAL_TIME = 800; // 40 sek × 20 pytań
+let timerStart = null;
+let timerInterval = null;
+let lastNotifiedPct = 0;
+
+
 async function pickQuestions() {
   const bank = await loadBank();
-  function pickCat(pool) {
-    const easy   = shuffle(pool.filter(q=>q.diff==='easy'));
-    const medium = shuffle(pool.filter(q=>q.diff==='medium'));
-    const hard   = shuffle(pool.filter(q=>q.diff==='hard'));
-    const picked = [easy[0], medium[0], hard[0]];
-    const rest = shuffle([...easy.slice(1), ...medium.slice(1), ...hard.slice(1)]);
-    return shuffle([...picked, ...rest.slice(0,2)]);
+  // Per category: 1 easy + 3 medium + 3 hard (= 7 questions, but we need ~6-7 per cat for 20 total)
+  // Distribution: 20 questions total, 3 categories
+  // Per cat: 1 easy + 3 medium + 3 hard = 7 → 21 total → trim last cat to 6
+  // Final: cat1=7, cat2=7, cat3=6 = 20
+  function pickCat(pool, nMedium, nHard) {
+    const easy   = shuffle(pool.filter(q => q.diff === 'easy'));
+    const medium = shuffle(pool.filter(q => q.diff === 'medium'));
+    const hard   = shuffle(pool.filter(q => q.diff === 'hard'));
+    const picked = [];
+    if (easy.length)   picked.push(easy[0]);                          // 1 easy
+    picked.push(...medium.slice(0, nMedium));                         // n medium
+    picked.push(...hard.slice(0, nHard));                             // n hard
+    return shuffle(picked);
   }
-  const j = pickCat(bank.jezykowe);
-  const m = pickCat(bank.matematyczne);
-  const w = pickCat(bank.werbalne);
-  return shuffle([...j, ...m, ...w]);
+  const j = pickCat(bank.jezykowe,   3, 3); // 7
+  const m = pickCat(bank.matematyczne, 3, 3); // 7
+  const w = pickCat(bank.werbalne,   2, 3); // 6
+  return shuffle([...j, ...m, ...w]); // 20 total
 }
 
 function shuffle(a) {
@@ -430,6 +451,54 @@ function showTutorial() {
   showScreen('tutorial');
 }
 
+
+function startTimer() {
+  timerStart = Date.now();
+  lastNotifiedPct = 0;
+  document.getElementById('timer-wrap').style.display = '';
+  updateTimer();
+  timerInterval = setInterval(function() {
+    const done = updateTimer();
+    if (done) { clearInterval(timerInterval); finishQuiz(); }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - timerStart) / 1000);
+  const remaining = Math.max(0, TOTAL_TIME - elapsed);
+  const pctUsed = Math.min(100, (elapsed / TOTAL_TIME) * 100);
+  const pctLeft = 100 - pctUsed;
+
+  const bar = document.getElementById('timer-bar');
+  const msg = document.getElementById('timer-msg');
+  if (bar) {
+    bar.style.width = pctLeft.toFixed(1) + '%';
+    if (pctUsed >= 80) bar.classList.add('urgent');
+  }
+
+  // Notify every 10%
+  const notifyAt = Math.floor(pctUsed / 10) * 10;
+  if (notifyAt > 0 && notifyAt > lastNotifiedPct && notifyAt <= 100) {
+    lastNotifiedPct = notifyAt;
+    if (msg) {
+      msg.textContent = notifyAt < 100
+        ? 'Minęło ' + notifyAt + '% czasu'
+        : 'Czas minął!';
+      if (notifyAt >= 80) msg.classList.add('urgent');
+    }
+  }
+
+  // Sync q-current-t
+  const qt = document.getElementById('q-current-t');
+  if (qt) qt.textContent = currentQ + 1;
+
+  return remaining === 0;
+}
+
 async function startWithNick() {
   const nick = document.getElementById('nickname-input').value.trim();
   if (!nick) { document.getElementById('nick-err').textContent = 'Podaj ksywę zanim zaczniesz.'; showScreen('welcome'); return; }
@@ -439,16 +508,18 @@ async function startWithNick() {
   const btn = document.querySelector('#screen-welcome .btn-primary, #screen-tutorial .btn-primary');
   if (btn) { btn.disabled = true; btn.textContent = 'Ładowanie pytań...'; }
   QUIZ = await pickQuestions();
-  answers = new Array(15).fill(null);
-  answerData = new Array(15).fill(null); // stores {correct, correctIndex, explain} from Worker
+  answers = new Array(20).fill(null);
+  answerData = new Array(20).fill(null); // stores {correct, correctIndex, explain} from Worker
   currentQ = 0;
   showScreen('quiz');
+  startTimer();
   renderQuestion();
 }
 
 function renderQuestion() {
   const q = QUIZ[currentQ];
-  const pct = ((currentQ) / 15 * 100).toFixed(0);
+  const pct = ((currentQ) / 20 * 100).toFixed(0);
+  const qt = document.getElementById('q-current-t'); if (qt) qt.textContent = currentQ + 1;
   document.getElementById('q-current').textContent = currentQ+1;
   document.getElementById('progress-fill').style.width = pct+'%';
   document.getElementById('q-cat-label').innerHTML = catLabel(q.id);
@@ -475,7 +546,7 @@ function renderQuestion() {
   document.getElementById('quiz-container').innerHTML = `
     <div class="q-card">
       <div class="q-meta">
-        <span class="q-num">Pytanie ${currentQ+1} / 15</span>
+        <span class="q-num">Pytanie ${currentQ+1} / 20</span>
         ${catLabel(q.id)} ${diffLabel(q.diff)}
       </div>
       ${passageHtml}
@@ -485,7 +556,7 @@ function renderQuestion() {
     </div>
     <div class="nav-btns">
       ${currentQ > 0 ? '<button class="btn btn-ghost" onclick="prevQ()">← Poprzednie</button>' : ''}
-      ${answered ? (currentQ < 14 ? '<button class="btn btn-primary" onclick="nextQ()">Następne →</button>' : '<button class="btn btn-purple" onclick="finishQuiz()">Zakończ i pokaż wyniki →</button>') : ''}
+      ${answered ? (currentQ < 19 ? '<button class="btn btn-primary" onclick="nextQ()">Następne →</button>' : '<button class="btn btn-purple" onclick="finishQuiz()">Zakończ i pokaż wyniki →</button>') : ''}
     </div>`;
 }
 
@@ -511,10 +582,11 @@ async function selectAnswer(i) {
   }
   renderQuestion();
 }
-function nextQ() { if (currentQ < 14) { currentQ++; renderQuestion(); } }
+function nextQ() { if (currentQ < 19) { currentQ++; renderQuestion(); } }
 function prevQ() { if (currentQ > 0) { currentQ--; renderQuestion(); } }
 
 async function finishQuiz() {
+  stopTimer();
   showScreen('result');
   const correct = answerData.filter((ad,i) => ad && ad.correct).length;
   const cats = { j:{label:'Językowe',right:0,total:0}, m:{label:'Matematyczne',right:0,total:0}, w:{label:'Werbalne',right:0,total:0} };
@@ -523,7 +595,7 @@ async function finishQuiz() {
     cats[k].total++;
     if (answerData[i] && answerData[i].correct) cats[k].right++;
   });
-  const pct = Math.round(correct/15*100);
+  const pct = Math.round(correct/20*100);
   let level = pct >= 80 ? 'Wysoki poziom predyspozycji' : pct >= 55 ? 'Dobry poziom predyspozycji' : 'Obszary do rozwoju';
   let levelDesc = pct >= 80 ? 'Wyniki wskazują na silne predyspozycje analityczne i komunikacyjne.' : pct >= 55 ? 'Solidna podstawa — pewne obszary warto wzmocnić.' : 'Wyniki wskazują konkretne obszary do pracy przed programem.';
 
