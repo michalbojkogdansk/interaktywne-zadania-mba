@@ -339,6 +339,30 @@
         .footer-left { font-size: 0.78rem; color: var(--text-muted); }
         .footer-right { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
 
+
+        /* ── Permissions refresh banner ── */
+        .refresh-banner {
+            display: none;
+            background: #FEF3C7;
+            border-bottom: 1px solid #F59E0B;
+            padding: 10px 24px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #92400E;
+            text-align: center;
+        }
+        .refresh-banner button {
+            margin-left: 12px;
+            padding: 4px 12px;
+            background: #F59E0B;
+            color: #fff;
+            border: none;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .refresh-banner button:hover { background: #D97706; }
         /* ── Responsive ── */
         .card-06 .card-thumb-bg { background: #1a3a5c; }
 
@@ -605,8 +629,14 @@
     document.getElementById('session-group-name').textContent = session.groupName;
 
     // Lock cards not in allowedExercises
-    document.querySelectorAll('.card[href]').forEach(card => {
-      const href = card.getAttribute('href');
+    document.querySelectorAll('.card[data-href]').forEach(card => {
+      card.setAttribute('href', card.dataset.href);
+      card.classList.remove('locked');
+    });
+    document.querySelectorAll('.card').forEach(card => {
+      const href = card.getAttribute('href') || card.dataset.href;
+      if (!href) return;
+      card.dataset.href = href;
       const ex = EX_MAP[href];
       if (allowed !== null && ex && !allowed.includes(ex)) {
         card.classList.add('locked');
@@ -617,13 +647,75 @@
     // Final exam card
     const finalCard = document.querySelector('.final-card');
     if (finalCard) {
-      const ex = 'test';
-      if (allowed !== null && !allowed.includes(ex)) {
+      const origHref = finalCard.dataset.href || finalCard.getAttribute('href');
+      if (origHref) finalCard.dataset.href = origHref;
+      if (allowed !== null && !allowed.includes('test')) {
         finalCard.classList.add('locked');
         finalCard.removeAttribute('href');
+      } else {
+        finalCard.classList.remove('locked');
+        if (finalCard.dataset.href) finalCard.setAttribute('href', finalCard.dataset.href);
       }
     }
   }
+
+  // ── Live permission check on card click ──────────────────────────────────
+  // Always re-verify with Worker before navigating to an exercise
+  document.addEventListener('click', async function(e) {
+    const card = e.target.closest('.card[href], .final-card[href]');
+    if (!card) return;
+    const session = loadSession();
+    if (!session || !session.password) return; // no session — gate will handle it
+    const href = card.getAttribute('href');
+    if (!href) return;
+    e.preventDefault();
+    try {
+      const res = await fetch(WORKER + '/verify-group', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ password: session.password })
+      });
+      const data = await res.json();
+      if (!data.valid) {
+        clearSession(); location.reload(); return;
+      }
+      // Update session with fresh permissions
+      saveSession(session.password, data.groupName, data.allowedExercises ?? null);
+      const ex = EX_MAP[href];
+      const allowed = data.allowedExercises;
+      if (allowed !== null && ex && !allowed.includes(ex)) {
+        // Access revoked for this exercise
+        document.getElementById('refresh-banner').style.display = '';
+        applySession({ groupName: data.groupName, allowedExercises: allowed });
+        return;
+      }
+      window.location.href = href;
+    } catch(err) {
+      // On network error, navigate anyway
+      window.location.href = href;
+    }
+  });
+
+  // ── Periodic permission poll (every 2 minutes) ───────────────────────────
+  setInterval(async function() {
+    const session = loadSession();
+    if (!session || !session.password) return;
+    try {
+      const res = await fetch(WORKER + '/verify-group', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ password: session.password })
+      });
+      const data = await res.json();
+      if (!data.valid) { clearSession(); location.reload(); return; }
+      const newAllowed = data.allowedExercises ?? null;
+      const oldAllowed = session.allowedExercises;
+      const changed = JSON.stringify(newAllowed) !== JSON.stringify(oldAllowed);
+      if (changed) {
+        saveSession(session.password, data.groupName, newAllowed);
+        document.getElementById('refresh-banner').style.display = '';
+        applySession({ groupName: data.groupName, allowedExercises: newAllowed });
+      }
+    } catch(e) {}
+  }, 2 * 60 * 1000);
 
   async function doStudentLogin() {
     const pw = document.getElementById('student-password').value.trim();
