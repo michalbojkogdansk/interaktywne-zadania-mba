@@ -189,6 +189,7 @@
             <div class="ex-item"><input type="checkbox" id="n04" value="04" checked><label for="n04">Ćw. 04 — Ciemne dane</label></div>
             <div class="ex-item"><input type="checkbox" id="n05" value="05" checked><label for="n05">Ćw. 05 — Inżynieria</label></div>
             <div class="ex-item"><input type="checkbox" id="ntest" value="test" checked><label for="ntest">Test końcowy</label></div>
+            <div class="ex-item"><input type="checkbox" id="npred" value="predyspozycje" checked><label for="npred">Test Predyspozycji</label></div>
           </div>
           <button class="ex-toggle-all" onclick="toggleAll('new-exercises')">zaznacz / odznacz wszystkie</button>
         </div>
@@ -221,6 +222,7 @@
       <div class="ex-item"><input type="checkbox" id="e04" value="04"><label for="e04">Ćw. 04 — Ciemne dane</label></div>
       <div class="ex-item"><input type="checkbox" id="e05" value="05"><label for="e05">Ćw. 05 — Inżynieria</label></div>
       <div class="ex-item"><input type="checkbox" id="etest" value="test"><label for="etest">Test końcowy</label></div>
+      <div class="ex-item"><input type="checkbox" id="epred" value="predyspozycje"><label for="epred">Test Predyspozycji</label></div>
     </div>
     <button class="ex-toggle-all" onclick="toggleAll('edit-exercises')">zaznacz / odznacz wszystkie</button>
     <div id="edit-msg"></div>
@@ -233,7 +235,7 @@
 
 <script>
 const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
-const ALL_EX = ['01','02','03','04','05','test'];
+const ALL_EX = ['01','02','03','04','05','test','predyspozycje'];
 let ADMIN_KEY = '', _groups = [], _editIdx = null;
 
 function togglePassVis(id, btnId) {
