@@ -432,6 +432,7 @@ function startWithNick() {
   if (!nick) { document.getElementById('nick-err').textContent = 'Podaj ksywę zanim zaczniesz.'; showScreen('welcome'); return; }
   nickname = nick;
   document.getElementById('nick-err').textContent = '';
+  if (typeof mbaSaveKsywa === 'function') mbaSaveKsywa(nick);
   QUIZ = pickQuestions();
   answers = new Array(15).fill(null);
   currentQ = 0;
