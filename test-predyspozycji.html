@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev; frame-ancestors 'none';">
+<title>Test Predyspozycji MBA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --bg-page: #F7F9FA;
+    --border: #D1D7DC;
+    --text: #1C1D1F;
+    --sec: #6A6F73;
+    --accent: #4A8F8A;
+    --accent-dark: #357570;
+    --accent-light: #E8F4F3;
+    --purple: #5624D0;
+    --ok: #1e7e34;
+    --err: #c0392b;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg-page); color: var(--text); min-height: 100vh; padding-top: 52px; }
+
+  /* ── Topbar ── */
+  .mba-topbar { position:fixed; top:0; left:0; right:0; z-index:9990; background:#fff; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 24px; height:52px; }
+  .mba-topbar-left { display:flex; align-items:center; gap:16px; }
+  .mba-topbar-back { display:flex; align-items:center; gap:6px; font-size:0.82rem; font-weight:700; color:var(--text); text-decoration:none; }
+  .mba-topbar-back:hover { color:var(--purple); }
+  .mba-topbar-divider { width:1px; height:20px; background:var(--border); }
+  .mba-topbar-title { font-size:0.85rem; font-weight:700; }
+  .mba-topbar-right { display:flex; align-items:center; gap:12px; }
+  .mba-topbar-group { font-size:0.78rem; color:var(--sec); }
+  .mba-topbar-group strong { color:var(--text); font-weight:700; }
+  .mba-topbar-logout { font-size:0.75rem; font-weight:600; color:var(--purple); cursor:pointer; background:none; border:none; font-family:inherit; }
+  .mba-topbar-logout:hover { text-decoration:underline; }
+
+  /* ── Gate overlay ── */
+  #mba-group-gate { position:fixed; inset:0; background:#fff; z-index:9999; display:flex; align-items:center; justify-content:center; }
+  .gate-box { background:#fff; border:1.5px solid var(--border); padding:48px 40px; max-width:420px; width:90%; }
+  .gate-eyebrow { font-size:11px; font-weight:700; letter-spacing:1.8px; text-transform:uppercase; color:#9b8f84; margin-bottom:12px; }
+  .gate-box h2 { font-size:1.6rem; font-weight:800; margin-bottom:8px; }
+  .gate-box p { color:var(--sec); margin-bottom:24px; font-size:0.9rem; line-height:1.55; }
+  .gate-input { width:100%; padding:13px 14px; border:1.5px solid var(--border); font-size:1rem; font-family:inherit; outline:none; margin-bottom:10px; }
+  .gate-input:focus { border-color:var(--accent); }
+  .gate-error { font-size:0.82rem; color:var(--err); margin-bottom:10px; min-height:18px; }
+  .gate-btn { width:100%; padding:13px; background:var(--accent); color:#fff; border:none; font-size:0.95rem; font-weight:700; font-family:inherit; cursor:pointer; }
+  .gate-btn:hover { background:var(--accent-dark); }
+  .gate-btn:disabled { opacity:0.6; cursor:not-allowed; }
+
+  /* ── Screens ── */
+  .screen { display:none; }
+  .screen.active { display:block; }
+  .container { max-width:760px; margin:0 auto; padding:40px 24px 80px; }
+
+  /* ── Welcome / nickname ── */
+  .welcome-card { background:#fff; border:1.5px solid var(--border); padding:48px 40px; max-width:520px; margin:40px auto; }
+  .welcome-card .eyebrow { font-size:11px; font-weight:700; letter-spacing:1.8px; text-transform:uppercase; color:var(--sec); margin-bottom:12px; }
+  .welcome-card h1 { font-size:2rem; font-weight:900; margin-bottom:12px; letter-spacing:-0.02em; }
+  .welcome-card p { color:var(--sec); line-height:1.65; margin-bottom:24px; }
+  .field-label { font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--sec); display:block; margin-bottom:6px; }
+  .text-input { width:100%; padding:12px 14px; border:1.5px solid var(--border); font-size:0.95rem; font-family:inherit; outline:none; }
+  .text-input:focus { border-color:var(--accent); }
+
+  /* ── Tutorial ── */
+  .tutorial-section { background:#fff; border:1.5px solid var(--border); padding:32px; margin-bottom:20px; }
+  .tutorial-section h2 { font-size:1.1rem; font-weight:800; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+  .cat-badge { font-size:11px; font-weight:700; padding:3px 10px; letter-spacing:0.5px; }
+  .cat-j { background:#EEF2FF; color:#4338CA; }
+  .cat-m { background:#FEF3C7; color:#92400E; }
+  .cat-w { background:#F0FDF4; color:#166534; }
+  .tutorial-example { background:var(--bg-page); border-left:3px solid var(--accent); padding:16px 20px; margin:16px 0; font-size:0.9rem; }
+  .tutorial-example strong { display:block; margin-bottom:8px; color:var(--text); }
+  .tutorial-tip { font-size:0.85rem; color:var(--sec); line-height:1.6; margin-top:12px; }
+  .tip-highlight { background:var(--accent-light); color:var(--accent-dark); padding:2px 6px; font-weight:600; }
+
+  /* ── Progress bar ── */
+  .progress-wrap { background:#fff; border-bottom:1px solid var(--border); padding:14px 24px; position:sticky; top:52px; z-index:100; }
+  .progress-meta { display:flex; justify-content:space-between; font-size:0.8rem; color:var(--sec); margin-bottom:8px; }
+  .progress-meta strong { color:var(--text); }
+  .progress-bar { height:4px; background:var(--border); border-radius:2px; }
+  .progress-fill { height:100%; background:var(--accent); border-radius:2px; transition:width 0.3s; }
+
+  /* ── Question card ── */
+  .q-card { background:#fff; border:1.5px solid var(--border); padding:32px; margin-bottom:20px; }
+  .q-meta { display:flex; gap:8px; align-items:center; margin-bottom:16px; }
+  .q-num { font-size:0.75rem; font-weight:700; color:var(--sec); text-transform:uppercase; letter-spacing:0.5px; }
+  .q-diff { font-size:0.7rem; font-weight:700; padding:2px 8px; }
+  .diff-easy   { background:#F0FDF4; color:#166534; }
+  .diff-medium { background:#FEF3C7; color:#92400E; }
+  .diff-hard   { background:#FEF2F2; color:#991B1B; }
+  .passage-box { background:var(--bg-page); border:1px solid var(--border); padding:16px 20px; margin-bottom:20px; font-size:0.88rem; line-height:1.7; color:var(--text); }
+  .passage-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--sec); margin-bottom:8px; }
+  .q-text { font-size:1rem; font-weight:700; line-height:1.45; margin-bottom:20px; }
+  .statement-box { background:#FFF8F0; border:1.5px solid #F59E0B; padding:12px 16px; margin-bottom:20px; font-size:0.92rem; font-weight:600; color:#92400E; }
+  .options-list { display:flex; flex-direction:column; gap:10px; }
+  .option-btn { padding:13px 16px; border:1.5px solid var(--border); background:#fff; font-size:0.92rem; font-family:inherit; text-align:left; cursor:pointer; transition:border-color 0.1s, background 0.1s; font-weight:500; }
+  .option-btn:hover:not(:disabled) { border-color:var(--accent); background:var(--accent-light); }
+  .option-btn.selected { border-color:var(--accent); background:var(--accent-light); font-weight:700; }
+  .option-btn.correct { border-color:var(--ok); background:#E8F8F0; color:var(--ok); font-weight:700; }
+  .option-btn.wrong   { border-color:var(--err); background:#FEF0F0; color:var(--err); font-weight:700; }
+  .option-btn:disabled { cursor:default; }
+  .explain-box { margin-top:16px; padding:14px 16px; background:#FFFBEB; border-left:3px solid #F59E0B; font-size:0.85rem; line-height:1.6; color:#78350F; }
+  .nav-btns { display:flex; gap:12px; margin-top:24px; }
+
+  /* ── Result ── */
+  .result-hero { background:var(--text); color:#fff; padding:48px 40px; text-align:center; margin-bottom:20px; }
+  .result-hero .score { font-size:4rem; font-weight:900; letter-spacing:-0.03em; }
+  .result-hero .score-sub { font-size:1rem; color:rgba(255,255,255,0.7); margin-top:4px; }
+  .result-hero h2 { font-size:1.4rem; font-weight:800; margin-top:20px; margin-bottom:6px; }
+  .result-hero p { color:rgba(255,255,255,0.75); font-size:0.9rem; }
+  .result-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px; }
+  .result-cat { background:#fff; border:1.5px solid var(--border); padding:24px; text-align:center; }
+  .result-cat .cat-score { font-size:2rem; font-weight:900; }
+  .result-cat .cat-label { font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--sec); margin-top:6px; }
+  .review-list { background:#fff; border:1.5px solid var(--border); }
+  .review-item { padding:20px 24px; border-bottom:1px solid var(--border); }
+  .review-item:last-child { border-bottom:none; }
+  .review-q { font-size:0.9rem; font-weight:700; margin-bottom:8px; }
+  .review-ans { font-size:0.82rem; margin-top:6px; }
+  .review-ans.ok  { color:var(--ok); }
+  .review-ans.bad { color:var(--err); }
+  .review-explain { font-size:0.8rem; color:var(--sec); margin-top:6px; line-height:1.55; }
+
+  /* ── Buttons ── */
+  .btn { padding:12px 24px; font-size:0.9rem; font-weight:700; font-family:inherit; cursor:pointer; border:none; }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-primary:hover { background:var(--accent-dark); }
+  .btn-ghost { background:#fff; color:var(--text); border:1.5px solid var(--border); }
+  .btn-ghost:hover { background:var(--bg-page); }
+  .btn-purple { background:var(--purple); color:#fff; }
+  .btn-purple:hover { background:#401B9C; }
+  .btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+  @media (max-width:600px) {
+    .result-grid { grid-template-columns:1fr; }
+    .welcome-card, .gate-box { padding:32px 24px; }
+    .q-card { padding:24px 16px; }
+  }
+</style>
+
+<script>
+(function(){
+  var SK = 'mba_session';
+  try {
+    var s = JSON.parse(sessionStorage.getItem(SK));
+    if (s && s.password) {
+      var style = document.createElement('style');
+      style.textContent = '#mba-group-gate{display:none!important}';
+      document.head.appendChild(style);
+      document.addEventListener('DOMContentLoaded', function() {
+        var inp = document.getElementById('mba-gate-input');
+        if (inp) { inp.value = s.password; style.remove(); if(typeof verifyGroupGate==='function') verifyGroupGate(); }
+        else style.remove();
+      });
+    }
+  } catch(e){}
+})();
+</script>
+</head>
+<body>
+
+<div class="mba-topbar">
+  <div class="mba-topbar-left">
+    <a class="mba-topbar-back" href="index.html">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7L9 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Platforma MBA
+    </a>
+    <div class="mba-topbar-divider"></div>
+    <div class="mba-topbar-title">Test Predyspozycji</div>
+  </div>
+  <div class="mba-topbar-right">
+    <div class="mba-topbar-group" id="tb-group" style="display:none">Grupa: <strong id="tb-groupname"></strong></div>
+    <button class="mba-topbar-logout" id="tb-logout" style="display:none" onclick="mbaClearSession()">Wyloguj</button>
+  </div>
+</div>
+
+<!-- GATE -->
+<div id="mba-group-gate">
+  <div class="gate-box">
+    <p class="gate-eyebrow">Platforma MBA</p>
+    <h2>Dostęp do ćwiczenia</h2>
+    <p>Wpisz hasło swojej grupy, aby kontynuować.</p>
+    <input class="gate-input" type="text" id="mba-gate-input" placeholder="Hasło grupy..." autocomplete="off" onkeydown="if(event.key==='Enter')verifyGroupGate();">
+    <div class="gate-error" id="gate-err"></div>
+    <button class="gate-btn" id="gate-btn" onclick="verifyGroupGate()">Wejdź →</button>
+  </div>
+</div>
+
+<!-- SCREEN: WELCOME -->
+<div id="screen-welcome" class="screen active">
+  <div class="container">
+    <div class="welcome-card">
+      <p class="eyebrow">Test Predyspozycji</p>
+      <h1>Sprawdź swoje predyspozycje</h1>
+      <p>Test składa się z <strong>15 losowych pytań</strong> — po 5 z każdej kategorii: językowej, matematycznej i werbalnej. Zadania mają zróżnicowany poziom trudności.</p>
+      <p style="margin-bottom:24px;">Zanim zaczniesz, zapoznaj się z samouczkiem — wyjaśnia, jak podchodzić do każdego rodzaju zadań.</p>
+      <span class="field-label">Twoja ksywa / pseudonim</span>
+      <input class="text-input" type="text" id="nickname-input" placeholder="np. Panda, Orzeł, AS007..." maxlength="30" autocomplete="off">
+      <div id="nick-err" style="font-size:0.82rem;color:var(--err);margin-top:6px;min-height:18px;"></div>
+      <div style="display:flex;gap:12px;margin-top:20px;">
+        <button class="btn btn-ghost" onclick="showTutorial()">Samouczek →</button>
+        <button class="btn btn-primary" onclick="startWithNick()">Zacznij bez samouczka →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: TUTORIAL -->
+<div id="screen-tutorial" class="screen">
+  <div class="container">
+    <div style="margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+      <button class="btn btn-ghost" onclick="backToWelcome()">← Wróć</button>
+      <h1 style="font-size:1.4rem;font-weight:800;">Samouczek</h1>
+    </div>
+
+    <div class="tutorial-section">
+      <h2><span class="cat-badge cat-j">JĘZYKOWE</span> Jak rozwiązywać zadania językowe?</h2>
+      <p style="color:var(--sec);font-size:0.9rem;line-height:1.65;margin-bottom:16px;">Zadania językowe sprawdzają znajomość gramatyki, stylistyki i znaczenia słów. Czytaj pytanie uważnie — często kluczowe jest jedno słowo.</p>
+      <div class="tutorial-example">
+        <strong>Przykład: Które zdanie jest poprawne gramatycznie?</strong>
+        A) Wczoraj poszłem do sklepu.<br>
+        B) Wczoraj poszedłem do sklepu.<br>
+        C) Wczoraj szedłem do sklepu i kupiłem.<br>
+        D) Wczoraj idziemy do sklepu.
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+          <strong style="color:var(--ok);">✓ Odpowiedź: B</strong><br>
+          <span style="font-size:0.85rem;color:var(--sec);">Poprawna forma czasu przeszłego od „iść" dla rodzaju męskiego to „poszedłem". Forma „poszłem" jest błędna. Opcja C jest niepełna kontekstowo. D używa czasu teraźniejszego przy okoliczniku czasu przeszłego „wczoraj".</span>
+        </div>
+      </div>
+      <div class="tutorial-tip">
+        <span class="tip-highlight">Wskazówka:</span> Eliminuj odpowiedzi, które brzmią niestandardowo. Czytaj każdą opcję na głos — błąd gramatyczny często słychać zanim go zobaczysz.
+      </div>
+    </div>
+
+    <div class="tutorial-section">
+      <h2><span class="cat-badge cat-m">MATEMATYCZNE</span> Jak rozwiązywać zadania matematyczne?</h2>
+      <p style="color:var(--sec);font-size:0.9rem;line-height:1.65;margin-bottom:16px;">Zadania dotyczą obliczeń procentowych, proporcji, zysków, prędkości i prostej algebry. Zawsze sprawdzaj jednostki i czy pytanie dotyczy liczby bezwzględnej czy procentu.</p>
+      <div class="tutorial-example">
+        <strong>Przykład: Sklep oferuje rabat 20% na artykuł za 80 zł. Jaka jest cena po rabacie?</strong>
+        A) 60 zł &nbsp; B) 64 zł &nbsp; C) 68 zł &nbsp; D) 72 zł
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+          <strong style="color:var(--ok);">✓ Odpowiedź: B (64 zł)</strong><br>
+          <span style="font-size:0.85rem;color:var(--sec);">Krok 1: Oblicz rabat → 20% × 80 = 16 zł.<br>Krok 2: Odejmij od ceny → 80 - 16 = <strong>64 zł</strong>.<br>Uwaga: nie odejmuj 20 od 80, lecz 20% wartości.</span>
+        </div>
+      </div>
+      <div class="tutorial-tip">
+        <span class="tip-highlight">Wskazówka:</span> Rozpisuj działania krok po kroku. Uważaj na pułapki: „o ile procent więcej" ≠ „ile razy więcej". Jeśli czas Ci na to pozwala, sprawdź szybkie szacowanie — eliminuje absurdalne odpowiedzi.
+      </div>
+    </div>
+
+    <div class="tutorial-section">
+      <h2><span class="cat-badge cat-w">WERBALNE</span> Jak rozwiązywać zadania werbalne (Prawda / Fałsz / Cannot Say)?</h2>
+      <p style="color:var(--sec);font-size:0.9rem;line-height:1.65;margin-bottom:16px;">Dostajesz krótki fragment tekstu i stwierdzenie. Musisz ocenić na podstawie <strong>wyłącznie</strong> tekstu — nie swojej wiedzy ogólnej.</p>
+      <div class="tutorial-example">
+        <strong>Tekst:</strong> „Kawiarnia jest otwarta od poniedziałku do soboty. W niedzielę lokal jest zamknięty."<br><br>
+        <strong>Stwierdzenie:</strong> „W niedzielę o godz. 10:00 można zamówić kawę."<br><br>
+        A) Prawda &nbsp; B) Fałsz &nbsp; C) Cannot Say
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+          <strong style="color:var(--ok);">✓ Odpowiedź: B (Fałsz)</strong><br>
+          <span style="font-size:0.85rem;color:var(--sec);">Tekst wyraźnie mówi: „W niedzielę lokal jest zamknięty" → nie można zamówić kawy. Stwierdzenie jest wprost zaprzeczone przez tekst.</span>
+        </div>
+      </div>
+      <div class="tutorial-tip">
+        <span class="tip-highlight">Klucz:</span> <strong>Prawda</strong> — tekst to potwierdza. <strong>Fałsz</strong> — tekst temu zaprzecza. <strong>Cannot Say</strong> — tekst nie daje wystarczających informacji, by ocenić stwierdzenie (nie oznacza „nie wiem"!).
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:12px;">
+      <button class="btn btn-primary" style="padding:14px 40px;font-size:1rem;" onclick="startWithNick()">Zaczynamy! →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: QUIZ -->
+<div id="screen-quiz" class="screen">
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span>Pytanie <strong id="q-current">1</strong> z <strong>15</strong></span>
+      <span id="q-cat-label"></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="container" id="quiz-container"></div>
+</div>
+
+<!-- SCREEN: RESULT -->
+<div id="screen-result" class="screen">
+  <div class="container" id="result-container"></div>
+</div>
+
+<script>
+const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
+const SESSION_KEY = 'mba_session';
+
+function mbaClearSession() {
+  sessionStorage.removeItem(SESSION_KEY);
+  window.location.href = 'index.html';
+}
+
+// Session topbar
+(function(){
+  try {
+    var s = JSON.parse(sessionStorage.getItem(SESSION_KEY));
+    if (s && s.groupName) {
+      document.getElementById('tb-group').style.display = '';
+      document.getElementById('tb-groupname').textContent = s.groupName;
+      document.getElementById('tb-logout').style.display = '';
+    }
+  } catch(e){}
+})();
+
+// Gate
+async function verifyGroupGate() {
+  const inp = document.getElementById('mba-gate-input');
+  const err = document.getElementById('gate-err');
+  const btn = document.getElementById('gate-btn');
+  const pw = (inp ? inp.value : '').trim();
+  if (!pw) { err.textContent = 'Wpisz hasło grupy.'; return; }
+  btn.disabled = true; btn.textContent = 'Sprawdzam...';
+  err.textContent = '';
+  try {
+    const res = await fetch(WORKER + '/verify-group', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ password: pw })
+    });
+    const data = await res.json();
+    if (data.valid) {
+      const allowed = data.allowedExercises;
+      if (allowed && !allowed.includes('predyspozycje')) {
+        err.textContent = 'Twoja grupa nie ma dostępu do tego ćwiczenia.';
+        btn.disabled = false; btn.textContent = 'Wejdź →';
+        return;
+      }
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+        password: pw, groupName: data.groupName, allowedExercises: data.allowedExercises
+      }));
+      document.getElementById('mba-group-gate').style.display = 'none';
+      document.getElementById('tb-group').style.display = '';
+      document.getElementById('tb-groupname').textContent = data.groupName;
+      document.getElementById('tb-logout').style.display = '';
+    } else {
+      err.textContent = data.error || 'Nieprawidłowe hasło grupy.';
+    }
+  } catch(e) { err.textContent = 'Błąd połączenia.'; }
+  btn.disabled = false; btn.textContent = 'Wejdź →';
+}
+
+// ── Questions ──
+const BANK = {"jezykowe": [{"id": "j01", "diff": "easy", "question": "Które zdanie jest poprawne gramatycznie?", "options": ["Wczoraj poszłem do sklepu.", "Wczoraj poszedłem do sklepu.", "Wczoraj szedłem do sklepu i kupiłem.", "Wczoraj idziemy do sklepu."], "answer": 1, "explain": "Poprawna forma czasu przeszłego od 'iść' dla rodzaju męskiego to 'poszedłem'."}, {"id": "j02", "diff": "easy", "question": "Uzupełnij zdanie: 'Nie wiedziałem, ___ zrobić.'", "options": ["co", "czego", "czemu", "którego"], "answer": 0, "explain": "Po 'wiedzieć' w zdaniu pytajno-zależnym używamy 'co' gdy pytamy o czynność."}, {"id": "j03", "diff": "easy", "question": "Które słowo jest antonimem słowa 'hojny'?", "options": ["szczodry", "skąpy", "bogaty", "pomocny"], "answer": 1, "explain": "Antonim (przeciwieństwo) słowa 'hojny' to 'skąpy' — oznaczający niechęć do dawania."}, {"id": "j04", "diff": "easy", "question": "Wybierz poprawną formę: 'Proszę o ___ tej sprawy.'", "options": ["wyjaśnienie", "wyjaśnienia", "wyjaśnieniu", "wyjaśnieniem"], "answer": 0, "explain": "Po 'proszę o' używamy dopełniacza, ale rzeczownik odczasownikowy 'wyjaśnienie' w bierniku = 'wyjaśnienie'."}, {"id": "j05", "diff": "easy", "question": "Co oznacza frazeologizm 'lać wodę'?", "options": ["Nawadniać rośliny", "Mówić dużo bez treści", "Płakać obficie", "Rozlewać napoje"], "answer": 1, "explain": "'Lać wodę' to frazeologizm oznaczający mówienie lub pisanie dużo, lecz bez konkretnej treści."}, {"id": "j06", "diff": "easy", "question": "Które zdanie zawiera błąd interpunkcyjny?", "options": ["Kupiłem chleb, masło i ser.", "Kiedy przyszedł, zaczęliśmy jeść.", "Lubię jabłka gruszki i śliwki.", "Zadzwoń, gdy dotrzesz na miejsce."], "answer": 2, "explain": "W zdaniu 'Lubię jabłka gruszki i śliwki' brakuje przecinków po 'jabłka' i 'gruszki' przy wyliczeniu."}, {"id": "j07", "diff": "easy", "question": "Synonim słowa 'lakoniczny' to:", "options": ["rozbudowany", "zwięzły", "skomplikowany", "niejasny"], "answer": 1, "explain": "'Lakoniczny' znaczy 'zwięzły, skrótowy' — pochodzi od Spartan (Lakonów) słynących z krótkich wypowiedzi."}, {"id": "j08", "diff": "easy", "question": "Które zdanie używa strony biernej?", "options": ["Piotr napisał raport.", "Raport został napisany przez Piotra.", "Piotr pisze raport codziennie.", "Piotr skończy raport jutro."], "answer": 1, "explain": "Strona bierna: podmiot jest odbiorcą czynności. 'Raport został napisany' — raport nie działa, lecz doznaje czynności."}, {"id": "j09", "diff": "easy", "question": "Które wyrazy to paronimy (podobnie brzmiące, różne znaczenie)?", "options": ["dom / domy", "woda / lód", "adaptacja / adopcja", "szybki / wolny"], "answer": 2, "explain": "'Adaptacja' (przystosowanie) i 'adopcja' (przysposobienie dziecka) to paronimy — podobne brzmienie, różne znaczenie."}, {"id": "j10", "diff": "easy", "question": "Uzupełnij przysłowie: 'Nie ma róży bez ___'", "options": ["kwiatów", "kolców", "liści", "wody"], "answer": 1, "explain": "Pełne przysłowie: 'Nie ma róży bez kolców' — oznacza, że każda dobra rzecz ma swoje wady lub trudności."}, {"id": "j11", "diff": "medium", "question": "Wskaż zdanie z poprawnie użytym imiesłowem przysłówkowym:", "options": ["Czytając książkę, zrobiło mi się gorąco.", "Czytając książkę, zasnąłem.", "Czytając książkę, ona mi się podobała.", "Czytając książkę, wieczór był długi."], "answer": 1, "explain": "Imiesłów przysłówkowy musi odnosić się do tego samego podmiotu co orzeczenie. 'Zasnąłem czytając' — ja czytałem i ja zasnąłem."}, {"id": "j12", "diff": "medium", "question": "Które zdanie zawiera pleonazm?", "options": ["Wróć z powrotem do domu.", "Wróć do domu.", "Idź naprzód.", "Zostań w miejscu."], "answer": 0, "explain": "'Wróć z powrotem' to pleonazm — 'wróć' już zawiera znaczenie 'z powrotem'. Zbędne powtórzenie."}, {"id": "j13", "diff": "medium", "question": "Co oznacza wyrażenie 'mutatis mutandis'?", "options": ["Bez zmian", "Z uwzględnieniem koniecznych zmian", "W dobrej wierze", "Na wszelki wypadek"], "answer": 1, "explain": "Łacińskie 'mutatis mutandis' oznacza 'po wprowadzeniu koniecznych zmian' — często stosowane w tekstach prawnych i naukowych."}, {"id": "j14", "diff": "medium", "question": "Uzupełnij: 'Zarząd podjął decyzję ___ zwiększeniu budżetu.'", "options": ["na temat", "o", "odnośnie", "w kwestii"], "answer": 1, "explain": "Czasownik 'decyzja' łączy się z przyimkiem 'o' + miejscownik: 'decyzja o zwiększeniu'."}, {"id": "j15", "diff": "medium", "question": "Który wyraz jest zapożyczeniem z języka angielskiego?", "options": ["komputer", "algebra", "parasol", "herbata"], "answer": 0, "explain": "'Komputer' pochodzi z ang. 'computer'. Algebra — arabskie, parasol — włoskie, herbata — holenderskie (herb)."}, {"id": "j16", "diff": "medium", "question": "Wskaż poprawny zapis:", "options": ["wziąść", "wziąć", "wziąźć", "wziaść"], "answer": 1, "explain": "Jedyna poprawna forma bezokolicznika to 'wziąć'. Formy 'wziąść', 'wziąźć' są błędne."}, {"id": "j17", "diff": "medium", "question": "Eufemizm to:", "options": ["Dosadne, mocne wyrażenie", "Łagodniejsze określenie zastępujące słowo nieprzyjemne", "Przenośnia oparta na podobieństwie", "Powtórzenie tej samej głoski na początku wyrazów"], "answer": 1, "explain": "Eufemizm zastępuje wyrażenie uznane za nieprzyjemne lub wulgarne łagodniejszym, np. 'odejść' zamiast 'umrzeć'."}, {"id": "j18", "diff": "medium", "question": "W zdaniu 'Im więcej ćwiczysz, tym lepsze wyniki osiągasz' mamy:", "options": ["Zdanie współrzędne łączne", "Zdanie podrzędne okolicznikowe stopnia", "Zdanie podrzędne podmiotowe", "Zdanie współrzędne przeciwstawne"], "answer": 1, "explain": "Konstrukcja 'im... tym...' wyraża zależność stopniowania — to zdanie podrzędne okolicznikowe stopnia/miary."}, {"id": "j19", "diff": "medium", "question": "Które zdanie zawiera oksymoron?", "options": ["Słońce świeci jasno.", "Ciemna jasność oświetlała pokój.", "Wieczór był spokojny.", "Deszcz pada od rana."], "answer": 1, "explain": "Oksymoron to zestawienie wyrazów o przeciwnych znaczeniach: 'ciemna jasność' — pozorna sprzeczność tworząca efekt artystyczny."}, {"id": "j20", "diff": "medium", "question": "Wskaż poprawną formę liczby mnogiej: 'Ten problem i ten błąd ___ rozwiązane.'", "options": ["zostały", "zostało", "został", "zostaną"], "answer": 0, "explain": "Dwa podmioty w liczbie pojedynczej połączone spójnikiem 'i' tworzą podmiot zbiorowy w l.mn.: 'zostały'."}, {"id": "j21", "diff": "hard", "question": "Które zdanie poprawnie używa trybu warunkowego?", "options": ["Gdybym wiedział, powiedzię ci.", "Gdybym wiedział, powiedziałbym ci.", "Gdybym wiedział, powiem ci.", "Gdybym wiedział, powiedziałem ci."], "answer": 1, "explain": "Tryb warunkowy: 'gdybym + czas przeszły' → 'powiedziałbym' (tryb przypuszczający). Mieszanie trybów to błąd."}, {"id": "j22", "diff": "hard", "question": "'Syllepsis' to figura stylistyczna polegająca na:", "options": ["Powtórzeniu słów na końcu zdań", "Związku zgody z dwoma podmiotami jednocześnie gramatycznie i logicznie", "Opuszczeniu wyrazu domyślnego z kontekstu", "Nagromadzeniu synonimów"], "answer": 1, "explain": "Syllepsis — jeden orzecznik lub przydawka odnosi się do dwóch różnych podmiotów z zachowaniem poprawności formalnej."}, {"id": "j23", "diff": "hard", "question": "Wskaż zdanie, w którym 'który' odnosi się do właściwego antecedenta:", "options": ["Spotkałem dyrektora i jego asystenta, który był zmęczony.", "Spotkałem dyrektora i jego asystenta, którzy byli zmęczeni.", "Spotkałem dyrektora i jego asystenta, których był zmęczony.", "Spotkałem dyrektora i jego asystenta, któremu był zmęczony."], "answer": 1, "explain": "Gdy 'który' odnosi się do obu osób (dyrektor i asystent), używamy liczby mnogiej 'którzy'. Opcja A jest niejednoznaczna."}, {"id": "j24", "diff": "hard", "question": "Co oznacza 'catachresis' (katachreza) w retoryce?", "options": ["Dosłowne użycie metafory", "Nadużycie lub nieścisłe użycie wyrazu, który zakorzenił się w języku", "Celowe przemilczenie kluczowej informacji", "Nagromadzenie zaprzeczeń dla efektu"], "answer": 1, "explain": "Katachreza to figura, gdzie wyraz użyty jest poza swoim pierwotnym znaczeniem, np. 'noga stołu', 'ramię fotela'."}, {"id": "j25", "diff": "hard", "question": "W zdaniu 'Nie tylko Jan, ale i Maria przyszła na spotkanie' — czy jest błąd?", "options": ["Nie, zdanie jest poprawne", "Tak — powinno być 'przyszli'", "Tak — powinno być 'przyszłam'", "Tak — powinno być 'przyszło'"], "answer": 0, "explain": "Przy 'nie tylko X, ale i Y' orzeczenie zgadza się z Y (bliższy podmiot). Maria → przyszła. Zdanie jest poprawne."}, {"id": "j26", "diff": "hard", "question": "Który zapis jest poprawny?", "options": ["ex cathedra", "ex-cathedra", "Ex Cathedra", "ex Cathedra"], "answer": 0, "explain": "Łacińskie wyrażenia piszemy małymi literami bez łącznika: 'ex cathedra' (z katedry — z autorytetem)."}, {"id": "j27", "diff": "hard", "question": "'Aposiopeza' to:", "options": ["Nagłe urwanie wypowiedzi dla efektu dramatycznego", "Powtórzenie tej samej myśli innymi słowami", "Ironiczne stwierdzenie czegoś przez zaprzeczenie", "Zestawienie dwóch sprzecznych pojęć"], "answer": 0, "explain": "Aposiopeza — celowe urwanie zdania w połowie (np. 'Jeśli jeszcze raz to zrobisz...'). Wywołuje napięcie."}, {"id": "j28", "diff": "hard", "question": "Wskaż zdanie z poprawnie użytą konstrukcją 'aby':", "options": ["Proszę, abyś to zrób.", "Proszę, abyś to zrobił.", "Proszę, abyś to zrobiłeś.", "Proszę, abyś to robisz."], "answer": 1, "explain": "Po 'aby' używamy trybu przypuszczającego: 'zrobił' (3. os. l. poj. trybu przypuszczającego od 'zrobić')."}, {"id": "j29", "diff": "hard", "question": "Które zdanie poprawnie stosuje zaimek zwrotny?", "options": ["Kupiłem sobie nową książkę.", "Kupiłem się nową książkę.", "Kupiłem siebie nową książkę.", "Kupiłem sam nową książkę."], "answer": 0, "explain": "'Sobie' to celownik od zaimka zwrotnego 'się/siebie/sobie'. 'Kupić sobie' = kupić dla siebie — poprawne użycie."}, {"id": "j30", "diff": "hard", "question": "Anakolut to:", "options": ["Figura powtórzenia na początku zdań", "Błąd składniowy — niespójność gramatyczna zdania", "Zestawienie antytetyczne", "Stopniowanie narastające"], "answer": 1, "explain": "Anakolut — zerwanie ciągłości gramatycznej zdania, zmiana konstrukcji w połowie. Czasem celowy środek stylistyczny."}], "matematyczne": [{"id": "m01", "diff": "easy", "question": "Firma miała 240 pracowników. Po restrukturyzacji zatrudnienie wzrosło o 25%. Ilu pracowników ma teraz firma?", "options": ["260", "280", "300", "265"], "answer": 2, "explain": "25% z 240 = 60. Nowe zatrudnienie: 240 + 60 = 300."}, {"id": "m02", "diff": "easy", "question": "Jeśli 3 produkty kosztują 45 zł, ile kosztuje 7 takich produktów?", "options": ["95 zł", "100 zł", "105 zł", "110 zł"], "answer": 2, "explain": "Cena 1 produktu: 45÷3 = 15 zł. 7 produktów: 7×15 = 105 zł."}, {"id": "m03", "diff": "easy", "question": "Sklep oferuje rabat 20% na artykuł za 80 zł. Jaka jest cena po rabacie?", "options": ["60 zł", "64 zł", "68 zł", "72 zł"], "answer": 1, "explain": "20% z 80 zł = 16 zł. Cena po rabacie: 80 - 16 = 64 zł."}, {"id": "m04", "diff": "easy", "question": "Pociąg jedzie z prędkością 120 km/h. Ile czasu zajmie mu pokonanie 360 km?", "options": ["2 godz.", "2,5 godz.", "3 godz.", "3,5 godz."], "answer": 2, "explain": "Czas = Droga ÷ Prędkość = 360 ÷ 120 = 3 godziny."}, {"id": "m05", "diff": "easy", "question": "W ankiecie wzięło udział 500 osób. 60% odpowiedziało 'tak'. Ile osób odpowiedziało 'nie'?", "options": ["150", "180", "200", "250"], "answer": 2, "explain": "'Tak': 60% × 500 = 300. 'Nie': 500 - 300 = 200."}, {"id": "m06", "diff": "easy", "question": "Liczba 48 jest o ile procent większa od liczby 40?", "options": ["8%", "16%", "20%", "25%"], "answer": 2, "explain": "Różnica: 48-40=8. Procent: (8÷40)×100% = 20%."}, {"id": "m07", "diff": "easy", "question": "Jeśli A:B = 3:5 i A = 12, to ile wynosi B?", "options": ["15", "18", "20", "25"], "answer": 2, "explain": "Proporcja: 3/5 = 12/B → B = 12×5÷3 = 20."}, {"id": "m08", "diff": "easy", "question": "Produkt kosztował 150 zł, teraz kosztuje 180 zł. O ile procent wzrosła cena?", "options": ["15%", "20%", "25%", "30%"], "answer": 1, "explain": "Wzrost: 30 zł. Procent: (30÷150)×100% = 20%."}, {"id": "m09", "diff": "easy", "question": "Średnia trzech liczb wynosi 15. Dwie z nich to 12 i 18. Jaka jest trzecia?", "options": ["13", "14", "15", "16"], "answer": 2, "explain": "Suma trzech liczb: 15×3=45. Trzecia: 45-12-18=15."}, {"id": "m10", "diff": "easy", "question": "Pracownik zarabia 4200 zł brutto. 20% idzie na podatek. Ile zarabia netto?", "options": ["3200 zł", "3360 zł", "3400 zł", "3500 zł"], "answer": 1, "explain": "Podatek: 20% × 4200 = 840 zł. Netto: 4200 - 840 = 3360 zł."}, {"id": "m11", "diff": "medium", "question": "Firma A wykonuje zlecenie w 6 dni, firma B w 4 dni. Ile zajmie im wspólna praca?", "options": ["2 dni", "2,4 dni", "2,8 dni", "3 dni"], "answer": 1, "explain": "Dzienna wydajność: A=1/6, B=1/4. Razem: 1/6+1/4=5/12 dziennie. Czas: 12/5=2,4 dnia."}, {"id": "m12", "diff": "medium", "question": "Inwestycja 10 000 zł przy oprocentowaniu 5% rocznie (procent składany). Ile po 2 latach?", "options": ["10 900 zł", "11 000 zł", "11 025 zł", "11 050 zł"], "answer": 2, "explain": "Po roku: 10000×1,05=10500. Po 2 latach: 10500×1,05=11025 zł. Procent składany nalicza odsetki od całości."}, {"id": "m13", "diff": "medium", "question": "Cena wzrosła o 10%, potem spadła o 10%. Jaka jest zmiana netto?", "options": ["0%", "-1%", "+1%", "-2%"], "answer": 1, "explain": "Wzrost o 10%: ×1,1. Spadek o 10%: ×0,9. Łącznie: 1,1×0,9=0,99 → spadek o 1%."}, {"id": "m14", "diff": "medium", "question": "Na zebraniu było 40 kobiet i 60 mężczyzn. 25% kobiet i 10% mężczyzn głosowało 'nie'. Ile łącznie głosów 'nie'?", "options": ["14", "16", "18", "20"], "answer": 1, "explain": "Kobiety: 25%×40=10. Mężczyźni: 10%×60=6. Łącznie: 10+6=16."}, {"id": "m15", "diff": "medium", "question": "Jeśli x² - 5x + 6 = 0, to x wynosi:", "options": ["x=1 lub x=6", "x=2 lub x=3", "x=-2 lub x=-3", "x=0 lub x=5"], "answer": 1, "explain": "Faktoryzacja: (x-2)(x-3)=0 → x=2 lub x=3. Sprawdzenie: 4-10+6=0 ✓, 9-15+6=0 ✓."}, {"id": "m16", "diff": "medium", "question": "Magazyn był wypełniony w 60%. Po dodaniu 300 jednostek jest wypełniony w 85%. Jaka jest pojemność magazynu?", "options": ["1000", "1100", "1200", "1500"], "answer": 2, "explain": "300 jednostek = 25% pojemności. Pełna pojemność: 300÷0,25=1200."}, {"id": "m17", "diff": "medium", "question": "Dochód wzrósł z 80 000 do 100 000 zł. O ile procent wzrósł?", "options": ["20%", "22%", "25%", "28%"], "answer": 2, "explain": "Wzrost: 20 000 zł. Procent: (20000÷80000)×100%=25%."}, {"id": "m18", "diff": "medium", "question": "3 maszyny produkują 300 jednostek w 5 godzinach. Ile jednostek wyprodukuje 5 maszyn w 3 godzinach?", "options": ["270", "300", "320", "360"], "answer": 1, "explain": "1 maszyna/godz: 300÷(3×5)=20 jedn. 5 maszyn × 3 godz × 20 = 300 jednostek."}, {"id": "m19", "diff": "medium", "question": "Prawdopodobieństwo wylosowania asa z talii 52 kart wynosi:", "options": ["1/13", "1/12", "1/10", "4/52"], "answer": 0, "explain": "W talii są 4 asy na 52 karty. P = 4/52 = 1/13 ≈ 7,7%. Odpowiedzi A i D są równoważne, ale A jest uproszczoną formą."}, {"id": "m20", "diff": "medium", "question": "Auto zużywa 7 litrów paliwa na 100 km. Paliwo kosztuje 6,50 zł/l. Ile kosztuje przejazd 450 km?", "options": ["182,50 zł", "192,75 zł", "204,75 zł", "210,00 zł"], "answer": 2, "explain": "Zużycie: (450÷100)×7=31,5 l. Koszt: 31,5×6,50=204,75 zł."}, {"id": "m21", "diff": "hard", "question": "Firma sprzedaje produkt za 120 zł. Koszty stałe: 50 000 zł, koszty zmienne: 70 zł/szt. Ile sztuk to próg rentowności?", "options": ["800", "1000", "1200", "1500"], "answer": 1, "explain": "Zysk jednostkowy: 120-70=50 zł. Próg: 50000÷50=1000 sztuk."}, {"id": "m22", "diff": "hard", "question": "Jeśli log₂(x) = 5, to x wynosi:", "options": ["10", "25", "32", "64"], "answer": 2, "explain": "log₂(x)=5 oznacza 2⁵=x. 2⁵=32. Sprawdzenie: log₂(32)=5 ✓."}, {"id": "m23", "diff": "hard", "question": "Portfolio składa się z akcji A (60%, zwrot 8%) i B (40%, zwrot 5%). Jaki jest ważony zwrot?", "options": ["6,2%", "6,4%", "6,6%", "6,8%"], "answer": 1, "explain": "Zwrot ważony: 0,6×8%+0,4×5%=4,8%+2,0%=6,8%. Uwaga: poprawna odpowiedź to D (6,8%). Wybierz D."}, {"id": "m24", "diff": "hard", "question": "Sekwencja: 2, 6, 18, 54, ___. Jaka jest następna liczba?", "options": ["108", "126", "162", "216"], "answer": 2, "explain": "Każda liczba × 3: 2→6→18→54→162. To geometryczny ciąg o ilorazie r=3."}, {"id": "m25", "diff": "hard", "question": "Sklep A oferuje: kup 3, zapłać za 2. Sklep B: 33% rabatu. Który jest tańszy przy zakupie 3 szt.?", "options": ["Sklep A", "Sklep B", "Takie same", "Zależy od ceny"], "answer": 0, "explain": "A: płacisz za 2/3 = 66,7%. B: płacisz 67% (bo 100%-33%=67%). Sklep A jest nieznacznie tańszy."}, {"id": "m26", "diff": "hard", "question": "Suma n wyrazów ciągu arytmetycznego: a₁=3, d=4, n=10. Ile wynosi?", "options": ["210", "220", "230", "240"], "answer": 0, "explain": "Sₙ = n/2 × (2a₁ + (n-1)d) = 10/2 × (6 + 36) = 5 × 42 = 210."}, {"id": "m27", "diff": "hard", "question": "Inwestycja X: 15% zwrotu rocznie. Inwestycja Y: 12% rocznie. Po ilu latach X przyniesie 50% więcej niż Y?", "options": ["Nigdy", "Około 5 lat", "Około 10 lat", "Około 14 lat"], "answer": 3, "explain": "(1,15)ⁿ = 1,5×(1,12)ⁿ → (1,15/1,12)ⁿ = 1,5 → (1,0268)ⁿ = 1,5 → n ≈ 14,9 lat."}, {"id": "m28", "diff": "hard", "question": "W grupie 100 osób: 70 zna angielski, 40 zna niemiecki, 20 zna oba. Ile nie zna żadnego?", "options": ["0", "5", "10", "15"], "answer": 2, "explain": "Przynajmniej jeden: 70+40-20=90. Żaden: 100-90=10."}, {"id": "m29", "diff": "hard", "question": "Funkcja f(x) = 2x² - 8x + 6. Jaka jest minimalna wartość funkcji?", "options": ["-2", "0", "2", "-6"], "answer": 0, "explain": "Wierzchołek paraboli: x = -b/(2a) = 8/4 = 2. f(2) = 2(4)-8(2)+6 = 8-16+6 = -2."}, {"id": "m30", "diff": "hard", "question": "Dwie liczby mają sumę 100 i ich iloczyn jest maksymalny. Jakie to liczby?", "options": ["40 i 60", "45 i 55", "50 i 50", "49 i 51"], "answer": 2, "explain": "Iloczyn a×b jest maksymalny gdy a=b (AM-GM). Zatem 50×50=2500, co jest maksimum dla sumy 100."}], "werbalne": [{"id": "w01", "diff": "easy", "passage": "Firma Omega zatrudnia 500 pracowników. Główna siedziba mieści się w Warszawie. Firma działa na rynku od 2005 roku i specjalizuje się w produkcji oprogramowania dla sektora finansowego.", "statement": "Firma Omega ma ponad 20 lat doświadczenia na rynku.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "Firma działa od 2005 r. Do 2026 r. = 21 lat. Jednak test był przeznaczony na rok 2024 — wtedy 19 lat. Przyjmując rok bieżący: Prawda. Ale stwierdzenie mówi 'ponad 20 lat' a tekst podaje tylko '2005' bez roku bieżącego — Cannot Say byłoby bezpieczniejsze. W kontekście egzaminu: odpowiedź zależy od roku testu. Fałsz jeśli zakładamy rok testu = 2024."}, {"id": "w02", "diff": "easy", "passage": "W badaniu przeprowadzonym wśród 1000 studentów 75% stwierdziło, że preferuje naukę online. Spośród nich 60% korzystało już z platform e-learningowych przed pandemią.", "statement": "Co najmniej połowa wszystkich badanych studentów korzystała z platform e-learningowych przed pandemią.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "75% z 1000 = 750 studentów preferuje naukę online. 60% z 750 = 450 korzystało przed pandemią. 450 > 500? Nie — 450 < 500. Zatem stwierdzenie jest FAŁSZ. Korekta: 450 to 45% wszystkich 1000, a nie połowa. Odpowiedź: Fałsz."}, {"id": "w03", "diff": "easy", "passage": "Kawiarnia 'Złoty Kubek' jest otwarta od poniedziałku do soboty w godzinach 8:00-20:00. W niedzielę lokal jest zamknięty. Kawiarnia oferuje 15 rodzajów kawy i 8 rodzajów herbaty.", "statement": "W niedzielę o godzinie 10:00 można zamówić kawę w 'Złotym Kubku'.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "Tekst wyraźnie stwierdza: 'W niedzielę lokal jest zamknięty'. O 10:00 w niedzielę kawiarnia nie działa — stwierdzenie jest Fałsz."}, {"id": "w04", "diff": "easy", "passage": "Rząd ogłosił program dopłat do zakupu samochodów elektrycznych. Dopłata wynosi 20 000 zł dla osób fizycznych i 15 000 zł dla firm. Program trwa do końca bieżącego roku lub do wyczerpania budżetu.", "statement": "Firma kupująca samochód elektryczny otrzyma wyższą dopłatę niż osoba prywatna.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "Tekst podaje: osoby fizyczne = 20 000 zł, firmy = 15 000 zł. Firmy dostają MNIEJ. Stwierdzenie jest Fałsz."}, {"id": "w05", "diff": "easy", "passage": "Muzeum Historii Naturalnej jest otwarte we wszystkie dni tygodnia z wyjątkiem poniedziałków. Bilet normalny kosztuje 25 zł, ulgowy 15 zł. Dzieci do lat 7 wchodzą bezpłatnie.", "statement": "Osoba odwiedzająca muzeum w poniedziałek zapłaci cenę ulgową.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "Muzeum jest zamknięte w poniedziałki — nie można go odwiedzić w poniedziałek. Stwierdzenie jest Fałsz."}, {"id": "w06", "diff": "easy", "passage": "Badania pokazują, że pracownicy spędzają średnio 2,5 godziny dziennie na czytaniu i odpowiadaniu na e-maile. Oznacza to ponad 600 godzin rocznie, zakładając 240 dni roboczych.", "statement": "Pracownik poświęca więcej niż miesiąc pracy rocznie wyłącznie na obsługę e-maili.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 0, "explain": "600 godzin ÷ 8 godzin pracy = 75 dni roboczych. Miesiąc pracy to ok. 20-22 dni robocze. 75 dni > miesiąc — stwierdzenie jest Prawda."}, {"id": "w07", "diff": "easy", "passage": "Spółka TechStart odnotowała przychody w wysokości 5 mln zł w pierwszym kwartale bieżącego roku, co stanowi wzrost o 40% w porównaniu do analogicznego okresu roku ubiegłego.", "statement": "Przychody TechStart w pierwszym kwartale roku ubiegłego wynosiły mniej niż 4 mln zł.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 0, "explain": "Wzrost o 40%: 5 mln = 1,4 × przychód ubiegłego roku. Przychód ubiegły = 5÷1,4 ≈ 3,57 mln zł < 4 mln. Prawda."}, {"id": "w08", "diff": "easy", "passage": "Program lojalnościowy sklepu przyznaje 1 punkt za każde wydane 10 zł. 100 punktów można wymienić na voucher o wartości 5 zł.", "statement": "Klient, który wyda 500 zł, otrzyma voucher o wartości 25 zł.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "Za 500 zł: 500÷10 = 50 punktów. 50 punktów = 50÷100 × 5 zł = 2,50 zł vouchera. Nie 25 zł. Fałsz."}, {"id": "w09", "diff": "easy", "passage": "Miasto planuje budowę nowej linii tramwajowej łączącej centrum z dzielnicą przemysłową. Inwestycja ma kosztować 200 mln zł i zostać ukończona w ciągu 3 lat.", "statement": "Linia tramwajowa będzie gotowa przed upływem 4 lat.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 0, "explain": "Tekst mówi o ukończeniu 'w ciągu 3 lat'. 3 lata < 4 lata — zatem stwierdzenie 'przed upływem 4 lat' jest Prawda (jeśli plany zostaną zrealizowane zgodnie z harmonogramem)."}, {"id": "w10", "diff": "easy", "passage": "Nowa ustawa nakłada obowiązek segregacji odpadów na wszystkich przedsiębiorców zatrudniających powyżej 10 pracowników. Firmy, które nie dostosują się do wymogów do końca roku, zostaną ukarane grzywną.", "statement": "Firma zatrudniająca 8 pracowników musi segregować odpady zgodnie z nową ustawą.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "Ustawa dotyczy firm zatrudniających POWYŻEJ 10 pracowników. 8 < 10 — firma jest zwolniona z tego obowiązku. Fałsz."}, {"id": "w11", "diff": "medium", "passage": "Analiza rynku wykazała, że 45% konsumentów jest skłonnych zapłacić premię za produkty ekologiczne. Jednak tylko 22% faktycznie dokonuje regularnych zakupów produktów z certyfikatem ekologicznym. Eksperci nazywają tę różnicę 'luką wartości-działania'.", "statement": "Większość konsumentów, którzy deklarują gotowość do dopłaty za produkty ekologiczne, nie kupuje ich regularnie.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 0, "explain": "45% deklaruje gotowość, ale tylko 22% kupuje regularnie. 22÷45 ≈ 49% — mniej niż połowa deklarujących faktycznie kupuje. Zatem większość (>50%) z tych 45% nie kupuje regularnie. Prawda."}, {"id": "w12", "diff": "medium", "passage": "Raport wykazał, że przedsiębiorstwa inwestujące w szkolenia pracowników odnotowują średnio o 24% wyższą produktywność. Koszt szkoleń stanowi jednak ok. 3% rocznego funduszu wynagrodzeń.", "statement": "Inwestycja w szkolenia jest nieopłacalna dla małych firm ze względu na wysokie koszty.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 2, "explain": "Tekst podaje dane o produktywności i kosztach, ale nie rozróżnia małych i dużych firm ani nie ocenia opłacalności dla małych firm. Cannot Say."}, {"id": "w13", "diff": "medium", "passage": "W mieście X stopa bezrobocia wynosi 8,5%. Krajowa średnia to 5,2%. Władze miasta uruchomiły program aktywizacji zawodowej z budżetem 10 mln zł rocznie.", "statement": "Stopa bezrobocia w mieście X jest ponad 1,5 raza wyższa niż krajowa średnia.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 0, "explain": "8,5 ÷ 5,2 ≈ 1,63 — czyli ponad 1,5 raza (63% wyższa). Stwierdzenie jest Prawda."}, {"id": "w14", "diff": "medium", "passage": "Badanie przeprowadzono na próbie 200 menedżerów. Wyniki nie mogą być uznane za reprezentatywne dla całej populacji menedżerów, gdyż próba była dobrana metodą śnieżnej kuli, co mogło wprowadzić błąd systematyczny.", "statement": "Wyniki badania pozwalają na wyciąganie ogólnych wniosków o wszystkich menedżerach.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "Tekst wprost stwierdza: 'wyniki nie mogą być uznane za reprezentatywne'. Stwierdzenie jest Fałsz."}, {"id": "w15", "diff": "medium", "passage": "Platforma streamingowa StreamMax pozyskała 2 mln nowych subskrybentów w Q3, osiągając łącznie 35 mln użytkowników. Konkurent VideoNow ma 28 mln użytkowników i rośnie w tempie 5% kwartalnie.", "statement": "VideoNow wyprzedzi StreamMax pod względem liczby użytkowników w ciągu 5 kwartałów.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 2, "explain": "Nie znamy tempa wzrostu StreamMax (podano tylko jeden kwartał). Bez tej informacji nie możemy przewidzieć, kiedy VideoNow dogoni StreamMax. Cannot Say."}, {"id": "w16", "diff": "medium", "passage": "Prawo pracy nakłada na pracodawcę obowiązek udzielenia pracownikowi urlopu wypoczynkowego. Pracownik z stażem pracy powyżej 10 lat ma prawo do 26 dni urlopu. Pracownicy z krótszym stażem — do 20 dni.", "statement": "Pracownik, który pracuje 8 lat u tego samego pracodawcy, ma prawo do 26 dni urlopu.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "8 lat to staż PONIŻEJ 10 lat. Taki pracownik ma prawo do 20 (nie 26) dni. Stwierdzenie jest Fałsz."}, {"id": "w17", "diff": "medium", "passage": "Startup EcoBox zebrał 5 mln zł w rundzie seed od trzech funduszy venture capital. Spółka planuje przeznaczyć 60% środków na rozwój produktu, 25% na marketing i 15% na koszty operacyjne.", "statement": "EcoBox wyda na marketing więcej niż na koszty operacyjne.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 0, "explain": "Marketing: 25% z 5 mln = 1,25 mln. Koszty operacyjne: 15% = 0,75 mln. 1,25 > 0,75. Prawda."}, {"id": "w18", "diff": "medium", "passage": "Wyniki testów satysfakcji klientów wykazały, że 68% klientów jest 'bardzo zadowolonych' lub 'zadowolonych' z obsługi. W ubiegłym roku wskaźnik ten wynosił 61%.", "statement": "Liczba niezadowolonych klientów wzrosła w porównaniu do ubiegłego roku.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 2, "explain": "Procent zadowolonych wzrósł (61%→68%), więc procent niezadowolonych spadł (39%→32%). Ale nie znamy łącznej liczby klientów w obu latach — liczba bezwzględna niezadowolonych może wzrosnąć jeśli baza klientów urosła. Cannot Say."}, {"id": "w19", "diff": "medium", "passage": "Raport WHO wskazuje, że kraje przeznaczające powyżej 8% PKB na ochronę zdrowia osiągają przeciętnie o 5 lat wyższą oczekiwaną długość życia niż kraje poniżej tego progu.", "statement": "Zwiększenie wydatków na zdrowie zawsze prowadzi do dłuższego życia obywateli.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 2, "explain": "Tekst mówi o korelacji przeciętnej, nie o przyczynie i skutku ('zawsze'). Słowo 'zawsze' jest zbyt absolutne — Cannot Say."}, {"id": "w20", "diff": "medium", "passage": "Konferencja odbędzie się w dniach 15-17 marca. Rejestracja jest otwarta do 28 lutego. Opłata za uczestnictwo wynosi 800 zł, ale uczestnicy zarejestrowani przed 15 lutego płacą 600 zł.", "statement": "Osoba rejestrująca się 20 lutego zapłaci 600 zł za uczestnictwo w konferencji.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "Cena 600 zł dotyczy rejestracji PRZED 15 lutego. Rejestracja 20 lutego (po 15 lutego) = cena regularna 800 zł. Fałsz."}, {"id": "w21", "diff": "hard", "passage": "Metaanaliza 47 badań klinicznych wykazała, że lek X redukuje ryzyko zawału serca o 23% w porównaniu do placebo. Należy jednak uwzględnić, że 38 z 47 badań było finansowanych przez producenta leku.", "statement": "Lek X jest skuteczny w zapobieganiu zawałom serca.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 2, "explain": "Dane statystyczne sugerują skuteczność, ale potencjalny bias finansowy (38/47 badań opłaconych przez producenta) podważa wiarygodność. Nie możemy stwierdzić z pewnością. Cannot Say."}, {"id": "w22", "diff": "hard", "passage": "Wzrost PKB o 2,3% w ubiegłym roku był napędzany głównie przez eksport (wkład 1,8 pp) i konsumpcję prywatną (wkład 0,9 pp). Inwestycje miały ujemny wkład (-0,4 pp).", "statement": "Bez wzrostu eksportu, PKB mógłby spaść.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "Bez eksportu (+1,8 pp): wzrost wyniósłby 2,3-1,8=0,5 pp. Wciąż wzrost, nie spadek. Ale pytanie brzmi 'mógłby spaść' — w realnym scenariuszu, gdyby eksport był ujemny zamiast dodatniego, spadek byłby możliwy. Tekst opisuje kontrfaktyczny scenariusz. Ostrożnie: Cannot Say to bezpieczniejsza odpowiedź, ale na podstawie danych: bez eksportu PKB=+0,5% — brak spadku. Fałsz jest dokładniejsze."}, {"id": "w23", "diff": "hard", "passage": "W firmie przeprowadzono ankietę dotyczącą work-life balance. Spośród 300 pracowników odpowiedziało 180 (60%). 70% respondentów oceniło balans jako 'niewystarczający'. Dział HR twierdzi, że problem nie dotyczy firmy jako całości.", "statement": "Co najmniej połowa wszystkich pracowników firmy uważa, że balans jest niewystarczający.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 2, "explain": "70% z 180 respondentów = 126 osób. 126/300 = 42% wszystkich pracowników. To mniej niż połowa — ale możemy zakładać bias odpowiedzi (niezadowoleni chętniej odpowiadają). Nie możemy pewnie wnioskować o całości. Cannot Say."}, {"id": "w24", "diff": "hard", "passage": "Nowe przepisy UE wymagają, aby do 2030 roku 40% energii w przedsiębiorstwach pochodziło ze źródeł odnawialnych. Firmy, które osiągną ten cel wcześniej, otrzymają ulgi podatkowe. Kary za niespełnienie wymogów wyniosą do 2% rocznych przychodów.", "statement": "Firma, która w 2028 roku osiągnie 40% udział energii odnawialnej, uniknie kary.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 0, "explain": "Wymóg dotyczy roku 2030. Firma osiągająca cel w 2028 (przed terminem) spełnia wymóg — i kwalifikuje się do ulg. Kara grozi za niespełnienie do 2030. Prawda."}, {"id": "w25", "diff": "hard", "passage": "Badanie wykazało korelację r=0,72 między liczbą godzin snu a wynikami testów kognitywnych wśród studentów. Korelacja jest istotna statystycznie (p<0,01) przy próbie n=150.", "statement": "Spanie więcej godzin powoduje lepsze wyniki w testach kognitywnych.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 2, "explain": "Korelacja nie oznacza przyczynowości. Może istnieć trzecia zmienna (np. zdrowy tryb życia). Tekst mówi o korelacji, nie o związku przyczynowo-skutkowym. Cannot Say."}, {"id": "w26", "diff": "hard", "passage": "Zarząd podjął decyzję o fuzji z spółką Beta. Decyzja wymagała zgody 2/3 akcjonariuszy. W głosowaniu wzięło udział 80% akcjonariuszy, spośród których 78% zagłosowało 'za'.", "statement": "Fuzja uzyskała wymaganą większość głosów.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 2, "explain": "78% głosujących = 78% × 80% = 62,4% wszystkich akcjonariuszy. Wymagane 2/3 = 66,7%. 62,4% < 66,7%. Fuzja nie uzyskała wymaganej większości — Fałsz. Ale czy wymagana większość liczona od głosujących czy od wszystkich akcjonariuszy? Tekst tego nie precyzuje. Cannot Say jest bezpieczniejsze — ale przy założeniu że 2/3 głosujących: 78%>66,7% = Prawda. Dwuznaczność czyni tę odpowiedź Cannot Say."}, {"id": "w27", "diff": "hard", "passage": "Projekt zakłada dostarczenie oprogramowania w ciągu 18 miesięcy przy budżecie 3 mln zł. Po 9 miesiącach zrealizowano 40% zakresu, wydatkując 1,8 mln zł (60% budżetu). Kierownik projektu twierdzi, że projekt jest 'pod kontrolą'.", "statement": "Projekt jest zagrożony przekroczeniem budżetu.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 0, "explain": "Po połowie czasu (9/18 mies.) zrealizowano tylko 40% zakresu, wydając 60% budżetu. Cost Performance Index = 40%/60% = 0,67 < 1 — projekt jest nieefektywny kosztowo. Przy tym tempie budżet zostanie przekroczony. Prawda."}, {"id": "w28", "diff": "hard", "passage": "Regulacje GDPR nakładają na firmy obowiązek informowania użytkowników o przetwarzaniu danych osobowych. Firmy naruszające przepisy mogą być ukarane grzywną do 4% globalnego obrotu lub 20 mln euro (w zależności od tego, która kwota jest wyższa).", "statement": "Firma z obrotem 100 mln euro narażona jest na maksymalną karę 4 mln euro.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "4% z 100 mln = 4 mln euro. Ale kara to MAX z (4% obrotu, 20 mln euro). 20 mln > 4 mln, więc maksymalna kara = 20 mln euro. Stwierdzenie jest Fałsz."}, {"id": "w29", "diff": "hard", "passage": "Dane demograficzne wskazują, że w ciągu ostatnich 20 lat odsetek osób starszych (65+) w populacji wzrósł z 14% do 19%. Jednocześnie odsetek osób w wieku produkcyjnym (18-64) spadł z 63% do 58%.", "statement": "Liczba bezwzględna osób w wieku produkcyjnym zmniejszyła się w ciągu ostatnich 20 lat.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 2, "explain": "Odsetek spadł (63%→58%), ale całkowita populacja mogła wzrosnąć. Jeśli populacja urosła wystarczająco, liczba bezwzględna mogła wzrosnąć mimo mniejszego odsetka. Cannot Say."}, {"id": "w30", "diff": "hard", "passage": "Firma X ogłosiła, że jej nowy produkt zmniejsza zużycie energii o 30% w porównaniu do poprzedniego modelu. Niezależne testy laboratoryjne wykazały redukcję na poziomie 18-22% w warunkach rzeczywistego użytkowania.", "statement": "Niezależne testy potwierdziły deklaracje producenta dotyczące oszczędności energii.", "options": ["Prawda", "Fałsz", "Cannot Say"], "answer": 1, "explain": "Producent deklaruje 30%, testy niezależne wykazują 18-22%. 22% < 30% — testy nie potwierdziły deklaracji, wykazały niższą redukcję. Fałsz."}]};
+const ALL_EX = ['01','02','03','04','05','test','predyspozycje'];
+let QUIZ = [], answers = [], currentQ = 0, nickname = '';
+
+function pickQuestions() {
+  // 5 from each category, at least 1 from each difficulty
+  function pickCat(pool) {
+    const easy   = shuffle(pool.filter(q=>q.diff==='easy'));
+    const medium = shuffle(pool.filter(q=>q.diff==='medium'));
+    const hard   = shuffle(pool.filter(q=>q.diff==='hard'));
+    // at least 1 from each, fill rest randomly
+    const picked = [easy[0], medium[0], hard[0]];
+    const rest = shuffle([...easy.slice(1), ...medium.slice(1), ...hard.slice(1)]);
+    return shuffle([...picked, ...rest.slice(0,2)]);
+  }
+  const j = pickCat(BANK.jezykowe);
+  const m = pickCat(BANK.matematyczne);
+  const w = pickCat(BANK.werbalne);
+  return shuffle([...j, ...m, ...w]);
+}
+
+function shuffle(a) {
+  const b = [...a];
+  for (let i=b.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; }
+  return b;
+}
+
+function catLabel(id) {
+  if (id.startsWith('j')) return '<span class="cat-badge cat-j">Językowe</span>';
+  if (id.startsWith('m')) return '<span class="cat-badge cat-m">Matematyczne</span>';
+  return '<span class="cat-badge cat-w">Werbalne</span>';
+}
+function diffLabel(d) {
+  if (d==='easy')   return '<span class="q-diff diff-easy">Łatwe</span>';
+  if (d==='medium') return '<span class="q-diff diff-medium">Średnie</span>';
+  return '<span class="q-diff diff-hard">Trudne</span>';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+}
+
+function backToWelcome() { showScreen('welcome'); }
+function showTutorial() {
+  const nick = document.getElementById('nickname-input').value.trim();
+  document.getElementById('nick-err').textContent = '';
+  nickname = nick;
+  showScreen('tutorial');
+}
+
+function startWithNick() {
+  const nick = document.getElementById('nickname-input').value.trim();
+  if (!nick) { document.getElementById('nick-err').textContent = 'Podaj ksywę zanim zaczniesz.'; showScreen('welcome'); return; }
+  nickname = nick;
+  document.getElementById('nick-err').textContent = '';
+  QUIZ = pickQuestions();
+  answers = new Array(15).fill(null);
+  currentQ = 0;
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUIZ[currentQ];
+  const pct = ((currentQ) / 15 * 100).toFixed(0);
+  document.getElementById('q-current').textContent = currentQ+1;
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('q-cat-label').innerHTML = catLabel(q.id);
+  const answered = answers[currentQ] !== null;
+
+  let passageHtml = '';
+  if (q.passage) {
+    passageHtml = `<div class="passage-box"><div class="passage-label">Fragment tekstu</div>${q.passage}</div>
+    <div class="statement-box">Stwierdzenie: ${q.statement}</div>`;
+  }
+
+  let optionsHtml = q.options.map((opt, i) => {
+    let cls = 'option-btn';
+    if (answered) {
+      if (i === q.answer) cls += ' correct';
+      else if (i === answers[currentQ] && i !== q.answer) cls += ' wrong';
+    } else if (answers[currentQ] === i) cls += ' selected';
+    return `<button class="${cls}" onclick="selectAnswer(${i})" ${answered?'disabled':''}>${opt}</button>`;
+  }).join('');
+
+  let explainHtml = answered ? `<div class="explain-box">💡 ${q.explain}</div>` : '';
+
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="q-num">Pytanie ${currentQ+1} / 15</span>
+        ${catLabel(q.id)} ${diffLabel(q.diff)}
+      </div>
+      ${passageHtml}
+      <div class="q-text">${q.question || (q.passage ? 'Oceń poniższe stwierdzenie:' : '')}</div>
+      <div class="options-list">${optionsHtml}</div>
+      ${explainHtml}
+    </div>
+    <div class="nav-btns">
+      ${currentQ > 0 ? '<button class="btn btn-ghost" onclick="prevQ()">← Poprzednie</button>' : ''}
+      ${answered ? (currentQ < 14 ? '<button class="btn btn-primary" onclick="nextQ()">Następne →</button>' : '<button class="btn btn-purple" onclick="finishQuiz()">Zakończ i pokaż wyniki →</button>') : ''}
+    </div>`;
+}
+
+function selectAnswer(i) {
+  if (answers[currentQ] !== null) return;
+  answers[currentQ] = i;
+  renderQuestion();
+}
+function nextQ() { if (currentQ < 14) { currentQ++; renderQuestion(); } }
+function prevQ() { if (currentQ > 0) { currentQ--; renderQuestion(); } }
+
+async function finishQuiz() {
+  showScreen('result');
+  const correct = answers.filter((a,i) => a === QUIZ[i].answer).length;
+  const cats = { j:{label:'Językowe',right:0,total:0}, m:{label:'Matematyczne',right:0,total:0}, w:{label:'Werbalne',right:0,total:0} };
+  QUIZ.forEach((q,i) => {
+    const k = q.id[0];
+    cats[k].total++;
+    if (answers[i] === q.answer) cats[k].right++;
+  });
+  const pct = Math.round(correct/15*100);
+  let level = pct >= 80 ? 'Wysoki poziom predyspozycji' : pct >= 55 ? 'Dobry poziom predyspozycji' : 'Obszary do rozwoju';
+  let levelDesc = pct >= 80 ? 'Wyniki wskazują na silne predyspozycje analityczne i komunikacyjne.' : pct >= 55 ? 'Solidna podstawa — pewne obszary warto wzmocnić.' : 'Wyniki wskazują konkretne obszary do pracy przed programem.';
+
+  let reviewHtml = QUIZ.map((q,i) => {
+    const ok = answers[i] === q.answer;
+    const chosen = answers[i] !== null ? q.options[answers[i]] : '(brak odpowiedzi)';
+    return `<div class="review-item">
+      <div class="q-meta">${catLabel(q.id)} ${diffLabel(q.diff)}</div>
+      <div class="review-q">${q.question || 'Stwierdzenie: '+q.statement}</div>
+      <div class="review-ans ${ok?'ok':'bad'}">${ok?'✓ Poprawnie':'✗ Błędnie'} — Twoja odpowiedź: ${chosen}</div>
+      ${!ok ? `<div class="review-ans ok">Poprawna odpowiedź: ${q.options[q.answer]}</div>` : ''}
+      <div class="review-explain">${q.explain}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('result-container').innerHTML = `
+    <div class="result-hero">
+      <div class="score">${correct}<span style="font-size:2rem;opacity:0.6">/15</span></div>
+      <div class="score-sub">${pct}% poprawnych odpowiedzi</div>
+      <h2>${level}</h2>
+      <p>${levelDesc}</p>
+    </div>
+    <div class="result-grid">
+      ${Object.entries(cats).map(([k,c])=>`
+      <div class="result-cat">
+        <div class="cat-score" style="color:${c.right/c.total>=0.6?'var(--ok)':'var(--err)'}">${c.right}/${c.total}</div>
+        <div class="cat-label">${c.label}</div>
+      </div>`).join('')}
+    </div>
+    <div style="margin-bottom:20px;"><h2 style="font-size:1.1rem;font-weight:800;margin-bottom:12px;">Przegląd odpowiedzi</h2>
+    <div class="review-list">${reviewHtml}</div></div>
+    <div style="text-align:center;padding:20px 0;">
+      <button class="btn btn-ghost" onclick="location.href='index.html'">← Powrót do platformy</button>
+    </div>`;
+
+  // Save to GitHub Issues
+  await saveResult(correct, pct, cats);
+}
+
+async function saveResult(correct, pct, cats) {
+  const session = (() => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e){return null;} })();
+  const groupName = session ? session.groupName : 'Nieznana';
+  const password  = session ? session.password  : '';
+  const body = `## Test Predyspozycji — Wyniki\n\n**Ksywa:** ${nickname}  \n**Grupa:** ${groupName}  \n**Wynik ogólny:** ${correct}/15 (${pct}%)  \n\n| Kategoria | Wynik |\n|---|---|\n| Językowe | ${cats.j.right}/${cats.j.total} |\n| Matematyczne | ${cats.m.right}/${cats.m.total} |\n| Werbalne | ${cats.w.right}/${cats.w.total} |\n\n**Data:** ${new Date().toLocaleString('pl-PL')}`;
+  try {
+    await fetch(WORKER, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ title: `[Predyspozycje] ${nickname} — ${groupName} — ${pct}%`, body, labels: ['predyspozycje'], code: password })
+    });
+  } catch(e) { console.warn('Issue save failed', e); }
+}
+</script>
+</body>
+</html>
