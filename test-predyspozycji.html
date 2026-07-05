@@ -138,6 +138,15 @@
     .welcome-card, .gate-box { padding:32px 24px; }
     .q-card { padding:24px 16px; }
   }
+
+        /* ── Timer bar ── */
+        .timer-wrap { background:#fff; border-bottom:1px solid var(--border); padding:10px 24px; position:sticky; top:52px; z-index:99; }
+        .timer-meta { display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; color:var(--sec); margin-bottom:6px; }
+        .timer-msg { font-weight:600; color:#92400E; }
+        .timer-msg.urgent { color:var(--err); }
+        .timer-bar-outer { height:4px; background:var(--border); border-radius:2px; }
+        .timer-bar-inner { height:100%; background:#F59E0B; border-radius:2px; transition:width 1s linear, background 0.5s; }
+        .timer-bar-inner.urgent { background:var(--err); }
 </style>
 
 <script>
