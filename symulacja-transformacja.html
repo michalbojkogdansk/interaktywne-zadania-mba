@@ -804,19 +804,15 @@
     if (!saved) return;
     // Fill any nickname/ksywa input found on page
     var candidates = [
-      document.getElementById('nickname-input'),
-      document.getElementById('ksywa-input'),
-      document.getElementById('nick-input'),
+      document.getElementById('nicknameInput'),
       document.querySelector('input[placeholder*="ksyw"]'),
-      document.querySelector('input[placeholder*="pseudonim"]'),
-      document.querySelector('input[placeholder*="Panda"]')
-    ];
-    candidates.forEach(function(el) { if (el && !el.value) el.value = saved; });
-    // Save ksywa when user changes the field
+      document.querySelector('input[placeholder*="pseudonim"]')
+    ].filter(Boolean);
+    candidates.forEach(function(el) { if (!el.value) el.value = saved; });
+    // Save ksywa when user leaves field
     candidates.forEach(function(el) {
-      if (!el) return;
-      el.addEventListener('change', function() { if (el.value.trim()) saveKsywa(el.value.trim()); });
       el.addEventListener('blur',   function() { if (el.value.trim()) saveKsywa(el.value.trim()); });
+      el.addEventListener('change', function() { if (el.value.trim()) saveKsywa(el.value.trim()); });
     });
   });
 })();
