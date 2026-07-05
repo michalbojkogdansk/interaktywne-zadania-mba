@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev; frame-ancestors 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev; frame-ancestors 'none';">
 <title>Test Predyspozycji MBA</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -386,8 +386,22 @@ let BANK = null;
 // Load public questions from JSON (no answers inside)
 async function loadBank() {
   if (BANK) return BANK;
-  const res = await fetch('questions.json?v=1');
-  BANK = await res.json();
+  try {
+    const res = await fetch('questions.json?v=2');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    BANK = await res.json();
+  } catch(e) {
+    console.warn('questions.json fetch failed:', e);
+    // Fallback: try absolute URL
+    try {
+      const base = window.location.href.replace(/[^/]*$/, '');
+      const res2 = await fetch(base + 'questions.json?v=2');
+      BANK = await res2.json();
+    } catch(e2) {
+      console.error('loadBank failed completely:', e2);
+      throw new Error('Nie udało się załadować pytań. Odśwież stronę.');
+    }
+  }
   return BANK;
 }
 const ALL_EX = ['01','02','03','04','05','test','predyspozycje'];
@@ -507,7 +521,13 @@ async function startWithNick() {
   if (typeof mbaSaveKsywa === 'function') mbaSaveKsywa(nick);
   const btn = document.querySelector('#screen-welcome .btn-primary, #screen-tutorial .btn-primary');
   if (btn) { btn.disabled = true; btn.textContent = 'Ładowanie pytań...'; }
-  QUIZ = await pickQuestions();
+  try {
+    QUIZ = await pickQuestions();
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Spróbuj ponownie'; }
+    document.getElementById('nick-err').textContent = e.message || 'Błąd ładowania pytań. Odśwież stronę.';
+    return;
+  }
   answers = new Array(20).fill(null);
   answerData = new Array(20).fill(null); // stores {correct, correctIndex, explain} from Worker
   currentQ = 0;
