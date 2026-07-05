@@ -522,21 +522,7 @@
     var saved = getKsywa();
     if (!saved) return;
     // Fill any nickname/ksywa input found on page
-    var candidates = [
-      document.getElementById('nickname-input'),
-      document.getElementById('ksywa-input'),
-      document.getElementById('nick-input'),
-      document.querySelector('input[placeholder*="ksyw"]'),
-      document.querySelector('input[placeholder*="pseudonim"]'),
-      document.querySelector('input[placeholder*="Panda"]')
-    ];
-    candidates.forEach(function(el) { if (el && !el.value) el.value = saved; });
-    // Save ksywa when user changes the field
-    candidates.forEach(function(el) {
-      if (!el) return;
-      el.addEventListener('change', function() { if (el.value.trim()) saveKsywa(el.value.trim()); });
-      el.addEventListener('blur',   function() { if (el.value.trim()) saveKsywa(el.value.trim()); });
-    });
+    // No ksywa field in this exercise
   });
 })();
 </script>
