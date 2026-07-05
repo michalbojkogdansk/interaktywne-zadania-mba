@@ -348,6 +348,7 @@ function renderGroups(groups) {
       <div class="group-status-wrap"><span class="badge ${st.cls}">${st.label}</span></div>
       <div class="group-actions">
         <button class="btn btn-ghost btn-sm" onclick="openModal(${i})">Ćwiczenia</button>
+        <button class="btn btn-ghost btn-sm" onclick="openDateModal(${i})">Daty</button>
         ${g.active
           ? `<button class="btn btn-ghost btn-sm" onclick="toggleGroup(${i},false)">Wyłącz</button>`
           : `<button class="btn btn-primary btn-sm" onclick="toggleGroup(${i},true)">Włącz</button>`}
@@ -450,6 +451,69 @@ window.addEventListener('load',()=>{
   document.getElementById('new-start').value=fmt(today);
   document.getElementById('new-end').value=fmt(later);
 });
+</script>
+
+<!-- Date edit modal -->
+<div class="modal-overlay" id="date-modal">
+  <div class="modal-box" style="max-width:380px;">
+    <h3 id="date-modal-title">Zmień daty dostępu</h3>
+    <div style="margin-top:4px;">
+      <span class="field-label">Data rozpoczęcia</span>
+      <input type="date" id="edit-start" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);font-size:0.95rem;font-family:inherit;outline:none;border-radius:0;margin-bottom:16px;">
+      <span class="field-label">Data zakończenia</span>
+      <input type="date" id="edit-end" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);font-size:0.95rem;font-family:inherit;outline:none;border-radius:0;">
+    </div>
+    <div id="date-msg"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeDateModal()">Anuluj</button>
+      <button class="btn btn-primary btn-sm" onclick="saveDates()">Zapisz →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+let _dateIdx = null;
+
+function openDateModal(idx) {
+  _dateIdx = idx;
+  const g = _groups[idx];
+  document.getElementById('date-modal-title').textContent = 'Daty dostępu — ' + g.name;
+  document.getElementById('edit-start').value = g.startDate;
+  document.getElementById('edit-end').value = g.endDate;
+  document.getElementById('date-msg').innerHTML = '';
+  document.getElementById('date-modal').classList.add('open');
+}
+
+function closeDateModal() {
+  document.getElementById('date-modal').classList.remove('open');
+  _dateIdx = null;
+}
+
+async function saveDates() {
+  if (_dateIdx === null) return;
+  const g = _groups[_dateIdx];
+  const start = document.getElementById('edit-start').value;
+  const end   = document.getElementById('edit-end').value;
+  const msg   = document.getElementById('date-msg');
+  if (!start || !end) { msg.innerHTML = '<div class="alert alert-err" style="margin-top:12px;">Wypełnij obie daty.</div>'; return; }
+  if (end < start)    { msg.innerHTML = '<div class="alert alert-err" style="margin-top:12px;">Data końca musi być późniejsza.</div>'; return; }
+  try {
+    const res = await fetch(WORKER + '/admin/update-dates', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY},
+      body: JSON.stringify({ password: g.password, startDate: start, endDate: end })
+    });
+    const data = await res.json();
+    if (data.success) { closeDateModal(); loadGroups(); }
+    else msg.innerHTML = `<div class="alert alert-err" style="margin-top:12px;">${data.error || 'Błąd zapisu.'}</div>`;
+  } catch(e) { msg.innerHTML = '<div class="alert alert-err" style="margin-top:12px;">Błąd połączenia.</div>'; }
+}
+
+document.getElementById('date-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeDateModal();
+});
+
 </script>
 </body>
 </html>
