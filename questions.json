@@ -3,7 +3,7 @@
     {
       "id": "j01",
       "diff": "easy",
-      "question": "Dzień — noc, lato — ?",
+      "question": "Dzień: noc, lato: ?",
       "options": [
         "wiosna",
         "jesień",
@@ -14,7 +14,7 @@
     {
       "id": "j02",
       "diff": "easy",
-      "question": "Ptak — gniazdo, ryba — ?",
+      "question": "Ptak: gniazdo, ryba: ?",
       "options": [
         "staw",
         "rzeka",
@@ -25,7 +25,7 @@
     {
       "id": "j03",
       "diff": "easy",
-      "question": "Nóż — kroić, ołówek — ?",
+      "question": "Nóż: kroić, ołówek: ?",
       "options": [
         "rysować",
         "malować",
@@ -36,7 +36,7 @@
     {
       "id": "j04",
       "diff": "easy",
-      "question": "Lekarz — szpital, nauczyciel — ?",
+      "question": "Lekarz: szpital, nauczyciel: ?",
       "options": [
         "biblioteka",
         "biuro",
@@ -47,7 +47,7 @@
     {
       "id": "j05",
       "diff": "easy",
-      "question": "Auto — garaż, samolot — ?",
+      "question": "Auto: garaż, samolot: ?",
       "options": [
         "lotnisko",
         "niebo",
@@ -58,7 +58,7 @@
     {
       "id": "j06",
       "diff": "easy",
-      "question": "Ogień — gorący, lód — ?",
+      "question": "Ogień: gorący, lód: ?",
       "options": [
         "twardy",
         "mokry",
@@ -69,7 +69,7 @@
     {
       "id": "j07",
       "diff": "easy",
-      "question": "Jabłko — owoc, marchew — ?",
+      "question": "Jabłko: owoc, marchew: ?",
       "options": [
         "roślina",
         "warzywo",
@@ -80,7 +80,7 @@
     {
       "id": "j08",
       "diff": "easy",
-      "question": "Księżyc — noc, słońce — ?",
+      "question": "Księżyc: noc, słońce: ?",
       "options": [
         "dzień",
         "ciepło",
@@ -91,7 +91,7 @@
     {
       "id": "j09",
       "diff": "easy",
-      "question": "Pies — szczekać, kot — ?",
+      "question": "Pies: szczekać, kot: ?",
       "options": [
         "wyć",
         "skrzeczeć",
@@ -102,7 +102,7 @@
     {
       "id": "j10",
       "diff": "easy",
-      "question": "Woda — pić, chleb — ?",
+      "question": "Woda: pić, chleb: ?",
       "options": [
         "kroić",
         "kupować",
@@ -113,7 +113,7 @@
     {
       "id": "j11",
       "diff": "medium",
-      "question": "Biblioteka — książki, muzeum — ?",
+      "question": "Biblioteka: książki, muzeum: ?",
       "options": [
         "obrazy",
         "eksponaty",
@@ -124,7 +124,7 @@
     {
       "id": "j12",
       "diff": "medium",
-      "question": "Głodny — jeść, zmęczony — ?",
+      "question": "Głodny: jeść, zmęczony: ?",
       "options": [
         "siedzieć",
         "spać",
@@ -135,7 +135,7 @@
     {
       "id": "j13",
       "diff": "medium",
-      "question": "Słowa — zdanie, nuty — ?",
+      "question": "Słowa: zdanie, nuty: ?",
       "options": [
         "dźwięki",
         "melodia",
@@ -146,7 +146,7 @@
     {
       "id": "j14",
       "diff": "medium",
-      "question": "Kapitan — statek, pilot — ?",
+      "question": "Kapitan: statek, pilot: ?",
       "options": [
         "lotnisko",
         "samolot",
@@ -157,7 +157,7 @@
     {
       "id": "j15",
       "diff": "medium",
-      "question": "Zegar — czas, termometr — ?",
+      "question": "Zegar: czas, termometr: ?",
       "options": [
         "temperaturę",
         "pogoda",
@@ -168,7 +168,7 @@
     {
       "id": "j16",
       "diff": "medium",
-      "question": "Radość — śmiech, smutek — ?",
+      "question": "Radość: śmiech, smutek: ?",
       "options": [
         "cisza",
         "milczenie",
@@ -179,7 +179,7 @@
     {
       "id": "j17",
       "diff": "medium",
-      "question": "Malarz — pędzel, rzeźbiarz — ?",
+      "question": "Malarz: pędzel, rzeźbiarz: ?",
       "options": [
         "glina",
         "dłuto",
@@ -190,7 +190,7 @@
     {
       "id": "j18",
       "diff": "medium",
-      "question": "Słońce — energia, wiatr — ?",
+      "question": "Słońce: energia, wiatr: ?",
       "options": [
         "ruch",
         "prąd",
@@ -201,7 +201,7 @@
     {
       "id": "j19",
       "diff": "medium",
-      "question": "Król — korona, sędzia — ?",
+      "question": "Król: korona, sędzia: ?",
       "options": [
         "krawat",
         "młotek",
@@ -212,7 +212,7 @@
     {
       "id": "j20",
       "diff": "medium",
-      "question": "Pytanie — odpowiedź, problem — ?",
+      "question": "Pytanie: odpowiedź, problem: ?",
       "options": [
         "trudność",
         "analiza",
@@ -223,7 +223,7 @@
     {
       "id": "j21",
       "diff": "hard",
-      "question": "Nasienie — drzewo, iskra — ?",
+      "question": "Nasienie: drzewo, iskra: ?",
       "options": [
         "dym",
         "pożar",
@@ -234,7 +234,7 @@
     {
       "id": "j22",
       "diff": "hard",
-      "question": "Słownik — znaczenia, mapa — ?",
+      "question": "Słownik: znaczenia, mapa: ?",
       "options": [
         "miejsca",
         "drogi",
@@ -245,7 +245,7 @@
     {
       "id": "j23",
       "diff": "hard",
-      "question": "Śmiech — komedia, łzy — ?",
+      "question": "Śmiech: komedia, łzy: ?",
       "options": [
         "tragedia",
         "dramat",
@@ -256,7 +256,7 @@
     {
       "id": "j24",
       "diff": "hard",
-      "question": "Oko — widzieć, ucho — ?",
+      "question": "Oko: widzieć, ucho: ?",
       "options": [
         "słyszeć",
         "mówić",
@@ -267,7 +267,7 @@
     {
       "id": "j25",
       "diff": "hard",
-      "question": "Chaos — porządek, konflikt — ?",
+      "question": "Chaos: porządek, konflikt: ?",
       "options": [
         "spokój",
         "zgoda",
@@ -278,7 +278,7 @@
     {
       "id": "j26",
       "diff": "hard",
-      "question": "Skrzypce — struny, bęben — ?",
+      "question": "Skrzypce: struny, bęben: ?",
       "options": [
         "membrana",
         "pałki",
@@ -289,7 +289,7 @@
     {
       "id": "j27",
       "diff": "hard",
-      "question": "Pamięć — przeszłość, wyobraźnia — ?",
+      "question": "Pamięć: przeszłość, wyobraźnia: ?",
       "options": [
         "marzenia",
         "twórczość",
@@ -300,7 +300,7 @@
     {
       "id": "j28",
       "diff": "hard",
-      "question": "Prawo — obowiązek, wolność — ?",
+      "question": "Prawo: obowiązek, wolność: ?",
       "options": [
         "odpowiedzialność",
         "wybór",
@@ -311,7 +311,7 @@
     {
       "id": "j29",
       "diff": "hard",
-      "question": "Ziarna — mąka, winogrona — ?",
+      "question": "Ziarna: mąka, winogrona: ?",
       "options": [
         "moszcz",
         "sok",
@@ -322,7 +322,7 @@
     {
       "id": "j30",
       "diff": "hard",
-      "question": "Cisza — dźwięk, ciemność — ?",
+      "question": "Cisza: dźwięk, ciemność: ?",
       "options": [
         "światło",
         "noc",
