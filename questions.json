@@ -6,9 +6,9 @@
       "question": "Dzień — noc, lato — ?",
       "options": [
         "wiosna",
-        "zima",
         "jesień",
-        "ciepło"
+        "ciepło",
+        "zima"
       ]
     },
     {
@@ -16,9 +16,9 @@
       "diff": "easy",
       "question": "Ptak — gniazdo, ryba — ?",
       "options": [
-        "woda",
         "staw",
         "rzeka",
+        "woda",
         "skrzela"
       ]
     },
@@ -28,8 +28,8 @@
       "question": "Nóż — kroić, ołówek — ?",
       "options": [
         "rysować",
-        "pisać",
         "malować",
+        "pisać",
         "kreślić"
       ]
     },
@@ -39,8 +39,8 @@
       "question": "Lekarz — szpital, nauczyciel — ?",
       "options": [
         "biblioteka",
-        "szkoła",
         "biuro",
+        "szkoła",
         "uczelnia"
       ]
     },
@@ -50,8 +50,8 @@
       "question": "Auto — garaż, samolot — ?",
       "options": [
         "lotnisko",
-        "hangar",
         "niebo",
+        "hangar",
         "terminal"
       ]
     },
@@ -82,8 +82,8 @@
       "diff": "easy",
       "question": "Księżyc — noc, słońce — ?",
       "options": [
-        "ciepło",
         "dzień",
+        "ciepło",
         "niebo",
         "gwiazda"
       ]
@@ -94,9 +94,9 @@
       "question": "Pies — szczekać, kot — ?",
       "options": [
         "wyć",
-        "miauczeć",
         "skrzeczeć",
-        "chrumkać"
+        "chrumkać",
+        "miauczeć"
       ]
     },
     {
@@ -105,9 +105,9 @@
       "question": "Woda — pić, chleb — ?",
       "options": [
         "kroić",
-        "jeść",
         "kupować",
-        "piec"
+        "piec",
+        "jeść"
       ]
     },
     {
@@ -149,8 +149,8 @@
       "question": "Kapitan — statek, pilot — ?",
       "options": [
         "lotnisko",
-        "pasażerowie",
         "samolot",
+        "pasażerowie",
         "kabina"
       ]
     },
@@ -159,9 +159,9 @@
       "diff": "medium",
       "question": "Zegar — czas, termometr — ?",
       "options": [
+        "temperaturę",
         "pogoda",
         "ciepło",
-        "temperaturę",
         "gorączkę"
       ]
     },
@@ -171,9 +171,9 @@
       "question": "Radość — śmiech, smutek — ?",
       "options": [
         "cisza",
-        "płacz",
         "milczenie",
-        "westchnienie"
+        "westchnienie",
+        "płacz"
       ]
     },
     {
@@ -201,12 +201,12 @@
     {
       "id": "j19",
       "diff": "medium",
-      "question": "Król — korona, żołnierz — ?",
+      "question": "Król — korona, sędzia — ?",
       "options": [
-        "mundur",
-        "hełm",
-        "broń",
-        "odznaczenie"
+        "krawat",
+        "młotek",
+        "toga",
+        "sala"
       ]
     },
     {
@@ -223,12 +223,12 @@
     {
       "id": "j21",
       "diff": "hard",
-      "question": "Nasienie — drzewo, pomysł — ?",
+      "question": "Nasienie — drzewo, iskra — ?",
       "options": [
-        "myśl",
-        "projekt",
-        "innowacja",
-        "wynalazek"
+        "dym",
+        "pożar",
+        "ciepło",
+        "zapałka"
       ]
     },
     {
@@ -236,8 +236,8 @@
       "diff": "hard",
       "question": "Słownik — znaczenia, mapa — ?",
       "options": [
-        "drogi",
         "miejsca",
+        "drogi",
         "odległości",
         "kierunki"
       ]
@@ -247,21 +247,21 @@
       "diff": "hard",
       "question": "Śmiech — komedia, łzy — ?",
       "options": [
+        "tragedia",
         "dramat",
         "smutek",
-        "tragedia",
         "melodramat"
       ]
     },
     {
       "id": "j24",
       "diff": "hard",
-      "question": "Oko — widzieć, serce — ?",
+      "question": "Oko — widzieć, ucho — ?",
       "options": [
-        "bić",
-        "kochać",
+        "słyszeć",
+        "mówić",
         "czuć",
-        "pompować"
+        "dotykać"
       ]
     },
     {
@@ -271,19 +271,19 @@
       "options": [
         "spokój",
         "zgoda",
-        "pokój",
-        "harmonia"
+        "harmonia",
+        "pokój"
       ]
     },
     {
       "id": "j26",
       "diff": "hard",
-      "question": "Skrzypce — smyczek, gitara — ?",
+      "question": "Skrzypce — struny, bęben — ?",
       "options": [
-        "struny",
-        "kostka",
-        "gryf",
-        "pudło"
+        "membrana",
+        "pałki",
+        "rytm",
+        "dźwięk"
       ]
     },
     {
@@ -292,9 +292,9 @@
       "question": "Pamięć — przeszłość, wyobraźnia — ?",
       "options": [
         "marzenia",
-        "przyszłość",
         "twórczość",
-        "możliwości"
+        "możliwości",
+        "przyszłość"
       ]
     },
     {
@@ -302,8 +302,8 @@
       "diff": "hard",
       "question": "Prawo — obowiązek, wolność — ?",
       "options": [
-        "wybór",
         "odpowiedzialność",
+        "wybór",
         "niezależność",
         "przywilej"
       ]
@@ -314,9 +314,9 @@
       "question": "Ziarna — mąka, winogrona — ?",
       "options": [
         "moszcz",
-        "wino",
         "sok",
-        "ocet"
+        "ocet",
+        "wino"
       ]
     },
     {
@@ -324,9 +324,9 @@
       "diff": "hard",
       "question": "Cisza — dźwięk, ciemność — ?",
       "options": [
+        "światło",
         "noc",
         "cień",
-        "światło",
         "zmrok"
       ]
     }
@@ -338,8 +338,8 @@
       "question": "W koszyku jest 12 jabłek. Zjadłeś 4, a dostałeś jeszcze 7. Ile jabłek masz teraz?",
       "options": [
         "13",
-        "14",
         "15",
+        "14",
         "16"
       ]
     },
@@ -349,9 +349,9 @@
       "question": "Bilet kosztuje 8 zł. Kupiłeś 5 biletów. Ile zapłaciłeś?",
       "options": [
         "35 zł",
-        "40 zł",
         "45 zł",
-        "48 zł"
+        "48 zł",
+        "40 zł"
       ]
     },
     {
@@ -372,8 +372,8 @@
       "options": [
         "10",
         "12",
-        "15",
-        "18"
+        "18",
+        "15"
       ]
     },
     {
@@ -382,8 +382,8 @@
       "question": "Pizza jest podzielona na 8 kawałków. Zjadłeś 3 kawałki. Ile zostało?",
       "options": [
         "4",
-        "5",
         "6",
+        "5",
         "3"
       ]
     },
@@ -394,8 +394,8 @@
       "options": [
         "120",
         "140",
-        "160",
-        "180"
+        "180",
+        "160"
       ]
     },
     {
@@ -403,9 +403,9 @@
       "diff": "easy",
       "question": "Sklep daje każdemu klientowi kartę z 10 punktami. Zebrałeś 5 kart. Ile masz punktów?",
       "options": [
+        "50",
         "40",
         "45",
-        "50",
         "55"
       ]
     },
@@ -415,8 +415,8 @@
       "question": "Masz 3 pudełka. W każdym są 4 kredki. Ile kredek masz łącznie?",
       "options": [
         "8",
-        "10",
         "12",
+        "10",
         "14"
       ]
     },
@@ -458,9 +458,9 @@
       "diff": "medium",
       "question": "Na przyjęcie przyszło 20 gości. 25% z nich to dzieci. Ile dzieci przyszło?",
       "options": [
+        "5",
         "3",
         "4",
-        "5",
         "6"
       ]
     },
@@ -469,8 +469,8 @@
       "diff": "medium",
       "question": "Auto zużywa 8 litrów na 100 km. Ile litrów potrzeba na 250 km?",
       "options": [
-        "18",
         "20",
+        "18",
         "22",
         "24"
       ]
@@ -481,8 +481,8 @@
       "question": "Masz 120 zł i chcesz podzielić je równo między 4 osoby. Ile dostanie każda?",
       "options": [
         "25 zł",
-        "28 zł",
         "30 zł",
+        "28 zł",
         "32 zł"
       ]
     },
@@ -491,9 +491,9 @@
       "diff": "medium",
       "question": "Sklep sprzedaje 3 jogurty za 9 zł. Ile kosztuje 7 jogurtów?",
       "options": [
+        "21 zł",
         "18 zł",
         "19 zł",
-        "21 zł",
         "24 zł"
       ]
     },
@@ -503,8 +503,8 @@
       "question": "Cena wzrosła z 40 zł do 50 zł. O ile procent wzrosła?",
       "options": [
         "10%",
-        "20%",
         "25%",
+        "20%",
         "30%"
       ]
     },
@@ -513,8 +513,8 @@
       "diff": "medium",
       "question": "Praca zajmuje 6 godzin. Zacząłeś o 9:00. O której skończysz?",
       "options": [
-        "14:00",
         "15:00",
+        "14:00",
         "16:00",
         "17:00"
       ]
@@ -524,9 +524,9 @@
       "diff": "medium",
       "question": "W magazynie jest 200 paczek. Wysłano 35% z nich. Ile paczek zostało?",
       "options": [
+        "130",
         "120",
         "125",
-        "130",
         "140"
       ]
     },
@@ -537,8 +537,8 @@
       "options": [
         "6",
         "7",
-        "8",
-        "9"
+        "9",
+        "8"
       ]
     },
     {
@@ -548,8 +548,8 @@
       "options": [
         "15%",
         "20%",
-        "25%",
-        "30%"
+        "30%",
+        "25%"
       ]
     },
     {
@@ -569,9 +569,9 @@
       "question": "Firma miała 80 pracowników. Zatrudniła 25% więcej, a potem zwolniła 10 osób. Ilu pracowników ma teraz?",
       "options": [
         "88",
-        "90",
         "92",
-        "95"
+        "95",
+        "90"
       ]
     },
     {
@@ -591,9 +591,9 @@
       "question": "Pociąg A jedzie 120 km/h, pociąg B jedzie 80 km/h w tym samym kierunku. B wyruszył godzinę wcześniej. Po ilu godzinach A dogoni B?",
       "options": [
         "1 godz.",
-        "2 godz.",
         "3 godz.",
-        "4 godz."
+        "4 godz.",
+        "2 godz."
       ]
     },
     {
@@ -603,8 +603,8 @@
       "options": [
         "150 zł",
         "160 zł",
-        "170 zł",
-        "180 zł"
+        "180 zł",
+        "170 zł"
       ]
     },
     {
@@ -612,9 +612,9 @@
       "diff": "hard",
       "question": "W sklepie: kup 3, zapłać za 2. Jeden produkt kosztuje 15 zł. Ile zapłacisz za 6 sztuk?",
       "options": [
+        "60 zł",
         "50 zł",
         "55 zł",
-        "60 zł",
         "65 zł"
       ]
     },
@@ -623,9 +623,9 @@
       "diff": "hard",
       "question": "Zbiornik wypełnia się w 4 godziny przez jeden kran, a opróżnia w 6 godzin przez odpływ. Ile godzin wypełni się przy otwartym odpływie?",
       "options": [
+        "12",
         "8",
         "10",
-        "12",
         "14"
       ]
     },
@@ -634,9 +634,9 @@
       "diff": "hard",
       "question": "Sklep podniósł cenę o 50%, a potem obniżył o 50%. Produkt kosztował 80 zł. Ile kosztuje teraz?",
       "options": [
-        "60 zł",
         "65 zł",
         "70 zł",
+        "60 zł",
         "80 zł"
       ]
     },
@@ -646,8 +646,8 @@
       "question": "Firma zarabia 5 000 zł tygodniowo. Koszty stałe to 2 000 zł, a zmienne to 40% przychodu. Ile wynosi tygodniowy zysk?",
       "options": [
         "800 zł",
-        "900 zł",
         "1000 zł",
+        "900 zł",
         "1100 zł"
       ]
     },
@@ -657,9 +657,9 @@
       "question": "Masz 3 worki z kulkami. Każdy worek ma 3 razy więcej kulek niż poprzedni. W pierwszym jest 4 kulki. Ile kulek łącznie?",
       "options": [
         "36",
+        "52",
         "40",
-        "48",
-        "52"
+        "48"
       ]
     }
   ],
@@ -800,7 +800,7 @@
       "id": "w13",
       "diff": "medium",
       "passage": "Autobus linii 12 kursuje co 15 minut między 6:00 a 22:00. Ostatni kurs wyjeżdża o 22:00.",
-      "statement": "Między godziną 18:00 a 19:00 przejeżdżają dokładnie 4 autobusy linii 12.",
+      "statement": "Od godziny 18:00 do 18:45 włącznie odjeżdżają dokładnie 4 autobusy linii 12.",
       "options": [
         "Prawda",
         "Fałsz",
@@ -854,7 +854,7 @@
     {
       "id": "w18",
       "diff": "medium",
-      "passage": "Sklep internetowy obsługuje zamówienia przez 7 dni w tygodniu. Czas dostawy wynosi 2–4 dni robocze. Zamówienie złożono w piątek.",
+      "passage": "Sklep internetowy obsługuje zamówienia przez 7 dni w tygodniu. Czas dostawy wynosi 2–4 dni robocze (poniedziałek–piątek). Zamówienie złożono w piątek.",
       "statement": "Zamówienie złożone w piątek dotrze najpóźniej w następną środę.",
       "options": [
         "Prawda",
