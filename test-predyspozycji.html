@@ -319,7 +319,7 @@
   </div>
   <div class="progress-wrap">
     <div class="progress-meta">
-      <span>Pytanie <strong id="q-current">1</strong> z <strong>20</strong></span>
+      <span>Pytanie <strong id="q-current">1</strong> z <strong id="progress-total-q">20</strong></span>
       <span id="q-cat-label"></span>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
@@ -581,6 +581,7 @@ function renderQuestion() {
   const qt = document.getElementById('q-current-t'); if (qt) qt.textContent = currentQ + 1;
   const qtTotal = document.getElementById('timer-total-q'); if (qtTotal) qtTotal.textContent = TOTAL_QUESTIONS;
   document.getElementById('q-current').textContent = currentQ+1;
+  const ptq = document.getElementById('progress-total-q'); if (ptq) ptq.textContent = TOTAL_QUESTIONS;
   document.getElementById('progress-fill').style.width = pct+'%';
   document.getElementById('q-cat-label').innerHTML = catLabel(q.id);
   const answered = answers[currentQ] !== null;
