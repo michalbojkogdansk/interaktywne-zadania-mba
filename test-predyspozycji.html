@@ -311,7 +311,7 @@
   <div class="timer-wrap" id="timer-wrap" style="display:none;">
     <div class="timer-meta">
       <span id="timer-msg" class="timer-msg"></span>
-      <span>Pytanie <strong id="q-current-t">1</strong> / <strong>20</strong></span>
+      <span>Pytanie <strong id="q-current-t">1</strong> / <strong id="timer-total-q">20</strong></span>
     </div>
     <div class="timer-bar-outer">
       <div class="timer-bar-inner" id="timer-bar" style="width:100%"></div>
@@ -416,32 +416,54 @@ async function loadBank() {
 const ALL_EX = ['01','02','03','04','05','test','predyspozycje'];
 let QUIZ = [], answers = [], answerData = [], currentQ = 0, nickname = '';
 
-const TOTAL_TIME = 800; // 40 sek × 20 pytań
+let TOTAL_TIME = 800;     // overridden by /get-test-config
+let TOTAL_QUESTIONS = 20; // overridden by /get-test-config
 let timerStart = null;
 let timerInterval = null;
 let lastNotifiedPct = 0;
 
+async function loadTestConfig() {
+  try {
+    const res = await fetch(WORKER + '/get-test-config');
+    const data = await res.json();
+    TOTAL_QUESTIONS = data.totalQuestions  || 20;
+    TOTAL_TIME      = data.secsPerQuestion * TOTAL_QUESTIONS || 800;
+  } catch(e) {
+    // defaults remain
+  }
+}
+
 
 async function pickQuestions() {
   const bank = await loadBank();
-  // Per category: 1 easy + 3 medium + 3 hard (= 7 questions, but we need ~6-7 per cat for 20 total)
-  // Distribution: 20 questions total, 3 categories
-  // Per cat: 1 easy + 3 medium + 3 hard = 7 → 21 total → trim last cat to 6
-  // Final: cat1=7, cat2=7, cat3=6 = 20
-  function pickCat(pool, nMedium, nHard) {
+  const total = TOTAL_QUESTIONS;
+  const perCat = Math.floor(total / 3);
+  const extra  = total - perCat * 3; // remainder goes to first categories
+
+  function pickCat(pool, n) {
     const easy   = shuffle(pool.filter(q => q.diff === 'easy'));
     const medium = shuffle(pool.filter(q => q.diff === 'medium'));
     const hard   = shuffle(pool.filter(q => q.diff === 'hard'));
-    const picked = [];
-    if (easy.length)   picked.push(easy[0]);                          // 1 easy
-    picked.push(...medium.slice(0, nMedium));                         // n medium
-    picked.push(...hard.slice(0, nHard));                             // n hard
+    // 1 easy, rest split ~50/50 medium/hard
+    const nEasy   = Math.min(1, easy.length);
+    const nRest   = n - nEasy;
+    const nMedium = Math.ceil(nRest / 2);
+    const nHard   = nRest - nMedium;
+    const picked  = [];
+    if (nEasy)   picked.push(...easy.slice(0, nEasy));
+    picked.push(...medium.slice(0, nMedium));
+    picked.push(...hard.slice(0, nHard));
     return shuffle(picked);
   }
-  const j = pickCat(bank.jezykowe,   3, 3); // 7
-  const m = pickCat(bank.matematyczne, 3, 3); // 7
-  const w = pickCat(bank.werbalne,   2, 3); // 6
-  return shuffle([...j, ...m, ...w]); // 20 total
+
+  const nJ = perCat + (extra > 0 ? 1 : 0);
+  const nM = perCat + (extra > 1 ? 1 : 0);
+  const nW = perCat;
+
+  const j = pickCat(bank.jezykowe,      nJ);
+  const m = pickCat(bank.matematyczne,  nM);
+  const w = pickCat(bank.werbalne,      nW);
+  return shuffle([...j, ...m, ...w]);
 }
 
 function shuffle(a) {
@@ -531,14 +553,15 @@ async function startWithNick() {
   const btn = document.querySelector('#screen-welcome .btn-primary, #screen-tutorial .btn-primary');
   if (btn) { btn.disabled = true; btn.textContent = 'Ładowanie pytań...'; }
   try {
-    QUIZ = await pickQuestions();
+    await loadTestConfig();
+  QUIZ = await pickQuestions();
   } catch(e) {
     if (btn) { btn.disabled = false; btn.textContent = 'Spróbuj ponownie'; }
     document.getElementById('nick-err').textContent = e.message || 'Błąd ładowania pytań. Odśwież stronę.';
     return;
   }
-  answers = new Array(20).fill(null);
-  answerData = new Array(20).fill(null); // stores {correct, correctIndex, explain} from Worker
+  answers = new Array(TOTAL_QUESTIONS).fill(null);
+  answerData = new Array(TOTAL_QUESTIONS).fill(null); // stores {correct, correctIndex, explain} from Worker
   currentQ = 0;
   showScreen('quiz');
   startTimer();
@@ -547,8 +570,9 @@ async function startWithNick() {
 
 function renderQuestion() {
   const q = QUIZ[currentQ];
-  const pct = ((currentQ) / 20 * 100).toFixed(0);
+  const pct = ((currentQ) / TOTAL_QUESTIONS * 100).toFixed(0);
   const qt = document.getElementById('q-current-t'); if (qt) qt.textContent = currentQ + 1;
+  const qtTotal = document.getElementById('timer-total-q'); if (qtTotal) qtTotal.textContent = TOTAL_QUESTIONS;
   document.getElementById('q-current').textContent = currentQ+1;
   document.getElementById('progress-fill').style.width = pct+'%';
   document.getElementById('q-cat-label').innerHTML = catLabel(q.id);
@@ -575,7 +599,7 @@ function renderQuestion() {
   document.getElementById('quiz-container').innerHTML = `
     <div class="q-card">
       <div class="q-meta">
-        <span class="q-num">Pytanie ${currentQ+1} / 20</span>
+        <span class="q-num">Pytanie ${currentQ+1} / ${TOTAL_QUESTIONS}</span>
         ${catLabel(q.id)} ${diffLabel(q.diff)}
       </div>
       ${passageHtml}
@@ -585,7 +609,7 @@ function renderQuestion() {
     </div>
     <div class="nav-btns">
       ${currentQ > 0 ? '<button class="btn btn-ghost" onclick="prevQ()">← Poprzednie</button>' : ''}
-      ${answered ? (currentQ < 19 ? '<button class="btn btn-primary" onclick="nextQ()">Następne →</button>' : '<button class="btn btn-purple" onclick="finishQuiz()">Zakończ i pokaż wyniki →</button>') : ''}
+      ${answered ? (currentQ < TOTAL_QUESTIONS - 1 ? '<button class="btn btn-primary" onclick="nextQ()">Następne →</button>' : '<button class="btn btn-purple" onclick="finishQuiz()">Zakończ i pokaż wyniki →</button>') : ''}
     </div>`;
 }
 
@@ -611,7 +635,7 @@ async function selectAnswer(i) {
   }
   renderQuestion();
 }
-function nextQ() { if (currentQ < 19) { currentQ++; renderQuestion(); } }
+function nextQ() { if (currentQ < TOTAL_QUESTIONS - 1) { currentQ++; renderQuestion(); } }
 function prevQ() { if (currentQ > 0) { currentQ--; renderQuestion(); } }
 
 async function finishQuiz() {
@@ -624,7 +648,7 @@ async function finishQuiz() {
     cats[k].total++;
     if (answerData[i] && answerData[i].correct) cats[k].right++;
   });
-  const pct = Math.round(correct/20*100);
+  const pct = Math.round(correct/TOTAL_QUESTIONS*100);
   let level = pct >= 80 ? 'Wysoki poziom predyspozycji' : pct >= 55 ? 'Dobry poziom predyspozycji' : 'Obszary do rozwoju';
   let levelDesc = pct >= 80 ? 'Wyniki wskazują na silne predyspozycje analityczne i komunikacyjne.' : pct >= 55 ? 'Solidna podstawa — pewne obszary warto wzmocnić.' : 'Wyniki wskazują konkretne obszary do pracy przed programem.';
 
@@ -645,7 +669,7 @@ async function finishQuiz() {
 
   document.getElementById('result-container').innerHTML = `
     <div class="result-hero">
-      <div class="score">${correct}<span style="font-size:2rem;opacity:0.6">/20</span></div>
+      <div class="score">${correct}<span style="font-size:2rem;opacity:0.6">/${TOTAL_QUESTIONS}</span></div>
       <div class="score-sub">${pct}% poprawnych odpowiedzi</div>
       <h2>${level}</h2>
       <p>${levelDesc}</p>
@@ -698,7 +722,7 @@ async function saveResult(correct, pct, cats) {
     '',
     '### Wynik ogólny',
     '',
-    `**${correct}/20 (${pct}%) — ${level}**`,
+    `**${correct}/${TOTAL_QUESTIONS} (${pct}%) — ${level}**`,
     '',
     '| Kategoria | Wynik | Procent |',
     '|---|---|---|',
@@ -717,7 +741,7 @@ async function saveResult(correct, pct, cats) {
     await fetch(WORKER, {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
-        title: `[Predyspozycje] ${nickname} — ${groupName} — ${correct}/20 (${pct}%)`,
+        title: `[Predyspozycje] ${nickname} — ${groupName} — ${correct}/${TOTAL_QUESTIONS} (${pct}%)`,
         body,
         labels: ['predyspozycje'],
         code: password
