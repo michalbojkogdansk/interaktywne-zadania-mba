@@ -527,6 +527,7 @@ document.getElementById('date-modal').addEventListener('click', function(e) {
       if (ok) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-screen').style.display = 'block';
+        loadConfig(); updateConfigTotal();
       } else {
         ADMIN_KEY = '';
         sessionStorage.removeItem('mba_admin_key');
