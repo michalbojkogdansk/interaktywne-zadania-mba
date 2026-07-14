@@ -425,7 +425,11 @@ let lastNotifiedPct = 0;
 
 async function loadTestConfig() {
   try {
-    const res = await fetch(WORKER + '/get-test-config');
+    const res = await fetch(WORKER + '/get-test-config', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({})
+    });
     const data = await res.json();
     TOTAL_QUESTIONS = data.totalQuestions  || 20;
     TOTAL_TIME      = data.secsPerQuestion * TOTAL_QUESTIONS || 800;
