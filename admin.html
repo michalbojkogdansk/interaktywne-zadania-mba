@@ -160,9 +160,9 @@
         <div class="form-row">
           <div>
             <span class="field-label">Liczba pytań w teście</span>
-            <input type="number" id="cfg-questions" min="6" max="30" value="20"
+            <input type="number" id="cfg-questions" min="1" value="20"
               style="width:100%;padding:11px 13px;border:1.5px solid var(--border);font-size:0.95rem;font-family:inherit;outline:none;">
-            <div style="font-size:0.75rem;color:var(--sec);margin-top:4px;">Zakres: 6–30. Pytania losowane równomiernie z trzech kategorii.</div>
+            <div style="font-size:0.75rem;color:var(--sec);margin-top:4px;">Pytania losowane równomiernie z trzech kategorii.</div>
           </div>
           <div>
             <span class="field-label">Sekund na jedno pytanie</span>
@@ -591,8 +591,8 @@ async function saveConfig() {
   const q = parseInt(document.getElementById('cfg-questions').value);
   const s = parseInt(document.getElementById('cfg-secs').value);
   const msg = document.getElementById('cfg-msg');
-  if (!q || !s || q < 6 || q > 30 || s < 10 || s > 300) {
-    msg.innerHTML = '<div class="alert alert-err" style="margin-top:12px;">Sprawdź zakresy: pytania 6–30, sekundy 10–300.</div>';
+  if (!q || !s || q < 1 || s < 10 || s > 300) {
+    msg.innerHTML = '<div class="alert alert-err" style="margin-top:12px;">Sprawdź zakresy: pytania min 1, sekundy 10–300.</div>';
     return;
   }
   try {
