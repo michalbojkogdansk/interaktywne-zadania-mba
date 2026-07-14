@@ -755,11 +755,20 @@ async function saveResult(correct, pct, cats) {
 
 
 // Load config after all functions are defined
-document.addEventListener('DOMContentLoaded', function() {
+// Execute immediately — script is at end of body so DOM is ready
+// Also handle case where DOMContentLoaded already fired
+function initConfig() {
   loadTestConfig().then(function() {
-    const wqc = document.getElementById('welcome-q-count');
+    var wqc = document.getElementById('welcome-q-count');
     if (wqc) wqc.textContent = TOTAL_QUESTIONS;
+  }).catch(function(e) {
+    console.error('initConfig failed:', e);
   });
-});
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initConfig);
+} else {
+  initConfig();
+}
 </script>
 </body>
