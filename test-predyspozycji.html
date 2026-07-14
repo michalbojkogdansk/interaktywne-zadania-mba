@@ -379,11 +379,7 @@ async function verifyGroupGate() {
         password: pw, groupName: data.groupName, allowedExercises: data.allowedExercises
       }));
       document.getElementById('mba-group-gate').style.display = 'none';
-      // Update welcome screen count dynamically
-      loadTestConfig().then(function() {
-        const wqc = document.getElementById('welcome-q-count');
-        if (wqc) wqc.textContent = TOTAL_QUESTIONS;
-      });
+
       document.getElementById('tb-group').style.display = '';
       document.getElementById('tb-groupname').textContent = data.groupName;
       document.getElementById('tb-logout').style.display = '';
