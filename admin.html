@@ -153,7 +153,33 @@
   </div>
   <div class="container">
 
+    
     <div class="panel">
+      <div class="panel-head"><h2>Test Predyspozycji — Konfiguracja</h2></div>
+      <div class="panel-body">
+        <div class="form-row">
+          <div>
+            <span class="field-label">Liczba pytań w teście</span>
+            <input type="number" id="cfg-questions" min="6" max="30" value="20"
+              style="width:100%;padding:11px 13px;border:1.5px solid var(--border);font-size:0.95rem;font-family:inherit;outline:none;">
+            <div style="font-size:0.75rem;color:var(--sec);margin-top:4px;">Zakres: 6–30. Pytania losowane równomiernie z trzech kategorii.</div>
+          </div>
+          <div>
+            <span class="field-label">Sekund na jedno pytanie</span>
+            <input type="number" id="cfg-secs" min="10" max="300" value="40"
+              style="width:100%;padding:11px 13px;border:1.5px solid var(--border);font-size:0.95rem;font-family:inherit;outline:none;">
+            <div style="font-size:0.75rem;color:var(--sec);margin-top:4px;">Zakres: 10–300. Łączny czas = pytania × sekundy.</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;align-items:center;gap:16px;">
+          <button class="btn btn-primary" onclick="saveConfig()">Zapisz konfigurację →</button>
+          <span id="cfg-total" style="font-size:0.85rem;color:var(--sec);"></span>
+        </div>
+        <div id="cfg-msg"></div>
+      </div>
+    </div>
+
+<div class="panel">
       <div class="panel-head"><h2>Nowa Grupa</h2></div>
       <div class="panel-body">
         <div class="form-row">
@@ -268,6 +294,7 @@ function doLogin() {
   loadGroups().then(ok => {
     if (ok) {
       try { sessionStorage.setItem('mba_admin_key', key); } catch(e) {}
+      loadConfig(); updateConfigTotal();
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('main-screen').style.display = 'block';
     } else {
@@ -528,6 +555,7 @@ document.getElementById('date-modal').addEventListener('click', function(e) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-screen').style.display = 'block';
         loadConfig(); updateConfigTotal();
+        loadConfig(); updateConfigTotal();
       } else {
         ADMIN_KEY = '';
         sessionStorage.removeItem('mba_admin_key');
@@ -535,6 +563,60 @@ document.getElementById('date-modal').addEventListener('click', function(e) {
     });
   } catch(e) {}
 })();
+</script>
+<script>
+
+// ── Config ──────────────────────────────────────────────────────────────────
+async function loadConfig() {
+  try {
+    const res = await fetch(WORKER + '/admin/get-config', { headers: { 'X-Admin-Key': ADMIN_KEY } });
+    const data = await res.json();
+    document.getElementById('cfg-questions').value = data.totalQuestions;
+    document.getElementById('cfg-secs').value = data.secsPerQuestion;
+    updateConfigTotal();
+  } catch(e) { console.warn('Config load failed', e); }
+}
+
+function updateConfigTotal() {
+  const q = parseInt(document.getElementById('cfg-questions').value) || 20;
+  const s = parseInt(document.getElementById('cfg-secs').value) || 40;
+  const total = q * s;
+  const mins = Math.floor(total / 60);
+  const secs = total % 60;
+  document.getElementById('cfg-total').textContent =
+    'Łączny czas testu: ' + (mins > 0 ? mins + ' min ' : '') + (secs > 0 ? secs + ' sek' : '');
+}
+
+async function saveConfig() {
+  const q = parseInt(document.getElementById('cfg-questions').value);
+  const s = parseInt(document.getElementById('cfg-secs').value);
+  const msg = document.getElementById('cfg-msg');
+  if (!q || !s || q < 6 || q > 30 || s < 10 || s > 300) {
+    msg.innerHTML = '<div class="alert alert-err" style="margin-top:12px;">Sprawdź zakresy: pytania 6–30, sekundy 10–300.</div>';
+    return;
+  }
+  try {
+    const res = await fetch(WORKER + '/admin/set-config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY },
+      body: JSON.stringify({ totalQuestions: q, secsPerQuestion: s })
+    });
+    const data = await res.json();
+    if (data.success) {
+      msg.innerHTML = '<div class="alert alert-ok" style="margin-top:12px;">✓ Konfiguracja zapisana.</div>';
+      setTimeout(() => { msg.innerHTML = ''; }, 3000);
+      updateConfigTotal();
+    } else {
+      msg.innerHTML = `<div class="alert alert-err" style="margin-top:12px;">${data.error || 'Błąd.'}</div>`;
+    }
+  } catch(e) { msg.innerHTML = '<div class="alert alert-err" style="margin-top:12px;">Błąd połączenia.</div>'; }
+}
+
+['cfg-questions','cfg-secs'].forEach(function(id) {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', updateConfigTotal);
+});
+
 </script>
 </body>
 </html>
