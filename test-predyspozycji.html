@@ -353,12 +353,6 @@ function mbaClearSession() {
   } catch(e){}
 })();
 
-// Load config immediately on page load and update welcome count
-loadTestConfig().then(function() {
-  const wqc = document.getElementById('welcome-q-count');
-  if (wqc) wqc.textContent = TOTAL_QUESTIONS;
-});
-
 // Gate
 async function verifyGroupGate() {
   const inp = document.getElementById('mba-gate-input');
@@ -762,6 +756,14 @@ async function saveResult(correct, pct, cats) {
     });
   } catch(e) { console.warn('Issue save failed', e); }
 }
+
+
+// Load config after all functions are defined
+document.addEventListener('DOMContentLoaded', function() {
+  loadTestConfig().then(function() {
+    const wqc = document.getElementById('welcome-q-count');
+    if (wqc) wqc.textContent = TOTAL_QUESTIONS;
+  });
+});
 </script>
 </body>
-</html>
