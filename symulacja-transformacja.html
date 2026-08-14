@@ -1035,6 +1035,52 @@
 // ═══════════════════════════════════════════════════
 // DECISIONS DATA
 // ═══════════════════════════════════════════════════
+
+// ── Tooltip engine ────────────────────────────────────────────
+const TERM_TOOLTIPS = {
+  "DDDM": "Data-Driven Decision Making: podejmowanie decyzji w oparciu o dane i analizy, a nie intuicj\u0119.",
+  "DWH": "Data Warehouse (Hurtownia Danych): centralna baza integruj\u0105ca dane z wielu system\u00f3w, zoptymalizowana pod analizy.",
+  "Power BI": "Narz\u0119dzie Microsoftu do wizualizacji danych i tworzenia interaktywnych dashboard\u00f3w biznesowych.",
+  "Modern Data Stack": "Nowoczesny stos technologiczny do danych w chmurze. Szybszy ni\u017c DWH, ale wymaga specjalist\u00f3w Data Engineering.",
+  "KPI": "Key Performance Indicator: mierzalny wska\u017anik realizacji cel\u00f3w (np. % defekt\u00f3w, czas dostawy, mar\u017ca).",
+  "ROI": "Return on Investment: zwrot z inwestycji. ROI 50% = za ka\u017cde 100 z\u0142 zainwestowane firma zyskuje 150 z\u0142.",
+  "API": "Application Programming Interface: interfejs pozwalaj\u0105cy systemom automatycznie komunikowa\u0107 si\u0119 i wymienia\u0107 dane.",
+  "Microsoft Copilot": "Asystent AI w aplikacjach Microsoft 365 (Word, Excel, Teams). Wspiera pisanie, analiz\u0119 i podsumowania.",
+  "Make.com": "Platforma automatyzacji no-code. \u0141\u0105czy aplikacje i tworzy automatyczne przep\u0142ywy pracy bez programowania.",
+  "Zapier": "Popularna platforma automatyzacji no-code. \u0141\u0105czy ponad 6000 aplikacji, umo\u017cliwiaj\u0105c przep\u0142yw danych mi\u0119dzy nimi.",
+  "Gemini": "Model j\u0119zykowy AI stworzony przez Google (konkurent ChatGPT). Analizuje teksty i odpowiada na pytania.",
+  "GPT-4": "Zaawansowany model AI OpenAI, podstawa ChatGPT. Stosowany do generowania tekst\u00f3w i automatyzacji biurowej.",
+  "ERP": "Enterprise Resource Planning: system \u0142\u0105cz\u0105cy finanse, produkcj\u0119, logistyk\u0119 i HR w jednej platformie (np. SAP).",
+  "CRM": "Customer Relationship Management: system do zarz\u0105dzania relacjami z klientami i histori\u0105 sprzeda\u017cy.",
+  "CDO": "Chief Digital Officer: dyrektor ds. cyfryzacji, odpowiada za strategi\u0119 i koordynacj\u0119 wdro\u017ce\u0144 technologicznych.",
+  "Digital Champions": "Pracownicy z r\u00f3\u017cnych dzia\u0142\u00f3w, kt\u00f3rzy jako pierwsi adoptuj\u0105 technologie i pomagaj\u0105 kolegom w transformacji.",
+  "change management": "Zarz\u0105dzanie zmian\u0105: metodyczne podej\u015bcie minimalizuj\u0105ce op\u00f3r pracownik\u00f3w przy wdro\u017ceniach nowych technologii.",
+  "AI-first": "Strategia stawiaj\u0105ca AI w centrum wszystkich decyzji firmy. Ryzykowna bez wcze\u015bniej uporz\u0105dkowanych danych.",
+  "quick wins": "Szybkie zwyci\u0119stwa: inicjatywy przynosz\u0105ce widoczne wyniki w 4-8 tygodniach, buduj\u0105ce zaufanie do programu.",
+  "Data Lake": "Repozytorium surowych danych w oryginalnym formacie. Ta\u0144sze ni\u017c DWH, ale wymaga Data Engineer\u00f3w."
+};
+
+function applyTooltips(htmlStr) {
+  const terms = Object.keys(TERM_TOOLTIPS).sort((a, b) => b.length - a.length);
+  let out = htmlStr;
+  const used = new Set();
+  terms.forEach(term => {
+    if (used.has(term)) return;
+    const tip = TERM_TOOLTIPS[term].replace(/"/g, '&quot;');
+    const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Match term not already inside a span
+    const re = new RegExp('(?<![=>\\w])(' + esc + ')(?![\\w<])', 'g');
+    let replaced = false;
+    out = out.replace(re, (match) => {
+      if (replaced) return match; // only first occurrence
+      replaced = true;
+      return '<span class="tt" data-tip="' + tip + '">' + match + '</span>';
+    });
+    if (replaced) used.add(term);
+  });
+  return out;
+}
+
 const DECISIONS = [
   {
     id: 1,
@@ -1042,7 +1088,7 @@ const DECISIONS = [
     tag: "dddm", tagLabel: "DDDM",
     emoji: "🔍",
     situation: `<strong>Tydzień 1.</strong> Zanim wydasz złotówkę, musisz zrozumieć gdzie firma jest cyfrowo. Masz dwa podejścia: zlecić zewnętrzny audyt firmie konsultingowej lub zbudować własną wiedzę angażując pracowników. Czas i pieniądze są ograniczone.`,
-    dataPoints: ["Excel w 90% procesów", "4 osobne bazy danych (bez integracji)", "Brak <span class="tt" data-tip="Key Performance Indicator: mierzalny wskaźnik pokazujący, czy firma realizuje cele strategiczne (np. czas realizacji zamówienia, % defektów, marża).">KPI</span> dashboard", "Dział IT: 3 osoby"],
+    dataPoints: ["Excel w 90% procesów", "4 osobne bazy danych (bez integracji)", "Brak KPI dashboard", "Dział IT: 3 osoby"],
     question: "Jak przeprowadzisz diagnozę stanu cyfrowego firmy?",
     type: "options",
     options: [
@@ -1062,7 +1108,7 @@ const DECISIONS = [
     question: "Jaką strategię danych wdrożysz jako fundament transformacji?",
     type: "options",
     options: [
-      { letter: "A", title: "Enterprise Data Warehouse + Power BI", desc: "Budujesz korporacyjną architekturę danych z jednym centralnym repozytorium i wdrażasz <span class="tt" data-tip="Narzędzie Microsoftu do wizualizacji danych i tworzenia interaktywnych dashboardów. Pozwala menedżerom śledzić KPI w czasie rzeczywistym.">Power BI</span>. Zarząd dostaje dashboard z dowolną metryką, jeden punkt prawdy dla całej firmy. Koszt ~120k PLN." },
+      { letter: "A", title: "Enterprise Data Warehouse + Power BI", desc: "Budujesz korporacyjną architekturę danych z jednym centralnym repozytorium i wdrażasz Power BI. Zarząd dostaje dashboard z dowolną metryką, jeden punkt prawdy dla całej firmy. Koszt ~120k PLN." },
       { letter: "B", title: "Modern Data Stack w chmurze (Azure/AWS)", desc: "Data lakehouse używany przez liderów rynku: architektura gotowa na AI i machine learning od pierwszego dnia. Skalowalna, elastyczna, integruje dowolne źródła. Koszt ~90k PLN + subskrypcja." },
       { letter: "C", title: "Targeted reporting: 3 kluczowe raporty", desc: "Identyfikujesz 3 raporty o najwyższym wpływie na decyzje i ujednolicasz je w 4 tygodnie. Szybkie, widoczne efekty, które natychmiast pokazują wartość transformacji. Koszt ~30k PLN." },
       { letter: "D", title: "Integracja przez middleware (iPaaS)", desc: "Platforma integracyjna (np. Make.com/Zapier Enterprise, koszt ~40k PLN/rok) spinająca istniejące systemy. Kompromis między szybkością a głębokością." }
@@ -1090,14 +1136,14 @@ const DECISIONS = [
     tag: "ai", tagLabel: "AI",
     emoji: "🤖",
     situation: `<strong>Miesiąc 3.</strong> Zarząd pyta: „Kiedy będziemy mieć AI?" Presja na szybkie wdrożenie jest duża. Ale AI bez danych to tylko marketingowe hasło. Musisz zdecydować o podejściu do AI w firmie.`,
-    dataPoints: ["Konkurencja wdrożyła chatbota obsługi", "ROI z automatyzacji prognoz: potencjalnie +12% marży", "Dostępne modele: <span class="tt" data-tip="Zaawansowany model językowy AI stworzony przez OpenAI. Podstawa ChatGPT. Stosowany do generowania tekstów, analizy danych i automatyzacji pracy biurowej.">GPT-4</span>, <span class="tt" data-tip="Model językowy AI stworzony przez Google (konkurent ChatGPT). Może analizować teksty, generować raporty i odpowiadać na pytania na podstawie danych firmy.">Gemini</span>, modele branżowe", "Ryzyko: 60% projektów AI kończy się niepowodzeniem"],
+    dataPoints: ["Konkurencja wdrożyła chatbota obsługi", "ROI z automatyzacji prognoz: potencjalnie +12% marży", "Dostępne modele: GPT-4, Gemini, modele branżowe", "Ryzyko: 60% projektów AI kończy się niepowodzeniem"],
     question: "Jaką strategię wdrożenia AI przyjmiesz?",
     type: "options",
     options: [
       { letter: "A", title: "AI-first: szerokie wdrożenie", desc: "Odpowiadasz na oczekiwania zarządu kompleksowo: równoległe wdrożenia AI w predykcji popytu, automatyzacji obsługi klienta i HR. Firma wchodzi w erę AI szybko i widocznie." },
       { letter: "B", title: "Jeden konkretny pilot AI", desc: "Wybierasz jeden obszar (np. prognozowanie produkcji) i budujesz PoC w 8 tygodni. Uczysz się na małym błędzie, nie na dużym." },
       { letter: "C", title: "AI-ready strategy: najpierw dane", desc: "Deklarujesz AI za 6+ miesięcy, skupiasz się na przygotowaniu danych i kompetencji. Zarząd może być niezadowolony." },
-      { letter: "D", title: "AI w codziennej pracy (<span class="tt" data-tip="Asystent AI wbudowany w aplikacje Microsoft 365 (Word, Excel, Teams). Pomaga pisać, analizować dane i podsumowywać spotkania.">Microsoft Copilot</span>)", desc: "Wdrażasz Microsoft Copilot lub Google Workspace AI dla całego zespołu. Każdy pracownik dostaje asystenta AI od razu: szybka adopcja, zero ryzyka technicznego, widoczny efekt." }
+      { letter: "D", title: "AI w codziennej pracy (Microsoft Copilot)", desc: "Wdrażasz Microsoft Copilot lub Google Workspace AI dla całego zespołu. Każdy pracownik dostaje asystenta AI od razu: szybka adopcja, zero ryzyka technicznego, widoczny efekt." }
     ]
   },
   {
@@ -1105,7 +1151,7 @@ const DECISIONS = [
     title: "Quick wins: jak pokazać wartość?",
     tag: "strategy", tagLabel: "Strategia",
     emoji: "",
-    situation: `<strong>Miesiąc 3–4.</strong> Zarząd oczekuje pierwszych wyników. Masz budżet i czas: ale co przyniesie największą wartość w krótkim terminie? To decyzja o komunikacji i wiarygodności <span class="tt" data-tip="Chief Digital Officer: dyrektor ds. cyfryzacji. Odpowiada za strategię transformacji cyfrowej firmy i koordynuje wdrożenia technologiczne.">CDO</span>.`,
+    situation: `<strong>Miesiąc 3–4.</strong> Zarząd oczekuje pierwszych wyników. Masz budżet i czas: ale co przyniesie największą wartość w krótkim terminie? To decyzja o komunikacji i wiarygodności CDO.`,
     dataPoints: ["Raportowanie zajmuje 2 dni/tydzień w każdym dziale", "Błędy w zamówieniach: 8% (koszt ~200k PLN/rok)", "Czas onboardingu nowego pracownika: 3 tygodnie", "Zarząd chce dashboard w czasie rzeczywistym"],
     question: "Jaki quick win przyniesie największą wartość i wiarygodność?",
     type: "rank",
@@ -1123,11 +1169,11 @@ const DECISIONS = [
     emoji: "",
     situation: `<strong>Miesiąc 4–5.</strong> Technologia gotowa: ale połowa pracowników boi się zmian. Część widzi w AI zagrożenie dla swoich miejsc pracy. Bez adopcji narzędzi, transformacja będzie tylko na papierze.`,
     dataPoints: ["Sondaż: 45% pracowników 'obawia się cyfryzacji'", "Liderzy linii: różne poziomy entuzjazmu", "HR nie był angażowany w planowanie", "Sukces transformacji: 70% to ludzie, 30% technologia"],
-    question: "Jaką strategię <span class="tt" data-tip="Zarządzanie zmianą: metodyczne podejście do wprowadzania zmian w organizacji, minimalizujące opór pracowników i zwiększające szanse na sukces wdrożenia.">change management</span> przyjmiesz?",
+    question: "Jaką strategię change management przyjmiesz?",
     type: "multi-choice",
     instruction: "Wybierz <strong>maksymalnie 3</strong> działania, które wdrożysz:",
     choices: [
-      { id: "champions", label: "🏆 Sieć <span class="tt" data-tip="Pracownicy z różnych działów, którzy jako pierwsi adoptują nowe technologie i pomagają kolegom. Kluczowi dla udanej transformacji — zmniejszają opór przed zmianą.">Digital Champions</span> (ambasadorów zmiany) w każdym dziale" },
+      { id: "champions", label: "🏆 Sieć Digital Champions (ambasadorów zmiany) w każdym dziale" },
       { id: "communication", label: "📣 Regularna komunikacja od CEO: 'dlaczego transformacja jest konieczna'" },
       { id: "training-role", label: "🎓 Szkolenia dopasowane do roli (nie jeden program dla wszystkich)" },
       { id: "metrics", label: "📊 Publiczne KPI transformacji: przejrzystość postępów" },
@@ -1281,7 +1327,7 @@ function renderDecision(idx) {
           <div class="option-letter">${o.letter}</div>
           <div class="option-text">
             <h4>${o.title}</h4>
-            <p>${o.desc}</p>
+            <p>${applyTooltips(o.desc)}</p>
           </div>
         </div>`).join('') +
     `</div>`;
@@ -1347,7 +1393,7 @@ function renderDecision(idx) {
           <span class="tag ${tagColors[d.tag]}">${d.tagLabel}</span>
         </div>
       </div>
-      <div class="situation-box">${d.situation}</div>
+      <div class="situation-box">${applyTooltips(d.situation)}</div>
       <div class="data-points">
         ${d.dataPoints.map(dp => `<div class="data-point">📌 ${dp}</div>`).join('')}
       </div>
@@ -1512,8 +1558,8 @@ function showSummary() {
 // ═══════════════════════════════════════════════════
 const SCORE_WEIGHTS = {
   D1: { 0: 2, 1: 10, 2: 15, 3: 6 },   // A=external audit(bad), B=workshops, C=rapid(best), D=integrated
-  D2: { 0: 2, 1: 6, 2: 20, 3: 14 },   // A=<span class="tt" data-tip="Data Warehouse (Hurtownia Danych): centralna baza danych integrująca dane z wielu systemów firmy, zoptymalizowana pod analizy historyczne.">DWH</span> 120k(bad), B=cloud stack(no competencies), C=targeted(best), D=iPaaS
-  D4: { 0: 2, 1: 20, 2: 11, 3: 6 },   // A=<span class="tt" data-tip="Strategia, w której sztuczna inteligencja jest centralnym elementem wszystkich decyzji i produktów firmy. Ryzykowna bez wcześniej uporządkowanych danych.">AI-first</span>(bad), B=one pilot(best), C=AI-ready, D=Copilot
+  D2: { 0: 2, 1: 6, 2: 20, 3: 14 },   // A=DWH 120k(bad), B=cloud stack(no competencies), C=targeted(best), D=iPaaS
+  D4: { 0: 2, 1: 20, 2: 11, 3: 6 },   // A=AI-first(bad), B=one pilot(best), C=AI-ready, D=Copilot
   D5_errors: { 0: 15, 1: 11, 2: 6, 3: 2 }, // position of "errors" in ranking
   D6: { champions: 5, communication: 4, 'training-role': 4, metrics: 3, feedback: 3, incentives: 1 }
 };
@@ -1662,7 +1708,7 @@ function buildPrompt() {
 KONTEKST FIRMY: ProdukcjaPlus Sp. z o.o.: firma produkcyjna, 850 pracowników, 45 lat na rynku, stagnacja przychodów od 3 lat, BUDŻET TRANSFORMACJI: 500k PLN, CZAS: 6 miesięcy.
 
 DECYZJE STUDENTA:
-1. Diagnoza (<span class="tt" data-tip="Data-Driven Decision Making: podejmowanie decyzji w oparciu o dane i analizy, a nie intuicję lub przyzwyczajenia.">DDDM</span>): ${d0text}
+1. Diagnoza (DDDM): ${d0text}
 2. Strategia danych (DDDM): ${d1text}
 3. Budżet na ludzi i kompetencje (pula: 150k PLN): ${d2text}
 4. Strategia AI: ${d3text}
@@ -1676,7 +1722,7 @@ DIAGNOZA (D1): PUŁAPKI:
 - "Podejście zintegrowane" za 45k PLN = kolejne marnotrawstwo; dobry CDO robi rapid assessment sam lub warsztatami.
 
 STRATEGIA DANYCH (D2): PUŁAPKI:
-- "Enterprise Data Warehouse + Power BI" za 120k PLN + 4 miesiące = 24% budżetu i 67% dostępnego czasu na samą infrastrukturę. Zostają 2 miesiące i 380k na wszystko inne. To błąd krytyczny: firma nie uzyska <span class="tt" data-tip="Return on Investment: wskaźnik zwrotu z inwestycji. ROI 50% oznacza, że za każde 100 zł zainwestowane firma zyskuje 150 zł.">ROI</span> w terminie.
+- "Enterprise Data Warehouse + Power BI" za 120k PLN + 4 miesiące = 24% budżetu i 67% dostępnego czasu na samą infrastrukturę. Zostają 2 miesiące i 380k na wszystko inne. To błąd krytyczny: firma nie uzyska ROI w terminie.
 - "Modern Data Stack w chmurze" = wymaga kompetencji Data Engineera seniorskiego, których firma NIE MA (dział IT: 3 osoby, przeciążone bieżącą obsługą). Projekt skończy się porażką lub permanent dependency od konsultantów.
 
 AI (D4): PUŁAPKI:
