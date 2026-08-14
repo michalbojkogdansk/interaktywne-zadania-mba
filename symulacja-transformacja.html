@@ -722,54 +722,60 @@
 
   
         /* ── Tooltips ── */
-        .tt {
-            display: inline;
+        
+        
+        
+        /* Arrow */
+        
+        
+
+        /* ── Term popups ── */
+        .term {
             border-bottom: 1px dashed #4A8F8A;
-            cursor: help;
-            position: relative;
-            white-space: nowrap;
+            cursor: pointer;
+            color: inherit;
         }
-        .tt::after {
-            content: attr(data-tip);
-            position: absolute;
-            bottom: calc(100% + 6px);
+        .term:hover { color: #4A8F8A; }
+
+        #term-popup {
+            display: none;
+            position: fixed;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
             background: #1C1D1F;
             color: #fff;
-            font-size: 0.75rem;
-            font-weight: 400;
-            line-height: 1.5;
-            padding: 8px 12px;
-            border-radius: 6px;
-            width: 260px;
-            white-space: normal;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.15s;
-            z-index: 9999;
-            text-align: left;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            border-radius: 10px;
+            padding: 14px 18px;
+            max-width: 420px;
+            width: calc(100% - 48px);
+            z-index: 99999;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+            font-size: 0.85rem;
+            line-height: 1.55;
+            animation: popup-in 0.15s ease;
         }
-        .tt:hover::after, .tt:focus::after {
-            opacity: 1;
+        @keyframes popup-in {
+            from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
-        /* Arrow */
-        .tt::before {
-            content: '';
+        #term-popup strong {
+            display: block;
+            font-size: 0.92rem;
+            margin-bottom: 4px;
+            color: #7DD3C0;
+        }
+        #term-popup-close {
             position: absolute;
-            bottom: calc(100% + 1px);
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: #1C1D1F;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.15s;
-            z-index: 9999;
+            top: 8px; right: 12px;
+            background: none; border: none;
+            color: #9CA3AF; font-size: 1.1rem;
+            cursor: pointer; line-height: 1;
+            padding: 2px 4px;
         }
-        .tt:hover::before, .tt:focus::before { opacity: 1; }
-</style>
+        #term-popup-close:hover { color: #fff; }
+
+        </style>
 <style>
   /* ═══ SITE-NAV (shared) ════════════════════════════════════════════════ */
   .site-nav {
@@ -875,6 +881,13 @@
 </head>
 <body>
 
+<div id="term-popup">
+  <button id="term-popup-close" onclick="closeTerm()">✕</button>
+  <strong id="term-popup-name"></strong>
+  <span id="term-popup-def"></span>
+</div>
+
+
 <div class="mba-topbar" id="mba-topbar">
   <div class="mba-topbar-left">
     <a class="mba-topbar-back" href="index.html">
@@ -915,8 +928,8 @@
     <a class="nav-link" href="myslenie-krytyczne.html">🧠 <span class="nav-label">02 · Myślenie</span></a>
     <a class="nav-link active" href="symulacja-transformacja.html">🎮 <span class="nav-label">03 · Symulacja</span></a>
     <a class="nav-link" href="ciemne-dane.html">🌑 <span class="nav-label">04 · Ciemne Dane</span></a>
-    <a class="nav-link" href="gra-inzynieria-danych.html"><span class="nav-label">05 · Inżynieria</span></a>
-    <a class="nav-link" href="test-wiedzy.html"><span class="nav-label">Zadanie końcowe</span></a>
+    <a class="nav-link" href="gra-inzynieria-danych.html">🤖 <span class="nav-label">05 · Inżynieria</span></a>
+    <a class="nav-link" href="test-wiedzy.html">✅ <span class="nav-label">Zadanie końcowe</span></a>
   </div>
 </nav>
 
@@ -927,7 +940,7 @@
   <div class="header">
     <h1>Cyfrowa Transformacja</h1>
     <p>Symulacja decyzji zarządczych: transformacja cyfrowa firmy</p>
-    <div class="badge">Ćwiczenie MBA · ~30 minut</div>
+    <div class="badge">🎓 Ćwiczenie MBA · ~30 minut</div>
   </div>
 
   <div class="progress-bar-outer hidden" id="progressBarOuter">
@@ -971,7 +984,7 @@
     </div>
 
     <div class="intro-challenge">
-      <h3>Twoje wyzwanie</h3>
+      <h3>⚡ Twoje wyzwanie</h3>
       <p>Firma działa na Excel-ach, dane są w silosach, decyzje opierają się na intuicji, a konkurencja już wdraża AI. Masz budżet, mandat zarządu i 6 miesięcy. Jaką strategię transformacji cyfrowej wybierzesz?</p>
     </div>
 
@@ -1000,12 +1013,12 @@
   <!-- SCREEN: SUMMARY -->
   <!-- ═══════════════════════════════════════════════════ -->
   <div id="screen-summary" class="card hidden">
-    <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:6px;">Podsumowanie Twojej strategii</h2>
+    <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:6px;">📋 Podsumowanie Twojej strategii</h2>
     <p style="font-size:0.88rem; color:var(--text-sec); margin-bottom:20px;">Sprawdź swoje decyzje przed wysłaniem do analizy AI.</p>
     <div class="summary-grid" id="summaryGrid"></div>
     <div class="timer-note" id="timerNote">⏱ Stan gry jest automatycznie zapisywany w przeglądarce.</div>
     <button class="btn btn-primary btn-full" onclick="submitForAnalysis()" id="btnSubmit">
-      Analizuj moją strategię z AI
+      🤖 Analizuj moją strategię z AI
     </button>
   </div>
 
@@ -1025,7 +1038,7 @@
   <!-- ═══════════════════════════════════════════════════ -->
   <div id="screen-results" class="card hidden">
     <div id="resultsContent"></div>
-    <div class="saved-badge" id="savedBadge">Wyniki zapisane do systemu wykładowcy</div>
+    <div class="saved-badge" id="savedBadge">✅ Wyniki zapisane do systemu wykładowcy</div>
     <div class="error-box" id="errorBox"></div>
     <button class="btn btn-secondary btn-full" onclick="location.reload()" style="margin-top:16px;">↩ Zacznij od nowa</button>
   </div>
@@ -1036,28 +1049,25 @@
 // DECISIONS DATA
 // ═══════════════════════════════════════════════════
 
-// ── Tooltip engine ────────────────────────────────────────────
+// ── Term popup engine ────────────────────────────────────────
 const TERM_TOOLTIPS = {
-  "DDDM": "Data-Driven Decision Making: podejmowanie decyzji w oparciu o dane i analizy, a nie intuicj\u0119.",
-  "DWH": "Data Warehouse (Hurtownia Danych): centralna baza integruj\u0105ca dane z wielu system\u00f3w, zoptymalizowana pod analizy.",
-  "Power BI": "Narz\u0119dzie Microsoftu do wizualizacji danych i tworzenia interaktywnych dashboard\u00f3w biznesowych.",
-  "Modern Data Stack": "Nowoczesny stos technologiczny do danych w chmurze. Szybszy ni\u017c DWH, ale wymaga specjalist\u00f3w Data Engineering.",
-  "KPI": "Key Performance Indicator: mierzalny wska\u017anik realizacji cel\u00f3w (np. % defekt\u00f3w, czas dostawy, mar\u017ca).",
-  "ROI": "Return on Investment: zwrot z inwestycji. ROI 50% = za ka\u017cde 100 z\u0142 zainwestowane firma zyskuje 150 z\u0142.",
-  "API": "Application Programming Interface: interfejs pozwalaj\u0105cy systemom automatycznie komunikowa\u0107 si\u0119 i wymienia\u0107 dane.",
-  "Microsoft Copilot": "Asystent AI w aplikacjach Microsoft 365 (Word, Excel, Teams). Wspiera pisanie, analiz\u0119 i podsumowania.",
-  "Make.com": "Platforma automatyzacji no-code. \u0141\u0105czy aplikacje i tworzy automatyczne przep\u0142ywy pracy bez programowania.",
-  "Zapier": "Popularna platforma automatyzacji no-code. \u0141\u0105czy ponad 6000 aplikacji, umo\u017cliwiaj\u0105c przep\u0142yw danych mi\u0119dzy nimi.",
-  "Gemini": "Model j\u0119zykowy AI stworzony przez Google (konkurent ChatGPT). Analizuje teksty i odpowiada na pytania.",
-  "GPT-4": "Zaawansowany model AI OpenAI, podstawa ChatGPT. Stosowany do generowania tekst\u00f3w i automatyzacji biurowej.",
-  "ERP": "Enterprise Resource Planning: system \u0142\u0105cz\u0105cy finanse, produkcj\u0119, logistyk\u0119 i HR w jednej platformie (np. SAP).",
-  "CRM": "Customer Relationship Management: system do zarz\u0105dzania relacjami z klientami i histori\u0105 sprzeda\u017cy.",
-  "CDO": "Chief Digital Officer: dyrektor ds. cyfryzacji, odpowiada za strategi\u0119 i koordynacj\u0119 wdro\u017ce\u0144 technologicznych.",
-  "Digital Champions": "Pracownicy z r\u00f3\u017cnych dzia\u0142\u00f3w, kt\u00f3rzy jako pierwsi adoptuj\u0105 technologie i pomagaj\u0105 kolegom w transformacji.",
-  "change management": "Zarz\u0105dzanie zmian\u0105: metodyczne podej\u015bcie minimalizuj\u0105ce op\u00f3r pracownik\u00f3w przy wdro\u017ceniach nowych technologii.",
-  "AI-first": "Strategia stawiaj\u0105ca AI w centrum wszystkich decyzji firmy. Ryzykowna bez wcze\u015bniej uporz\u0105dkowanych danych.",
-  "quick wins": "Szybkie zwyci\u0119stwa: inicjatywy przynosz\u0105ce widoczne wyniki w 4-8 tygodniach, buduj\u0105ce zaufanie do programu.",
-  "Data Lake": "Repozytorium surowych danych w oryginalnym formacie. Ta\u0144sze ni\u017c DWH, ale wymaga Data Engineer\u00f3w."
+  "Digital Maturity Assessment": ["Digital Maturity Assessment", "Ustandaryzowana ocena dojrza\u0142o\u015bci cyfrowej firmy: analizuje ludzi, procesy, dane i technologie na skali 1-5. Pozwala por\u00f3wna\u0107 si\u0119 z bran\u017c\u0105 i wskazuje priorytety transformacji."],
+  "API": ["API", "Application Programming Interface: interfejs umo\u017cliwiaj\u0105cy dw\u00f3m systemom automatyczn\u0105 wymian\u0119 danych. Brak API = integracja tylko r\u0119cznie lub przez pliki Excel."],
+  "Data Warehouse": ["Data Warehouse", "Hurtownia Danych: centralna baza integruj\u0105ca dane z wielu system\u00f3w (ERP, CRM, produkcja). Zoptymalizowana pod analizy historyczne i raporty zarz\u0105dcze. Skr\u00f3t: DWH."],
+  "DWH": ["DWH", "Data Warehouse (Hurtownia Danych): centralna baza integruj\u0105ca dane z wielu system\u00f3w, zoptymalizowana pod analizy. Budowa zajmuje 3-6 miesi\u0119cy i wymaga Data Engineer\u00f3w."],
+  "Power BI": ["Power BI", "Narz\u0119dzie Microsoftu do wizualizacji danych i tworzenia interaktywnych dashboard\u00f3w. Mened\u017cerowie mog\u0105 \u015bledzi\u0107 KPI w czasie rzeczywistym bez znajomo\u015bci SQL czy Excela."],
+  "Modern Data Stack": ["Modern Data Stack", "Nowoczesny stos technologiczny do przetwarzania danych w chmurze (np. Snowflake + dbt + Fivetran). Szybszy i ta\u0144szy ni\u017c klasyczny DWH, ale wymaga do\u015bwiadczonych specjalist\u00f3w."],
+  "Data lakehouse": ["Data lakehouse", "Architektura \u0142\u0105cz\u0105ca elastyczno\u015b\u0107 Data Lake (surowe dane) z porz\u0105dkiem Data Warehouse (struktury). Gotowa na AI od pierwszego dnia, ale z\u0142o\u017cona we wdro\u017ceniu."],
+  "iPaaS": ["iPaaS", "Integration Platform as a Service: platforma chmurowa (np. Make.com, Zapier, Boomi) spinaj\u0105ca r\u00f3\u017cne systemy bez pisania kodu. Ta\u0144sza i szybsza ni\u017c budowa w\u0142asnych integracji API."],
+  "middleware": ["middleware", "Oprogramowanie po\u015brednicz\u0105ce: warstwa \u0142\u0105cz\u0105ca r\u00f3\u017cne systemy IT. Dzia\u0142a jak \"t\u0142umacz\" mi\u0119dzy systemami o r\u00f3\u017cnych formatach danych i protoko\u0142ach komunikacji."],
+  "PoC": ["PoC", "Proof of Concept (dow\u00f3d s\u0142uszno\u015bci koncepcji): szybki, tani eksperyment sprawdzaj\u0105cy czy dana technologia lub rozwi\u0105zanie zadzia\u0142a w warunkach firmy przed pe\u0142nym wdro\u017ceniem."],
+  "Microsoft Copilot": ["Microsoft Copilot", "Asystent AI wbudowany w aplikacje Microsoft 365 (Word, Excel, Teams, Outlook). Pomaga pisa\u0107 dokumenty, analizowa\u0107 dane w Excelu i podsumowywa\u0107 spotkania. Subskrypcja ~120 PLN/os./miesi\u0105c."],
+  "CDO": ["CDO", "Chief Digital Officer: dyrektor ds. cyfryzacji. Odpowiada za ca\u0142o\u015bciow\u0105 strategi\u0119 transformacji cyfrowej firmy \u2014 od danych przez AI po zmian\u0119 kultury organizacyjnej."],
+  "KPI": ["KPI", "Key Performance Indicator: mierzalny wska\u017anik pokazuj\u0105cy realizacj\u0119 cel\u00f3w strategicznych. Przyk\u0142ady w produkcji: % terminowych dostaw, czas przestoju maszyn, koszt na jednostk\u0119."],
+  "DDDM": ["DDDM", "Data-Driven Decision Making: kultura i praktyka podejmowania decyzji biznesowych na podstawie danych i analiz, a nie intuicji czy przyzwyczaje\u0144. Wymaga zar\u00f3wno narz\u0119dzi jak i zmiany mentalno\u015bci."],
+  "Make.com": ["Make.com", "Platforma automatyzacji no-code (bez programowania). Pozwala \u0142\u0105czy\u0107 aplikacje i automatyzowa\u0107 przep\u0142ywy danych wizualnie. Alternatywa dla Zapier, ta\u0144sza przy z\u0142o\u017conych integracjach."],
+  "Zapier": ["Zapier", "Najpopularniejsza platforma automatyzacji no-code. \u0141\u0105czy ponad 6000 aplikacji. Prosta w u\u017cyciu, ale dro\u017csza przy du\u017cych wolumenach danych. Idealna do automatyzacji pracy biurowej."],
+  "Google Workspace AI": ["Google Workspace AI", "Asystent AI wbudowany w aplikacje Google (Docs, Sheets, Gmail, Meet). Odpowiednik Microsoft Copilot w ekosystemie Google. Pomaga pisa\u0107, analizowa\u0107 i podsumowywa\u0107."]
 };
 
 function applyTooltips(htmlStr) {
@@ -1066,20 +1076,22 @@ function applyTooltips(htmlStr) {
   const used = new Set();
   terms.forEach(term => {
     if (used.has(term)) return;
-    const tip = TERM_TOOLTIPS[term].replace(/"/g, '&quot;');
+    const [display, definition] = TERM_TOOLTIPS[term];
+    const defEsc = definition.replace(/'/g, "\\'");
+    const dispEsc = display.replace(/'/g, "\\'");
     const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // Match term not already inside a span
-    const re = new RegExp('(?<![=>\\w])(' + esc + ')(?![\\w<])', 'g');
+    const re = new RegExp('(?<![=>\\w-])(' + esc + ')(?![\\w<-])', 'g');
     let replaced = false;
     out = out.replace(re, (match) => {
-      if (replaced) return match; // only first occurrence
+      if (replaced) return match;
       replaced = true;
-      return '<span class="tt" data-tip="' + tip + '">' + match + '</span>';
+      return '<span class="term" onclick="showTerm(\'' + dispEsc + '\', \'' + defEsc + '\')">' + match + '</span>';
     });
     if (replaced) used.add(term);
   });
   return out;
 }
+
 
 const DECISIONS = [
   {
@@ -1156,10 +1168,10 @@ const DECISIONS = [
     question: "Jaki quick win przyniesie największą wartość i wiarygodność?",
     type: "rank",
     rankItems: [
-      { id: "dashboard", label: " Dashboard zarządczy w czasie rzeczywistym" },
+      { id: "dashboard", label: "📈 Dashboard zarządczy w czasie rzeczywistym" },
       { id: "automation", label: "Automatyzacja raportowania (oszczędność ~8h/tydzień/dział)" },
-      { id: "errors", label: "Redukcja błędów w zamówieniach (AI validation)" },
-      { id: "onboarding", label: "Cyfrowy onboarding pracowników" }
+      { id: "errors", label: "❌ Redukcja błędów w zamówieniach (AI validation)" },
+      { id: "onboarding", label: "🚀 Cyfrowy onboarding pracowników" }
     ]
   },
   {
@@ -1173,12 +1185,12 @@ const DECISIONS = [
     type: "multi-choice",
     instruction: "Wybierz <strong>maksymalnie 3</strong> działania, które wdrożysz:",
     choices: [
-      { id: "champions", label: "Sieć Digital Champions (ambasadorów zmiany) w każdym dziale" },
-      { id: "communication", label: "Regularna komunikacja od CEO: 'dlaczego transformacja jest konieczna'" },
-      { id: "training-role", label: "Szkolenia dopasowane do roli (nie jeden program dla wszystkich)" },
-      { id: "metrics", label: "Publiczne KPI transformacji: przejrzystość postępów" },
-      { id: "feedback", label: "Kanał feedbacku dla pracowników: zgłaszanie obaw i pomysłów" },
-      { id: "incentives", label: "System nagród za adopcję nowych narzędzi cyfrowych" }
+      { id: "champions", label: "🏆 Sieć Digital Champions (ambasadorów zmiany) w każdym dziale" },
+      { id: "communication", label: "📣 Regularna komunikacja od CEO: 'dlaczego transformacja jest konieczna'" },
+      { id: "training-role", label: "🎓 Szkolenia dopasowane do roli (nie jeden program dla wszystkich)" },
+      { id: "metrics", label: "📊 Publiczne KPI transformacji: przejrzystość postępów" },
+      { id: "feedback", label: "💬 Kanał feedbacku dla pracowników: zgłaszanie obaw i pomysłów" },
+      { id: "incentives", label: "🎁 System nagród za adopcję nowych narzędzi cyfrowych" }
     ]
   }
 ];
@@ -1395,7 +1407,7 @@ function renderDecision(idx) {
       </div>
       <div class="situation-box">${applyTooltips(d.situation)}</div>
       <div class="data-points">
-        ${d.dataPoints.map(dp => `<div class="data-point"> ${dp}</div>`).join('')}
+        ${d.dataPoints.map(dp => `<div class="data-point">📌 ${dp}</div>`).join('')}
       </div>
       <div class="question-label">❓ ${d.question}</div>
       ${inputHTML}
@@ -1572,7 +1584,7 @@ function calcDeterministicScore(answers) {
   const d1 = answers[0];
   const d1score = (d1 !== undefined) ? (SCORE_WEIGHTS.D1[d1] || 0) : 0;
   const d1labels = ['Zewnętrzny audyt 80k', 'Warsztaty wewnętrzne', 'Rapid Assessment', 'Podejście zintegrowane'];
-  const d1comments = ['16% budżetu + 6 tyg. bez wartości operacyjnej', 'Koszt-efektywne, buduje zaangażowanie', '✅ Najszybsze i najtańsze, bezpośredni kontakt', '⚠️ Sensowne, ale 45k to dużo na etap diagnozy'];
+  const d1comments = ['❌ 16% budżetu + 6 tyg. bez wartości operacyjnej', '✅ Koszt-efektywne, buduje zaangażowanie', '✅ Najszybsze i najtańsze, bezpośredni kontakt', '⚠️ Sensowne, ale 45k to dużo na etap diagnozy'];
   breakdown.push({ label: '🔍 Diagnoza', score: d1score, max: 15, choice: d1labels[d1] || '—', comment: d1comments[d1] || '' });
   total += d1score;
 
@@ -1581,7 +1593,7 @@ function calcDeterministicScore(answers) {
   const d2score = (d2 !== undefined) ? (SCORE_WEIGHTS.D2[d2] || 0) : 0;
   const d2labels = ['DWH + Power BI 120k', 'Modern Data Stack (chmura)', '3 kluczowe raporty 30k', 'iPaaS middleware 40k'];
   const d2comments = ['❌ 24% budżetu + 4 miesiące = 0 wartości przez 2/3 projektu', '⚠️ Wymaga Data Engineera, którego firma nie ma', '✅ Szybkie efekty, niski koszt, widoczna wartość', '✅ Dobry kompromis: szybkość + integracja'];
-  breakdown.push({ label: 'Strategia danych', score: d2score, max: 20, choice: d2labels[d2] || '—', comment: d2comments[d2] || '' });
+  breakdown.push({ label: '📊 Strategia danych', score: d2score, max: 20, choice: d2labels[d2] || '—', comment: d2comments[d2] || '' });
   total += d2score;
 
   // D3: Budżet na ludzi (max 15)
@@ -1601,7 +1613,7 @@ function calcDeterministicScore(answers) {
   else if (outsource >= 140) d3comment = '⚠️ Wszystko na outsourcing = firma nie buduje żadnych kompetencji wewnętrznych';
   else if (hire > 20 && train > 20 && outsource > 20) d3comment = '✅ Zbalansowane inwestycje w ludzi, szkolenia i wykonanie';
   else d3comment = '⚠️ Niezbalansowany podział: jeden wymiar dominuje';
-  breakdown.push({ label: 'Budżet na kompetencje', score: d3score, max: 15, choice: `Etaty: ${hire}k / Szkolenia: ${train}k / Outsourcing: ${outsource}k`, comment: d3comment });
+  breakdown.push({ label: '👥 Budżet na kompetencje', score: d3score, max: 15, choice: `Etaty: ${hire}k / Szkolenia: ${train}k / Outsourcing: ${outsource}k`, comment: d3comment });
   total += d3score;
 
   // D4: Strategia AI (max 20)
@@ -1623,7 +1635,7 @@ function calcDeterministicScore(answers) {
   else if (errIdx === 1) d5comment = '✅ Błędy zamówień w top 2: dobra priorytetyzacja wartości';
   else if (errIdx === 2) d5comment = '⚠️ Błędy zamówień (200k/rok) zepchnięte na 3. miejsce';
   else d5comment = '❌ Największa konkretna oszczędność pominięta: onboarding nie przynosi porównywalnego ROI';
-  breakdown.push({ label: 'Quick wins', score: d5score, max: 15, choice: d5.map((id,i) => `${i+1}. ${d5RankLabels[id]||id}`).join(' → '), comment: d5comment });
+  breakdown.push({ label: '⚡ Quick wins', score: d5score, max: 15, choice: d5.map((id,i) => `${i+1}. ${d5RankLabels[id]||id}`).join(' → '), comment: d5comment });
   total += d5score;
 
   // D6: Change management (max 15)
@@ -1637,7 +1649,7 @@ function calcDeterministicScore(answers) {
   else if (d6.includes('incentives') && !d6.includes('training-role')) d6comment = '⚠️ Nagrody bez szkoleń = kupujesz compliance, nie komptencje';
   else if (d6.includes('champions') && d6.includes('communication') && d6.includes('training-role')) d6comment = '✅ Najlepsza kombinacja: sponsor + ambasadorzy + kompetencje';
   else d6comment = '✅ Dobra podstawa zarządzania zmianą';
-  breakdown.push({ label: 'Change management', score: d6score, max: 15, choice: d6.map(id => SCORE_WEIGHTS.D6[id] !== undefined ? id : id).join(', ') || '—', comment: d6comment });
+  breakdown.push({ label: '🔄 Change management', score: d6score, max: 15, choice: d6.map(id => SCORE_WEIGHTS.D6[id] !== undefined ? id : id).join(', ') || '—', comment: d6comment });
   total += d6score;
 
   return { total, breakdown };
@@ -1668,7 +1680,7 @@ function renderDeterministicScore(answers) {
   return `<div style="background:${bg}; border:2px solid ${color}; border-radius:14px; padding:20px 22px; margin-bottom:20px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
       <div>
-        <div style="font-weight:700; font-size:1.1rem; color:${color};">Wynik punktowy strategii</div>
+        <div style="font-weight:700; font-size:1.1rem; color:${color};">🎯 Wynik punktowy strategii</div>
         <div style="font-size:0.85rem; color:#64748b; margin-top:2px;">Ocena deterministyczna na podstawie wag decyzji</div>
       </div>
       <div style="text-align:right;">
@@ -1921,7 +1933,7 @@ function showResults(a) {
     
     <div class="ai-content">
       <div class="section-block">
-        <div class="section-block-title">Ocena AI (subiektywna)</div>
+        <div class="section-block-title">📋 Ocena AI (subiektywna)</div>
         <p>${a.overallAssessment}</p>
       </div>
       
@@ -1949,7 +1961,7 @@ function showResults(a) {
       </div>
       
       <div class="section-block" style="border-left-color:var(--blue); background:var(--blue-light);">
-        <div class="section-block-title" style="color:var(--blue);">Najważniejsza rekomendacja</div>
+        <div class="section-block-title" style="color:var(--blue);">🎯 Najważniejsza rekomendacja</div>
         <p><strong>${a.recommendation}</strong></p>
       </div>
 
@@ -2263,6 +2275,29 @@ function getGroupName() { return _mbaGroupName; }
     }
   } catch(e) {}
 })();
+
+// ── Term popup ───────────────────────────────────────────────
+function showTerm(name, def) {
+  document.getElementById('term-popup-name').textContent = name;
+  document.getElementById('term-popup-def').textContent = def;
+  const el = document.getElementById('term-popup');
+  el.style.display = 'block';
+  // Auto-close after 8 seconds
+  clearTimeout(window._termTimer);
+  window._termTimer = setTimeout(closeTerm, 8000);
+}
+function closeTerm() {
+  document.getElementById('term-popup').style.display = 'none';
+  clearTimeout(window._termTimer);
+}
+// Close on outside click
+document.addEventListener('click', function(e) {
+  const popup = document.getElementById('term-popup');
+  if (popup && !popup.contains(e.target) && !e.target.classList.contains('term')) {
+    closeTerm();
+  }
+});
+
 </script>
 
 </body>
