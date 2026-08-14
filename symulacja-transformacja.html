@@ -1680,18 +1680,32 @@ Zwróć WYŁĄCZNIE JSON (zero markdown, zero komentarzy, zero tekstu poza JSON)
   "criticalMistakes": ["opis błędu krytycznego 1 — co dokładnie poszło nie tak i dlaczego", "błąd 2 jeśli istnieje"],
   "strengths": ["mocna strona 1 — tylko jeśli naprawdę istnieje"],
   "risks": ["konkretne ryzyko 1", "ryzyko 2", "ryzyko 3"],
-  "overallAssessment": "2-3 zdania SZCZEREJ oceny. Jeśli strategia jest słaba — powiedz to wprost i wyjaśnij dlaczego. Jeśli student popełnił błędy kosztujące budżet lub czas — nazwij to konkretnie. Zero lukrowania.",
+  "overallAssessment": "5-8 zdań SZCZEREJ, pogłębionej oceny. Zacznij od określenia charakteru strategii jako całości. Następnie wskaż które decyzje wzajemnie się wzmacniają lub osłabiają (synergie i konflikty). Jeśli student popełnił błędy kosztujące budżet lub czas — nazwij je konkretnie z szacunkiem strat. Zakończ jednym zdaniem o tym, czego ta strategia uczy o myśleniu o transformacji cyfrowej. Zero lukrowania, zero ogólników.",
   "whatIf": [
     {
-      "scenario": "Co gdyby wybrał(a) [wskaż konkretną lepszą alternatywę dla najgorszej decyzji]?",
-      "description": "2-3 zdania — konkretna różnica w wynikach i ROI"
+      "scenario": "Co gdyby wybrał(a) [wskaż konkretną, najważniejszą alternatywę dla najgorszej decyzji — podaj nazwę opcji]?",
+      "description": "3-4 zdania z KONKRETNYMI LICZBAMI: ile PLN oszczędności/zysku, ile tygodni szybciej, jaki wpływ na ROI (podaj % różnicy). Porównaj oba scenariusze numerycznie.",
+      "deltaROI": "szacowana zmiana ROI względem wybranej strategii, np. +25% lub -15%",
+      "deltaCost": "szacowana zmiana kosztu lub oszczędności w PLN, np. -80 000 PLN lub +45 000 PLN"
     },
     {
-      "scenario": "Co gdyby [drugi scenariusz alternatywny]?",
-      "description": "2-3 zdania"
+      "scenario": "Co gdyby [drugi scenariusz — inna kluczowa decyzja do zmiany]?",
+      "description": "3-4 zdania z KONKRETNYMI LICZBAMI: jlr PLN, jaki wpływ na harmonogram (tygodnie), jaki wpływ na ryzyko adopcji.",
+      "deltaROI": "szacowana zmiana ROI",
+      "deltaCost": "szacowana zmiana kosztu w PLN"
+    },
+    {
+      "scenario": "Co gdyby wszystkie kluczowe decyzje były optymalne?",
+      "description": "2-3 zdania opisujące jak wyglądałaby idealna strategia dla ProdukcjaPlus w tym budżecie i czasie. Podaj docelowy ROI i dojrzałość cyfrową dla optymalnej strategii.",
+      "deltaROI": "ROI optymalnej strategii",
+      "deltaCost": "całkowity koszt optymalnej strategii z podziałem na główne kategorie"
     }
   ],
-  "recommendation": "Jedna najważniejsza rzecz do naprawienia gdyby student zaczynał od nowa. Konkretna, nie ogólna (1-2 zdania)."
+  "recommendation": "2-3 zdania: jedna najważniejsza zmiana z uzasadnieniem finansowym (ile PLN lub % ROI by zyskał). Konkretna decyzja, nie ogólna zasada.",
+  "benchmark": {
+    "typical": "Jak wygląda typowa dobra strategia transformacji cyfrowej dla firmy produkcyjnej tej wielkości (2-3 zdania — konkretne proporcje budżetu, priorytety, czas do pierwszych wyników)?",
+    "studentVsBenchmark": "W czym strategia studenta odbiega od benchmarku — co zrobił lepiej, co gorzej (2-3 zdania z konkretnymi liczbami)?"
+  }
 }`;
 }
 
@@ -1706,7 +1720,7 @@ async function submitForAnalysis() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 1400 }
+        generationConfig: { temperature: 0.6, maxOutputTokens: 3000 }
       })
     });
     
@@ -1727,6 +1741,7 @@ async function submitForAnalysis() {
     saveState();
     
     showResults(analysis);
+    setDialogContext(analysis);
     saveToGitHub(analysis);
     
   } catch (err) {
@@ -1836,6 +1851,19 @@ function showResults(a) {
         <div class="section-block-title" style="color:var(--blue);">🎯 Najważniejsza rekomendacja</div>
         <p><strong>${a.recommendation}</strong></p>
       </div>
+
+      ${a.benchmark ? `
+      <div class="section-block" style="border-left-color:#6366f1; background:#f5f3ff; margin-top:12px;">
+        <div class="section-block-title" style="color:#6366f1; margin-bottom:12px;">📐 Benchmark branżowy</div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;color:#6366f1;margin-bottom:4px;">Jak wygląda dobra strategia dla firmy tej wielkości</div>
+          <p style="color:#374151;line-height:1.6;font-size:0.9rem;">${a.benchmark.typical}</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.7);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;color:#6366f1;margin-bottom:4px;">Twoja strategia vs benchmark</div>
+          <p style="color:#374151;line-height:1.6;font-size:0.9rem;">${a.benchmark.studentVsBenchmark}</p>
+        </div>
+      </div>` : ''}
     </div>
   `;
 
@@ -1848,7 +1876,131 @@ function showResults(a) {
     </div>
   `);
 
+
+  // ── Inject AI dialog panel after results ──
+  const dialogHtml = `
+    <div id="ai-dialog-panel" style="margin-top:24px; background:#fff; border:1.5px solid #e2e8f0; border-radius:14px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <span style="font-size:1.3rem;">🤖</span>
+        <div>
+          <div style="font-weight:800;font-size:1rem;color:#1e293b;">Zapytaj AI o szczegóły</div>
+          <div style="font-size:0.78rem;color:#94a3b8;">Możesz zadać maksymalnie 2 pytania dotyczące Twojej analizy</div>
+        </div>
+        <span id="dialog-counter" style="margin-left:auto;background:#f1f5f9;padding:4px 12px;border-radius:20px;font-size:0.78rem;font-weight:700;color:#64748b;">0/2 pytań</span>
+      </div>
+      <div id="dialog-history" style="margin-bottom:14px;"></div>
+      <div id="dialog-input-wrap" style="display:flex;gap:8px;">
+        <input id="dialog-input" type="text" maxlength="200"
+          placeholder="np. Dlaczego DWH to błąd przy tym budżecie?"
+          style="flex:1;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.9rem;font-family:inherit;outline:none;"
+          onkeydown="if(event.key==='Enter')sendDialogQuestion()">
+        <button id="dialog-send-btn" onclick="sendDialogQuestion()"
+          style="padding:11px 20px;background:#4A8F8A;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.9rem;cursor:pointer;font-family:inherit;white-space:nowrap;">
+          Wyślij →
+        </button>
+      </div>
+      <div id="dialog-limit-msg" style="display:none;margin-top:12px;padding:10px 14px;background:#fef3c7;border-radius:8px;font-size:0.85rem;color:#92400e;font-weight:600;">
+        Wykorzystałeś/aś limit 2 pytań. Przeanalizuj odpowiedzi i wróć do zajęć.
+      </div>
+    </div>
+  `;
+  document.getElementById('resultsContent').insertAdjacentHTML('beforeend', dialogHtml);
+
   window.scrollTo(0, 0);
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// AI DIALOG
+// ══════════════════════════════════════════════════════════════
+let dialogQuestions = 0;
+const DIALOG_LIMIT = 2;
+let dialogContext = null; // stores analysis for context
+
+function setDialogContext(analysis) {
+  dialogContext = analysis;
+}
+
+async function sendDialogQuestion() {
+  if (dialogQuestions >= DIALOG_LIMIT) return;
+  const input = document.getElementById('dialog-input');
+  const question = input.value.trim();
+  if (!question) return;
+
+  const btn = document.getElementById('dialog-send-btn');
+  btn.disabled = true;
+  btn.textContent = '...';
+  input.disabled = true;
+
+  // Show question in history
+  const history = document.getElementById('dialog-history');
+  history.insertAdjacentHTML('beforeend', `
+    <div style="margin-bottom:10px;">
+      <div style="background:#f1f5f9;border-radius:8px;padding:10px 14px;font-size:0.88rem;color:#1e293b;">
+        <strong>Ty:</strong> ${question}
+      </div>
+    </div>
+  `);
+  input.value = '';
+
+  // Build context prompt
+  const contextStr = dialogContext ? `
+Kontekst: Analiza strategii studenta dla ProdukcjaPlus Sp. z o.o. (firma produkcyjna, 850 prac., budżet 500k PLN, 6 miesięcy).
+Profil studenta: ${dialogContext.profileName} (wynik ${dialogContext.scoreOverall}/100).
+Ocena AI: ${dialogContext.overallAssessment}
+Kluczowe błędy: ${(dialogContext.criticalMistakes||[]).join('; ')}
+Rekomendacja: ${dialogContext.recommendation}
+` : '';
+
+  const prompt = `${contextStr}
+Student zadaje pytanie dotyczące swojej analizy strategii transformacji cyfrowej.
+Odpowiedz konkretnie, merytorycznie, w 3-5 zdaniach. Jeśli pytanie dotyczy liczb — podaj konkretne liczby (PLN, %, tygodnie).
+
+Pytanie: ${question}
+
+Odpowiedz po polsku, bez zbędnych wstępów.`;
+
+  try {
+    const res = await fetch('https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.5, maxOutputTokens: 600 }
+      })
+    });
+    const data = await res.json();
+    const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Brak odpowiedzi. Spróbuj ponownie.';
+
+    history.insertAdjacentHTML('beforeend', `
+      <div style="margin-bottom:14px;">
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;font-size:0.88rem;color:#14532d;line-height:1.6;">
+          <strong>🤖 AI:</strong> ${answer}
+        </div>
+      </div>
+    `);
+  } catch(e) {
+    history.insertAdjacentHTML('beforeend', `
+      <div style="margin-bottom:10px;">
+        <div style="background:#fef2f2;border-radius:8px;padding:10px 14px;font-size:0.85rem;color:#dc2626;">
+          Błąd połączenia. Spróbuj ponownie za chwilę.
+        </div>
+      </div>
+    `);
+  }
+
+  dialogQuestions++;
+  document.getElementById('dialog-counter').textContent = dialogQuestions + '/2 pytań';
+
+  if (dialogQuestions >= DIALOG_LIMIT) {
+    document.getElementById('dialog-input-wrap').style.display = 'none';
+    document.getElementById('dialog-limit-msg').style.display = '';
+  } else {
+    btn.disabled = false;
+    btn.textContent = 'Wyślij →';
+    input.disabled = false;
+    input.focus();
+  }
 }
 
 // ═══════════════════════════════════════════════════
