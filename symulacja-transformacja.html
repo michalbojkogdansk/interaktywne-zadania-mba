@@ -732,48 +732,33 @@
         /* ── Term popups ── */
         .term {
             border-bottom: 1px dashed #4A8F8A;
-            cursor: pointer;
+            cursor: help;
             color: inherit;
         }
-        .term:hover { color: #4A8F8A; }
+        .term:hover { color: #357570; }
 
         #term-popup {
             display: none;
             position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
             background: #1C1D1F;
             color: #fff;
-            border-radius: 10px;
-            padding: 14px 18px;
-            max-width: 420px;
-            width: calc(100% - 48px);
+            border-radius: 8px;
+            padding: 12px 16px;
+            max-width: 320px;
+            width: max-content;
             z-index: 99999;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.35);
-            font-size: 0.85rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+            font-size: 0.82rem;
             line-height: 1.55;
-            animation: popup-in 0.15s ease;
-        }
-        @keyframes popup-in {
-            from { opacity: 0; transform: translateX(-50%) translateY(8px); }
-            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+            pointer-events: none;
         }
         #term-popup strong {
             display: block;
-            font-size: 0.92rem;
-            margin-bottom: 4px;
+            font-size: 0.88rem;
+            margin-bottom: 5px;
             color: #7DD3C0;
+            font-weight: 700;
         }
-        #term-popup-close {
-            position: absolute;
-            top: 8px; right: 12px;
-            background: none; border: none;
-            color: #9CA3AF; font-size: 1.1rem;
-            cursor: pointer; line-height: 1;
-            padding: 2px 4px;
-        }
-        #term-popup-close:hover { color: #fff; }
 
         </style>
 <style>
@@ -882,7 +867,6 @@
 <body>
 
 <div id="term-popup">
-  <button id="term-popup-close" onclick="closeTerm()">✕</button>
   <strong id="term-popup-name"></strong>
   <span id="term-popup-def"></span>
 </div>
@@ -1051,23 +1035,23 @@
 
 // ── Term popup engine ────────────────────────────────────────
 const TERM_TOOLTIPS = {
-  "Digital Maturity Assessment": ["Digital Maturity Assessment", "Ustandaryzowana ocena dojrza\u0142o\u015bci cyfrowej firmy: analizuje ludzi, procesy, dane i technologie na skali 1-5. Pozwala por\u00f3wna\u0107 si\u0119 z bran\u017c\u0105 i wskazuje priorytety transformacji."],
-  "API": ["API", "Application Programming Interface: interfejs umo\u017cliwiaj\u0105cy dw\u00f3m systemom automatyczn\u0105 wymian\u0119 danych. Brak API = integracja tylko r\u0119cznie lub przez pliki Excel."],
-  "Data Warehouse": ["Data Warehouse", "Hurtownia Danych: centralna baza integruj\u0105ca dane z wielu system\u00f3w (ERP, CRM, produkcja). Zoptymalizowana pod analizy historyczne i raporty zarz\u0105dcze. Skr\u00f3t: DWH."],
-  "DWH": ["DWH", "Data Warehouse (Hurtownia Danych): centralna baza integruj\u0105ca dane z wielu system\u00f3w, zoptymalizowana pod analizy. Budowa zajmuje 3-6 miesi\u0119cy i wymaga Data Engineer\u00f3w."],
-  "Power BI": ["Power BI", "Narz\u0119dzie Microsoftu do wizualizacji danych i tworzenia interaktywnych dashboard\u00f3w. Mened\u017cerowie mog\u0105 \u015bledzi\u0107 KPI w czasie rzeczywistym bez znajomo\u015bci SQL czy Excela."],
-  "Modern Data Stack": ["Modern Data Stack", "Nowoczesny stos technologiczny do przetwarzania danych w chmurze (np. Snowflake + dbt + Fivetran). Szybszy i ta\u0144szy ni\u017c klasyczny DWH, ale wymaga do\u015bwiadczonych specjalist\u00f3w."],
-  "Data lakehouse": ["Data lakehouse", "Architektura \u0142\u0105cz\u0105ca elastyczno\u015b\u0107 Data Lake (surowe dane) z porz\u0105dkiem Data Warehouse (struktury). Gotowa na AI od pierwszego dnia, ale z\u0142o\u017cona we wdro\u017ceniu."],
-  "iPaaS": ["iPaaS", "Integration Platform as a Service: platforma chmurowa (np. Make.com, Zapier, Boomi) spinaj\u0105ca r\u00f3\u017cne systemy bez pisania kodu. Ta\u0144sza i szybsza ni\u017c budowa w\u0142asnych integracji API."],
-  "middleware": ["middleware", "Oprogramowanie po\u015brednicz\u0105ce: warstwa \u0142\u0105cz\u0105ca r\u00f3\u017cne systemy IT. Dzia\u0142a jak \"t\u0142umacz\" mi\u0119dzy systemami o r\u00f3\u017cnych formatach danych i protoko\u0142ach komunikacji."],
-  "PoC": ["PoC", "Proof of Concept (dow\u00f3d s\u0142uszno\u015bci koncepcji): szybki, tani eksperyment sprawdzaj\u0105cy czy dana technologia lub rozwi\u0105zanie zadzia\u0142a w warunkach firmy przed pe\u0142nym wdro\u017ceniem."],
-  "Microsoft Copilot": ["Microsoft Copilot", "Asystent AI wbudowany w aplikacje Microsoft 365 (Word, Excel, Teams, Outlook). Pomaga pisa\u0107 dokumenty, analizowa\u0107 dane w Excelu i podsumowywa\u0107 spotkania. Subskrypcja ~120 PLN/os./miesi\u0105c."],
-  "CDO": ["CDO", "Chief Digital Officer: dyrektor ds. cyfryzacji. Odpowiada za ca\u0142o\u015bciow\u0105 strategi\u0119 transformacji cyfrowej firmy \u2014 od danych przez AI po zmian\u0119 kultury organizacyjnej."],
-  "KPI": ["KPI", "Key Performance Indicator: mierzalny wska\u017anik pokazuj\u0105cy realizacj\u0119 cel\u00f3w strategicznych. Przyk\u0142ady w produkcji: % terminowych dostaw, czas przestoju maszyn, koszt na jednostk\u0119."],
-  "DDDM": ["DDDM", "Data-Driven Decision Making: kultura i praktyka podejmowania decyzji biznesowych na podstawie danych i analiz, a nie intuicji czy przyzwyczaje\u0144. Wymaga zar\u00f3wno narz\u0119dzi jak i zmiany mentalno\u015bci."],
-  "Make.com": ["Make.com", "Platforma automatyzacji no-code (bez programowania). Pozwala \u0142\u0105czy\u0107 aplikacje i automatyzowa\u0107 przep\u0142ywy danych wizualnie. Alternatywa dla Zapier, ta\u0144sza przy z\u0142o\u017conych integracjach."],
-  "Zapier": ["Zapier", "Najpopularniejsza platforma automatyzacji no-code. \u0141\u0105czy ponad 6000 aplikacji. Prosta w u\u017cyciu, ale dro\u017csza przy du\u017cych wolumenach danych. Idealna do automatyzacji pracy biurowej."],
-  "Google Workspace AI": ["Google Workspace AI", "Asystent AI wbudowany w aplikacje Google (Docs, Sheets, Gmail, Meet). Odpowiednik Microsoft Copilot w ekosystemie Google. Pomaga pisa\u0107, analizowa\u0107 i podsumowywa\u0107."]
+  "Digital Maturity Assessment": ["Digital Maturity Assessment", "Ocena dojrza\u0142o\u015bci cyfrowej firmy: ile firma korzysta z danych, automatyzacji i nowoczesnych narz\u0119dzi. Wynik na skali 1-5 pokazuje gdzie jeste\u015b i co poprawi\u0107."],
+  "API": ["API", "Spos\u00f3b, w jaki dwa systemy IT rozmawiaj\u0105 ze sob\u0105 automatycznie \u2014 bez r\u0119cznego kopiowania danych. Brak API = dane przepisywane r\u0119cznie lub przez Excel."],
+  "Data Warehouse": ["Data Warehouse", "Centralna baza danych firmy, kt\u00f3ra zbiera informacje ze wszystkich system\u00f3w (ERP, CRM, produkcja) w jednym miejscu. S\u0142u\u017cy do raport\u00f3w i analiz historycznych. Skr\u00f3t: DWH."],
+  "DWH": ["DWH", "Data Warehouse, czyli hurtownia danych: jedno centralne miejsce, gdzie trafiaj\u0105 dane ze wszystkich system\u00f3w firmy. Budowa zajmuje zwykle 3-6 miesi\u0119cy."],
+  "Power BI": ["Power BI", "Program Microsoftu do tworzenia wykres\u00f3w i dashboard\u00f3w z danych firmowych. Mened\u017cerowie widz\u0105 aktualne liczby bez pytania IT o raport."],
+  "Modern Data Stack": ["Modern Data Stack", "Nowoczesny zestaw narz\u0119dzi chmurowych do zarz\u0105dzania danymi \u2014 szybszy i ta\u0144szy ni\u017c klasyczna hurtownia danych, ale wymaga specjalist\u00f3w do wdro\u017cenia."],
+  "Data lakehouse": ["Data lakehouse", "Nowoczesny system do przechowywania danych, kt\u00f3ry \u0142\u0105czy tanie i pojemne jezioro danych (data lake) z uporz\u0105dkowan\u0105 i szybk\u0105 hurtowni\u0105 danych (data warehouse). W jednym miejscu trzymasz zar\u00f3wno surowe pliki, jak i gotowe tabele do szybkich raport\u00f3w."],
+  "iPaaS": ["iPaaS", "Platforma w chmurze, kt\u00f3ra \u0142\u0105czy r\u00f3\u017cne systemy firmy bez pisania kodu \u2014 jak \"kabel adapter\" mi\u0119dzy aplikacjami. Przyk\u0142ady: Make.com, Zapier, Boomi."],
+  "middleware": ["middleware", "Oprogramowanie dzia\u0142aj\u0105ce \"w tle\" mi\u0119dzy dwoma systemami IT, kt\u00f3re t\u0142umaczy ich dane na wsp\u00f3lny j\u0119zyk. Dzi\u0119ki niemu ERP mo\u017ce rozmawia\u0107 z CRM czy systemem produkcyjnym."],
+  "PoC": ["PoC", "Proof of Concept: ma\u0142y, szybki test sprawdzaj\u0105cy, czy pomys\u0142 zadzia\u0142a w praktyce \u2014 zanim wyda si\u0119 du\u017cy bud\u017cet. Odpowiednik pilota\u017cu lub pr\u00f3by przed wdro\u017ceniem."],
+  "Microsoft Copilot": ["Microsoft Copilot", "Asystent AI wbudowany w Word, Excel, Teams i Outlook. Pomaga pisa\u0107 teksty, analizowa\u0107 tabele i podsumowywa\u0107 spotkania. Subskrypcja ok. 120 z\u0142/osob\u0119/miesi\u0105c."],
+  "CDO": ["CDO", "Chief Digital Officer, czyli dyrektor ds. cyfryzacji. Odpowiada za ca\u0142\u0105 strategi\u0119 transformacji cyfrowej firmy: od wyboru technologii po zmian\u0119 sposobu pracy ludzi."],
+  "KPI": ["KPI", "Key Performance Indicator: liczba, kt\u00f3r\u0105 firma mierzy, \u017ceby sprawdzi\u0107 czy realizuje swoje cele. Przyk\u0142ady: % zam\u00f3wie\u0144 dostarczonych na czas, koszt produkcji jednej sztuki, poziom reklamacji."],
+  "DDDM": ["DDDM", "Data-Driven Decision Making: podejmowanie decyzji na podstawie danych i analiz, a nie przyzwyczaje\u0144 czy intuicji. Wymaga zar\u00f3wno dobrego dost\u0119pu do danych, jak i gotowo\u015bci mened\u017cer\u00f3w do ich u\u017cywania."],
+  "Make.com": ["Make.com", "Narz\u0119dzie do automatyzacji proces\u00f3w bez programowania. \u0141\u0105czy aplikacje i przesy\u0142a dane mi\u0119dzy nimi automatycznie. Ta\u0144sza alternatywa dla Zapiera przy bardziej z\u0142o\u017conych przep\u0142ywach."],
+  "Zapier": ["Zapier", "Najpopularniejsze narz\u0119dzie do automatyzacji bez programowania. \u0141\u0105czy ponad 6000 aplikacji. Proste w obs\u0142udze, ale drogie przy du\u017cej liczbie operacji."],
+  "Google Workspace AI": ["Google Workspace AI", "Asystent AI w aplikacjach Google (Docs, Sheets, Gmail, Meet). Pomaga pisa\u0107, analizowa\u0107 dane i podsumowywa\u0107 spotkania. Odpowiednik Microsoft Copilot dla u\u017cytkownik\u00f3w Google."]
 };
 
 function applyTooltips(htmlStr) {
@@ -1085,7 +1069,7 @@ function applyTooltips(htmlStr) {
     out = out.replace(re, (match) => {
       if (replaced) return match;
       replaced = true;
-      return '<span class="term" onclick="showTerm(\'' + dispEsc + '\', \'' + defEsc + '\')">' + match + '</span>';
+      return '<span class="term" data-term-name="' + dispEsc + '" data-term-def="' + defEsc + '">' + match + '</span>';
     });
     if (replaced) used.add(term);
   });
@@ -1533,7 +1517,7 @@ function showSummary() {
   const grid = document.getElementById('summaryGrid');
   grid.innerHTML = DECISIONS.map((d, idx) => {
     const ans = state.answers[idx];
-    let ansText = '—';
+    let ansText = ':';
     if (d.type === 'options' && ans !== undefined) {
       ansText = `${d.options[ans].letter}: ${d.options[ans].title}`;
     } else if (d.type === 'budget' && ans) {
@@ -1585,7 +1569,7 @@ function calcDeterministicScore(answers) {
   const d1score = (d1 !== undefined) ? (SCORE_WEIGHTS.D1[d1] || 0) : 0;
   const d1labels = ['Zewnętrzny audyt 80k', 'Warsztaty wewnętrzne', 'Rapid Assessment', 'Podejście zintegrowane'];
   const d1comments = ['❌ 16% budżetu + 6 tyg. bez wartości operacyjnej', '✅ Koszt-efektywne, buduje zaangażowanie', '✅ Najszybsze i najtańsze, bezpośredni kontakt', '⚠️ Sensowne, ale 45k to dużo na etap diagnozy'];
-  breakdown.push({ label: '🔍 Diagnoza', score: d1score, max: 15, choice: d1labels[d1] || '—', comment: d1comments[d1] || '' });
+  breakdown.push({ label: '🔍 Diagnoza', score: d1score, max: 15, choice: d1labels[d1] || ':', comment: d1comments[d1] || '' });
   total += d1score;
 
   // D2: Strategia danych (max 20)
@@ -1593,7 +1577,7 @@ function calcDeterministicScore(answers) {
   const d2score = (d2 !== undefined) ? (SCORE_WEIGHTS.D2[d2] || 0) : 0;
   const d2labels = ['DWH + Power BI 120k', 'Modern Data Stack (chmura)', '3 kluczowe raporty 30k', 'iPaaS middleware 40k'];
   const d2comments = ['❌ 24% budżetu + 4 miesiące = 0 wartości przez 2/3 projektu', '⚠️ Wymaga Data Engineera, którego firma nie ma', '✅ Szybkie efekty, niski koszt, widoczna wartość', '✅ Dobry kompromis: szybkość + integracja'];
-  breakdown.push({ label: '📊 Strategia danych', score: d2score, max: 20, choice: d2labels[d2] || '—', comment: d2comments[d2] || '' });
+  breakdown.push({ label: '📊 Strategia danych', score: d2score, max: 20, choice: d2labels[d2] || ':', comment: d2comments[d2] || '' });
   total += d2score;
 
   // D3: Budżet na ludzi (max 15)
@@ -1621,7 +1605,7 @@ function calcDeterministicScore(answers) {
   const d4score = (d4 !== undefined) ? (SCORE_WEIGHTS.D4[d4] || 0) : 0;
   const d4labels = ['AI-first (szerokie wdrożenie)', 'Jeden pilot AI', 'AI-ready (najpierw dane)', 'Microsoft Copilot'];
   const d4comments = ['❌ AI na brudnych danych = 60% ryzyko porażki, utrata zaufania zarządu', '✅ PoC w 8 tyg.: uczysz się na małym, nie na dużym błędzie', '⚠️ Rozsądne, ale zarząd będzie niezadowolony przez 6 miesięcy', '⚠️ Produktywność biurowa ≠ transformacja cyfrowa zakładu produkcyjnego'];
-  breakdown.push({ label: '🤖 Strategia AI', score: d4score, max: 20, choice: d4labels[d4] || '—', comment: d4comments[d4] || '' });
+  breakdown.push({ label: '🤖 Strategia AI', score: d4score, max: 20, choice: d4labels[d4] || ':', comment: d4comments[d4] || '' });
   total += d4score;
 
   // D5: Quick wins ranking (max 15): position of "errors"
@@ -1649,7 +1633,7 @@ function calcDeterministicScore(answers) {
   else if (d6.includes('incentives') && !d6.includes('training-role')) d6comment = '⚠️ Nagrody bez szkoleń = kupujesz compliance, nie komptencje';
   else if (d6.includes('champions') && d6.includes('communication') && d6.includes('training-role')) d6comment = '✅ Najlepsza kombinacja: sponsor + ambasadorzy + kompetencje';
   else d6comment = '✅ Dobra podstawa zarządzania zmianą';
-  breakdown.push({ label: '🔄 Change management', score: d6score, max: 15, choice: d6.map(id => SCORE_WEIGHTS.D6[id] !== undefined ? id : id).join(', ') || '—', comment: d6comment });
+  breakdown.push({ label: '🔄 Change management', score: d6score, max: 15, choice: d6.map(id => SCORE_WEIGHTS.D6[id] !== undefined ? id : id).join(', ') || ':', comment: d6comment });
   total += d6score;
 
   return { total, breakdown };
@@ -2125,7 +2109,7 @@ async function saveToGitHub(analysis) {
   
   const decisionsText = DECISIONS.map((d, idx) => {
     const ans = state.answers[idx];
-    let ansText = '—';
+    let ansText = ':';
     if (d.type === 'options' && ans !== undefined) {
       ansText = `${d.options[ans].letter}: ${d.options[ans].title}`;
     } else if (d.type === 'budget' && ans) {
@@ -2276,26 +2260,44 @@ function getGroupName() { return _mbaGroupName; }
   } catch(e) {}
 })();
 
-// ── Term popup ───────────────────────────────────────────────
+// ── Term popup (hover, follows cursor) ───────────────────────
 function showTerm(name, def) {
   document.getElementById('term-popup-name').textContent = name;
   document.getElementById('term-popup-def').textContent = def;
-  const el = document.getElementById('term-popup');
-  el.style.display = 'block';
-  // Auto-close after 8 seconds
-  clearTimeout(window._termTimer);
-  window._termTimer = setTimeout(closeTerm, 8000);
+  document.getElementById('term-popup').style.display = 'block';
 }
 function closeTerm() {
   document.getElementById('term-popup').style.display = 'none';
-  clearTimeout(window._termTimer);
 }
-// Close on outside click
-document.addEventListener('click', function(e) {
+
+// Position popup near cursor
+document.addEventListener('mousemove', function(e) {
   const popup = document.getElementById('term-popup');
-  if (popup && !popup.contains(e.target) && !e.target.classList.contains('term')) {
-    closeTerm();
-  }
+  if (!popup || popup.style.display === 'none') return;
+  const pw = popup.offsetWidth;
+  const ph = popup.offsetHeight;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  let x = e.clientX + 14;
+  let y = e.clientY - ph - 10;
+  if (x + pw > vw - 10) x = e.clientX - pw - 14;
+  if (y < 10) y = e.clientY + 20;
+  popup.style.left = x + 'px';
+  popup.style.top  = y + 'px';
+});
+
+// Hover delegation on .term spans
+document.addEventListener('mouseover', function(e) {
+  const span = e.target.closest('.term');
+  if (!span) return;
+  const name = span.dataset.termName;
+  const def  = span.dataset.termDef;
+  if (name && def) showTerm(name, def);
+});
+
+document.addEventListener('mouseout', function(e) {
+  const span = e.target.closest('.term');
+  if (span && !span.contains(e.relatedTarget)) closeTerm();
 });
 
 </script>
