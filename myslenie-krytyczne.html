@@ -550,7 +550,13 @@
       document.querySelector('input[placeholder*="ksyw"]'),
       document.querySelector('input[placeholder*="pseudonim"]')
     ].filter(Boolean);
-    candidates.forEach(function(el) { if (!el.value) el.value = saved; });
+    candidates.forEach(function(el) {
+      if (!el.value) {
+        el.value = saved;
+        // Dispatch input event so button-enable logic fires
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
     // Save ksywa when user leaves field
     candidates.forEach(function(el) {
       el.addEventListener('blur',   function() { if (el.value.trim()) saveKsywa(el.value.trim()); });
