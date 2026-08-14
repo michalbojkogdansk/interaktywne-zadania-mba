@@ -915,8 +915,8 @@
     <a class="nav-link" href="myslenie-krytyczne.html">🧠 <span class="nav-label">02 · Myślenie</span></a>
     <a class="nav-link active" href="symulacja-transformacja.html">🎮 <span class="nav-label">03 · Symulacja</span></a>
     <a class="nav-link" href="ciemne-dane.html">🌑 <span class="nav-label">04 · Ciemne Dane</span></a>
-    <a class="nav-link" href="gra-inzynieria-danych.html">🤖 <span class="nav-label">05 · Inżynieria</span></a>
-    <a class="nav-link" href="test-wiedzy.html">✅ <span class="nav-label">Zadanie końcowe</span></a>
+    <a class="nav-link" href="gra-inzynieria-danych.html"><span class="nav-label">05 · Inżynieria</span></a>
+    <a class="nav-link" href="test-wiedzy.html"><span class="nav-label">Zadanie końcowe</span></a>
   </div>
 </nav>
 
@@ -927,7 +927,7 @@
   <div class="header">
     <h1>Cyfrowa Transformacja</h1>
     <p>Symulacja decyzji zarządczych: transformacja cyfrowa firmy</p>
-    <div class="badge">🎓 Ćwiczenie MBA · ~30 minut</div>
+    <div class="badge">Ćwiczenie MBA · ~30 minut</div>
   </div>
 
   <div class="progress-bar-outer hidden" id="progressBarOuter">
@@ -971,7 +971,7 @@
     </div>
 
     <div class="intro-challenge">
-      <h3>⚡ Twoje wyzwanie</h3>
+      <h3>Twoje wyzwanie</h3>
       <p>Firma działa na Excel-ach, dane są w silosach, decyzje opierają się na intuicji, a konkurencja już wdraża AI. Masz budżet, mandat zarządu i 6 miesięcy. Jaką strategię transformacji cyfrowej wybierzesz?</p>
     </div>
 
@@ -1000,12 +1000,12 @@
   <!-- SCREEN: SUMMARY -->
   <!-- ═══════════════════════════════════════════════════ -->
   <div id="screen-summary" class="card hidden">
-    <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:6px;">📋 Podsumowanie Twojej strategii</h2>
+    <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:6px;">Podsumowanie Twojej strategii</h2>
     <p style="font-size:0.88rem; color:var(--text-sec); margin-bottom:20px;">Sprawdź swoje decyzje przed wysłaniem do analizy AI.</p>
     <div class="summary-grid" id="summaryGrid"></div>
     <div class="timer-note" id="timerNote">⏱ Stan gry jest automatycznie zapisywany w przeglądarce.</div>
     <button class="btn btn-primary btn-full" onclick="submitForAnalysis()" id="btnSubmit">
-      🤖 Analizuj moją strategię z AI
+      Analizuj moją strategię z AI
     </button>
   </div>
 
@@ -1025,7 +1025,7 @@
   <!-- ═══════════════════════════════════════════════════ -->
   <div id="screen-results" class="card hidden">
     <div id="resultsContent"></div>
-    <div class="saved-badge" id="savedBadge">✅ Wyniki zapisane do systemu wykładowcy</div>
+    <div class="saved-badge" id="savedBadge">Wyniki zapisane do systemu wykładowcy</div>
     <div class="error-box" id="errorBox"></div>
     <button class="btn btn-secondary btn-full" onclick="location.reload()" style="margin-top:16px;">↩ Zacznij od nowa</button>
   </div>
@@ -1156,10 +1156,10 @@ const DECISIONS = [
     question: "Jaki quick win przyniesie największą wartość i wiarygodność?",
     type: "rank",
     rankItems: [
-      { id: "dashboard", label: "📈 Dashboard zarządczy w czasie rzeczywistym" },
+      { id: "dashboard", label: " Dashboard zarządczy w czasie rzeczywistym" },
       { id: "automation", label: "Automatyzacja raportowania (oszczędność ~8h/tydzień/dział)" },
-      { id: "errors", label: "❌ Redukcja błędów w zamówieniach (AI validation)" },
-      { id: "onboarding", label: "🚀 Cyfrowy onboarding pracowników" }
+      { id: "errors", label: "Redukcja błędów w zamówieniach (AI validation)" },
+      { id: "onboarding", label: "Cyfrowy onboarding pracowników" }
     ]
   },
   {
@@ -1173,12 +1173,12 @@ const DECISIONS = [
     type: "multi-choice",
     instruction: "Wybierz <strong>maksymalnie 3</strong> działania, które wdrożysz:",
     choices: [
-      { id: "champions", label: "🏆 Sieć Digital Champions (ambasadorów zmiany) w każdym dziale" },
-      { id: "communication", label: "📣 Regularna komunikacja od CEO: 'dlaczego transformacja jest konieczna'" },
-      { id: "training-role", label: "🎓 Szkolenia dopasowane do roli (nie jeden program dla wszystkich)" },
-      { id: "metrics", label: "📊 Publiczne KPI transformacji: przejrzystość postępów" },
-      { id: "feedback", label: "💬 Kanał feedbacku dla pracowników: zgłaszanie obaw i pomysłów" },
-      { id: "incentives", label: "🎁 System nagród za adopcję nowych narzędzi cyfrowych" }
+      { id: "champions", label: "Sieć Digital Champions (ambasadorów zmiany) w każdym dziale" },
+      { id: "communication", label: "Regularna komunikacja od CEO: 'dlaczego transformacja jest konieczna'" },
+      { id: "training-role", label: "Szkolenia dopasowane do roli (nie jeden program dla wszystkich)" },
+      { id: "metrics", label: "Publiczne KPI transformacji: przejrzystość postępów" },
+      { id: "feedback", label: "Kanał feedbacku dla pracowników: zgłaszanie obaw i pomysłów" },
+      { id: "incentives", label: "System nagród za adopcję nowych narzędzi cyfrowych" }
     ]
   }
 ];
@@ -1395,7 +1395,7 @@ function renderDecision(idx) {
       </div>
       <div class="situation-box">${applyTooltips(d.situation)}</div>
       <div class="data-points">
-        ${d.dataPoints.map(dp => `<div class="data-point">📌 ${dp}</div>`).join('')}
+        ${d.dataPoints.map(dp => `<div class="data-point"> ${dp}</div>`).join('')}
       </div>
       <div class="question-label">❓ ${d.question}</div>
       ${inputHTML}
@@ -1572,7 +1572,7 @@ function calcDeterministicScore(answers) {
   const d1 = answers[0];
   const d1score = (d1 !== undefined) ? (SCORE_WEIGHTS.D1[d1] || 0) : 0;
   const d1labels = ['Zewnętrzny audyt 80k', 'Warsztaty wewnętrzne', 'Rapid Assessment', 'Podejście zintegrowane'];
-  const d1comments = ['❌ 16% budżetu + 6 tyg. bez wartości operacyjnej', '✅ Koszt-efektywne, buduje zaangażowanie', '✅ Najszybsze i najtańsze, bezpośredni kontakt', '⚠️ Sensowne, ale 45k to dużo na etap diagnozy'];
+  const d1comments = ['16% budżetu + 6 tyg. bez wartości operacyjnej', 'Koszt-efektywne, buduje zaangażowanie', '✅ Najszybsze i najtańsze, bezpośredni kontakt', '⚠️ Sensowne, ale 45k to dużo na etap diagnozy'];
   breakdown.push({ label: '🔍 Diagnoza', score: d1score, max: 15, choice: d1labels[d1] || '—', comment: d1comments[d1] || '' });
   total += d1score;
 
@@ -1581,7 +1581,7 @@ function calcDeterministicScore(answers) {
   const d2score = (d2 !== undefined) ? (SCORE_WEIGHTS.D2[d2] || 0) : 0;
   const d2labels = ['DWH + Power BI 120k', 'Modern Data Stack (chmura)', '3 kluczowe raporty 30k', 'iPaaS middleware 40k'];
   const d2comments = ['❌ 24% budżetu + 4 miesiące = 0 wartości przez 2/3 projektu', '⚠️ Wymaga Data Engineera, którego firma nie ma', '✅ Szybkie efekty, niski koszt, widoczna wartość', '✅ Dobry kompromis: szybkość + integracja'];
-  breakdown.push({ label: '📊 Strategia danych', score: d2score, max: 20, choice: d2labels[d2] || '—', comment: d2comments[d2] || '' });
+  breakdown.push({ label: 'Strategia danych', score: d2score, max: 20, choice: d2labels[d2] || '—', comment: d2comments[d2] || '' });
   total += d2score;
 
   // D3: Budżet na ludzi (max 15)
@@ -1601,7 +1601,7 @@ function calcDeterministicScore(answers) {
   else if (outsource >= 140) d3comment = '⚠️ Wszystko na outsourcing = firma nie buduje żadnych kompetencji wewnętrznych';
   else if (hire > 20 && train > 20 && outsource > 20) d3comment = '✅ Zbalansowane inwestycje w ludzi, szkolenia i wykonanie';
   else d3comment = '⚠️ Niezbalansowany podział: jeden wymiar dominuje';
-  breakdown.push({ label: '👥 Budżet na kompetencje', score: d3score, max: 15, choice: `Etaty: ${hire}k / Szkolenia: ${train}k / Outsourcing: ${outsource}k`, comment: d3comment });
+  breakdown.push({ label: 'Budżet na kompetencje', score: d3score, max: 15, choice: `Etaty: ${hire}k / Szkolenia: ${train}k / Outsourcing: ${outsource}k`, comment: d3comment });
   total += d3score;
 
   // D4: Strategia AI (max 20)
@@ -1623,7 +1623,7 @@ function calcDeterministicScore(answers) {
   else if (errIdx === 1) d5comment = '✅ Błędy zamówień w top 2: dobra priorytetyzacja wartości';
   else if (errIdx === 2) d5comment = '⚠️ Błędy zamówień (200k/rok) zepchnięte na 3. miejsce';
   else d5comment = '❌ Największa konkretna oszczędność pominięta: onboarding nie przynosi porównywalnego ROI';
-  breakdown.push({ label: '⚡ Quick wins', score: d5score, max: 15, choice: d5.map((id,i) => `${i+1}. ${d5RankLabels[id]||id}`).join(' → '), comment: d5comment });
+  breakdown.push({ label: 'Quick wins', score: d5score, max: 15, choice: d5.map((id,i) => `${i+1}. ${d5RankLabels[id]||id}`).join(' → '), comment: d5comment });
   total += d5score;
 
   // D6: Change management (max 15)
@@ -1637,7 +1637,7 @@ function calcDeterministicScore(answers) {
   else if (d6.includes('incentives') && !d6.includes('training-role')) d6comment = '⚠️ Nagrody bez szkoleń = kupujesz compliance, nie komptencje';
   else if (d6.includes('champions') && d6.includes('communication') && d6.includes('training-role')) d6comment = '✅ Najlepsza kombinacja: sponsor + ambasadorzy + kompetencje';
   else d6comment = '✅ Dobra podstawa zarządzania zmianą';
-  breakdown.push({ label: '🔄 Change management', score: d6score, max: 15, choice: d6.map(id => SCORE_WEIGHTS.D6[id] !== undefined ? id : id).join(', ') || '—', comment: d6comment });
+  breakdown.push({ label: 'Change management', score: d6score, max: 15, choice: d6.map(id => SCORE_WEIGHTS.D6[id] !== undefined ? id : id).join(', ') || '—', comment: d6comment });
   total += d6score;
 
   return { total, breakdown };
@@ -1668,7 +1668,7 @@ function renderDeterministicScore(answers) {
   return `<div style="background:${bg}; border:2px solid ${color}; border-radius:14px; padding:20px 22px; margin-bottom:20px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
       <div>
-        <div style="font-weight:700; font-size:1.1rem; color:${color};">🎯 Wynik punktowy strategii</div>
+        <div style="font-weight:700; font-size:1.1rem; color:${color};">Wynik punktowy strategii</div>
         <div style="font-size:0.85rem; color:#64748b; margin-top:2px;">Ocena deterministyczna na podstawie wag decyzji</div>
       </div>
       <div style="text-align:right;">
@@ -1921,7 +1921,7 @@ function showResults(a) {
     
     <div class="ai-content">
       <div class="section-block">
-        <div class="section-block-title">📋 Ocena AI (subiektywna)</div>
+        <div class="section-block-title">Ocena AI (subiektywna)</div>
         <p>${a.overallAssessment}</p>
       </div>
       
@@ -1949,7 +1949,7 @@ function showResults(a) {
       </div>
       
       <div class="section-block" style="border-left-color:var(--blue); background:var(--blue-light);">
-        <div class="section-block-title" style="color:var(--blue);">🎯 Najważniejsza rekomendacja</div>
+        <div class="section-block-title" style="color:var(--blue);">Najważniejsza rekomendacja</div>
         <p><strong>${a.recommendation}</strong></p>
       </div>
 
