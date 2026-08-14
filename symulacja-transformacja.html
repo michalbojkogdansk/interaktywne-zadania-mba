@@ -720,7 +720,56 @@
   .mba-topbar-logout:hover { text-decoration: underline; }
   body { padding-top: 52px; }
 
-  </style>
+  
+        /* ── Tooltips ── */
+        .tt {
+            display: inline;
+            border-bottom: 1px dashed #4A8F8A;
+            cursor: help;
+            position: relative;
+            white-space: nowrap;
+        }
+        .tt::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1C1D1F;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 400;
+            line-height: 1.5;
+            padding: 8px 12px;
+            border-radius: 6px;
+            width: 260px;
+            white-space: normal;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s;
+            z-index: 9999;
+            text-align: left;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        }
+        .tt:hover::after, .tt:focus::after {
+            opacity: 1;
+        }
+        /* Arrow */
+        .tt::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 1px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1C1D1F;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s;
+            z-index: 9999;
+        }
+        .tt:hover::before, .tt:focus::before { opacity: 1; }
+</style>
 <style>
   /* ═══ SITE-NAV (shared) ════════════════════════════════════════════════ */
   .site-nav {
@@ -784,7 +833,7 @@
             verifyGroupGate();
           }
         } else {
-          // gate input not found — gate already hidden, nothing to do
+          // gate input not found: gate already hidden, nothing to do
           style.remove();
         }
       });
@@ -876,8 +925,8 @@
 
 <div class="container">
   <div class="header">
-    <h1>🏭 Cyfrowa Transformacja</h1>
-    <p>Symulacja decyzji zarządczych — transformacja cyfrowa firmy</p>
+    <h1>Cyfrowa Transformacja</h1>
+    <p>Symulacja decyzji zarządczych: transformacja cyfrowa firmy</p>
     <div class="badge">🎓 Ćwiczenie MBA · ~30 minut</div>
   </div>
 
@@ -891,7 +940,7 @@
   <!-- ═══════════════════════════════════════════════════ -->
   <div id="screen-intro" class="card">
     <div class="company-logo">
-      <div class="icon">🏭</div>
+      <div class="icon">PP</div>
       <div>
         <h2>ProdukcjaPlus Sp. z o.o.</h2>
         <p>Firma produkcyjna · 850 pracowników · 45 lat na rynku</p>
@@ -902,7 +951,7 @@
       <div class="briefing-item">
         <div class="label">Twoja rola</div>
         <div class="value">Chief Digital Officer</div>
-        <div class="sub">Nowo mianowany — od 1. dnia pracy</div>
+        <div class="sub">Nowo mianowany: od 1. dnia pracy</div>
       </div>
       <div class="briefing-item">
         <div class="label">Budżet transformacji</div>
@@ -926,13 +975,13 @@
       <p>Firma działa na Excel-ach, dane są w silosach, decyzje opierają się na intuicji, a konkurencja już wdraża AI. Masz budżet, mandat zarządu i 6 miesięcy. Jaką strategię transformacji cyfrowej wybierzesz?</p>
     </div>
 
-    <p style="font-size:0.88rem; color:var(--text-sec); margin-bottom:16px;">Podejmiesz <strong>6 kluczowych decyzji</strong>. Każda wpłynie na następną. Na końcu AI przeanalizuje Twoją strategię i pokaże możliwe wyniki. <strong>Nie ma jednej poprawnej ścieżki</strong> — liczy się spójność i uzasadnienie.</p>
+    <p style="font-size:0.88rem; color:var(--text-sec); margin-bottom:16px;">Podejmiesz <strong>6 kluczowych decyzji</strong>. Każda wpłynie na następną. Na końcu AI przeanalizuje Twoją strategię i pokaże możliwe wyniki. <strong>Nie ma jednej poprawnej ścieżki</strong>: liczy się spójność i uzasadnienie.</p>
 
     <div class="nickname-row">
       <input type="text" id="nicknameInput" placeholder="Twój pseudonim / ksywa (np. Marek_CDO)" maxlength="30" />
       <button class="btn btn-primary" onclick="startGame()" id="startBtn" disabled>Rozpocznij →</button>
     </div>
-    <p style="font-size:0.82rem;color:#888;margin:6px 0 0;">Użyj pseudonimu — nie podawaj imienia i nazwiska.</p>
+    <p style="font-size:0.82rem;color:#888;margin:6px 0 0;">Użyj pseudonimu: nie podawaj imienia i nazwiska.</p>
     <p style="font-size:0.78rem; color:var(--text-sec); margin-top:4px;">Pseudonim jest widoczny tylko dla wykładowcy, nie dla innych studentów.</p>
   </div>
 
@@ -989,11 +1038,11 @@
 const DECISIONS = [
   {
     id: 1,
-    title: "Diagnoza — skąd zaczynasz?",
+    title: "Diagnoza: skąd zaczynasz?",
     tag: "dddm", tagLabel: "DDDM",
     emoji: "🔍",
     situation: `<strong>Tydzień 1.</strong> Zanim wydasz złotówkę, musisz zrozumieć gdzie firma jest cyfrowo. Masz dwa podejścia: zlecić zewnętrzny audyt firmie konsultingowej lub zbudować własną wiedzę angażując pracowników. Czas i pieniądze są ograniczone.`,
-    dataPoints: ["Excel w 90% procesów", "4 osobne bazy danych (bez integracji)", "Brak KPI dashboard", "Dział IT: 3 osoby"],
+    dataPoints: ["Excel w 90% procesów", "4 osobne bazy danych (bez integracji)", "Brak <span class="tt" data-tip="Key Performance Indicator: mierzalny wskaźnik pokazujący, czy firma realizuje cele strategiczne (np. czas realizacji zamówienia, % defektów, marża).">KPI</span> dashboard", "Dział IT: 3 osoby"],
     question: "Jak przeprowadzisz diagnozę stanu cyfrowego firmy?",
     type: "options",
     options: [
@@ -1005,26 +1054,26 @@ const DECISIONS = [
   },
   {
     id: 2,
-    title: "Strategia danych — fundament DDDM",
+    title: "Strategia danych: fundament DDDM",
     tag: "dddm", tagLabel: "DDDM",
-    emoji: "📊",
+    emoji: "",
     situation: `<strong>Miesiąc 1–2.</strong> Diagnoza gotowa. Dane firmy są wszędzie i nigdzie jednocześnie. Przed wdrożeniem AI potrzebujesz solidnych fundamentów danych. Pytanie: jak duże fundamenty i jak szybko?`,
     dataPoints: ["7 systemów bez API", "Dział sprzedaży vs. produkcja: inne definicje KPI", "Raportowanie: 3–5 dni oczekiwania", "Historyczne dane: 8 lat w Excelu"],
     question: "Jaką strategię danych wdrożysz jako fundament transformacji?",
     type: "options",
     options: [
-      { letter: "A", title: "Enterprise Data Warehouse + Power BI", desc: "Budujesz korporacyjną architekturę danych z jednym centralnym repozytorium i wdrażasz Power BI. Zarząd dostaje dashboard z dowolną metryką, jeden punkt prawdy dla całej firmy. Koszt ~120k PLN." },
-      { letter: "B", title: "Modern Data Stack w chmurze (Azure/AWS)", desc: "Data lakehouse używany przez liderów rynku — architektura gotowa na AI i machine learning od pierwszego dnia. Skalowalna, elastyczna, integruje dowolne źródła. Koszt ~90k PLN + subskrypcja." },
-      { letter: "C", title: "Targeted reporting — 3 kluczowe raporty", desc: "Identyfikujesz 3 raporty o najwyższym wpływie na decyzje i ujednolicasz je w 4 tygodnie. Szybkie, widoczne efekty, które natychmiast pokazują wartość transformacji. Koszt ~30k PLN." },
+      { letter: "A", title: "Enterprise Data Warehouse + Power BI", desc: "Budujesz korporacyjną architekturę danych z jednym centralnym repozytorium i wdrażasz <span class="tt" data-tip="Narzędzie Microsoftu do wizualizacji danych i tworzenia interaktywnych dashboardów. Pozwala menedżerom śledzić KPI w czasie rzeczywistym.">Power BI</span>. Zarząd dostaje dashboard z dowolną metryką, jeden punkt prawdy dla całej firmy. Koszt ~120k PLN." },
+      { letter: "B", title: "Modern Data Stack w chmurze (Azure/AWS)", desc: "Data lakehouse używany przez liderów rynku: architektura gotowa na AI i machine learning od pierwszego dnia. Skalowalna, elastyczna, integruje dowolne źródła. Koszt ~90k PLN + subskrypcja." },
+      { letter: "C", title: "Targeted reporting: 3 kluczowe raporty", desc: "Identyfikujesz 3 raporty o najwyższym wpływie na decyzje i ujednolicasz je w 4 tygodnie. Szybkie, widoczne efekty, które natychmiast pokazują wartość transformacji. Koszt ~30k PLN." },
       { letter: "D", title: "Integracja przez middleware (iPaaS)", desc: "Platforma integracyjna (np. Make.com/Zapier Enterprise, koszt ~40k PLN/rok) spinająca istniejące systemy. Kompromis między szybkością a głębokością." }
     ]
   },
   {
     id: 3,
-    title: "Ludzie i kompetencje — kto to zrobi?",
+    title: "Ludzie i kompetencje: kto to zrobi?",
     tag: "people", tagLabel: "Ludzie",
-    emoji: "👥",
-    situation: `<strong>Miesiąc 2.</strong> Masz strategię — ale kto ją wdroży? Budujesz wewnętrzny zespół, który będzie z firmą długo, albo kupujesz szybkość przez outsourcing. Budżet na ludzi konkuruje z budżetem na technologię.`,
+    emoji: "",
+    situation: `<strong>Miesiąc 2.</strong> Masz strategię: ale kto ją wdroży? Budujesz wewnętrzny zespół, który będzie z firmą długo, albo kupujesz szybkość przez outsourcing. Budżet na ludzi konkuruje z budżetem na technologię.`,
     dataPoints: ["Dział IT przytłoczony bieżącą obsługą", "3 pracowników wyraziło chęć szkolenia z AI", "Stawka seniora Data Engineer: 15k+ PLN/mies.", "Firma szkoleniowa: pakiet ~60k PLN dla 20 osób"],
     question: "Jak zbudujesz kompetencje cyfrowe w organizacji?",
     type: "budget",
@@ -1037,52 +1086,52 @@ const DECISIONS = [
   },
   {
     id: 4,
-    title: "Technologia AI — kiedy i jak?",
+    title: "Technologia AI: kiedy i jak?",
     tag: "ai", tagLabel: "AI",
     emoji: "🤖",
     situation: `<strong>Miesiąc 3.</strong> Zarząd pyta: „Kiedy będziemy mieć AI?" Presja na szybkie wdrożenie jest duża. Ale AI bez danych to tylko marketingowe hasło. Musisz zdecydować o podejściu do AI w firmie.`,
-    dataPoints: ["Konkurencja wdrożyła chatbota obsługi", "ROI z automatyzacji prognoz: potencjalnie +12% marży", "Dostępne modele: GPT-4, Gemini, modele branżowe", "Ryzyko: 60% projektów AI kończy się niepowodzeniem"],
+    dataPoints: ["Konkurencja wdrożyła chatbota obsługi", "ROI z automatyzacji prognoz: potencjalnie +12% marży", "Dostępne modele: <span class="tt" data-tip="Zaawansowany model językowy AI stworzony przez OpenAI. Podstawa ChatGPT. Stosowany do generowania tekstów, analizy danych i automatyzacji pracy biurowej.">GPT-4</span>, <span class="tt" data-tip="Model językowy AI stworzony przez Google (konkurent ChatGPT). Może analizować teksty, generować raporty i odpowiadać na pytania na podstawie danych firmy.">Gemini</span>, modele branżowe", "Ryzyko: 60% projektów AI kończy się niepowodzeniem"],
     question: "Jaką strategię wdrożenia AI przyjmiesz?",
     type: "options",
     options: [
-      { letter: "A", title: "AI-first — szerokie wdrożenie", desc: "Odpowiadasz na oczekiwania zarządu kompleksowo: równoległe wdrożenia AI w predykcji popytu, automatyzacji obsługi klienta i HR. Firma wchodzi w erę AI szybko i widocznie." },
+      { letter: "A", title: "AI-first: szerokie wdrożenie", desc: "Odpowiadasz na oczekiwania zarządu kompleksowo: równoległe wdrożenia AI w predykcji popytu, automatyzacji obsługi klienta i HR. Firma wchodzi w erę AI szybko i widocznie." },
       { letter: "B", title: "Jeden konkretny pilot AI", desc: "Wybierasz jeden obszar (np. prognozowanie produkcji) i budujesz PoC w 8 tygodni. Uczysz się na małym błędzie, nie na dużym." },
-      { letter: "C", title: "AI-ready strategy — najpierw dane", desc: "Deklarujesz AI za 6+ miesięcy, skupiasz się na przygotowaniu danych i kompetencji. Zarząd może być niezadowolony." },
-      { letter: "D", title: "AI w codziennej pracy (Microsoft Copilot)", desc: "Wdrażasz Microsoft Copilot lub Google Workspace AI dla całego zespołu. Każdy pracownik dostaje asystenta AI od razu — szybka adopcja, zero ryzyka technicznego, widoczny efekt." }
+      { letter: "C", title: "AI-ready strategy: najpierw dane", desc: "Deklarujesz AI za 6+ miesięcy, skupiasz się na przygotowaniu danych i kompetencji. Zarząd może być niezadowolony." },
+      { letter: "D", title: "AI w codziennej pracy (<span class="tt" data-tip="Asystent AI wbudowany w aplikacje Microsoft 365 (Word, Excel, Teams). Pomaga pisać, analizować dane i podsumowywać spotkania.">Microsoft Copilot</span>)", desc: "Wdrażasz Microsoft Copilot lub Google Workspace AI dla całego zespołu. Każdy pracownik dostaje asystenta AI od razu: szybka adopcja, zero ryzyka technicznego, widoczny efekt." }
     ]
   },
   {
     id: 5,
-    title: "Quick wins — jak pokazać wartość?",
+    title: "Quick wins: jak pokazać wartość?",
     tag: "strategy", tagLabel: "Strategia",
-    emoji: "⚡",
-    situation: `<strong>Miesiąc 3–4.</strong> Zarząd oczekuje pierwszych wyników. Masz budżet i czas — ale co przyniesie największą wartość w krótkim terminie? To decyzja o komunikacji i wiarygodności CDO.`,
+    emoji: "",
+    situation: `<strong>Miesiąc 3–4.</strong> Zarząd oczekuje pierwszych wyników. Masz budżet i czas: ale co przyniesie największą wartość w krótkim terminie? To decyzja o komunikacji i wiarygodności <span class="tt" data-tip="Chief Digital Officer: dyrektor ds. cyfryzacji. Odpowiada za strategię transformacji cyfrowej firmy i koordynuje wdrożenia technologiczne.">CDO</span>.`,
     dataPoints: ["Raportowanie zajmuje 2 dni/tydzień w każdym dziale", "Błędy w zamówieniach: 8% (koszt ~200k PLN/rok)", "Czas onboardingu nowego pracownika: 3 tygodnie", "Zarząd chce dashboard w czasie rzeczywistym"],
     question: "Jaki quick win przyniesie największą wartość i wiarygodność?",
     type: "rank",
     rankItems: [
       { id: "dashboard", label: "📈 Dashboard zarządczy w czasie rzeczywistym" },
-      { id: "automation", label: "🔄 Automatyzacja raportowania (oszczędność ~8h/tydzień/dział)" },
+      { id: "automation", label: "Automatyzacja raportowania (oszczędność ~8h/tydzień/dział)" },
       { id: "errors", label: "❌ Redukcja błędów w zamówieniach (AI validation)" },
       { id: "onboarding", label: "🚀 Cyfrowy onboarding pracowników" }
     ]
   },
   {
     id: 6,
-    title: "Change management — jak angażować ludzi?",
+    title: "Change management: jak angażować ludzi?",
     tag: "change", tagLabel: "Change Mgmt",
-    emoji: "🔄",
-    situation: `<strong>Miesiąc 4–5.</strong> Technologia gotowa — ale połowa pracowników boi się zmian. Część widzi w AI zagrożenie dla swoich miejsc pracy. Bez adopcji narzędzi, transformacja będzie tylko na papierze.`,
+    emoji: "",
+    situation: `<strong>Miesiąc 4–5.</strong> Technologia gotowa: ale połowa pracowników boi się zmian. Część widzi w AI zagrożenie dla swoich miejsc pracy. Bez adopcji narzędzi, transformacja będzie tylko na papierze.`,
     dataPoints: ["Sondaż: 45% pracowników 'obawia się cyfryzacji'", "Liderzy linii: różne poziomy entuzjazmu", "HR nie był angażowany w planowanie", "Sukces transformacji: 70% to ludzie, 30% technologia"],
-    question: "Jaką strategię change management przyjmiesz?",
+    question: "Jaką strategię <span class="tt" data-tip="Zarządzanie zmianą: metodyczne podejście do wprowadzania zmian w organizacji, minimalizujące opór pracowników i zwiększające szanse na sukces wdrożenia.">change management</span> przyjmiesz?",
     type: "multi-choice",
     instruction: "Wybierz <strong>maksymalnie 3</strong> działania, które wdrożysz:",
     choices: [
-      { id: "champions", label: "🏆 Sieć Digital Champions (ambasadorów zmiany) w każdym dziale" },
-      { id: "communication", label: "📣 Regularna komunikacja od CEO — 'dlaczego transformacja jest konieczna'" },
+      { id: "champions", label: "🏆 Sieć <span class="tt" data-tip="Pracownicy z różnych działów, którzy jako pierwsi adoptują nowe technologie i pomagają kolegom. Kluczowi dla udanej transformacji — zmniejszają opór przed zmianą.">Digital Champions</span> (ambasadorów zmiany) w każdym dziale" },
+      { id: "communication", label: "📣 Regularna komunikacja od CEO: 'dlaczego transformacja jest konieczna'" },
       { id: "training-role", label: "🎓 Szkolenia dopasowane do roli (nie jeden program dla wszystkich)" },
-      { id: "metrics", label: "📊 Publiczne KPI transformacji — przejrzystość postępów" },
-      { id: "feedback", label: "💬 Kanał feedbacku dla pracowników — zgłaszanie obaw i pomysłów" },
+      { id: "metrics", label: "📊 Publiczne KPI transformacji: przejrzystość postępów" },
+      { id: "feedback", label: "💬 Kanał feedbacku dla pracowników: zgłaszanie obaw i pomysłów" },
       { id: "incentives", label: "🎁 System nagród za adopcję nowych narzędzi cyfrowych" }
     ]
   }
@@ -1254,7 +1303,7 @@ function renderDecision(idx) {
   } else if (d.type === 'rank') {
     const ranked = ans || d.rankItems.map(r => r.id);
     inputHTML = `
-      <p style="font-size:0.82rem; color:var(--text-sec); margin-bottom:10px;">Przeciągnij lub kliknij strzałki, aby ustawić priorytety (1 = najważniejszy)</p>
+      <p style="font-size:0.82rem; color:var(--text-sec); margin-bottom:10px;">Kliknij strzałki, aby ustawić priorytety (1 = najważniejszy)</p>
       <div id="rankList" class="options-grid">
         ${ranked.map((id, i) => {
           const item = d.rankItems.find(r => r.id === id);
@@ -1294,7 +1343,7 @@ function renderDecision(idx) {
       <div class="decision-header">
         <div class="decision-number">${d.id}</div>
         <div>
-          <h2>${d.emoji} ${d.title}</h2>
+          <h2>${d.title}</h2>
           <span class="tag ${tagColors[d.tag]}">${d.tagLabel}</span>
         </div>
       </div>
@@ -1448,7 +1497,7 @@ function showSummary() {
     return `<div class="summary-item">
       <div class="num">${d.id}</div>
       <div class="content">
-        <h4>${d.emoji} ${d.title}</h4>
+        <h4>${d.title}</h4>
         <p>${ansText}</p>
       </div>
     </div>`;
@@ -1463,8 +1512,8 @@ function showSummary() {
 // ═══════════════════════════════════════════════════
 const SCORE_WEIGHTS = {
   D1: { 0: 2, 1: 10, 2: 15, 3: 6 },   // A=external audit(bad), B=workshops, C=rapid(best), D=integrated
-  D2: { 0: 2, 1: 6, 2: 20, 3: 14 },   // A=DWH 120k(bad), B=cloud stack(no competencies), C=targeted(best), D=iPaaS
-  D4: { 0: 2, 1: 20, 2: 11, 3: 6 },   // A=AI-first(bad), B=one pilot(best), C=AI-ready, D=Copilot
+  D2: { 0: 2, 1: 6, 2: 20, 3: 14 },   // A=<span class="tt" data-tip="Data Warehouse (Hurtownia Danych): centralna baza danych integrująca dane z wielu systemów firmy, zoptymalizowana pod analizy historyczne.">DWH</span> 120k(bad), B=cloud stack(no competencies), C=targeted(best), D=iPaaS
+  D4: { 0: 2, 1: 20, 2: 11, 3: 6 },   // A=<span class="tt" data-tip="Strategia, w której sztuczna inteligencja jest centralnym elementem wszystkich decyzji i produktów firmy. Ryzykowna bez wcześniej uporządkowanych danych.">AI-first</span>(bad), B=one pilot(best), C=AI-ready, D=Copilot
   D5_errors: { 0: 15, 1: 11, 2: 6, 3: 2 }, // position of "errors" in ranking
   D6: { champions: 5, communication: 4, 'training-role': 4, metrics: 3, feedback: 3, incentives: 1 }
 };
@@ -1505,7 +1554,7 @@ function calcDeterministicScore(answers) {
   if (train === 0) d3comment = '❌ 0 PLN na szkolenia = permanentna zależność od zewnętrznych';
   else if (outsource >= 140) d3comment = '⚠️ Wszystko na outsourcing = firma nie buduje żadnych kompetencji wewnętrznych';
   else if (hire > 20 && train > 20 && outsource > 20) d3comment = '✅ Zbalansowane inwestycje w ludzi, szkolenia i wykonanie';
-  else d3comment = '⚠️ Niezbalansowany podział — jeden wymiar dominuje';
+  else d3comment = '⚠️ Niezbalansowany podział: jeden wymiar dominuje';
   breakdown.push({ label: '👥 Budżet na kompetencje', score: d3score, max: 15, choice: `Etaty: ${hire}k / Szkolenia: ${train}k / Outsourcing: ${outsource}k`, comment: d3comment });
   total += d3score;
 
@@ -1513,21 +1562,21 @@ function calcDeterministicScore(answers) {
   const d4 = answers[3];
   const d4score = (d4 !== undefined) ? (SCORE_WEIGHTS.D4[d4] || 0) : 0;
   const d4labels = ['AI-first (szerokie wdrożenie)', 'Jeden pilot AI', 'AI-ready (najpierw dane)', 'Microsoft Copilot'];
-  const d4comments = ['❌ AI na brudnych danych = 60% ryzyko porażki, utrata zaufania zarządu', '✅ PoC w 8 tyg. — uczysz się na małym, nie na dużym błędzie', '⚠️ Rozsądne, ale zarząd będzie niezadowolony przez 6 miesięcy', '⚠️ Produktywność biurowa ≠ transformacja cyfrowa zakładu produkcyjnego'];
+  const d4comments = ['❌ AI na brudnych danych = 60% ryzyko porażki, utrata zaufania zarządu', '✅ PoC w 8 tyg.: uczysz się na małym, nie na dużym błędzie', '⚠️ Rozsądne, ale zarząd będzie niezadowolony przez 6 miesięcy', '⚠️ Produktywność biurowa ≠ transformacja cyfrowa zakładu produkcyjnego'];
   breakdown.push({ label: '🤖 Strategia AI', score: d4score, max: 20, choice: d4labels[d4] || '—', comment: d4comments[d4] || '' });
   total += d4score;
 
-  // D5: Quick wins ranking (max 15) — position of "errors"
+  // D5: Quick wins ranking (max 15): position of "errors"
   const d5 = answers[4] || [];
   const errIdx = d5.indexOf('errors');
   let d5score = errIdx >= 0 ? SCORE_WEIGHTS.D5_errors[errIdx] : 0;
   if (d5[0] === 'onboarding') d5score = Math.max(0, d5score - 3);
   const d5RankLabels = { dashboard: 'Dashboard zarządczy', automation: 'Automatyzacja raportowania', errors: 'Redukcja błędów zamówień', onboarding: 'Onboarding cyfrowy' };
   let d5comment = '';
-  if (errIdx === 0) d5comment = '✅ Priorytet na oszczędność 200k PLN/rok — świetna decyzja';
-  else if (errIdx === 1) d5comment = '✅ Błędy zamówień w top 2 — dobra priorytetyzacja wartości';
+  if (errIdx === 0) d5comment = '✅ Priorytet na oszczędność 200k PLN/rok: świetna decyzja';
+  else if (errIdx === 1) d5comment = '✅ Błędy zamówień w top 2: dobra priorytetyzacja wartości';
   else if (errIdx === 2) d5comment = '⚠️ Błędy zamówień (200k/rok) zepchnięte na 3. miejsce';
-  else d5comment = '❌ Największa konkretna oszczędność pominięta — onboarding nie przynosi porównywalnego ROI';
+  else d5comment = '❌ Największa konkretna oszczędność pominięta: onboarding nie przynosi porównywalnego ROI';
   breakdown.push({ label: '⚡ Quick wins', score: d5score, max: 15, choice: d5.map((id,i) => `${i+1}. ${d5RankLabels[id]||id}`).join(' → '), comment: d5comment });
   total += d5score;
 
@@ -1538,7 +1587,7 @@ function calcDeterministicScore(answers) {
   d6score = Math.max(0, Math.min(15, d6score));
   let d6comment = '';
   const hasChampsOrComm = d6.includes('champions') || d6.includes('communication');
-  if (!hasChampsOrComm) d6comment = '❌ Brak sponsora zmiany i ambasadorów — transformacja zostanie "projektem IT"';
+  if (!hasChampsOrComm) d6comment = '❌ Brak sponsora zmiany i ambasadorów: transformacja zostanie "projektem IT"';
   else if (d6.includes('incentives') && !d6.includes('training-role')) d6comment = '⚠️ Nagrody bez szkoleń = kupujesz compliance, nie komptencje';
   else if (d6.includes('champions') && d6.includes('communication') && d6.includes('training-role')) d6comment = '✅ Najlepsza kombinacja: sponsor + ambasadorzy + kompetencje';
   else d6comment = '✅ Dobra podstawa zarządzania zmianą';
@@ -1553,7 +1602,7 @@ function renderDeterministicScore(answers) {
   const pct = Math.round((total / 100) * 100);
   const color = total >= 75 ? '#16a34a' : total >= 55 ? '#d97706' : total >= 35 ? '#ea580c' : '#dc2626';
   const bg = total >= 75 ? '#dcfce7' : total >= 55 ? '#fef3c7' : total >= 35 ? '#ffedd5' : '#fee2e2';
-  const label = total >= 75 ? 'Solidna strategia' : total >= 55 ? 'Przeciętna z niedociągnięciami' : total >= 35 ? 'Słaba — poważne błędy' : 'Nieefektywna — krytyczne błędy';
+  const label = total >= 75 ? 'Solidna strategia' : total >= 55 ? 'Przeciętna z niedociągnięciami' : total >= 35 ? 'Słaba: poważne błędy' : 'Nieefektywna: krytyczne błędy';
 
   const rows = breakdown.map(b => {
     const bpct = Math.round((b.score / b.max) * 100);
@@ -1608,41 +1657,41 @@ function buildPrompt() {
   
   const detScore = calcDeterministicScore(state.answers);
   
-  return `Jesteś surowym egzaminatorem MBA i konsultantem transformacji cyfrowej. Twoja rola to uczciwa, ostra ocena strategii — NIE coaching, NIE komplementowanie. Studenci uczą się WYŁĄCZNIE gdy dostają prawdziwą ocenę swoich błędów.
+  return `Jesteś surowym egzaminatorem MBA i konsultantem transformacji cyfrowej. Twoja rola to uczciwa, ostra ocena strategii: NIE coaching, NIE komplementowanie. Studenci uczą się WYŁĄCZNIE gdy dostają prawdziwą ocenę swoich błędów.
 
-KONTEKST FIRMY: ProdukcjaPlus Sp. z o.o. — firma produkcyjna, 850 pracowników, 45 lat na rynku, stagnacja przychodów od 3 lat, BUDŻET TRANSFORMACJI: 500k PLN, CZAS: 6 miesięcy.
+KONTEKST FIRMY: ProdukcjaPlus Sp. z o.o.: firma produkcyjna, 850 pracowników, 45 lat na rynku, stagnacja przychodów od 3 lat, BUDŻET TRANSFORMACJI: 500k PLN, CZAS: 6 miesięcy.
 
 DECYZJE STUDENTA:
-1. Diagnoza (DDDM): ${d0text}
+1. Diagnoza (<span class="tt" data-tip="Data-Driven Decision Making: podejmowanie decyzji w oparciu o dane i analizy, a nie intuicję lub przyzwyczajenia.">DDDM</span>): ${d0text}
 2. Strategia danych (DDDM): ${d1text}
 3. Budżet na ludzi i kompetencje (pula: 150k PLN): ${d2text}
 4. Strategia AI: ${d3text}
 5. Quick wins (ranking priorytetów): ${d4text}
 6. Change management: ${d5text}
 
-RUBRYKA OCENY — zastosuj rygorystycznie każdy punkt:
+RUBRYKA OCENY: zastosuj rygorystycznie każdy punkt:
 
-DIAGNOZA (D1) — PUŁAPKI:
-- "Digital Maturity Assessment zewnętrzny" za 80k PLN = 16% całego budżetu + 6 tygodni TYLKO na diagnozę. Przy budżecie 500k i 6 miesiącach — marnotrawstwo zasobów na etapie, który nie przynosi żadnej wartości operacyjnej.
+DIAGNOZA (D1): PUŁAPKI:
+- "Digital Maturity Assessment zewnętrzny" za 80k PLN = 16% całego budżetu + 6 tygodni TYLKO na diagnozę. Przy budżecie 500k i 6 miesiącach: marnotrawstwo zasobów na etapie, który nie przynosi żadnej wartości operacyjnej.
 - "Podejście zintegrowane" za 45k PLN = kolejne marnotrawstwo; dobry CDO robi rapid assessment sam lub warsztatami.
 
-STRATEGIA DANYCH (D2) — PUŁAPKI:
-- "Enterprise Data Warehouse + Power BI" za 120k PLN + 4 miesiące = 24% budżetu i 67% dostępnego czasu na samą infrastrukturę. Zostają 2 miesiące i 380k na wszystko inne. To błąd krytyczny — firma nie uzyska ROI w terminie.
+STRATEGIA DANYCH (D2): PUŁAPKI:
+- "Enterprise Data Warehouse + Power BI" za 120k PLN + 4 miesiące = 24% budżetu i 67% dostępnego czasu na samą infrastrukturę. Zostają 2 miesiące i 380k na wszystko inne. To błąd krytyczny: firma nie uzyska <span class="tt" data-tip="Return on Investment: wskaźnik zwrotu z inwestycji. ROI 50% oznacza, że za każde 100 zł zainwestowane firma zyskuje 150 zł.">ROI</span> w terminie.
 - "Modern Data Stack w chmurze" = wymaga kompetencji Data Engineera seniorskiego, których firma NIE MA (dział IT: 3 osoby, przeciążone bieżącą obsługą). Projekt skończy się porażką lub permanent dependency od konsultantów.
 
-AI (D4) — PUŁAPKI:
-- "AI-first — szerokie wdrożenie" bez solidnych danych = wdrożenie AI na brudnych, niespójnych danych (4 osobne bazy bez integracji) = błędne predykcje, utrata zaufania zarządu. Statystyka: 60% projektów AI kończy się niepowodzeniem właśnie z tego powodu.
+AI (D4): PUŁAPKI:
+- "AI-first: szerokie wdrożenie" bez solidnych danych = wdrożenie AI na brudnych, niespójnych danych (4 osobne bazy bez integracji) = błędne predykcje, utrata zaufania zarządu. Statystyka: 60% projektów AI kończy się niepowodzeniem właśnie z tego powodu.
 - "AI w codziennej pracy (Microsoft Copilot)" = nie transformuje żadnego core procesu firmy produkcyjnej. To narzędzie produktywności biurowej, nie transformacja cyfrowa zakładu produkcyjnego.
 
-QUICK WINS (D5) — PUŁAPKI:
+QUICK WINS (D5): PUŁAPKI:
 - "Cyfrowy onboarding pracowników" na 1. miejscu = najniższy bezpośredni ROI dla firmy produkcyjnej ze wszystkich opcji. Priorytetyzowanie onboardingu nad redukcją błędów zamówień (wartych 200k PLN/rok!) to błąd strategicznego myślenia.
 - Brak "Redukcji błędów w zamówieniach" w top 2 = przeoczenie największej konkretnej oszczędności dostępnej w firmie.
 
-BUDŻET LUDZI (D3) — PUŁAPKI:
+BUDŻET LUDZI (D3): PUŁAPKI:
 - 0 PLN na szkolenia wewnętrzne = permanentna zależność od zewnętrznych. Każda zmiana w systemach wymaga nowego kontraktu. Firma nie buduje żadnych kompetencji wewnętrznych.
 - 0 PLN na nowe etaty przy ambitnej strategii AI/danych = kto utrzyma systemy po zakończeniu projektu?
 
-CHANGE MANAGEMENT (D6) — PUŁAPKI:
+CHANGE MANAGEMENT (D6): PUŁAPKI:
 - Brak "Digital Champions" I jednocześnie brak "Komunikacji CEO" = transformacja zostaje "projektem IT" bez sponsora i ambasadorów. Przy 45% pracowników obawiających się cyfryzacji to gwarantowana niska adopcja.
 - Wybór "System nagród za adopcję" bez szkoleń = kupowanie compliance zamiast budowania kompetencji.
 
@@ -1654,7 +1703,7 @@ Algorytm deterministyczny wyliczył ${detScore.total}/100 punktów.
 - Jeśli detScore 51-70: scoreOverall MUSI być 55-75.
 - Jeśli detScore > 70: scoreOverall MUSI być 65-90.
 
-KALIBRACJA ROI — używaj WYŁĄCZNIE tych przedziałów:
+KALIBRACJA ROI: używaj WYŁĄCZNIE tych przedziałów:
 - detScore < 25: ROI od -30% do -5% (inwestycja nie zwróci się w 6 mies.)
 - detScore 25-40: ROI od -5% do 20%
 - detScore 41-55: ROI od 15% do 45%
@@ -1680,22 +1729,22 @@ Zwróć WYŁĄCZNIE JSON (zero markdown, zero komentarzy, zero tekstu poza JSON)
   "scoreOverall": liczba 1-100 (SUROWA skala: <40 = poważne błędy strategiczne, 40-55 = przeciętna z błędami, 56-70 = dobra z niedociągnięciami, 71-85 = bardzo dobra, 86+ = wyjątkowa. NIE dawaj wysokiej oceny złej strategii),
   "kpi": {
     "digitalMaturity": "realistyczna zmiana poziomów po 6 mies. (może być +0.5 jeśli strategia słaba; maksymalnie +2.0)",
-    "roiEstimate": "ROI po 6 mies. — może być ujemny lub 0 jeśli błędy są poważne. Zakres: od -30% (strata) do 180% (wyjątkowa strategia). Podaj konkretny % z krótkim uzasadnieniem w nawiasie.",
+    "roiEstimate": "ROI po 6 mies.: może być ujemny lub 0 jeśli błędy są poważne. Zakres: od -30% (strata) do 180% (wyjątkowa strategia). Podaj konkretny % z krótkim uzasadnieniem w nawiasie.",
     "adoptionRisk": "Niskie/Średnie/Wysokie/Krytyczne"
   },
-  "criticalMistakes": ["opis błędu krytycznego 1 — co dokładnie poszło nie tak i dlaczego", "błąd 2 jeśli istnieje"],
-  "strengths": ["mocna strona 1 — tylko jeśli naprawdę istnieje"],
+  "criticalMistakes": ["opis błędu krytycznego 1: co dokładnie poszło nie tak i dlaczego", "błąd 2 jeśli istnieje"],
+  "strengths": ["mocna strona 1: tylko jeśli naprawdę istnieje"],
   "risks": ["konkretne ryzyko 1", "ryzyko 2", "ryzyko 3"],
-  "overallAssessment": "5-8 zdań SZCZEREJ, pogłębionej oceny. Zacznij od określenia charakteru strategii jako całości. Następnie wskaż które decyzje wzajemnie się wzmacniają lub osłabiają (synergie i konflikty). Jeśli student popełnił błędy kosztujące budżet lub czas — nazwij je konkretnie z szacunkiem strat. Zakończ jednym zdaniem o tym, czego ta strategia uczy o myśleniu o transformacji cyfrowej. Zero lukrowania, zero ogólników.",
+  "overallAssessment": "5-8 zdań SZCZEREJ, pogłębionej oceny. Zacznij od określenia charakteru strategii jako całości. Następnie wskaż które decyzje wzajemnie się wzmacniają lub osłabiają (synergie i konflikty). Jeśli student popełnił błędy kosztujące budżet lub czas: nazwij je konkretnie z szacunkiem strat. Zakończ jednym zdaniem o tym, czego ta strategia uczy o myśleniu o transformacji cyfrowej. Zero lukrowania, zero ogólników.",
   "whatIf": [
     {
-      "scenario": "Co gdyby wybrał(a) [wskaż konkretną, najważniejszą alternatywę dla najgorszej decyzji — podaj nazwę opcji]?",
+      "scenario": "Co gdyby wybrał(a) [wskaż konkretną, najważniejszą alternatywę dla najgorszej decyzji: podaj nazwę opcji]?",
       "description": "3-4 zdania z KONKRETNYMI LICZBAMI: ile PLN oszczędności/zysku, ile tygodni szybciej, jaki wpływ na ROI (podaj % różnicy). Porównaj oba scenariusze numerycznie.",
       "deltaROI": "szacowana zmiana ROI względem wybranej strategii, np. +25% lub -15%",
       "deltaCost": "szacowana zmiana kosztu lub oszczędności w PLN, np. -80 000 PLN lub +45 000 PLN"
     },
     {
-      "scenario": "Co gdyby [drugi scenariusz — inna kluczowa decyzja do zmiany]?",
+      "scenario": "Co gdyby [drugi scenariusz: inna kluczowa decyzja do zmiany]?",
       "description": "3-4 zdania z KONKRETNYMI LICZBAMI: jlr PLN, jaki wpływ na harmonogram (tygodnie), jaki wpływ na ryzyko adopcji.",
       "deltaROI": "szacowana zmiana ROI",
       "deltaCost": "szacowana zmiana kosztu w PLN"
@@ -1709,8 +1758,8 @@ Zwróć WYŁĄCZNIE JSON (zero markdown, zero komentarzy, zero tekstu poza JSON)
   ],
   "recommendation": "2-3 zdania: jedna najważniejsza zmiana z uzasadnieniem finansowym (ile PLN lub % ROI by zyskał). Konkretna decyzja, nie ogólna zasada.",
   "benchmark": {
-    "typical": "Jak wygląda typowa dobra strategia transformacji cyfrowej dla firmy produkcyjnej tej wielkości (2-3 zdania — konkretne proporcje budżetu, priorytety, czas do pierwszych wyników)?",
-    "studentVsBenchmark": "W czym strategia studenta odbiega od benchmarku — co zrobił lepiej, co gorzej (2-3 zdania z konkretnymi liczbami)?"
+    "typical": "Jak wygląda typowa dobra strategia transformacji cyfrowej dla firmy produkcyjnej tej wielkości (2-3 zdania: konkretne proporcje budżetu, priorytety, czas do pierwszych wyników)?",
+    "studentVsBenchmark": "W czym strategia studenta odbiega od benchmarku: co zrobił lepiej, co gorzej (2-3 zdania z konkretnymi liczbami)?"
   }
 }`;
 }
@@ -1798,27 +1847,27 @@ function showResults(a) {
       <div style="display:grid; gap:8px;">
         <div style="display:flex; align-items:center; gap:12px;">
           <div style="min-width:32px; height:32px; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-weight:700; color:#64748b;">1</div>
-          <div><strong>Ad hoc</strong> — Excel wszędzie, brak integracji systemów, brak KPI</div>
+          <div><strong>Ad hoc</strong>: Excel wszędzie, brak integracji systemów, brak KPI</div>
         </div>
         <div style="display:flex; align-items:center; gap:12px;">
           <div style="min-width:32px; height:32px; border-radius:50%; background:#bfdbfe; display:flex; align-items:center; justify-content:center; font-weight:700; color:#1d4ed8;">2</div>
-          <div><strong>Świadomy</strong> — pierwsze systemy (ERP/CRM), świadomość problemów</div>
+          <div><strong>Świadomy</strong>: pierwsze systemy (ERP/CRM), świadomość problemów</div>
         </div>
         <div style="display:flex; align-items:center; gap:12px;">
           <div style="min-width:32px; height:32px; border-radius:50%; background:#99f6e4; display:flex; align-items:center; justify-content:center; font-weight:700; color:#0f766e;">3</div>
-          <div><strong>Zdefiniowany</strong> — dane centralizowane, spójne procesy, BI działające</div>
+          <div><strong>Zdefiniowany</strong>: dane centralizowane, spójne procesy, BI działające</div>
         </div>
         <div style="display:flex; align-items:center; gap:12px;">
           <div style="min-width:32px; height:32px; border-radius:50%; background:#6ee7b7; display:flex; align-items:center; justify-content:center; font-weight:700; color:#065f46;">4</div>
-          <div><strong>Zarządzany</strong> — decyzje oparte na danych, automatyzacja, piloty AI</div>
+          <div><strong>Zarządzany</strong>: decyzje oparte na danych, automatyzacja, piloty AI</div>
         </div>
         <div style="display:flex; align-items:center; gap:12px;">
           <div style="min-width:32px; height:32px; border-radius:50%; background:#14b8a6; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff;">5</div>
-          <div><strong>Optymalizujący</strong> — AI w core procesach, ciągłe uczenie, data-driven culture</div>
+          <div><strong>Optymalizujący</strong>: AI w core procesach, ciągłe uczenie, data-driven culture</div>
         </div>
       </div>
       <div style="margin-top:14px; padding:10px 14px; background:rgba(20,184,166,0.12); border-radius:8px; font-size:0.9rem; color:#0f766e;">
-        💡 <strong>Firma startowa (ProdukcjaPlus):</strong> poziom ~1,5 — Twoja strategia przesuwa ją o <strong>${a.kpi.digitalMaturity}</strong>
+        💡 <strong>Firma startowa (ProdukcjaPlus):</strong> poziom ~1,5: Twoja strategia przesuwa ją o <strong>${a.kpi.digitalMaturity}</strong>
       </div>
     </div>
 
@@ -1960,7 +2009,7 @@ Rekomendacja: ${dialogContext.recommendation}
 
   const prompt = `${contextStr}
 Student zadaje pytanie dotyczące swojej analizy strategii transformacji cyfrowej.
-Odpowiedz konkretnie, merytorycznie, w 3-5 zdaniach. Jeśli pytanie dotyczy liczb — podaj konkretne liczby (PLN, %, tygodnie).
+Odpowiedz konkretnie, merytorycznie, w 3-5 zdaniach. Jeśli pytanie dotyczy liczb: podaj konkretne liczby (PLN, %, tygodnie).
 
 Pytanie: ${question}
 
@@ -2037,7 +2086,7 @@ async function saveToGitHub(analysis) {
     return `**${d.id}. ${d.title}:** ${ansText}`;
   }).join('\n');
   
-  const body = `## 🏭 Symulacja Transformacji Cyfrowej — Wyniki
+  const body = `## 🏭 Symulacja Transformacji Cyfrowej: Wyniki
 
 **Student:** ${state.nickname}
 **Data:** ${dateStr}
@@ -2075,7 +2124,7 @@ ${(analysis.risks || []).map(r => `- ${r}`).join('\n')}
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        title: `🏭 Symulacja Transformacji — ${state.nickname}${getGroupName() ? ' — ' + getGroupName() : ''} — ${analysis.profileName} — ${dateStr}`,
+        title: `🏭 Symulacja Transformacji: ${state.nickname}${getGroupName() ? ': ' + getGroupName() : ''}: ${analysis.profileName}: ${dateStr}`,
         body: body + (getGroupName() ? '\n\n---\n**Grupa:** ' + getGroupName() : ''),
         labels: ['symulacja-transformacja']
       })
@@ -2093,7 +2142,7 @@ ${(analysis.risks || []).map(r => `- ${r}`).join('\n')}
 }
 
 // ═══════════════════════════════════════════════════
-// INIT — restore from localStorage if possible
+// INIT: restore from localStorage if possible
 // ═══════════════════════════════════════════════════
 window.addEventListener('load', () => {
   const saved = loadState();
@@ -2151,7 +2200,7 @@ function getGroupName() { return _mbaGroupName; }
   // Set title from <title> tag
   var titleEl = document.getElementById('mba-topbar-title');
   if (titleEl) {
-    var t = document.title.replace('MBA — ','').replace(' — MBA','').replace('MBA Quiz: ','').replace('MBA | ','');
+    var t = document.title.replace('MBA: ','').replace(': MBA','').replace('MBA Quiz: ','').replace('MBA | ','');
     titleEl.textContent = t;
   }
 
