@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev; frame-ancestors 'none';">
-<title>Recenzja — MBA</title>
+<title>Recenzja MBA</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -432,7 +432,7 @@ async function submitReview() {
   }
   if (!CURRENT_INVITE || !CURRENT_INVITE.invite_id) {
     errBox.className = 'status-note err';
-    errBox.textContent = 'Brak aktywnego zaproszenia — wróć i wpisz kod ponownie.';
+    errBox.textContent = 'Brak aktywnego zaproszenia. Wróć i wpisz kod ponownie.';
     return;
   }
 

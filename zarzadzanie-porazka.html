@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev; frame-ancestors 'none';">
-<title>Zarządzanie Porażką — MBA</title>
+<title>Zarządzanie Porażką MBA</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -215,14 +215,14 @@
 
     <div class="q-card">
       <div class="q-label">A1. Chronologia faktów</div>
-      <div class="q-hint">8–15 punktów kluczowych decyzji i zdarzeń prowadzących do niepowodzenia. Każdy punkt to fakt weryfikowalny (data, decyzja, działanie, zdarzenie) — bez ocen, bez przymiotników wartościujących.</div>
+      <div class="q-hint">8–15 punktów kluczowych decyzji i zdarzeń prowadzących do niepowodzenia. Każdy punkt to fakt weryfikowalny (data, decyzja, działanie, zdarzenie), bez ocen, bez przymiotników wartościujących.</div>
       <textarea class="q-textarea" id="a1" placeholder="1) ...&#10;2) ...&#10;3) ..."></textarea>
     </div>
 
     <div class="q-card">
       <div class="q-label">A2. Rozdzielenie faktów od interpretacji</div>
-      <div class="q-hint">Minimum 8 par. Format jednej linii: Fakt — Interpretacja/emocja. Pilnuj, żeby po lewej naprawdę nie było ocen.</div>
-      <textarea class="q-textarea" id="a2" placeholder="Fakt: ... — Interpretacja: ..."></textarea>
+      <div class="q-hint">Minimum 8 par. Format jednej linii: najpierw fakt, potem interpretacja lub emocja. Pilnuj, żeby po lewej nie było ocen.</div>
+      <textarea class="q-textarea" id="a2" placeholder="Fakt: ...  Interpretacja: ..."></textarea>
     </div>
 
     <div class="q-card">
@@ -233,19 +233,19 @@
 
     <div class="q-card">
       <div class="q-label">A4. Audyt kontroli</div>
-      <div class="q-hint">Minimum 6 czynników podzielonych na trzy kategorie: w pełni w mojej kontroli / częściowo w mojej kontroli / poza moją kontrolą. Jeśli wszystko ląduje w jednej kategorii — to sygnał zbyt uproszczonej analizy.</div>
+      <div class="q-hint">Minimum 6 czynników podzielonych na trzy kategorie: w pełni w mojej kontroli / częściowo w mojej kontroli / poza moją kontrolą. Jeśli wszystko ląduje w jednej kategorii, to sygnał zbyt uproszczonej analizy.</div>
       <textarea class="q-textarea" id="a4" placeholder="W mojej kontroli: ...&#10;Częściowo: ...&#10;Poza kontrolą: ..."></textarea>
     </div>
 
     <div class="part-header">
       <div class="part-eyebrow">Część B</div>
       <h2>Pogodzenie się z porażką</h2>
-      <div class="part-time">Rekomendowane 40 min. Strukturyzowana refleksja na bazie Części A — nie wolny strumień świadomości.</div>
+      <div class="part-time">Rekomendowane 40 min. Strukturyzowana refleksja na bazie Części A, nie wolny strumień świadomości.</div>
     </div>
 
     <div class="q-card">
       <div class="q-label">B1. Opis porażki</div>
-      <div class="q-hint">Jeden zwięzły akapit, bez usprawiedliwień i bez samokrytyki — czysty opis tego, co się nie wydarzyło względem planu.</div>
+      <div class="q-hint">Jeden zwięzły akapit, bez usprawiedliwień i bez samokrytyki: czysty opis tego, co się nie wydarzyło względem planu.</div>
       <textarea class="q-textarea short" id="b1"></textarea>
     </div>
 
@@ -269,14 +269,14 @@
 
     <div class="q-card">
       <div class="q-label">B5. Zamknięcie</div>
-      <div class="q-hint">Nie deklaracja, że porażka była dobra — uznanie faktu i przejęcie odpowiedzialności za dalsze działania. Unikaj frazesów, ma być konkretne i osobiste.</div>
+      <div class="q-hint">Uznanie faktu i przejęcie odpowiedzialności za dalsze działania, bez deklaracji, że porażka była dobra. Unikaj frazesów, pisz konkretnie i osobiście.</div>
       <textarea class="q-textarea short" id="b5"></textarea>
     </div>
 
     <div class="part-header">
       <div class="part-eyebrow">Część C</div>
       <h2>Root Cause Analysis</h2>
-      <div class="part-time">Rekomendowane 35–40 min. Systemowa analiza przyczyn — dopiero teraz, po przetworzeniu emocjonalnym.</div>
+      <div class="part-time">Rekomendowane 35–40 min. Systemowa analiza przyczyn, dopiero teraz, po przetworzeniu emocjonalnym.</div>
     </div>
 
     <div class="q-card">
@@ -441,7 +441,7 @@ async function submitExercise() {
   const errBox = document.getElementById('submit-err');
   errBox.textContent = '';
   const nick = (typeof mbaGetKsywa === 'function' ? mbaGetKsywa() : '') || '';
-  if (!nick) { errBox.textContent = 'Brak ksywy — wróć do ekranu startowego.'; return; }
+  if (!nick) { errBox.textContent = 'Brak ksywy. Wróć do ekranu startowego.'; return; }
 
   const content = {};
   let filled = 0;
