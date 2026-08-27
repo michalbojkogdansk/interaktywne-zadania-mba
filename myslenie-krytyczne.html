@@ -1092,10 +1092,13 @@
                 `*Wysłano: ${new Date().toLocaleString('pl-PL')}*`
             ].join('\n');
 
+            const _session = (() => { try { return JSON.parse(sessionStorage.getItem('mba_session')); } catch(e) { return null; } })();
+
             const response = await fetch(WORKER_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    code: _session && _session.password,
                     title: `🧠 Myślenie Krytyczne — ${nickname}${getGroupName() ? ' — ' + getGroupName() : ''} — ${results.percentage}% — ${new Date().toLocaleDateString('pl-PL')}`,
                     body: issueBody + (getGroupName() ? '\n\n---\n**Grupa:** ' + getGroupName() : ''),
                     labels: ['myslenie-krytyczne']
