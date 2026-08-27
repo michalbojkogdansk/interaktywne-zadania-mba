@@ -833,11 +833,14 @@ async function submitResults() {
 ${rows}
 ${comment ? `\n### Komentarz\n${comment}` : ''}`;
 
+  const _session = (() => { try { return JSON.parse(sessionStorage.getItem('mba_session')); } catch(e) { return null; } })();
+
   try {
     const res = await fetch(WORKER, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        code: _session && _session.password,
         action: 'github',
         title: `🔦 Ciemne Dane — ${st.nick}${getGroupName() ? ' — ' + getGroupName() : ''} — ${st.finalScore}pkt — ${date}`,
         body: body + (getGroupName() ? '\n\n---\n**Grupa:** ' + getGroupName() : ''),

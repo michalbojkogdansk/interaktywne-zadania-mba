@@ -1055,11 +1055,14 @@ ${lines}
 
 ${audit ? `## 🔍 Data Audit\n\n${audit}\n` : '> Brak Data Audit.'}`;
 
+  const _session = (() => { try { return JSON.parse(sessionStorage.getItem('mba_session')); } catch(e) { return null; } })();
+
   try {
     const res = await fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          code: _session && _session.password,
           title: `📊 Korelacja Danych — ${nick}${getGroupName() ? ' — ' + getGroupName() : ''} — ${new Date().toLocaleDateString('pl-PL')}`,
           body: body + (getGroupName() ? '\n\n---\n**Grupa:** ' + getGroupName() : ''),
           labels: ['korelacja-danych']
