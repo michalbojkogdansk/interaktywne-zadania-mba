@@ -2161,11 +2161,14 @@ ${(analysis.risks || []).map(r => `- ${r}`).join('\n')}
 
 **Rekomendacja:** ${analysis.recommendation}`;
 
+  const _session = (() => { try { return JSON.parse(sessionStorage.getItem('mba_session')); } catch(e) { return null; } })();
+
   try {
-    const response = await fetch('https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev/', {
+    const response = await fetch('https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev/private-issue', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        code: _session && _session.password,
         title: `🏭 Symulacja Transformacji: ${state.nickname}${getGroupName() ? ': ' + getGroupName() : ''}: ${analysis.profileName}: ${dateStr}`,
         body: body + (getGroupName() ? '\n\n---\n**Grupa:** ' + getGroupName() : ''),
         labels: ['symulacja-transformacja']

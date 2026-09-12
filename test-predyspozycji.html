@@ -752,7 +752,7 @@ async function saveResult(correct, pct, cats) {
   ].join('\n');
 
   try {
-    await fetch(WORKER, {
+    await fetch(WORKER + '/private-issue', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         title: `[Predyspozycje] ${nickname} — ${groupName} — ${correct}/${TOTAL_QUESTIONS} (${pct}%)`,

@@ -1058,7 +1058,7 @@ ${audit ? `## 🔍 Data Audit\n\n${audit}\n` : '> Brak Data Audit.'}`;
   const _session = (() => { try { return JSON.parse(sessionStorage.getItem('mba_session')); } catch(e) { return null; } })();
 
   try {
-    const res = await fetch(WORKER_URL, {
+    const res = await fetch(WORKER_URL + '/private-issue', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

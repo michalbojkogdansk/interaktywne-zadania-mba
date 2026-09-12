@@ -836,7 +836,7 @@ ${comment ? `\n### Komentarz\n${comment}` : ''}`;
   const _session = (() => { try { return JSON.parse(sessionStorage.getItem('mba_session')); } catch(e) { return null; } })();
 
   try {
-    const res = await fetch(WORKER, {
+    const res = await fetch(WORKER + '/private-issue', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
