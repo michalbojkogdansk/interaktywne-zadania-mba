@@ -656,7 +656,7 @@
             <div class="progress-container">
                 <div class="progress-header">
                     <span id="progressText">Pytanie 1 / 10</span>
-                    <div class="timer" id="timer">⏱ 20:00</div>
+                    <div class="timer" id="timer">⏱ 15:00</div>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
@@ -736,13 +736,13 @@
             scenario: 'Dyrektor sprzedaży analizuje wyniki zespołu i mówi na zebraniu: „Nasz najlepszy handlowiec, Tomek, nie ma żadnych szkoleń z technik sprzedaży. To dowodzi, że szkolenia są niepotrzebne — powinniśmy ciąć budżet szkoleniowy."',
             text: 'Jakie błędy w rozumowaniu popełnia dyrektor? (wybierz najlepszą odpowiedź)',
             options: [
-                'Błąd przetrwania — analizuje tylko „zwycięzcę", ignorując handlowców bez szkoleń, którzy mają słabe wyniki',
+                'Błąd przetrwania — dyrektor wyciąga ogólny wniosek na podstawie jednego wyjątkowego przypadku (najlepszego wyniku), nie znając wyników pozostałych handlowców, ani przeszkolonych, ani nieprzeszkolonych',
                 'Ma rację — wynik najlepszego pracownika jest najbardziej miarodajnym wskaźnikiem skuteczności szkoleń',
                 'Jedyny błąd to za mała próbka — powinien porównać wyniki co najmniej kilkudziesięciu handlowców w firmie',
                 'Błąd polega na tym, że Tomek może mieć wrodzony talent negocjacyjny, który maskuje realną wartość szkoleń'
             ],
             correct: 0,
-            explanation: 'To klasyczny błąd przetrwania (survivorship bias). Dyrektor patrzy tylko na jednego „zwycięzcę" i ignoruje dziesiątki handlowców bez szkoleń, którzy mogą mieć fatalne wyniki. To tak jak mówić „Bill Gates rzucił studia i jest bogaty, więc studia są niepotrzebne" — ignorując miliony osób, które rzuciły studia i nie zostały miliarderami.'
+            explanation: 'To klasyczny błąd przetrwania (survivorship bias). Dyrektor patrzy tylko na jednego „zwycięzcę" i na tej podstawie ocenia całą metodę, nie wiedząc nic o wynikach pozostałych handlowców — ani tych po szkoleniu, ani tych bez niego. Gdyby się okazało, że przeciętny nieprzeszkolony handlowiec radzi sobie znacznie gorzej niż Tomek, cały wniosek by się rozsypał. To tak jak mówić „Bill Gates rzucił studia i jest bogaty, więc studia są niepotrzebne" — ignorując miliony osób, które rzuciły studia i nie zostały miliarderami.'
         },
         {
             id: 5,
@@ -763,7 +763,7 @@
             id: 6,
             difficulty: 'medium',
             difficultyLabel: 'Średnie',
-            scenario: 'Badanie wykazało, że dzieci, które jedzą śniadanie, mają lepsze oceny w szkole. Gazeta publikuje nagłówek: „Naukowcy udowodnili: śniadanie poprawia oceny! Rodzice, karmcie dzieci rano!"',
+            scenario: 'Duże, dobrze zaprojektowane badanie na tysiącach uczniów (reprezentatywna próba, odpowiednio długi okres obserwacji) wykazało, że dzieci, które jedzą śniadanie, mają lepsze oceny w szkole. Gazeta publikuje nagłówek: „Naukowcy udowodnili: śniadanie poprawia oceny! Rodzice, karmcie dzieci rano!"',
             text: 'Co pomija ten nagłówek?',
             options: [
                 'Nic nie pomija — korelacja między śniadaniem a ocenami jest wystarczająco silna i wielokrotnie potwierdzona, by uzasadnić zalecenie dla rodziców i szkół',
@@ -772,7 +772,7 @@
                 'Pomija wielkość próby, sposób jej doboru oraz okres obserwacji — bez tych informacji nie można rzetelnie ocenić wiarygodności wyników tego badania'
             ],
             correct: 1,
-            explanation: 'Nagłówek pomija zmienne zakłócające (confounding variables). Śniadanie może być markerem (wskaźnikiem) lepszego środowiska domowego — stabilnej rodziny, regularnego trybu życia, wsparcia rodziców. To nie samo jedzenie rano magicznie poprawia oceny, ale cały ekosystem czynników, których śniadanie jest częścią.'
+            explanation: 'Nagłówek pomija zmienne zakłócające (confounding variables). Zwróć uwagę, że badanie samo w sobie jest solidne metodologicznie (duża, reprezentatywna próba, długi okres obserwacji) — problem nie leży w jego jakości, tylko w interpretacji. Śniadanie może być markerem (wskaźnikiem) lepszego środowiska domowego — stabilnej rodziny, regularnego trybu życia, wsparcia rodziców. To nie samo jedzenie rano magicznie poprawia oceny, ale cały ekosystem czynników, których śniadanie jest częścią. Nawet najlepiej zaprojektowane badanie korelacyjne nie dowodzi samo z siebie związku przyczynowo-skutkowego.'
         },
         {
             id: 7,
@@ -781,12 +781,12 @@
             text: 'Firma farmaceutyczna reklamuje nowy lek na ból głowy: „W badaniu klinicznym 80% pacjentów poczuło ulgę po naszym leku!" Okazuje się, że w grupie placebo (pigułka cukrowa) ulgę poczuło 75% pacjentów. Jak oceniasz skuteczność leku?',
             options: [
                 '80% to bardzo dobry wynik bezwzględny — lek jest skuteczny i powinien zostać dopuszczony do sprzedaży na rynku farmaceutycznym',
-                'Różnica 5 punktów procentowych wobec placebo jest minimalna — lek prawdopodobnie nie jest znacząco skuteczniejszy od efektu placebo',
+                'Różnica 5 punktów procentowych wobec placebo jest niewielka — bez wielkości próby i testu istotności statystycznej nie możemy stwierdzić, że lek jest znacząco skuteczniejszy od placebo',
                 'Placebo nie ma znaczenia w ocenie leku przeciwbólowego — liczy się wyłącznie subiektywne odczucie ulgi pacjentów',
                 'Potrzebujemy danych o dawkowaniu i skutkach ubocznych, żeby rzetelnie ocenić stosunek korzyści do ryzyka tego leku'
             ],
             correct: 1,
-            explanation: 'Bez porównania z placebo, „80% skuteczności" brzmi imponująco. Ale jeśli sam cukier daje 75%, rzeczywisty efekt leku to zaledwie 5pp powyżej placebo. To podstawa myślenia naukowego: zawsze pytaj „w porównaniu z czym?" Firmy często podają wynik bezwzględny, bo brzmi lepiej niż wynik względny.'
+            explanation: 'Bez porównania z placebo, „80% skuteczności" brzmi imponująco. Ale jeśli sam cukier daje 75%, obserwowana różnica to zaledwie 5pp powyżej placebo, i to na tak niewielkiej różnicy nie da się jeszcze stwierdzić, czy lek działa lepiej niż placebo, czy różnica to przypadek, bez wielkości próby i testu istotności statystycznej. To podstawa myślenia naukowego: zawsze pytaj „w porównaniu z czym?" i „czy ta różnica jest istotna statystycznie?" Firmy często podają wynik bezwzględny, bo brzmi lepiej niż wynik względny.'
         },
         // --- HARD (8-10) ---
         {
@@ -996,7 +996,7 @@
             avgConfidence: (totalConfidence / questions.length).toFixed(1),
             avgConfidenceCorrect: correctCount > 0 ? (correctConfidence / correctCount).toFixed(1) : 'N/A',
             avgConfidenceIncorrect: incorrectCount > 0 ? (incorrectConfidence / incorrectCount).toFixed(1) : 'N/A',
-            timeUsed: 20 * 60 - timeLeft,
+            timeUsed: 15 * 60 - timeLeft,
             details
         };
     }
