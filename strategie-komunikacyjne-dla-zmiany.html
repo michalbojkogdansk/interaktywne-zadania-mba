@@ -11,6 +11,7 @@
     --bg: #FFFFFF;
     --bg-page: #F7F9FA;
     --border: #D1D7DC;
+    --border-dark: #9CA3AF;
     --text: #1C1D1F;
     --sec: #6A6F73;
     --accent: #3B5BA9;
@@ -73,6 +74,10 @@
   .progress-bar { height:4px; background:var(--border); border-radius:2px; }
   .progress-fill { height:100%; background:var(--accent); border-radius:2px; transition:width 0.3s; }
 
+  /* Resume banner */
+  .resume-card { background:var(--accent-light); border:1.5px solid var(--accent); padding:20px 24px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .resume-card .rc-text { font-size:0.88rem; color:var(--accent-dark); }
+
   /* Yes/No items */
   .yn-item { padding:20px 0; border-bottom:1px solid var(--border); }
   .yn-item:last-child { border-bottom:none; }
@@ -125,11 +130,26 @@
   .raw-cell { background:#fff; border:1.5px solid var(--border); padding:16px; text-align:center; }
   .raw-cell .v { font-size:1.4rem; font-weight:900; color:var(--accent); }
   .raw-cell .l { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:var(--sec); margin-top:4px; }
+  .calc-explain { margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+  .calc-explain p { font-size:0.84rem; margin-bottom:10px; }
+  .calc-explain p:last-child { margin-bottom:0; }
+  .calc-explain code { background:var(--bg-page); padding:1px 5px; font-size:0.82rem; }
+
+  /* Dimension glossary */
+  .dim-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px; }
+  .dim-card { border:1.5px solid var(--border); padding:16px; }
+  .dim-card-active { border-color:var(--accent); background:var(--accent-light); }
+  .dim-card-head { margin-bottom:8px; font-size:0.92rem; line-height:1.4; }
+  .dim-en { color:var(--sec); font-weight:400; font-size:0.8rem; }
+  .dim-you-badge { display:inline-block; background:var(--accent); color:#fff; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; padding:2px 8px; margin-bottom:6px; }
+  .dim-card-score { font-size:0.8rem; color:var(--sec); margin-bottom:8px; }
+  .dim-card p { font-size:0.85rem; margin-bottom:0; }
+
   .dim-badge { display:inline-block; padding:4px 12px; background:var(--accent-light); color:var(--accent-dark); font-size:0.85rem; font-weight:700; margin-bottom:8px; }
   .coding-item { padding:14px 0; border-bottom:1px solid var(--border); }
   .coding-item:last-child { border-bottom:none; }
   .coding-item .ci-head { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
-  .coding-score { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff; font-size:0.8rem; font-weight:800; }
+  .coding-score { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff; font-size:0.8rem; font-weight:800; flex-shrink:0; }
   .coding-item .ci-title { font-size:0.85rem; font-weight:700; }
   .coding-item .ci-reason { font-size:0.82rem; color:var(--sec); line-height:1.5; }
   .strategy-block { padding:16px 0; border-bottom:1px solid var(--border); }
@@ -137,10 +157,32 @@
   .strategy-block .sb-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--accent); margin-bottom:6px; }
   .strategy-block p { margin-bottom:0; }
 
+  /* Quadrant chart */
+  .quadrant-chart-wrap { margin:16px 0; }
+  .quadrant-svg { width:100%; height:auto; display:block; }
+  .zone-fill { opacity:0.4; }
+  .zone-zagrozeni { fill:#FEE2E2; }
+  .zone-ambasadorzy { fill:#DCFCE7; }
+  .zone-sceptycy { fill:#FEF9C3; }
+  .zone-obserwatorzy { fill:#F1F5F9; }
+  .chart-divider { stroke:var(--border-dark); stroke-width:1.5; stroke-dasharray:4 4; }
+  .chart-border { fill:none; stroke:var(--border); stroke-width:1.5; }
+  .chart-zone-label { font-size:11px; font-weight:700; fill:var(--sec); text-transform:uppercase; letter-spacing:0.4px; font-family:'Inter',sans-serif; }
+  .chart-axis-label { font-size:11px; fill:var(--sec); font-family:'Inter',sans-serif; }
+  .chart-own-dot { fill:var(--accent); stroke:#fff; stroke-width:2; }
+  .chart-own-label { font-size:12px; font-weight:800; fill:var(--accent-dark); font-family:'Inter',sans-serif; }
+  .chart-other-dot { fill:var(--sec); opacity:0.45; }
+  .chart-legend { font-size:0.82rem; color:var(--sec); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .legend-dot { display:inline-block; width:10px; height:10px; border-radius:50%; }
+  .legend-dot-own { background:var(--accent); }
+  .legend-dot-other { background:var(--sec); opacity:0.5; }
+
   @media (max-width:640px) {
     .card, .gate-box { padding:28px 20px; }
     .raw-grid { grid-template-columns:repeat(2,1fr); }
+    .dim-grid { grid-template-columns:1fr; }
     .lik-endlabel { display:none; }
+    .resume-card { flex-direction:column; align-items:flex-start; }
   }
 </style>
 
@@ -213,10 +255,15 @@
     <p class="eyebrow">Diagnoza dyspozycyjna</p>
     <h1 class="page-title">Strategie komunikacyjne dla zmiany</h1>
 
+    <div class="resume-card" id="resume-banner" style="display:none;">
+      <div class="rc-text">Masz zapisany wynik z poprzedniego podejścia (<span id="resume-when"></span>). Możesz go zobaczyć ponownie bez powtarzania ćwiczenia.</div>
+      <button class="btn btn-primary" onclick="resumeSavedResult()">Zobacz swój wynik →</button>
+    </div>
+
     <div class="card">
       <h2>Cel ćwiczenia</h2>
       <p>To narzędzie mierzy Twoją dyspozycję do reagowania na zmiany organizacyjne, opartą na modelu Resistance to Change (Oreg, 2003), jednym z najczęściej cytowanych i zwalidowanych narzędzi w badaniach nad zarządzaniem zmianą. Wynik ma dwa cele: po pierwsze da Ci wgląd we własny wzorzec reagowania na zmianę, po drugie posłuży do przetestowania mechanizmu pytań i oceny przed użyciem analogicznego narzędzia w realnym wdrożeniu organizacyjnym. Twoje odpowiedzi z tego ćwiczenia nie zostaną użyte do kalibrowania tamtego, osobnego projektu.</p>
-      <p><strong>Wynik ma charakter wstępnego kierunku interpretacji.</strong> To nie jest ostateczna diagnoza kliniczna ani psychometryczna.</p>
+      <p><strong>Wynik ma charakter wstępnego kierunku interpretacji.</strong> To nie jest ostateczna diagnoza kliniczna ani psychometryczna. Na kolejnym ekranie z wynikiem znajdziesz też pełny wykład teoretyczny modelu, formuły użyte do policzenia każdej liczby oraz wykres pokazujący, gdzie na tle grupy wypadasz.</p>
 
       <h2 style="margin-top:24px;">Dwa zjawiska, o których warto wiedzieć</h2>
       <p><strong>Efekt hipotetyczności</strong> (List &amp; Gallet, 2001): odpowiedzi na wyimaginowaną sytuację często odbiegają od realnego zachowania. Dlatego Sekcja A i B wymagają przywołania konkretnej, prawdziwej zmiany zawodowej, którą sam(a) przeżyłeś(aś): zmiana przełożonego, reorganizacja, nowe narzędzie, fuzja, restrukturyzacja. Odpowiadaj z tej perspektywy.</p>
@@ -318,6 +365,7 @@
 const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
 const SESSION_KEY = 'mba_session';
 const EXERCISE_ID = 'strategie-zmiany';
+const RESULT_STORAGE_KEY = 'mba_result_strategie_zmiany';
 
 function mbaClearSession() {
   sessionStorage.removeItem(SESSION_KEY);
@@ -363,6 +411,7 @@ async function verifyGroupGate() {
       document.getElementById('tb-group').style.display = '';
       document.getElementById('tb-groupname').textContent = data.groupName;
       document.getElementById('tb-logout').style.display = '';
+      checkForSavedResult();
     } else {
       err.textContent = data.error || 'Nieprawidłowe hasło grupy.';
     }
@@ -402,6 +451,56 @@ const SCENARIOS = [
     args:[], question:'Co w tym uzasadnieniu jest najbardziej, a co najmniej przekonujące?' }
 ];
 
+const DIMENSION_INFO = {
+  RS: {
+    label: 'Poszukiwanie rutyny',
+    en: 'Routine Seeking',
+    text: 'Skłonność do trzymania się ustalonych nawyków, znanych procedur i przewidywalnego trybu pracy. Osoby z wysokim wynikiem na tym wymiarze cenią stabilność samą w sobie: nawet gdy nowy sposób pracy nie jest gorszy, sam fakt konieczności nauczenia się go i porzucenia czegoś znajomego jest odczuwany jako koszt. W praktyce objawia się to np. wracaniem do starych metod „z przyzwyczajenia", mimo że nowe narzędzie zostało już formalnie wdrożone, albo planowaniem dnia tak, by jak najdłużej unikać kontaktu z nowym systemem.'
+  },
+  ER: {
+    label: 'Reakcja emocjonalna',
+    en: 'Emotional Reaction',
+    text: 'Stopień, w jakim sama zapowiedź zmiany, jeszcze zanim poznamy jej szczegóły, wywołuje napięcie, niepokój lub stres. To reakcja afektywna, „z brzucha", w dużej mierze niezależna od realnej treści zmiany: dwie osoby mogą usłyszeć dokładnie tę samą wiadomość, a jedna zareaguje spokojnie, druga odczuje wyraźny dyskomfort, zanim jeszcze zdąży racjonalnie ocenić, czy zmiana jest dla niej korzystna.'
+  },
+  SF: {
+    label: 'Skupienie krótkoterminowe',
+    en: 'Short-Term Focus',
+    text: 'Tendencja do nadawania nieproporcjonalnie dużej wagi bieżącym niedogodnościom okresu przejściowego kosztem długoterminowych korzyści, jakie zmiana może przynieść. Osoba z wysokim wynikiem na tym wymiarze zapamięta przede wszystkim chaos pierwszych tygodni wdrożenia, nawet jeśli sama zmiana po pół roku okazała się jednoznacznie korzystna dla niej i dla zespołu.'
+  },
+  CR: {
+    label: 'Sztywność poznawcza',
+    en: 'Cognitive Rigidity',
+    text: 'Niechęć do rewidowania własnego zdania nawet wobec nowych, trafnych argumentów. To wymiar najbliższy zjawisku znanemu jako confirmation bias: osoba z wysokim wynikiem będzie raczej szukać powodów, dla których stare rozwiązanie było lepsze, niż ocenieniać nowe rozwiązanie na jego własnych zasadach, niezależnie od siły przedstawianych jej dowodów.'
+  }
+};
+
+const QUADRANT_DESC = {
+  'Zagrożeni': 'Wysoki wpływ zmiany na Ciebie i wysoki opór. To grupa wymagająca najintensywniejszej uwagi komunikacyjnej.',
+  'Ambasadorzy': 'Wysoki wpływ zmiany na Ciebie i niski opór. Naturalny kandydat do roli współtwórcy i promotora zmiany.',
+  'Sceptycy poboczni': 'Niski wpływ zmiany na Ciebie, a mimo to wysoki opór. Zmiana Cię nie dotyka bezpośrednio, a jednak budzi sprzeciw.',
+  'Obserwatorzy': 'Niski wpływ zmiany na Ciebie i niski opór. Zmiana pozostaje w dużej mierze poza Twoim polem uwagi.'
+};
+
+const BASE_STRATEGY = {
+  'Zagrożeni': 'Priorytet najwyższy. Dedykowana komunikacja jeden na jeden lub w małych grupach, z menedżerem liniowym jako głównym kanałem.',
+  'Ambasadorzy': 'Priorytet wysoki, ale inny cel niż przy oporze: włącz jako współtwórcę zmiany, komunikacja peer-to-peer do zespołu.',
+  'Sceptycy poboczni': 'Priorytet niski zasobowo. Komunikacja masowa (mail, FAQ), monitorowanie sytuacji, bez inwestowania w rozmowy jeden na jeden.',
+  'Obserwatorzy': 'Priorytet minimalny. Standardowa informacja, bez dodatkowych działań komunikacyjnych.'
+};
+
+const ENGAGEMENT_MODIFIER = {
+  'Wysokie': 'Debata merytoryczna: sesja pytań i odpowiedzi odnosząca się wprost do konkretnego zarzutu, a nie ogólna prezentacja już znanych danych.',
+  'Częściowe': 'Dopytanie i doprecyzowanie: krótka rozmowa jeden na jeden identyfikująca konkretny element wątpliwości.',
+  'Niskie': 'Zmiana formatu i nadawcy: case innego zespołu, rówieśnik albo lider nieformalny zamiast oficjalnej komunikacji zarządu. Powtórzenie tych samych danych w tej samej formie prawdopodobnie się nie sprawdzi.'
+};
+
+const DIMENSION_MODIFIER = {
+  'RS': 'Wdrożenie fazowane, z jasnym harmonogramem tego co się zmienia i kiedy.',
+  'ER': 'Najpierw bezpieczeństwo psychologiczne i przestrzeń na obawy, dopiero potem dane i argumenty.',
+  'SF': 'Widoczne szybkie korzyści już w pierwszych tygodniach, krótki horyzont pokazywanych rezultatów.',
+  'CR': 'Modelowanie postawy przez liderów oraz wielokrotna, spokojna ekspozycja na nową sytuację, zamiast jednorazowej perswazji.'
+};
+
 function escapeHtml(s) {
   const d = document.createElement('div');
   d.textContent = s == null ? '' : String(s);
@@ -413,8 +512,60 @@ let state = {
   a: {}, anchor: '',
   b: {},
   c: {},
-  coding: {}, codingReason: {}, codingAvailable: false, codingError: ''
+  coding: {}, codingReason: {}, codingAvailable: false, codingError: '',
+  interpretation: ''
 };
+
+// ── Resume a previously saved result ──────────────────────────────
+function loadSavedResult() {
+  try {
+    const raw = localStorage.getItem(RESULT_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function saveResultLocally(sc) {
+  try {
+    localStorage.setItem(RESULT_STORAGE_KEY, JSON.stringify({
+      nickname: state.nickname,
+      scores: sc,
+      coding: state.coding,
+      codingReason: state.codingReason,
+      codingAvailable: state.codingAvailable,
+      codingError: state.codingError,
+      interpretation: state.interpretation,
+      savedAt: new Date().toISOString()
+    }));
+  } catch(e) {}
+}
+
+function checkForSavedResult() {
+  const saved = loadSavedResult();
+  const banner = document.getElementById('resume-banner');
+  if (!banner) return;
+  if (saved) {
+    banner.style.display = '';
+    const when = document.getElementById('resume-when');
+    if (when && saved.savedAt) { try { when.textContent = new Date(saved.savedAt).toLocaleString('pl-PL'); } catch(e) {} }
+  } else {
+    banner.style.display = 'none';
+  }
+}
+document.addEventListener('DOMContentLoaded', checkForSavedResult);
+
+function resumeSavedResult() {
+  const saved = loadSavedResult();
+  if (!saved) return;
+  state.nickname = saved.nickname || '';
+  state.coding = saved.coding || {};
+  state.codingReason = saved.codingReason || {};
+  state.codingAvailable = !!saved.codingAvailable;
+  state.codingError = saved.codingError || '';
+  state.interpretation = saved.interpretation || '';
+  renderResult(saved.scores);
+  showScreen('result');
+  startPointsPolling();
+}
 
 // ── Screen 1: intro ──────────────────────────────────────────────
 function startExercise() {
@@ -532,7 +683,9 @@ Nie oceniaj długości, stylu, ani tego czy respondent jest za czy przeciw zmian
     return `### ${s.id.toUpperCase()} — ${s.title}\nScenariusz: ${s.prompt}\nArgumenty:\n${argsText}\nPytanie do studenta: ${s.question}\nOdpowiedź studenta: """${state.c[s.id] || ''}"""`;
   }).join('\n\n');
 
-  return `Jesteś asystentem kodującym odpowiedzi studentów MBA w ćwiczeniu o oporze wobec zmian organizacyjnych.\n${rubric}\n\n${blocks}\n\nZwróć wyłącznie poprawny JSON, bez markdown i bez dodatkowego tekstu, w formacie:\n{"c1":{"code":0,"reason":"krótkie uzasadnienie po polsku, jedno zdanie"},"c2":{"code":0,"reason":"..."},"c3":{"code":0,"reason":"..."},"c4":{"code":0,"reason":"..."}}`;
+  const interpretationAsk = `Po zakodowaniu wszystkich czterech odpowiedzi napisz też pole "interpretation": 2-4 zdaniowe podsumowanie po polsku, co WZÓR tych czterech kodów (nie pojedyncza odpowiedź) może sugerować o sposobie zaangażowania tego studenta z kontrargumentami. Przykładowe kierunki (użyj tylko jeśli faktycznie pasują, nie na siłę): konsekwentnie ogólnikowe odpowiedzi mogą sugerować unikanie tematu, powierzchowne zaangażowanie, brak czasu lub po prostu dyskomfort związany z konfrontowaniem się z kontrargumentami; konsekwentnie konkretne odpowiedzi mogą sugerować analityczne, krytyczne podejście do ocenianych argumentów; wzorzec zależny od tematu (np. konkretne przy liczbach, ogólnikowe przy argumentach interpersonalnych) może sugerować, że pewne typy argumentów są dla tej osoby łatwiejsze do przetworzenia niż inne. Formułuj to WYŁĄCZNIE jako ostrożną hipotezę: używaj sformułowań "może sugerować", "warto to zweryfikować z prowadzącym", nigdy nie stawiaj diagnozy jako faktu. Nie oceniaj, czy odpowiedzi są "dobre" czy "złe", i nie komentuj czy student jest za czy przeciw zmianom.`;
+
+  return `Jesteś asystentem kodującym odpowiedzi studentów MBA w ćwiczeniu o oporze wobec zmian organizacyjnych.\n${rubric}\n\n${blocks}\n\n${interpretationAsk}\n\nZwróć wyłącznie poprawny JSON, bez markdown i bez dodatkowego tekstu, w formacie:\n{"c1":{"code":0,"reason":"krótkie uzasadnienie po polsku, jedno zdanie"},"c2":{"code":0,"reason":"..."},"c3":{"code":0,"reason":"..."},"c4":{"code":0,"reason":"..."},"interpretation":"2-4 zdania po polsku"}`;
 }
 
 async function codeWithAI() {
@@ -540,7 +693,7 @@ async function codeWithAI() {
     const prompt = buildCodingPrompt();
     const response = await fetch(WORKER + '/gemini', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 2000 } })
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 3000 } })
     });
     const data = await response.json();
     if (!data.candidates || !data.candidates[0]) throw new Error('Brak odpowiedzi od modelu AI.');
@@ -554,10 +707,12 @@ async function codeWithAI() {
       state.coding[s.id] = code;
       state.codingReason[s.id] = (entry && entry.reason) ? String(entry.reason).slice(0,300) : '';
     });
+    state.interpretation = parsed.interpretation ? String(parsed.interpretation).slice(0,600) : '';
     state.codingAvailable = true;
   } catch(e) {
     console.warn('Kodowanie AI nieudane:', e);
     SCENARIOS.forEach(s => { state.coding[s.id] = 1; state.codingReason[s.id] = ''; });
+    state.interpretation = '';
     state.codingAvailable = false;
     state.codingError = e.message || 'Nieznany błąd';
   }
@@ -593,35 +748,127 @@ function computeScores() {
   else if (wplyw === 'Niski' && opor === 'Wysoki') quadrant = 'Sceptycy poboczni';
   else quadrant = 'Obserwatorzy';
 
-  return { wplywSuma, wplyw, RS, ER, SF, CR, oporOgolny, opor, dims, dominant, zaangazowanieIndex, zaangazowanie, quadrant };
+  return {
+    wplywSuma, wplyw, RS, ER, SF, CR, oporOgolny, opor, dims, dominant, zaangazowanieIndex, zaangazowanie, quadrant,
+    rawA: { a1: state.a.a1==='tak'?1:0, a2: state.a.a2==='tak'?1:0, a3: state.a.a3==='tak'?1:0 },
+    rawB: Object.assign({}, state.b),
+    rawC: codes
+  };
 }
 
-const QUADRANT_DESC = {
-  'Zagrożeni': 'Wysoki wpływ zmiany na Ciebie i wysoki opór. To grupa wymagająca najintensywniejszej uwagi komunikacyjnej.',
-  'Ambasadorzy': 'Wysoki wpływ zmiany na Ciebie i niski opór. Naturalny kandydat do roli współtwórcy i promotora zmiany.',
-  'Sceptycy poboczni': 'Niski wpływ zmiany na Ciebie, a mimo to wysoki opór. Zmiana Cię nie dotyka bezpośrednio, a jednak budzi sprzeciw.',
-  'Obserwatorzy': 'Niski wpływ zmiany na Ciebie i niski opór. Zmiana pozostaje w dużej mierze poza Twoim polem uwagi.'
-};
+// ── Quadrant chart (own position + live anonymized dots) ─────────
+const EXERCISE_SLUG = 'strategie-zmiany';
+const CHART_W = 520, CHART_H = 380;
+const PLOT_L = 56, PLOT_R = CHART_W - 20, PLOT_T = 20, PLOT_B = CHART_H - 54;
 
-const BASE_STRATEGY = {
-  'Zagrożeni': 'Priorytet najwyższy. Dedykowana komunikacja jeden na jeden lub w małych grupach, z menedżerem liniowym jako głównym kanałem.',
-  'Ambasadorzy': 'Priorytet wysoki, ale inny cel niż przy oporze: włącz jako współtwórcę zmiany, komunikacja peer-to-peer do zespołu.',
-  'Sceptycy poboczni': 'Priorytet niski zasobowo. Komunikacja masowa (mail, FAQ), monitorowanie sytuacji, bez inwestowania w rozmowy jeden na jeden.',
-  'Obserwatorzy': 'Priorytet minimalny. Standardowa informacja, bez dodatkowych działań komunikacyjnych.'
-};
+function xScale(opor) { return PLOT_L + (opor - 1) / 5 * (PLOT_R - PLOT_L); }
+function yScale(wplyw) { return PLOT_B - (wplyw - 0) / 3 * (PLOT_B - PLOT_T); }
 
-const ENGAGEMENT_MODIFIER = {
-  'Wysokie': 'Debata merytoryczna: sesja pytań i odpowiedzi odnosząca się wprost do konkretnego zarzutu, a nie ogólna prezentacja już znanych danych.',
-  'Częściowe': 'Dopytanie i doprecyzowanie: krótka rozmowa jeden na jeden identyfikująca konkretny element wątpliwości.',
-  'Niskie': 'Zmiana formatu i nadawcy: case innego zespołu, rówieśnik albo lider nieformalny zamiast oficjalnej komunikacji zarządu. Powtórzenie tych samych danych w tej samej formie prawdopodobnie się nie sprawdzi.'
-};
+function seededRandom(seedStr) {
+  let h = 0;
+  for (let i = 0; i < seedStr.length; i++) h = (Math.imul(31, h) + seedStr.charCodeAt(i)) | 0;
+  const x = Math.sin(h) * 10000;
+  return x - Math.floor(x);
+}
 
-const DIMENSION_MODIFIER = {
-  'RS': 'Wdrożenie fazowane, z jasnym harmonogramem tego co się zmienia i kiedy.',
-  'ER': 'Najpierw bezpieczeństwo psychologiczne i przestrzeń na obawy, dopiero potem dane i argumenty.',
-  'SF': 'Widoczne szybkie korzyści już w pierwszych tygodniach, krótki horyzont pokazywanych rezultatów.',
-  'CR': 'Modelowanie postawy przez liderów oraz wielokrotna, spokojna ekspozycja na nową sytuację, zamiast jednorazowej perswazji.'
-};
+function buildChartSvg(sc) {
+  const dividerX = xScale(4.0);
+  const dividerY = yScale(1.5);
+  const zoneLabel = (cx, cy, text) => `<text x="${cx}" y="${cy}" text-anchor="middle" class="chart-zone-label">${text}</text>`;
+  return `
+  <svg viewBox="0 0 ${CHART_W} ${CHART_H}" class="quadrant-svg" id="quadrant-svg">
+    <rect x="${PLOT_L}" y="${PLOT_T}" width="${dividerX-PLOT_L}" height="${dividerY-PLOT_T}" class="zone-fill zone-ambasadorzy"/>
+    <rect x="${dividerX}" y="${PLOT_T}" width="${PLOT_R-dividerX}" height="${dividerY-PLOT_T}" class="zone-fill zone-zagrozeni"/>
+    <rect x="${PLOT_L}" y="${dividerY}" width="${dividerX-PLOT_L}" height="${PLOT_B-dividerY}" class="zone-fill zone-obserwatorzy"/>
+    <rect x="${dividerX}" y="${dividerY}" width="${PLOT_R-dividerX}" height="${PLOT_B-dividerY}" class="zone-fill zone-sceptycy"/>
+    <line x1="${dividerX}" y1="${PLOT_T}" x2="${dividerX}" y2="${PLOT_B}" class="chart-divider"/>
+    <line x1="${PLOT_L}" y1="${dividerY}" x2="${PLOT_R}" y2="${dividerY}" class="chart-divider"/>
+    <rect x="${PLOT_L}" y="${PLOT_T}" width="${PLOT_R-PLOT_L}" height="${PLOT_B-PLOT_T}" class="chart-border"/>
+    ${zoneLabel((PLOT_L+dividerX)/2, PLOT_T+16, 'Ambasadorzy')}
+    ${zoneLabel((dividerX+PLOT_R)/2, PLOT_T+16, 'Zagrożeni')}
+    ${zoneLabel((PLOT_L+dividerX)/2, PLOT_B-8, 'Obserwatorzy')}
+    ${zoneLabel((dividerX+PLOT_R)/2, PLOT_B-8, 'Sceptycy poboczni')}
+    <text x="${(PLOT_L+PLOT_R)/2}" y="${CHART_H-14}" text-anchor="middle" class="chart-axis-label">Opór ogólny (skala 1–6) →</text>
+    <text x="16" y="${(PLOT_T+PLOT_B)/2}" text-anchor="middle" class="chart-axis-label" transform="rotate(-90 16 ${(PLOT_T+PLOT_B)/2})">Wpływ zmiany (0–3) →</text>
+    <g id="other-dots"></g>
+    <circle cx="${xScale(sc.oporOgolny).toFixed(1)}" cy="${yScale(sc.wplywSuma).toFixed(1)}" r="9" class="chart-own-dot"/>
+    <text x="${xScale(sc.oporOgolny).toFixed(1)}" y="${(yScale(sc.wplywSuma)-14).toFixed(1)}" text-anchor="middle" class="chart-own-label">Ty</text>
+  </svg>`;
+}
+
+function renderOtherDots(points) {
+  const g = document.getElementById('other-dots');
+  if (!g) return;
+  g.innerHTML = points.map(p => {
+    const wplyw = Number(p.wplyw_suma), opor = Number(p.opor_ogolny);
+    const jx = (seededRandom(String(p.created_at) + 'x') - 0.5) * 0.7;
+    const jy = (seededRandom(String(p.created_at) + 'y') - 0.5) * 0.55;
+    const cx = xScale(Math.min(6, Math.max(1, opor + jx)));
+    const cy = yScale(Math.min(3, Math.max(0, wplyw + jy)));
+    return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="4.5" class="chart-other-dot"><title>Wpływ ${wplyw}/3, Opór ${opor.toFixed(2)}</title></circle>`;
+  }).join('');
+  const cnt = document.getElementById('dot-count');
+  if (cnt) cnt.textContent = points.length;
+}
+
+async function postExercisePoint(sc) {
+  const session = (() => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e){ return null; } })();
+  if (!session || !session.password) return;
+  try {
+    await fetch(WORKER + '/exercise-points', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        code: session.password, exerciseSlug: EXERCISE_SLUG,
+        wplywSuma: sc.wplywSuma, oporOgolny: Number(sc.oporOgolny.toFixed(2)), quadrant: sc.quadrant
+      })
+    });
+  } catch(e) { console.warn('Zapis punktu na wykres nieudany (funkcja może być jeszcze niewdrożona po stronie Workera):', e); }
+}
+
+async function fetchExercisePoints() {
+  const session = (() => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e){ return null; } })();
+  if (!session || !session.password) return [];
+  try {
+    const res = await fetch(WORKER + '/exercise-points/list', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ code: session.password, exerciseSlug: EXERCISE_SLUG })
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data.points) ? data.points : [];
+  } catch(e) { return []; }
+}
+
+let pointsPollInterval = null;
+let pointsPollCount = 0;
+const MAX_POLLS = 40;
+
+async function pollPointsOnce() {
+  const points = await fetchExercisePoints();
+  renderOtherDots(points);
+}
+
+function startPointsPolling() {
+  stopPointsPolling();
+  pointsPollCount = 0;
+  pollPointsOnce();
+  pointsPollInterval = setInterval(() => {
+    pointsPollCount++;
+    if (pointsPollCount > MAX_POLLS) { stopPointsPolling(); return; }
+    if (document.hidden) return;
+    pollPointsOnce();
+  }, 45000);
+  document.addEventListener('visibilitychange', onVisibilityChangeForPolling);
+}
+
+function stopPointsPolling() {
+  if (pointsPollInterval) { clearInterval(pointsPollInterval); pointsPollInterval = null; }
+  document.removeEventListener('visibilitychange', onVisibilityChangeForPolling);
+}
+
+function onVisibilityChangeForPolling() {
+  if (!document.hidden) pollPointsOnce();
+}
 
 // ── Finish + render result ───────────────────────────────────────
 async function finishExercise() {
@@ -631,6 +878,9 @@ async function finishExercise() {
   renderResult(scores);
   showScreen('result');
   saveResult(scores);
+  saveResultLocally(scores);
+  postExercisePoint(scores);
+  startPointsPolling();
 }
 
 function renderResult(sc) {
@@ -644,11 +894,32 @@ function renderResult(sc) {
     ? `<div class="strategy-block"><div class="sb-label">Dostrojenie wg zaangażowania merytorycznego</div><p>${ENGAGEMENT_MODIFIER[sc.zaangazowanie]}</p></div>`
     : '';
 
+  const dimGridHtml = Object.entries(DIMENSION_INFO).map(([key, info]) => `
+    <div class="dim-card ${sc.dominant.key === key ? 'dim-card-active' : ''}">
+      <div class="dim-card-head">
+        ${sc.dominant.key === key ? '<span class="dim-you-badge">Twój dominujący</span><br>' : ''}
+        <strong>${info.label}</strong> <span class="dim-en">(${info.en}, ${key})</span>
+      </div>
+      <div class="dim-card-score">Twój wynik: <strong>${sc[key].toFixed(2)}</strong> / 6</div>
+      <p>${info.text}</p>
+    </div>`).join('');
+
+  const interpretationHtml = state.interpretation
+    ? `<div class="note-box"><strong>Wstępna interpretacja wzorca odpowiedzi (AI):</strong> ${escapeHtml(state.interpretation)}<br><span style="font-size:0.78rem;opacity:0.85;">To hipoteza do zweryfikowania przez prowadzącego, nie ostateczna ocena.</span></div>`
+    : '';
+
   document.getElementById('result-container').innerHTML = `
     <div class="result-hero">
       <p class="eyebrow" style="color:rgba(255,255,255,0.6);">Wynik wstępny, nie ostateczna diagnoza</p>
       <div class="quadrant">${sc.quadrant}</div>
       <div class="quadrant-desc">${QUADRANT_DESC[sc.quadrant]}</div>
+    </div>
+
+    <div class="card">
+      <h2>Skąd się bierze ten wynik: model Resistance to Change (Oreg, 2003)</h2>
+      <p>Shaul Oreg, badacz zarządzania z Uniwersytetu Hebrajskiego w Jerozolimie, zauważył, że w literaturze opór wobec zmiany bywa traktowany głównie jako efekt złej komunikacji czy złego wdrożenia, podczas gdy w dużej mierze jest też cechą <strong>dyspozycyjną</strong>: względnie stałą tendencją, którą ta sama osoba przenosi z jednej zmiany na drugą, niezależnie od tego, jak dobrze zmiana została przygotowana. W 2003 roku opracował i zwalidował na kilku próbach badawczych Resistance to Change Scale (RTC), kwestionariusz mierzący cztery odrębne, ale powiązane wymiary tej dyspozycji. To jedno z najczęściej cytowanych narzędzi w badaniach nad zarządzaniem zmianą.</p>
+      <p>Sekcja B tego ćwiczenia to skrócona, dydaktyczna wersja tej idei: po dwa stwierdzenia na każdy z czterech wymiarów (oryginalne narzędzie ma ich więcej na wymiar, co zwiększa rzetelność pomiaru). Twoje odpowiedzi łączymy w cztery podskale — RS, ER, SF, CR — opisane szczegółowo niżej, w sekcji „Cztery wymiary oporu wobec zmiany".</p>
+      <div class="note-box">Sekcja A (Wpływ zmiany) nie pochodzi z oryginalnej skali Oreg. To praktyczny dodatek tego ćwiczenia: łączy Twoją dyspozycję (Opór, z Sekcji B) z kontekstem konkretnej zmiany, czyli tym, jak bardzo Cię ona dotyczy, żeby zbudować prostą macierz priorytetyzacji komunikacji — podobną do klasycznych macierzy interesariuszy „wpływ / zainteresowanie" znanych z zarządzania projektami.</div>
     </div>
 
     <div class="card">
@@ -663,24 +934,43 @@ function renderResult(sc) {
         <div class="raw-cell"><div class="v">${sc.zaangazowanieIndex.toFixed(2)}</div><div class="l">Zaangażowanie</div></div>
         <div class="raw-cell"><div class="v">${sc.wplyw} / ${sc.opor}</div><div class="l">Wpływ / Opór</div></div>
       </div>
-      <p style="font-size:0.78rem;">Skale: Wpływ 0 do 3 (próg wysokiego: 2+). RS, ER, SF, CR i Opór ogólny 1 do 6 (próg wysokiego oporu: 4.0+). Zaangażowanie 0 do 2 (0.5 i 1.5 to progi między poziomami).</p>
+      <div class="calc-explain">
+        <p><code>Wpływ_suma = A1 + A2 + A3</code> = ${sc.rawA.a1}+${sc.rawA.a2}+${sc.rawA.a3} = <strong>${sc.wplywSuma}/3</strong>. Każde „Tak" liczy się jako 1, każde „Nie" jako 0. Próg: suma ≥ 2 → Wpływ „Wysoki", inaczej „Niski".</p>
+        <p><code>RS = średnia(B1, B2)</code> = (${sc.rawB.b1}+${sc.rawB.b2}) / 2 = <strong>${sc.RS.toFixed(2)}</strong>. Analogicznie liczone są ER = średnia(B3, B4) = ${sc.ER.toFixed(2)}, SF = średnia(B5, B6) = ${sc.SF.toFixed(2)}, CR = średnia(B7, B8) = ${sc.CR.toFixed(2)}.</p>
+        <p><code>Opór_ogólny = średnia(RS, ER, SF, CR)</code> = (${sc.RS.toFixed(2)}+${sc.ER.toFixed(2)}+${sc.SF.toFixed(2)}+${sc.CR.toFixed(2)}) / 4 = <strong>${sc.oporOgolny.toFixed(2)}</strong>. Próg: ≥ 4.0 na skali 1–6 → Opór „Wysoki".</p>
+        <p><code>Zaangażowanie_index = średnia kodów Sekcji C</code> = (${sc.rawC.join('+')}) / 4 = <strong>${sc.zaangazowanieIndex.toFixed(2)}</strong> na skali 0–2. Progi: poniżej 0.5 = Niskie, 0.5–1.49 = Częściowe, od 1.5 = Wysokie.</p>
+      </div>
     </div>
 
     <div class="card">
-      <h2>Wymiar dominujący</h2>
-      <div class="dim-badge">${sc.dominant.label} (${sc.dominant.key})</div>
-      <p>To wymiar oporu, który u Ciebie zaznaczył się najsilniej w tej konkretnej zmianie. Nie oznacza to, że pozostałe wymiary nie występują, tylko że ten dominuje w treści komunikatu, jaki najlepiej do Ciebie trafi.</p>
+      <h2>Gdzie jesteś na tle grupy</h2>
+      <p>Ta ćwiartka powstaje z przecięcia dwóch osi policzonych wyżej: Wpływu (oś pionowa) i Oporu ogólnego (oś pozioma). Duża kropka to Ty. Małe, półprzezroczyste kropki to inni studenci z Twojej grupy, którzy już ukończyli to ćwiczenie — bez ksywy, bez treści odpowiedzi, wyłącznie te same dwie liczby co u Ciebie. Wykres odświeża się automatycznie: jeśli zostaniesz na tym ekranie, zobaczysz jak dołączają kolejni studenci.</p>
+      <div class="quadrant-chart-wrap">${buildChartSvg(sc)}</div>
+      <div class="chart-legend">
+        <span class="legend-dot legend-dot-own"></span> Ty
+        &nbsp;&nbsp;
+        <span class="legend-dot legend-dot-other"></span> inni studenci z Twojej grupy: <strong id="dot-count">0</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cztery wymiary oporu wobec zmiany</h2>
+      <p>Wynik na każdym wymiarze to średnia dwóch odpowiedzi z Sekcji B, w skali 1 do 6. Wymiar z najwyższym wynikiem dominuje w Twoim wzorcu reagowania na tę konkretną zmianę i to on decyduje, jaka <strong>treść</strong> komunikatu (nie tylko forma) najlepiej do Ciebie trafi — patrz sekcja „Dopasowana strategia komunikacyjna" niżej.</p>
+      <div class="dim-grid">${dimGridHtml}</div>
     </div>
 
     <div class="card">
       <h2>Zaangażowanie merytoryczne (Sekcja C)</h2>
-      <p>Poziom: <strong>${sc.zaangazowanie}</strong> (indeks ${sc.zaangazowanieIndex.toFixed(2)} w skali 0 do 2).</p>
+      <p>Ten wskaźnik nie mierzy oporu wobec zmiany, tylko coś innego: czy w ocenie fikcyjnych argumentów odnosisz się do ich konkretnej treści (liczby, mechanizmu, brakującego elementu), czy pozostajesz na poziomie ogólnika. Dwie osoby mogą mieć identyczny opór na Sekcji B, ale jedna analizuje argumenty krytycznie i szczegółowo, a druga powierzchownie — to wpływa na to, JAK z nimi rozmawiać, a nie na to, do której ćwiartki trafiają: klasyfikacja na cztery ćwiartki zależy wyłącznie od Wpływu i Oporu, nie od Zaangażowania.</p>
+      <p>Poziom: <strong>${sc.zaangazowanie}</strong> (indeks ${sc.zaangazowanieIndex.toFixed(2)} w skali 0–2).</p>
       ${!state.codingAvailable ? `<div class="warn-box">Automatyczne kodowanie AI było niedostępne, więc każdej odpowiedzi przypisano wartość neutralną (1). Ten wynik wymaga korekty prowadzącego.</div>` : `<div class="note-box">Kodowanie 0/1/2 poniżej wykonała AI na podstawie specyficzności Twoich odpowiedzi względem podanych argumentów. To kodowanie ma charakter wstępny i podlega korekcie prowadzącego.</div>`}
       ${codingHtml}
+      ${interpretationHtml}
     </div>
 
     <div class="card">
       <h2>Dopasowana strategia komunikacyjna</h2>
+      <p>Poniższa strategia łączy trzy elementy policzone wyżej: bazowe podejście dla Twojej ćwiartki, ewentualne dostrojenie wg zaangażowania merytorycznego (dotyczy tylko ćwiartek „Zagrożeni" i „Sceptycy poboczni") oraz treść komunikatu dobraną pod Twój wymiar dominujący.</p>
       <div class="strategy-block">
         <div class="sb-label">Podejście bazowe dla Twojej ćwiartki</div>
         <p>${BASE_STRATEGY[sc.quadrant]}</p>
@@ -736,6 +1026,7 @@ async function saveResult(sc) {
     '### Sekcja C — analiza argumentów i kodowanie AI',
     '',
     cRows,
+    state.interpretation ? `**Wstępna interpretacja AI (Sekcja C):** ${state.interpretation}\n` : '',
     '### Wynik',
     '',
     `Wpływ_suma: ${sc.wplywSuma}/3 (${sc.wplyw}) · RS: ${sc.RS.toFixed(2)} · ER: ${sc.ER.toFixed(2)} · SF: ${sc.SF.toFixed(2)} · CR: ${sc.CR.toFixed(2)} · Opór ogólny: ${sc.oporOgolny.toFixed(2)} (${sc.opor})`,
