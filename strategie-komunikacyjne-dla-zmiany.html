@@ -482,23 +482,23 @@ const QUADRANT_DESC = {
 };
 
 const BASE_STRATEGY = {
-  'Zagrożeni': 'Priorytet najwyższy. Dedykowana komunikacja jeden na jeden lub w małych grupach, z menedżerem liniowym jako głównym kanałem.',
-  'Ambasadorzy': 'Priorytet wysoki, ale inny cel niż przy oporze: włącz jako współtwórcę zmiany, komunikacja peer-to-peer do zespołu.',
-  'Sceptycy poboczni': 'Priorytet niski zasobowo. Komunikacja masowa (mail, FAQ), monitorowanie sytuacji, bez inwestowania w rozmowy jeden na jeden.',
-  'Obserwatorzy': 'Priorytet minimalny. Standardowa informacja, bez dodatkowych działań komunikacyjnych.'
+  'Zagrożeni': 'Poproś o krótką rozmowę jeden na jeden z bezpośrednim przełożonym. Ta zmiana mocno wpływa na Twoją pracę i budzi w Tobie duży opór, więc potrzebujesz przestrzeni na własne pytania, dokładnie o to, co Ciebie dotyczy, a nie na ogólne zebranie dla całego zespołu.',
+  'Ambasadorzy': 'Zgłoś się jako osoba, która pomoże wdrożyć tę zmianę u innych, na przykład dzieląc się swoim doświadczeniem z zespołem. Zmiana Cię dotyczy, a opór jest u Ciebie niski, więc Twój głos może przekonać kolegów skuteczniej niż kolejny komunikat od zarządu.',
+  'Sceptycy poboczni': 'Wystarczy, że przeczytasz maila albo krótkie FAQ dotyczące tej zmiany. Nie dotyczy Cię bezpośrednio, więc dedykowana rozmowa w Twojej sprawie nie jest potrzebna. Jeśli mimo to czujesz silny opór, warto zastanowić się, skąd on się bierze, skoro zmiana realnie nie wpływa na Twoją pracę.',
+  'Obserwatorzy': 'Standardowa informacja, na przykład mail albo ogłoszenie, w pełni wystarczy. Ta zmiana ani Cię specjalnie nie dotyczy, ani nie budzi w Tobie oporu, więc nie potrzebujesz nic więcej.'
 };
 
 const ENGAGEMENT_MODIFIER = {
-  'Wysokie': 'Debata merytoryczna: sesja pytań i odpowiedzi odnosząca się wprost do konkretnego zarzutu, a nie ogólna prezentacja już znanych danych.',
-  'Częściowe': 'Dopytanie i doprecyzowanie: krótka rozmowa jeden na jeden identyfikująca konkretny element wątpliwości.',
-  'Niskie': 'Zmiana formatu i nadawcy: case innego zespołu, rówieśnik albo lider nieformalny zamiast oficjalnej komunikacji zarządu. Powtórzenie tych samych danych w tej samej formie prawdopodobnie się nie sprawdzi.'
+  'Wysokie': 'Poproś o sesję pytań i odpowiedzi, na której możesz zadać konkretne pytania, które Cię niepokoją. Analizujesz argumenty szczegółowo, więc rzeczowa rozmowa da Ci więcej niż ogólna prezentacja już znanych danych.',
+  'Częściowe': 'Poproś o krótką rozmowę jeden na jeden, żeby doprecyzować, co konkretnie budzi Twoje wątpliwości.',
+  'Niskie': 'Poszukaj innego źródła informacji niż oficjalna komunikacja zarządu, na przykład opinii kolegi z innego zespołu, który już przeszedł podobną zmianę. Te same dane w tej samej formie prawdopodobnie Cię nie przekonają, więc warto zmienić format albo osobę, od której je usłyszysz.'
 };
 
 const DIMENSION_MODIFIER = {
-  'RS': 'Wdrożenie fazowane, z jasnym harmonogramem tego co się zmienia i kiedy.',
-  'ER': 'Najpierw bezpieczeństwo psychologiczne i przestrzeń na obawy, dopiero potem dane i argumenty.',
-  'SF': 'Widoczne szybkie korzyści już w pierwszych tygodniach, krótki horyzont pokazywanych rezultatów.',
-  'CR': 'Modelowanie postawy przez liderów oraz wielokrotna, spokojna ekspozycja na nową sytuację, zamiast jednorazowej perswazji.'
+  'RS': 'Poproś o jasny harmonogram: co konkretnie się zmienia i kiedy. Rozłożenie wdrożenia na etapy pomoże Ci oswoić się z nowym sposobem pracy stopniowo.',
+  'ER': 'Zacznij od nazwania swoich obaw na głos, zanim przejdziesz do analizy danych i argumentów. Potrzebujesz najpierw poczuć się bezpiecznie, dopiero potem możesz racjonalnie ocenić zmianę.',
+  'SF': 'Poszukaj informacji o konkretnych korzyściach, które pojawią się już w pierwszych tygodniach. Krótkoterminowy chaos łatwiej znieść, gdy widzisz szybkie, namacalne efekty.',
+  'CR': 'Obserwuj, jak liderzy sami stosują się do nowego sposobu pracy, i daj sobie czas na wielokrotny kontakt z nową sytuacją zamiast jednorazowej rozmowy. Zmiana zdania zwykle przychodzi stopniowo.'
 };
 
 function escapeHtml(s) {
@@ -761,7 +761,15 @@ const EXERCISE_SLUG = 'strategie-zmiany';
 const CHART_W = 520, CHART_H = 380;
 const PLOT_L = 56, PLOT_R = CHART_W - 20, PLOT_T = 20, PLOT_B = CHART_H - 54;
 
-function xScale(opor) { return PLOT_L + (opor - 1) / 5 * (PLOT_R - PLOT_L); }
+function xScale(opor) {
+  // Piecewise around the real classification threshold (4.0) instead of a
+  // plain linear 1-6 scale, so the visual divider sits exactly on the
+  // threshold and the four quadrant rectangles come out equal-sized, while
+  // no point can ever land on the visually "wrong" side of the line.
+  const mid = (PLOT_L + PLOT_R) / 2;
+  if (opor <= 4.0) return PLOT_L + (opor - 1) / (4.0 - 1) * (mid - PLOT_L);
+  return mid + (opor - 4.0) / (6 - 4.0) * (PLOT_R - mid);
+}
 function yScale(wplyw) { return PLOT_B - (wplyw - 0) / 3 * (PLOT_B - PLOT_T); }
 
 function seededRandom(seedStr) {
@@ -890,9 +898,18 @@ function renderResult(sc) {
       <div class="ci-reason">${escapeHtml(state.codingReason[s.id]) || 'Brak dodatkowego uzasadnienia.'}</div>
     </div>`).join('');
 
-  const modifier1Html = (sc.quadrant === 'Zagrożeni' || sc.quadrant === 'Sceptycy poboczni')
-    ? `<div class="strategy-block"><div class="sb-label">Dostrojenie wg zaangażowania merytorycznego</div><p>${ENGAGEMENT_MODIFIER[sc.zaangazowanie]}</p></div>`
-    : '';
+  const strategySteps = [
+    { label: 'Co zrobić najpierw', text: BASE_STRATEGY[sc.quadrant] }
+  ];
+  if (sc.quadrant === 'Zagrożeni' || sc.quadrant === 'Sceptycy poboczni') {
+    strategySteps.push({ label: 'Jak dopasować rozmowę do Twojego zaangażowania', text: ENGAGEMENT_MODIFIER[sc.zaangazowanie] });
+  }
+  strategySteps.push({ label: `Jak sformułować treść komunikatu (Twój dominujący wymiar: ${sc.dominant.label}, ${sc.dominant.key})`, text: DIMENSION_MODIFIER[sc.dominant.key] });
+  const strategyHtml = strategySteps.map((step, i) => `
+    <div class="strategy-block">
+      <div class="sb-label">${i+1}. ${step.label}</div>
+      <p>${step.text}</p>
+    </div>`).join('');
 
   const dimGridHtml = Object.entries(DIMENSION_INFO).map(([key, info]) => `
     <div class="dim-card ${sc.dominant.key === key ? 'dim-card-active' : ''}">
@@ -918,8 +935,8 @@ function renderResult(sc) {
     <div class="card">
       <h2>Skąd się bierze ten wynik: model Resistance to Change (Oreg, 2003)</h2>
       <p>Shaul Oreg, badacz zarządzania z Uniwersytetu Hebrajskiego w Jerozolimie, zauważył, że w literaturze opór wobec zmiany bywa traktowany głównie jako efekt złej komunikacji czy złego wdrożenia, podczas gdy w dużej mierze jest też cechą <strong>dyspozycyjną</strong>: względnie stałą tendencją, którą ta sama osoba przenosi z jednej zmiany na drugą, niezależnie od tego, jak dobrze zmiana została przygotowana. W 2003 roku opracował i zwalidował na kilku próbach badawczych Resistance to Change Scale (RTC), kwestionariusz mierzący cztery odrębne, ale powiązane wymiary tej dyspozycji. To jedno z najczęściej cytowanych narzędzi w badaniach nad zarządzaniem zmianą.</p>
-      <p>Sekcja B tego ćwiczenia to skrócona, dydaktyczna wersja tej idei: po dwa stwierdzenia na każdy z czterech wymiarów (oryginalne narzędzie ma ich więcej na wymiar, co zwiększa rzetelność pomiaru). Twoje odpowiedzi łączymy w cztery podskale — RS, ER, SF, CR — opisane szczegółowo niżej, w sekcji „Cztery wymiary oporu wobec zmiany".</p>
-      <div class="note-box">Sekcja A (Wpływ zmiany) nie pochodzi z oryginalnej skali Oreg. To praktyczny dodatek tego ćwiczenia: łączy Twoją dyspozycję (Opór, z Sekcji B) z kontekstem konkretnej zmiany, czyli tym, jak bardzo Cię ona dotyczy, żeby zbudować prostą macierz priorytetyzacji komunikacji — podobną do klasycznych macierzy interesariuszy „wpływ / zainteresowanie" znanych z zarządzania projektami.</div>
+      <p>Sekcja B tego ćwiczenia to skrócona, dydaktyczna wersja tej idei: po dwa stwierdzenia na każdy z czterech wymiarów (oryginalne narzędzie ma ich więcej na wymiar, co zwiększa rzetelność pomiaru). Twoje odpowiedzi łączymy w cztery podskale (RS, ER, SF, CR), opisane szczegółowo niżej, w sekcji „Cztery wymiary oporu wobec zmiany".</p>
+      <div class="note-box">Sekcja A (Wpływ zmiany) nie pochodzi z oryginalnej skali Oreg. To praktyczny dodatek tego ćwiczenia: łączy Twoją dyspozycję (Opór, z Sekcji B) z kontekstem konkretnej zmiany, czyli tym, jak bardzo Cię ona dotyczy, żeby zbudować prostą macierz priorytetyzacji komunikacji, podobną do klasycznych macierzy interesariuszy „wpływ / zainteresowanie" znanych z zarządzania projektami.</div>
     </div>
 
     <div class="card">
@@ -944,7 +961,7 @@ function renderResult(sc) {
 
     <div class="card">
       <h2>Gdzie jesteś na tle grupy</h2>
-      <p>Ta ćwiartka powstaje z przecięcia dwóch osi policzonych wyżej: Wpływu (oś pionowa) i Oporu ogólnego (oś pozioma). Duża kropka to Ty. Małe, półprzezroczyste kropki to inni studenci z Twojej grupy, którzy już ukończyli to ćwiczenie — bez ksywy, bez treści odpowiedzi, wyłącznie te same dwie liczby co u Ciebie. Wykres odświeża się automatycznie: jeśli zostaniesz na tym ekranie, zobaczysz jak dołączają kolejni studenci.</p>
+      <p>Ta ćwiartka powstaje z przecięcia dwóch osi policzonych wyżej: Wpływu (oś pionowa) i Oporu ogólnego (oś pozioma). Duża kropka to Ty. Małe, półprzezroczyste kropki to inni studenci z Twojej grupy, którzy już ukończyli to ćwiczenie: bez ksywy, bez treści odpowiedzi, wyłącznie te same dwie liczby co u Ciebie. Wykres odświeża się automatycznie: jeśli zostaniesz na tym ekranie, zobaczysz jak dołączają kolejni studenci.</p>
       <div class="quadrant-chart-wrap">${buildChartSvg(sc)}</div>
       <div class="chart-legend">
         <span class="legend-dot legend-dot-own"></span> Ty
@@ -955,14 +972,21 @@ function renderResult(sc) {
 
     <div class="card">
       <h2>Cztery wymiary oporu wobec zmiany</h2>
-      <p>Wynik na każdym wymiarze to średnia dwóch odpowiedzi z Sekcji B, w skali 1 do 6. Wymiar z najwyższym wynikiem dominuje w Twoim wzorcu reagowania na tę konkretną zmianę i to on decyduje, jaka <strong>treść</strong> komunikatu (nie tylko forma) najlepiej do Ciebie trafi — patrz sekcja „Dopasowana strategia komunikacyjna" niżej.</p>
+      <p>Wynik na każdym wymiarze to średnia dwóch odpowiedzi z Sekcji B, w skali 1 do 6. Wymiar z najwyższym wynikiem dominuje w Twoim wzorcu reagowania na tę konkretną zmianę i to on decyduje, jaka <strong>treść</strong> komunikatu (nie tylko forma) najlepiej do Ciebie trafi. Patrz sekcja „Dopasowana strategia komunikacyjna" niżej.</p>
+      <div class="note-box">Przypomnienie: jesteś w ćwiartce <strong>${sc.quadrant}</strong> (Wpływ: ${sc.wplyw}, Opór: ${sc.opor}). Ćwiartka na wykresie wyżej i cztery wymiary poniżej to dwie różne rzeczy: ćwiartka opisuje Twoją sytuację wobec tej konkretnej zmiany (Wpływ i Opór razem), a RS, ER, SF, CR to składniki, z których liczy się sam wynik Oporu. Wymiar dominujący (podświetlony niżej) mówi Ci tylko, jaką treścią najlepiej do Ciebie trafić, nie zmienia Twojej ćwiartki.</div>
       <div class="dim-grid">${dimGridHtml}</div>
     </div>
 
     <div class="card">
       <h2>Zaangażowanie merytoryczne (Sekcja C)</h2>
-      <p>Ten wskaźnik nie mierzy oporu wobec zmiany, tylko coś innego: czy w ocenie fikcyjnych argumentów odnosisz się do ich konkretnej treści (liczby, mechanizmu, brakującego elementu), czy pozostajesz na poziomie ogólnika. Dwie osoby mogą mieć identyczny opór na Sekcji B, ale jedna analizuje argumenty krytycznie i szczegółowo, a druga powierzchownie — to wpływa na to, JAK z nimi rozmawiać, a nie na to, do której ćwiartki trafiają: klasyfikacja na cztery ćwiartki zależy wyłącznie od Wpływu i Oporu, nie od Zaangażowania.</p>
-      <p>Poziom: <strong>${sc.zaangazowanie}</strong> (indeks ${sc.zaangazowanieIndex.toFixed(2)} w skali 0–2).</p>
+      <p>Ten wskaźnik mierzy coś innego niż opór wobec zmiany: czy w ocenie fikcyjnych argumentów odnosisz się do ich konkretnej treści (liczby, mechanizmu, brakującego elementu), czy pozostajesz na poziomie ogólnika. Dwie osoby mogą mieć identyczny opór na Sekcji B, a mimo to jedna analizuje argumenty krytycznie i szczegółowo, a druga powierzchownie. Ten wskaźnik wpływa na to, jak z Tobą rozmawiać, natomiast klasyfikacja na cztery ćwiartki zależy wyłącznie od Wpływu i Oporu, nie od Zaangażowania.</p>
+      <p>Poziom: <strong>${sc.zaangazowanie}</strong> (indeks ${sc.zaangazowanieIndex.toFixed(2)} w skali 0 do 2).</p>
+      <div class="note-box">
+        <strong>Co oznaczają liczby 0, 1, 2 przy każdej odpowiedzi:</strong><br><br>
+        <strong>0:</strong> ogólnik, brak odniesienia do konkretnej liczby czy mechanizmu z argumentów (na przykład „wszyscy tak robią").<br>
+        <strong>1:</strong> częściowe odniesienie, wskazuje który argument, ale nie wyjaśnia dlaczego.<br>
+        <strong>2:</strong> pełne odniesienie, podważa lub broni konkretny element: liczbę, brak punktu odniesienia, albo konkretny mechanizm.
+      </div>
       ${!state.codingAvailable ? `<div class="warn-box">Automatyczne kodowanie AI było niedostępne, więc każdej odpowiedzi przypisano wartość neutralną (1). Ten wynik wymaga korekty prowadzącego.</div>` : `<div class="note-box">Kodowanie 0/1/2 poniżej wykonała AI na podstawie specyficzności Twoich odpowiedzi względem podanych argumentów. To kodowanie ma charakter wstępny i podlega korekcie prowadzącego.</div>`}
       ${codingHtml}
       ${interpretationHtml}
@@ -970,16 +994,8 @@ function renderResult(sc) {
 
     <div class="card">
       <h2>Dopasowana strategia komunikacyjna</h2>
-      <p>Poniższa strategia łączy trzy elementy policzone wyżej: bazowe podejście dla Twojej ćwiartki, ewentualne dostrojenie wg zaangażowania merytorycznego (dotyczy tylko ćwiartek „Zagrożeni" i „Sceptycy poboczni") oraz treść komunikatu dobraną pod Twój wymiar dominujący.</p>
-      <div class="strategy-block">
-        <div class="sb-label">Podejście bazowe dla Twojej ćwiartki</div>
-        <p>${BASE_STRATEGY[sc.quadrant]}</p>
-      </div>
-      ${modifier1Html}
-      <div class="strategy-block">
-        <div class="sb-label">Treść komunikatu wg wymiaru dominującego</div>
-        <p>${DIMENSION_MODIFIER[sc.dominant.key]}</p>
-      </div>
+      <p>Trzy konkretne wskazówki dopasowane do Twojego wyniku, w prostym języku: co zrobić najpierw, jak (jeśli dotyczy) dostosować rozmowę do Twojego zaangażowania, i jak sformułować treść komunikatu pod Twój dominujący wymiar.</p>
+      ${strategyHtml}
     </div>
 
     <div class="warn-box">
