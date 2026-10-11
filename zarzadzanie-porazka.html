@@ -195,6 +195,7 @@
         <span class="welcome-pill">Peer-review z drugą osobą</span>
       </div>
       <p>Możesz robić przerwy: odpowiedzi zapisują się automatycznie w tej przeglądarce. Żeby wrócić, otwórz ćwiczenie na tym samym komputerze i wpisz tę samą ksywę.</p>
+      <div class="draft-banner" id="invite-banner" style="display:none"></div>
       <div class="draft-banner" id="draft-banner" style="display:none"></div>
       <span class="field-label">Twoja ksywa / pseudonim</span>
       <input class="text-input" type="text" id="nickname-input" placeholder="np. Panda, Orzeł, AS007..." maxlength="30" autocomplete="off">
@@ -324,7 +325,7 @@
     <div class="invite-code-box">
       <div class="field-label">Kod dla recenzenta</div>
       <div class="invite-code" id="invite-code-display">------</div>
-      <div class="invite-note">Kod jest ważny 7 dni i może zostać użyty tylko raz. Recenzent nie może być tą samą osobą co autor.</div>
+      <div class="invite-note">Kod jest ważny 7 dni i może zostać użyty tylko raz. Recenzent nie może być tą samą osobą co autor. Kod zapisaliśmy też w tej przeglądarce: zobaczysz go na stronie startowej ćwiczenia po wpisaniu swojej ksywy.</div>
       <button class="btn btn-ghost copy-btn" onclick="copyInviteCode()">Kopiuj kod</button>
     </div>
     <a class="btn btn-primary" href="index.html" style="text-decoration:none; display:inline-block;">Wróć do platformy</a>
@@ -457,7 +458,63 @@ function scheduleAutosave() {
   autosaveTimer = setTimeout(saveDraft, 800);
 }
 
+// Ostatni kod dla recenzenta, zapisany lokalnie per ksywa, żeby autor nie
+// stracił go po zamknięciu ekranu końcowego. Wpis znika 14 dni po wygenerowaniu.
+const INVITE_KEY = 'mba_invite_zarzadzanie_porazka';
+const INVITE_VALID_MS = 7 * 24 * 60 * 60 * 1000;
+const INVITE_KEEP_MS = 14 * 24 * 60 * 60 * 1000;
+
+function inviteKeyFor(nick) { return INVITE_KEY + ':' + nick.trim().toLowerCase(); }
+
+function saveInviteCode(nick, code) {
+  try { localStorage.setItem(inviteKeyFor(nick), JSON.stringify({ code: code, createdAt: Date.now() })); } catch(e) {}
+}
+
+function readInviteCode(nick) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(inviteKeyFor(nick)));
+    if (!saved || !saved.code) return null;
+    if (Date.now() - saved.createdAt > INVITE_KEEP_MS) { localStorage.removeItem(inviteKeyFor(nick)); return null; }
+    return saved;
+  } catch(e) { return null; }
+}
+
+function renderInviteBanner() {
+  const banner = document.getElementById('invite-banner');
+  const nick = (document.getElementById('nickname-input').value || '').trim();
+  const saved = nick ? readInviteCode(nick) : null;
+  if (!saved) { banner.style.display = 'none'; return; }
+  const expiresAt = saved.createdAt + INVITE_VALID_MS;
+  const expired = Date.now() > expiresAt;
+  banner.textContent = '';
+  const strong = document.createElement('strong');
+  strong.textContent = 'Twój kod dla recenzenta: ' + saved.code;
+  banner.appendChild(strong);
+  banner.appendChild(document.createTextNode(
+    ' (wygenerowany ' + formatSavedAt(saved.createdAt) + ', ' +
+    (expired ? 'termin ważności minął ' + formatSavedAt(expiresAt) : 'ważny do ' + formatSavedAt(expiresAt)) + '). '
+  ));
+  if (!expired) {
+    const copy = document.createElement('button');
+    copy.type = 'button';
+    copy.className = 'btn btn-ghost';
+    copy.style.cssText = 'padding:4px 10px;font-size:0.78rem;';
+    copy.textContent = 'Kopiuj kod';
+    copy.onclick = function() {
+      if (navigator.clipboard) navigator.clipboard.writeText(saved.code);
+      copy.textContent = 'Skopiowano';
+    };
+    banner.appendChild(copy);
+  }
+  const status = document.createElement('div');
+  status.style.cssText = 'margin-top:6px;font-size:0.8rem;';
+  status.textContent = 'Status recenzji sprawdzisz na stronie „Porażka: recenzja”.';
+  banner.appendChild(status);
+  banner.style.display = '';
+}
+
 function renderDraftBanner() {
+  renderInviteBanner();
   const banner = document.getElementById('draft-banner');
   const nick = (document.getElementById('nickname-input').value || '').trim();
   const draft = nick ? readDraft(nick) : null;
@@ -541,6 +598,7 @@ async function submitExercise() {
 
     clearTimeout(autosaveTimer);
     try { localStorage.removeItem(draftKeyFor(nick)); } catch(e) {}
+    saveInviteCode(nick, invData.invite_code);
     draftOwner = null;
     document.getElementById('invite-code-display').textContent = invData.invite_code;
     showScreen('screen-done');
