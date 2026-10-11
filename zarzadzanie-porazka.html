@@ -581,17 +581,20 @@ async function submitExercise() {
   const btn = document.getElementById('submit-btn');
   btn.disabled = true; btn.textContent = 'Zapisuję...';
 
+  const session = (() => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e){ return null; } })();
+  const groupCode = session ? session.password : '';
+
   try {
     const subRes = await fetch(WORKER + '/submissions', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ exercise_slug: EXERCISE_SLUG, author_ksywa: nick, content: content })
+      body: JSON.stringify({ code: groupCode, exercise_slug: EXERCISE_SLUG, author_ksywa: nick, content: content })
     });
     const subData = await subRes.json();
     if (!subRes.ok || !subData.submission_id) throw new Error(subData.error || 'Błąd zapisu ćwiczenia.');
 
     const invRes = await fetch(WORKER + '/invites', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ submission_id: subData.submission_id, author_ksywa: nick })
+      body: JSON.stringify({ code: groupCode, submission_id: subData.submission_id, author_ksywa: nick })
     });
     const invData = await invRes.json();
     if (!invRes.ok || !invData.invite_code) throw new Error(invData.error || 'Błąd generowania kodu.');

@@ -438,6 +438,11 @@ window.addEventListener('pagehide', saveReviewDraft);
 document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'hidden') saveReviewDraft(); });
 renderResumeBanner();
 
+// Hasło grupy z bieżącej sesji; Worker wymaga go we wszystkich trasach recenzji.
+function getSessionCode() {
+  try { const s = JSON.parse(sessionStorage.getItem(SESSION_KEY)); return (s && s.password) || ''; } catch(e) { return ''; }
+}
+
 async function claimInvite() {
   const codeInp = document.getElementById('code-input');
   const nickInp = document.getElementById('reviewer-nick-input');
@@ -462,7 +467,7 @@ async function claimInvite() {
   try {
     const res = await fetch(WORKER + '/invites/claim', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ invite_code: code, reviewer_ksywa: nick })
+      body: JSON.stringify({ code: getSessionCode(), invite_code: code, reviewer_ksywa: nick })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Nie udało się odebrać kodu.');
@@ -562,7 +567,7 @@ async function submitReview() {
     document.getElementById('review-comments').focus();
     return;
   }
-  if (!CURRENT_INVITE || !CURRENT_INVITE.invite_id) {
+  if (!CURRENT_INVITE || !CURRENT_CODE) {
     errBox.className = 'status-note err';
     errBox.textContent = 'Brak aktywnego zaproszenia. Wróć i wpisz kod ponownie.';
     return;
@@ -574,7 +579,7 @@ async function submitReview() {
   try {
     const res = await fetch(WORKER + '/reviews', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ invite_id: CURRENT_INVITE.invite_id, scores: scores, comments: comments, reviewer_ksywa: CURRENT_INVITE.reviewer_ksywa || null })
+      body: JSON.stringify({ code: getSessionCode(), invite_code: CURRENT_CODE, scores: scores, comments: comments, reviewer_ksywa: CURRENT_INVITE.reviewer_ksywa || null })
     });
     const data = await res.json();
     if (!res.ok || !data.success) throw new Error(data.error || 'Błąd zapisu oceny.');

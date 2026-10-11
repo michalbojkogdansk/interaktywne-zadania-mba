@@ -172,7 +172,10 @@
 
   <div class="panel" id="panel-mine">
     <div class="field-label">Twoja ksywa / pseudonim</div>
-    <input class="text-input" type="text" id="mine-ksywa-input" placeholder="np. Panda, Orzeł, AS007..." maxlength="30" autocomplete="off" onkeydown="if(event.key==='Enter')checkMyReview();">
+    <input class="text-input" type="text" id="mine-ksywa-input" placeholder="np. Panda, Orzeł, AS007..." maxlength="30" autocomplete="off" oninput="fillSavedInviteCode(true)" onkeydown="if(event.key==='Enter')checkMyReview();">
+    <div class="field-label" style="margin-top:14px;">Twój kod dla recenzenta</div>
+    <p style="font-size:0.85rem; color:var(--sec); margin-bottom:8px;">6-znakowy kod, który dostałeś po zakończeniu ćwiczenia i przekazałeś recenzentowi.</p>
+    <input class="text-input" type="text" id="mine-code-input" placeholder="np. K7M2QX" maxlength="6" autocomplete="off" style="text-transform:uppercase; letter-spacing:2px;" onkeydown="if(event.key==='Enter')checkMyReview();">
     <div class="status-note" id="mine-status"></div>
     <button class="btn btn-primary" id="mine-btn" onclick="checkMyReview()">Sprawdź ocenę →</button>
 
@@ -238,7 +241,20 @@ function selectOption(which) {
     const saved = (typeof mbaGetKsywa === 'function' ? mbaGetKsywa() : '') || '';
     const inp = document.getElementById('mine-ksywa-input');
     if (saved && !inp.value) inp.value = saved;
+    fillSavedInviteCode(false);
   }
+}
+
+// Kod zapisany lokalnie przez zarzadzanie-porazka.html (per ksywa), żeby
+// autor nie musiał go przepisywać na tym samym komputerze.
+function fillSavedInviteCode(overwrite) {
+  const nick = (document.getElementById('mine-ksywa-input').value || '').trim().toLowerCase();
+  const codeInp = document.getElementById('mine-code-input');
+  if (!nick || (codeInp.value && !overwrite)) return;
+  try {
+    const saved = JSON.parse(localStorage.getItem('mba_invite_zarzadzanie_porazka:' + nick));
+    if (saved && saved.code) codeInp.value = saved.code;
+  } catch(e) {}
 }
 
 const CRIT_LABELS = {
@@ -265,19 +281,25 @@ async function checkMyReview() {
   resultBox.innerHTML = '';
 
   const ksywa = (inp.value || '').trim();
+  const inviteCode = (document.getElementById('mine-code-input').value || '').trim().toUpperCase();
   if (!ksywa) { status.className = 'status-note err'; status.textContent = 'Wpisz swoją ksywę.'; return; }
+  if (!/^[A-Z0-9]{6}$/.test(inviteCode)) { status.className = 'status-note err'; status.textContent = 'Wpisz 6-znakowy kod, który dostałeś po zakończeniu ćwiczenia.'; return; }
 
   btn.disabled = true; btn.textContent = 'Sprawdzam...';
   if (typeof mbaSaveKsywa === 'function') mbaSaveKsywa(ksywa);
 
   try {
-    const res = await fetch(WORKER + '/my-review/' + encodeURIComponent(ksywa));
+    const session = (() => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e){ return null; } })();
+    const res = await fetch(WORKER + '/my-review', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ code: session ? session.password : '', ksywa: ksywa, invite_code: inviteCode })
+    });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Błąd połączenia.');
 
     if (!data.found) {
       resultBox.style.display = '';
-      resultBox.innerHTML = '<div class="result-status">Nie znaleziono ćwiczenia</div><div class="result-detail">Nie mamy zapisanego ćwiczenia „Zarządzanie Porażką” dla tej ksywy. Sprawdź pisownię albo upewnij się, że ćwiczenie zostało zakończone.</div>';
+      resultBox.innerHTML = '<div class="result-status">Nie znaleziono ćwiczenia</div><div class="result-detail">Nie mamy zapisanego ćwiczenia „Zarządzanie Porażką” dla tej ksywy i tego kodu. Sprawdź pisownię ksywy i kod albo upewnij się, że ćwiczenie zostało zakończone.</div>';
     } else if (data.status === 'no_invite') {
       resultBox.style.display = '';
       resultBox.innerHTML = '<div class="result-status">Brak wygenerowanego kodu</div><div class="result-detail">Twoje ćwiczenie zostało zapisane, ale nie wygenerowano jeszcze kodu dla recenzenta.</div>';

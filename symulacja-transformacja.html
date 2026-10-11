@@ -1806,6 +1806,11 @@ Zwróć WYŁĄCZNIE JSON (zero markdown, zero komentarzy, zero tekstu poza JSON)
 }`;
 }
 
+// Hasło grupy z bieżącej sesji; Worker wymaga go także dla zapytań do AI.
+function getSessionCode() {
+  try { const s = JSON.parse(sessionStorage.getItem('mba_session')); return (s && s.password) || ''; } catch(e) { return ''; }
+}
+
 async function submitForAnalysis() {
   showScreen('loading');
   window.scrollTo(0, 0);
@@ -1816,6 +1821,7 @@ async function submitForAnalysis() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        code: getSessionCode(),
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { temperature: 0.6, maxOutputTokens: 3000 }
       })
@@ -2062,6 +2068,7 @@ Odpowiedz po polsku, bez zbędnych wstępów.`;
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        code: getSessionCode(),
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { temperature: 0.5, maxOutputTokens: 600 }
       })

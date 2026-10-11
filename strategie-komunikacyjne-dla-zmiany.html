@@ -691,9 +691,10 @@ Nie oceniaj długości, stylu, ani tego czy respondent jest za czy przeciw zmian
 async function codeWithAI() {
   try {
     const prompt = buildCodingPrompt();
+    const session = (() => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e){ return null; } })();
     const response = await fetch(WORKER + '/gemini', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 3000 } })
+      body: JSON.stringify({ code: session ? session.password : '', contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 3000 } })
     });
     const data = await response.json();
     if (!data.candidates || !data.candidates[0]) throw new Error('Brak odpowiedzi od modelu AI.');
