@@ -239,6 +239,7 @@
   }
 
   /* ── Potwierdzenie ── */
+  .submit-error { display: none; margin-top: 12px; padding: 12px 14px; border: 1.5px solid #C0392B; background: #FDF0EE; color: #8E2A1F; font-size: 0.9rem; line-height: 1.5; }
   .confirmation-box {
     display: none;
     background: #fff;
@@ -570,6 +571,7 @@
     </button>
     <button class="btn btn-secondary" onclick="window.location.href='index.html'">← Powrót</button>
   </div>
+  <div class="submit-error" id="submit-error" role="alert"></div>
 
   <!-- Potwierdzenie -->
   <div class="confirmation-box" id="confirmation-box">
@@ -638,6 +640,7 @@ async function submitTest() {
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
   btn.textContent = 'Zapisuję…';
+  document.getElementById('submit-error').style.display = 'none';
 
   const fname = document.getElementById('first-name').value.trim();
   const lname = document.getElementById('last-name').value.trim();
@@ -674,13 +677,29 @@ ${a.text}
         labels: ['test-wiedzy'],
       })
     });
-    let _twNum = null;
-    try { const _d = await _twRes.json(); _twNum = _d.number || null; } catch(e2) {}
-    showConfirmation(fname, lname, answers, _twNum);
+    let _twData = null;
+    try { _twData = await _twRes.json(); } catch(e2) {}
+    // Potwierdzenie tylko wtedy, gdy wynik naprawdę trafił do prowadzącego.
+    if (!_twRes.ok || !_twData || !_twData.number) {
+      throw Object.assign(new Error('Zapis nieudany'), { status: _twRes.status });
+    }
+    showConfirmation(fname, lname, answers, _twData.number);
   } catch(e) {
     console.error('Błąd zapisu:', e);
-    showConfirmation(fname, lname, answers, null);
+    showSubmitError(e.status);
   }
+}
+
+// Odpowiedzi zostają w formularzu, więc student może po prostu spróbować ponownie.
+function showSubmitError(status) {
+  const box = document.getElementById('submit-error');
+  box.textContent = status === 403
+    ? 'Nie udało się zapisać odpowiedzi: sesja grupy wygasła albo hasło jest nieaktualne. Twoje odpowiedzi są nadal w formularzu. Skopiuj je na wszelki wypadek, wróć na stronę główną, zaloguj się ponownie i wyślij jeszcze raz.'
+    : 'Nie udało się zapisać odpowiedzi. Twoje odpowiedzi są nadal w formularzu. Spróbuj wysłać ponownie za chwilę. Jeśli błąd się powtórzy, skopiuj odpowiedzi i przekaż je prowadzącemu.';
+  box.style.display = 'block';
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = false;
+  btn.textContent = 'Spróbuj ponownie →';
 }
 
 function showConfirmation(fname, lname, answers, issueNum) {
@@ -725,7 +744,9 @@ async function verifyGroupGate() {
     const data = await res.json();
     if (data.valid) {
       _mbaGroupName = data.groupName;
-      _mbaGroupPassword = input.value.trim().toUpperCase();
+      // Hasło dokładnie takie, jakie przeszło /verify-group. Hasła grup
+      // rozróżniają wielkość liter, więc toUpperCase() psuł zapis wyników.
+      _mbaGroupPassword = password;
       const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none';
     } else {
       errEl.textContent = data.error || 'Nieprawidłowe hasło.';
