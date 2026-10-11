@@ -80,7 +80,13 @@
   .score-row { display:flex; gap:8px; align-items:center; }
   .score-btn { width:42px; height:38px; border:1.5px solid var(--border); background:#fff; font-weight:700; font-size:0.9rem; cursor:pointer; font-family:inherit; }
   .score-btn.selected { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .scale-note { background:var(--accent-light); border-left:3px solid var(--accent); padding:14px 18px; margin-bottom:16px; font-size:0.85rem; line-height:1.6; }
+  .resume-banner { background:var(--accent-light); border:1px solid var(--accent); padding:14px 18px; margin-bottom:20px; font-size:0.86rem; line-height:1.55; }
+  .resume-banner .resume-item { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:10px; }
+  .resume-banner .btn { padding:8px 14px; font-size:0.82rem; }
   .comments-box { margin-top:24px; }
+  .comments-hint { font-size:0.8rem; color:var(--sec); line-height:1.55; margin-bottom:10px; }
+  .draft-note { font-size:0.75rem; color:var(--sec); margin-right:auto; align-self:center; }
   .comments-textarea { width:100%; min-height:100px; padding:12px 14px; border:1.5px solid var(--border); font-size:0.9rem; font-family:inherit; outline:none; resize:vertical; }
 
   .btn { padding:12px 24px; font-size:0.9rem; font-weight:700; font-family:inherit; cursor:pointer; border:none; }
@@ -179,7 +185,8 @@
     <div class="welcome-card">
       <p class="eyebrow">Recenzja koleżeńska</p>
       <h1>Oceń cudze ćwiczenie</h1>
-      <p>Wpisz kod, który dostałeś/aś od osoby, której ćwiczenie masz ocenić, oraz swoją ksywę. Kod jest jednorazowy i ważny 7 dni.</p>
+      <div class="resume-banner" id="resume-banner" style="display:none"></div>
+      <p>Wpisz kod, który dostałeś/aś od osoby, której ćwiczenie masz ocenić, oraz swoją ksywę. Kod jest jednorazowy i ważny 7 dni. Możesz zrobić przerwę: rozpoczęta recenzja zapisuje się w tej przeglądarce i wrócisz do niej, wpisując ten sam kod.</p>
       <span class="field-label">Kod od autora</span>
       <input class="text-input" type="text" id="code-input" placeholder="np. K7X2QM" maxlength="6" autocomplete="off">
       <div class="field-gap">
@@ -203,15 +210,18 @@
     <div id="submission-content"></div>
 
     <div class="part-header"><h2>Pełne kryteria oceny</h2></div>
+    <div class="scale-note">Opisy podają trzy punkty odniesienia: 5, 3 i 0–1. Oceny 4 i 2 są pośrednie: wybierz 4, gdy praca wyraźnie przekracza opis dla 3, ale nie spełnia w pełni opisu dla 5. Wybierz 2, gdy jest między 3 a 0–1.</div>
     <div id="criteria-form"></div>
 
     <div class="crit-card comments-box">
-      <div class="crit-title">Komentarz ogólny (opcjonalnie)</div>
-      <textarea class="comments-textarea" id="review-comments" placeholder="Dodatkowe uwagi dla autora..."></textarea>
+      <div class="crit-title">Komentarz dla autora (wymagany)</div>
+      <div class="comments-hint">Same liczby niewiele mówią autorowi. Napisz co najmniej 2–3 zdania: co w tej pracy jest najmocniejsze i co warto poprawić.</div>
+      <textarea class="comments-textarea" id="review-comments" placeholder="Najmocniejsza część tej pracy to... Warto poprawić..."></textarea>
     </div>
 
     <div class="status-note" id="review-err"></div>
     <div class="btn-row">
+      <div class="draft-note" id="review-draft-note">Recenzja zapisywana automatycznie w tej przeglądarce.</div>
       <button class="btn btn-primary" id="review-submit-btn" onclick="submitReview()">Zapisz ocenę</button>
     </div>
   </div>
@@ -315,7 +325,118 @@ const CRITERIA = [
 ];
 
 let CURRENT_INVITE = null;
+let CURRENT_CODE = null;
 const scores = {};
+const MIN_COMMENT_LENGTH = 80;
+
+// Wersje robocze recenzji w localStorage, kluczowane kodem zaproszenia.
+// /invites/claim działa tylko raz, więc po odświeżeniu strony recenzję da się
+// wznowić wyłącznie z zapisanej lokalnie kopii (invite_id + treść autora).
+const REVIEW_DRAFTS_KEY = 'mba_draft_recenzja';
+const REVIEW_DRAFT_MAX_AGE_MS = 8 * 24 * 60 * 60 * 1000;
+
+function readReviewDrafts() {
+  try {
+    const all = JSON.parse(localStorage.getItem(REVIEW_DRAFTS_KEY)) || {};
+    const now = Date.now();
+    Object.keys(all).forEach(function(code) {
+      if (!all[code] || !all[code].invite || now - (all[code].savedAt || 0) > REVIEW_DRAFT_MAX_AGE_MS) delete all[code];
+    });
+    return all;
+  } catch(e) { return {}; }
+}
+
+function writeReviewDrafts(all) {
+  try {
+    if (Object.keys(all).length) localStorage.setItem(REVIEW_DRAFTS_KEY, JSON.stringify(all));
+    else localStorage.removeItem(REVIEW_DRAFTS_KEY);
+  } catch(e) {}
+}
+
+function saveReviewDraft() {
+  if (!CURRENT_CODE || !CURRENT_INVITE) return;
+  const all = readReviewDrafts();
+  all[CURRENT_CODE] = {
+    reviewer: CURRENT_INVITE.reviewer_ksywa || '',
+    invite: {
+      invite_id: CURRENT_INVITE.invite_id,
+      author_ksywa: CURRENT_INVITE.author_ksywa,
+      content: CURRENT_INVITE.content
+    },
+    scores: Object.assign({}, scores),
+    comments: document.getElementById('review-comments').value,
+    savedAt: Date.now()
+  };
+  writeReviewDrafts(all);
+  const note = document.getElementById('review-draft-note');
+  if (note) note.textContent = 'Zapisano w tej przeglądarce o ' + new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }) + '.';
+}
+
+function removeReviewDraft(code) {
+  const all = readReviewDrafts();
+  delete all[code];
+  writeReviewDrafts(all);
+}
+
+let reviewDraftTimer = null;
+function scheduleReviewDraftSave() {
+  clearTimeout(reviewDraftTimer);
+  reviewDraftTimer = setTimeout(saveReviewDraft, 600);
+}
+
+function openReview(code, invite, savedScores, savedComments) {
+  CURRENT_CODE = code;
+  CURRENT_INVITE = invite;
+  Object.keys(scores).forEach(function(k) { delete scores[k]; });
+  Object.assign(scores, savedScores || {});
+  document.getElementById('review-comments').value = savedComments || '';
+  renderSubmission(invite);
+  renderCriteria();
+  document.getElementById('author-ksywa-display').textContent = invite.author_ksywa;
+  showScreen('screen-review');
+}
+
+function resumeReview(code) {
+  const draft = readReviewDrafts()[code];
+  if (!draft) return false;
+  const invite = Object.assign({ reviewer_ksywa: draft.reviewer }, draft.invite);
+  openReview(code, invite, draft.scores, draft.comments);
+  return true;
+}
+
+function renderResumeBanner() {
+  const banner = document.getElementById('resume-banner');
+  const all = readReviewDrafts();
+  writeReviewDrafts(all); // usuwa przeterminowane wpisy
+  const codes = Object.keys(all);
+  banner.innerHTML = '';
+  if (!codes.length) { banner.style.display = 'none'; return; }
+  const head = document.createElement('div');
+  head.innerHTML = '<strong>Masz niedokończoną recenzję.</strong> Możesz do niej wrócić:';
+  banner.appendChild(head);
+  codes.forEach(function(code) {
+    const d = all[code];
+    const row = document.createElement('div');
+    row.className = 'resume-item';
+    const label = document.createElement('span');
+    const rated = Object.keys(d.scores || {}).length;
+    label.textContent = 'Praca autora ' + d.invite.author_ksywa + ' (kod ' + code + '), ocenione wymiary: ' + rated + '/' + CRITERIA.length;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-primary';
+    btn.textContent = 'Wróć do recenzji →';
+    btn.onclick = function() { resumeReview(code); };
+    row.appendChild(label);
+    row.appendChild(btn);
+    banner.appendChild(row);
+  });
+  banner.style.display = '';
+}
+
+document.getElementById('review-comments').addEventListener('input', scheduleReviewDraftSave);
+window.addEventListener('pagehide', saveReviewDraft);
+document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'hidden') saveReviewDraft(); });
+renderResumeBanner();
 
 async function claimInvite() {
   const codeInp = document.getElementById('code-input');
@@ -330,8 +451,13 @@ async function claimInvite() {
   if (!code) { status.className = 'status-note err'; status.textContent = 'Wpisz kod od autora.'; return; }
   if (!nick) { status.className = 'status-note err'; status.textContent = 'Wpisz swoją ksywę.'; return; }
 
-  btn.disabled = true; btn.textContent = 'Sprawdzam...';
   if (typeof mbaSaveKsywa === 'function') mbaSaveKsywa(nick);
+
+  // Kod odebrany wcześniej w tej przeglądarce: wznów z wersji roboczej,
+  // bo ponowne /invites/claim zostałoby odrzucone.
+  if (resumeReview(code)) return;
+
+  btn.disabled = true; btn.textContent = 'Sprawdzam...';
 
   try {
     const res = await fetch(WORKER + '/invites/claim', {
@@ -341,11 +467,8 @@ async function claimInvite() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Nie udało się odebrać kodu.');
 
-    CURRENT_INVITE = data;
-    renderSubmission(data);
-    renderCriteria();
-    document.getElementById('author-ksywa-display').textContent = data.author_ksywa;
-    showScreen('screen-review');
+    openReview(code, Object.assign({ reviewer_ksywa: nick }, data), {}, '');
+    saveReviewDraft();
   } catch(e) {
     status.className = 'status-note err';
     status.textContent = e.message || 'Błąd połączenia.';
@@ -405,11 +528,13 @@ function renderCriteria() {
       b.type = 'button';
       b.className = 'score-btn';
       b.textContent = i;
+      if (scores[c.id] === i) b.classList.add('selected');
       b.onclick = (function(val, critId, buttonEl, rowEl) {
         return function() {
           scores[critId] = val;
           Array.from(rowEl.children).forEach(function(ch){ ch.classList.remove('selected'); });
           buttonEl.classList.add('selected');
+          saveReviewDraft();
         };
       })(i, c.id, b, row);
       row.appendChild(b);
@@ -430,6 +555,13 @@ async function submitReview() {
     errBox.textContent = 'Oceń wszystkie ' + CRITERIA.length + ' wymiarów (brakuje ' + missing.length + ').';
     return;
   }
+  const comments = document.getElementById('review-comments').value.trim();
+  if (comments.length < MIN_COMMENT_LENGTH) {
+    errBox.className = 'status-note err';
+    errBox.textContent = 'Napisz komentarz dla autora: co najmniej 2–3 zdania (minimum ' + MIN_COMMENT_LENGTH + ' znaków, teraz ' + comments.length + ').';
+    document.getElementById('review-comments').focus();
+    return;
+  }
   if (!CURRENT_INVITE || !CURRENT_INVITE.invite_id) {
     errBox.className = 'status-note err';
     errBox.textContent = 'Brak aktywnego zaproszenia. Wróć i wpisz kod ponownie.';
@@ -440,13 +572,16 @@ async function submitReview() {
   btn.disabled = true; btn.textContent = 'Zapisuję...';
 
   try {
-    const comments = document.getElementById('review-comments').value.trim();
     const res = await fetch(WORKER + '/reviews', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ invite_id: CURRENT_INVITE.invite_id, scores: scores, comments: comments || null })
+      body: JSON.stringify({ invite_id: CURRENT_INVITE.invite_id, scores: scores, comments: comments })
     });
     const data = await res.json();
     if (!res.ok || !data.success) throw new Error(data.error || 'Błąd zapisu oceny.');
+    clearTimeout(reviewDraftTimer);
+    removeReviewDraft(CURRENT_CODE);
+    CURRENT_INVITE = null;
+    CURRENT_CODE = null;
     showScreen('screen-review-done');
   } catch(e) {
     errBox.className = 'status-note err';

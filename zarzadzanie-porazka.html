@@ -77,6 +77,7 @@
   .q-textarea:focus { border-color:var(--accent); }
   .q-textarea.short { min-height:70px; }
   .autosave-note { font-size:0.75rem; color:var(--sec); text-align:right; margin-top:20px; }
+  .draft-banner { background:var(--accent-light); border:1px solid var(--accent); padding:14px 18px; margin-bottom:20px; font-size:0.86rem; line-height:1.55; }
 
   /* ── Buttons ── */
   .btn { padding:12px 24px; font-size:0.9rem; font-weight:700; font-family:inherit; cursor:pointer; border:none; }
@@ -193,11 +194,13 @@
         <span class="welcome-pill">Format tekstowy</span>
         <span class="welcome-pill">Peer-review z drugą osobą</span>
       </div>
+      <p>Możesz robić przerwy: odpowiedzi zapisują się automatycznie w tej przeglądarce. Żeby wrócić, otwórz ćwiczenie na tym samym komputerze i wpisz tę samą ksywę.</p>
+      <div class="draft-banner" id="draft-banner" style="display:none"></div>
       <span class="field-label">Twoja ksywa / pseudonim</span>
       <input class="text-input" type="text" id="nickname-input" placeholder="np. Panda, Orzeł, AS007..." maxlength="30" autocomplete="off">
       <div id="nick-err" style="font-size:0.82rem;color:var(--err);margin-top:6px;min-height:18px;"></div>
       <div style="margin-top:20px;">
-        <button class="btn btn-primary" onclick="startExercise()">Zacznij ćwiczenie →</button>
+        <button class="btn btn-primary" id="start-btn" onclick="startExercise()">Zacznij ćwiczenie →</button>
       </div>
     </div>
   </div>
@@ -394,22 +397,57 @@ function showScreen(id) {
   window.scrollTo(0, 0);
 }
 
-function loadDraft() {
+// Wersja robocza jest przypisana do ksywy (klucz DRAFT_KEY + ':' + ksywa),
+// żeby na wspólnym komputerze kolejna osoba nie dostała cudzego tekstu.
+let draftOwner = null;
+
+function draftKeyFor(nick) { return DRAFT_KEY + ':' + nick.trim().toLowerCase(); }
+
+function readDraft(nick) {
   try {
-    const raw = localStorage.getItem(DRAFT_KEY);
-    if (!raw) return;
-    const draft = JSON.parse(raw);
-    FIELD_IDS.forEach(function(id) {
-      if (draft[id]) document.getElementById(id).value = draft[id];
-    });
+    const raw = localStorage.getItem(draftKeyFor(nick));
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function draftFilledCount(draft) {
+  return FIELD_IDS.filter(function(id) { return draft && draft[id] && draft[id].trim(); }).length;
+}
+
+function formatSavedAt(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  return d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' }) + ', ' + d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+}
+
+// Jednorazowa migracja starej wersji roboczej zapisanej bez ksywy.
+function migrateLegacyDraft(nick) {
+  try {
+    const legacy = localStorage.getItem(DRAFT_KEY);
+    if (!legacy) return;
+    if (!localStorage.getItem(draftKeyFor(nick))) localStorage.setItem(draftKeyFor(nick), legacy);
+    localStorage.removeItem(DRAFT_KEY);
   } catch(e) {}
 }
 
+function loadDraft(nick) {
+  const draft = readDraft(nick);
+  FIELD_IDS.forEach(function(id) {
+    document.getElementById(id).value = (draft && draft[id]) || '';
+  });
+  if (draft && draft.savedAt) {
+    document.getElementById('autosave-note').textContent = 'Wczytano wersję roboczą z ' + formatSavedAt(draft.savedAt) + '. Zmiany zapisują się automatycznie w tej przeglądarce.';
+  }
+}
+
 function saveDraft() {
+  if (!draftOwner) return;
   try {
-    const draft = {};
+    const draft = { savedAt: Date.now() };
     FIELD_IDS.forEach(function(id) { draft[id] = document.getElementById(id).value; });
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    if (!draftFilledCount(draft)) { localStorage.removeItem(draftKeyFor(draftOwner)); return; }
+    localStorage.setItem(draftKeyFor(draftOwner), JSON.stringify(draft));
+    document.getElementById('autosave-note').textContent = 'Zapisano w tej przeglądarce o ' + new Date(draft.savedAt).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }) + '.';
   } catch(e) {}
 }
 
@@ -419,18 +457,46 @@ function scheduleAutosave() {
   autosaveTimer = setTimeout(saveDraft, 800);
 }
 
+function renderDraftBanner() {
+  const banner = document.getElementById('draft-banner');
+  const nick = (document.getElementById('nickname-input').value || '').trim();
+  const draft = nick ? readDraft(nick) : null;
+  const filled = draftFilledCount(draft);
+  const btn = document.getElementById('start-btn');
+  if (!filled) {
+    banner.style.display = 'none';
+    btn.textContent = 'Zacznij ćwiczenie →';
+    return;
+  }
+  banner.textContent = '';
+  const strong = document.createElement('strong');
+  strong.textContent = 'Masz zapisaną wersję roboczą.';
+  banner.appendChild(strong);
+  banner.appendChild(document.createTextNode(' Uzupełnione pola: ' + filled + '/' + FIELD_IDS.length +
+    (draft.savedAt ? ', ostatni zapis: ' + formatSavedAt(draft.savedAt) : '') + '.'));
+  banner.style.display = '';
+  btn.textContent = 'Kontynuuj ćwiczenie →';
+}
+
 function startExercise() {
   const inp = document.getElementById('nickname-input');
   const err = document.getElementById('nick-err');
   const nick = (inp.value || '').trim();
   if (!nick) { err.textContent = 'Wpisz swoją ksywę, żeby kontynuować.'; return; }
   if (typeof mbaSaveKsywa === 'function') mbaSaveKsywa(nick);
-  loadDraft();
-  FIELD_IDS.forEach(function(id) {
-    document.getElementById(id).addEventListener('input', scheduleAutosave);
-  });
+  migrateLegacyDraft(nick);
+  draftOwner = nick;
+  loadDraft(nick);
   showScreen('screen-exercise');
 }
+
+FIELD_IDS.forEach(function(id) {
+  document.getElementById(id).addEventListener('input', scheduleAutosave);
+});
+window.addEventListener('pagehide', saveDraft);
+document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'hidden') saveDraft(); });
+document.getElementById('nickname-input').addEventListener('input', renderDraftBanner);
+document.addEventListener('DOMContentLoaded', renderDraftBanner);
 
 function copyInviteCode() {
   const code = document.getElementById('invite-code-display').textContent;
@@ -473,7 +539,9 @@ async function submitExercise() {
     const invData = await invRes.json();
     if (!invRes.ok || !invData.invite_code) throw new Error(invData.error || 'Błąd generowania kodu.');
 
-    try { localStorage.removeItem(DRAFT_KEY); } catch(e) {}
+    clearTimeout(autosaveTimer);
+    try { localStorage.removeItem(draftKeyFor(nick)); } catch(e) {}
+    draftOwner = null;
     document.getElementById('invite-code-display').textContent = invData.invite_code;
     showScreen('screen-done');
   } catch(e) {
