@@ -627,6 +627,11 @@ function renderQuestion() {
     </div>`;
 }
 
+// Hasło grupy z bieżącej sesji; Worker wymaga go przy sprawdzaniu odpowiedzi.
+function getSessionCode() {
+  try { const s = JSON.parse(sessionStorage.getItem(SESSION_KEY)); return (s && s.password) || ''; } catch(e) { return ''; }
+}
+
 async function selectAnswer(i) {
   if (answers[currentQ] !== null) return;
   answers[currentQ] = i;
@@ -636,7 +641,7 @@ async function selectAnswer(i) {
   try {
     const res = await fetch(WORKER + '/check-answer', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ id: q.id, selected: i })
+      body: JSON.stringify({ code: getSessionCode(), id: q.id, selected: i })
     });
     const data = await res.json();
     answerData[currentQ] = data;
@@ -751,8 +756,9 @@ async function saveResult(correct, pct, cats) {
     detailRows.trim(),
   ].join('\n');
 
+  let saved = false;
   try {
-    await fetch(WORKER + '/private-issue', {
+    const res = await fetch(WORKER + '/private-issue', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         title: `[Predyspozycje] ${nickname} — ${groupName} — ${correct}/${TOTAL_QUESTIONS} (${pct}%)`,
@@ -761,7 +767,35 @@ async function saveResult(correct, pct, cats) {
         code: password
       })
     });
+    const data = await res.json().catch(() => null);
+    saved = res.ok && !!(data && data.number);
   } catch(e) { console.warn('Issue save failed', e); }
+  showSaveStatus(saved, () => saveResult(correct, pct, cats));
+}
+
+// Informacja na ekranie wyniku, czy wynik naprawdę dotarł do prowadzącego.
+// Przy błędzie student może ponowić zapis bez powtarzania ćwiczenia.
+function showSaveStatus(saved, retry) {
+  const screen = document.getElementById('screen-result');
+  let box = document.getElementById('save-status');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'save-status';
+    box.setAttribute('role', 'status');
+    screen.insertBefore(box, screen.firstChild);
+  }
+  box.textContent = '';
+  box.style.cssText = 'margin:0 0 16px;padding:12px 14px;font-size:0.9rem;line-height:1.5;border:1.5px solid;' +
+    (saved ? 'border-color:#2E7D5B;background:#EAF5EF;color:#1F5A41;' : 'border-color:#C0392B;background:#FDF0EE;color:#8E2A1F;');
+  if (saved) { box.textContent = '✓ Wynik zapisany i przekazany prowadzącemu.'; return; }
+  box.appendChild(document.createTextNode('Nie udało się zapisać wyniku, więc prowadzący go nie zobaczy. Sprawdź połączenie i spróbuj ponownie. Jeśli błąd się powtórzy, zrób zrzut ekranu wyniku i przekaż go prowadzącemu. '));
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = 'Spróbuj zapisać ponownie';
+  btn.style.cssText = 'margin-top:8px;padding:8px 14px;border:0;background:#8E2A1F;color:#fff;font:inherit;font-weight:700;cursor:pointer;';
+  btn.onclick = () => { btn.disabled = true; btn.textContent = 'Zapisuję…'; retry(); };
+  box.appendChild(document.createElement('br'));
+  box.appendChild(btn);
 }
 
 

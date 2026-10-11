@@ -1082,7 +1082,14 @@ ${audit ? `## 🔍 Data Audit\n\n${audit}\n` : '> Brak Data Audit.'}`;
 }
 
 // ─── SUCCESS / ERROR ──────────────────────────────────────────────────────────
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
 function showSuccess(nick, ans, audit, saved) {
+  nick = escapeHtml(nick);
   const confMap = ['—','★☆☆☆☆','★★☆☆☆','★★★☆☆','★★★★☆','★★★★★'];
   const choiceLabel = { tak:'Tak', nie:'Nie', nie_wiem:'Nie wiem' };
   const dirLabel = { pos:'📈 Poz.', neg:'📉 Neg.', nieokreślona:'—' };
@@ -1124,6 +1131,9 @@ async function verifyGroupGate() {
     const data = await res.json();
     if (data.valid) {
       _mbaGroupName = data.groupName;
+      // Zapis sesji jak na pozostałych stronach: zapis wyniku bierze hasło z sesji,
+      // więc bez tego wejście prosto na tę stronę kończyło się odmową przy zapisie.
+      try { sessionStorage.setItem('mba_session', JSON.stringify({ password: password, groupName: data.groupName, allowedExercises: data.allowedExercises || null })); } catch(e) {}
       const el = document.getElementById('mba-group-gate'); if(el) el.style.display='none';
     } else {
       errEl.textContent = data.error || 'Nieprawidłowe hasło.';
