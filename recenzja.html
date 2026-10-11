@@ -574,7 +574,7 @@ async function submitReview() {
   try {
     const res = await fetch(WORKER + '/reviews', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ invite_id: CURRENT_INVITE.invite_id, scores: scores, comments: comments })
+      body: JSON.stringify({ invite_id: CURRENT_INVITE.invite_id, scores: scores, comments: comments, reviewer_ksywa: CURRENT_INVITE.reviewer_ksywa || null })
     });
     const data = await res.json();
     if (!res.ok || !data.success) throw new Error(data.error || 'Błąd zapisu oceny.');

@@ -236,6 +236,18 @@
       </div>
     </div>
 
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Niedokończone recenzje</h2>
+        <button class="btn btn-ghost btn-sm" onclick="loadPeerInvites()">↻ Odśwież</button>
+      </div>
+      <div class="panel-body" style="padding:0;">
+        <div style="padding:14px 24px 0;font-size:0.85rem;color:var(--sec);line-height:1.55;">Kody odebrane przez recenzenta, dla których nie zapisano jeszcze oceny. Odblokowanie przywraca kod do stanu sprzed odebrania: recenzent (albo inna osoba) może go wpisać ponownie. Kod dostaje też co najmniej 3 dni ważności.</div>
+        <div id="peer-msg" style="padding:0 24px;"></div>
+        <div id="peer-container"><div class="empty-state">Ładowanie...</div></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -298,7 +310,7 @@ function doLogin() {
   loadGroups().then(ok => {
     if (ok) {
       try { sessionStorage.setItem('mba_admin_key', key); } catch(e) {}
-      loadConfig(); updateConfigTotal();
+      loadConfig(); updateConfigTotal(); loadPeerInvites();
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('main-screen').style.display = 'block';
     } else {
@@ -390,6 +402,69 @@ function renderGroups(groups) {
     </div>`;
   });
   c.innerHTML = h;
+}
+
+// ── Niedokończone recenzje (peer review) ─────────────────────────────────
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function fmtDateTime(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  return d.toLocaleDateString('pl-PL', { day:'numeric', month:'short' }) + ', ' + d.toLocaleTimeString('pl-PL', { hour:'2-digit', minute:'2-digit' });
+}
+
+async function loadPeerInvites() {
+  const c = document.getElementById('peer-container');
+  try {
+    const res = await fetch(WORKER+'/admin/peer-invites', {
+      method:'POST', headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY}, body:'{}'
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Błąd pobierania listy.');
+    renderPeerInvites(data.invites || []);
+  } catch(e) {
+    c.innerHTML = '<div class="empty-state">Nie udało się pobrać listy: ' + escapeHtml(e.message) + '</div>';
+  }
+}
+
+function renderPeerInvites(invites) {
+  const c = document.getElementById('peer-container');
+  if (!invites.length) { c.innerHTML = '<div class="empty-state">Brak niedokończonych recenzji.</div>'; return; }
+  const now = new Date();
+  c.innerHTML = invites.map(inv => {
+    const expired = new Date(inv.expires_at) < now;
+    return `<div class="group-card">
+      <div class="group-info">
+        <div class="group-name"><span class="code-pill">${escapeHtml(inv.invite_code)}</span></div>
+        <div class="group-dates">Autor: <strong>${escapeHtml(inv.author_ksywa)}</strong> · Recenzent: <strong>${escapeHtml(inv.reviewer_ksywa || '—')}</strong></div>
+        <div class="group-dates">Odebrany: ${fmtDateTime(inv.claimed_at)} · Ważny do: ${fmtDateTime(inv.expires_at)}</div>
+      </div>
+      <div class="group-status-wrap"><span class="badge ${expired ? 'badge-expired' : 'badge-active'}">${expired ? 'Wygasł' : 'W toku'}</span></div>
+      <div class="group-actions">
+        <button class="btn btn-primary btn-sm" onclick="unlockInvite('${escapeHtml(inv.invite_code)}')">Odblokuj</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function unlockInvite(code) {
+  const msg = document.getElementById('peer-msg');
+  if (!/^[A-Z0-9]{6}$/.test(code)) return;
+  if (!confirm('Odblokować kod ' + code + '? Recenzent straci przypisanie i będzie mógł wpisać kod od nowa.')) return;
+  try {
+    const res = await fetch(WORKER+'/admin/unlock-invite', {
+      method:'POST', headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_KEY},
+      body: JSON.stringify({ invite_code: code })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || 'Błąd odblokowania.');
+    msg.innerHTML = '<div class="alert alert-ok">Kod ' + escapeHtml(data.invite_code) + ' odblokowany, ważny do ' + fmtDateTime(data.expires_at) + '.</div>';
+    loadPeerInvites();
+  } catch(e) {
+    msg.innerHTML = '<div class="alert alert-err">' + escapeHtml(e.message) + '</div>';
+  }
 }
 
 async function createGroup() {
@@ -559,7 +634,7 @@ document.getElementById('date-modal').addEventListener('click', function(e) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-screen').style.display = 'block';
         loadConfig(); updateConfigTotal();
-        loadConfig(); updateConfigTotal();
+        loadPeerInvites();
       } else {
         ADMIN_KEY = '';
         sessionStorage.removeItem('mba_admin_key');
