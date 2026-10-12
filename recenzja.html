@@ -100,6 +100,19 @@
   .result-hero h2 { font-size:1.5rem; font-weight:800; margin-bottom:8px; }
   .result-hero p { color:rgba(255,255,255,0.75); font-size:0.9rem; line-height:1.6; }
 
+  /* ── Przełącznik języka ── */
+  .lang-switch { display:inline-flex; border:1.5px solid var(--border); }
+  .lang-switch button { background:#fff; border:none; padding:5px 10px; font-family:inherit; font-size:0.72rem; font-weight:700; letter-spacing:0.06em; color:var(--sec); cursor:pointer; }
+  .lang-switch button + button { border-left:1.5px solid var(--border); }
+  .lang-switch button.active { background:var(--text); color:#fff; }
+  .gate-box .lang-switch-slot { display:flex; justify-content:flex-end; margin:-28px -20px 16px 0; }
+  @media (max-width:600px) {
+    .mba-topbar { padding:0 16px; }
+    .mba-topbar-group { display:none !important; }
+  }
+  body.lang-fixed .lang-switch-slot { display:none; }
+  .lang-note { font-size:0.8rem; color:var(--sec); margin-bottom:12px; }
+
   @media (max-width:600px) {
     .welcome-card, .gate-box { padding:32px 24px; }
     .submission-box, .crit-card { padding:18px 16px; }
@@ -156,26 +169,28 @@
   <div class="mba-topbar-left">
     <a class="mba-topbar-back" href="index.html">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7L9 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Platforma MBA
+      <span data-i18n="tb.back">Platforma MBA</span>
     </a>
     <div class="mba-topbar-divider"></div>
-    <div class="mba-topbar-title">Recenzja</div>
+    <div class="mba-topbar-title" data-i18n="tb.title">Recenzja</div>
   </div>
   <div class="mba-topbar-right">
-    <div class="mba-topbar-group" id="tb-group" style="display:none">Grupa: <strong id="tb-groupname"></strong></div>
-    <button class="mba-topbar-logout" id="tb-logout" style="display:none" onclick="mbaClearSession()">Wyloguj</button>
+    <div class="lang-switch-slot"></div>
+    <div class="mba-topbar-group" id="tb-group" style="display:none"><span data-i18n="tb.group">Grupa:</span> <strong id="tb-groupname"></strong></div>
+    <button class="mba-topbar-logout" id="tb-logout" style="display:none" onclick="mbaClearSession()" data-i18n="tb.logout">Wyloguj</button>
   </div>
 </div>
 
 <!-- GATE -->
 <div id="mba-group-gate">
   <div class="gate-box">
-    <p class="gate-eyebrow">Platforma MBA</p>
-    <h2>Dostęp do platformy</h2>
-    <p>Wpisz hasło swojej grupy, aby kontynuować.</p>
-    <input class="gate-input" type="text" id="mba-gate-input" placeholder="Hasło grupy..." autocomplete="off" onkeydown="if(event.key==='Enter')verifyGroupGate();">
+    <div class="lang-switch-slot"></div>
+    <p class="gate-eyebrow" data-i18n="tb.back">Platforma MBA</p>
+    <h2 data-i18n="gate.h">Dostęp do platformy</h2>
+    <p data-i18n="gate.p">Wpisz hasło swojej grupy, aby kontynuować.</p>
+    <input class="gate-input" type="text" id="mba-gate-input" data-i18n-ph="gate.ph" placeholder="Hasło grupy..." autocomplete="off" onkeydown="if(event.key==='Enter')verifyGroupGate();">
     <div class="gate-error" id="gate-err"></div>
-    <button class="gate-btn" id="gate-btn" onclick="verifyGroupGate()">Wejdź →</button>
+    <button class="gate-btn" id="gate-btn" onclick="verifyGroupGate()" data-i18n="gate.btn">Wejdź →</button>
   </div>
 </div>
 
@@ -183,19 +198,19 @@
 <div id="screen-code" class="screen active">
   <div class="container">
     <div class="welcome-card">
-      <p class="eyebrow">Recenzja koleżeńska</p>
-      <h1>Oceń cudze ćwiczenie</h1>
+      <p class="eyebrow" data-i18n="code.eyebrow">Recenzja koleżeńska</p>
+      <h1 data-i18n="code.h">Oceń cudze ćwiczenie</h1>
       <div class="resume-banner" id="resume-banner" style="display:none"></div>
-      <p>Wpisz kod, który dostałeś/aś od osoby, której ćwiczenie masz ocenić, oraz swoją ksywę. Kod jest jednorazowy i ważny 7 dni. Możesz zrobić przerwę: rozpoczęta recenzja zapisuje się w tej przeglądarce i wrócisz do niej, wpisując ten sam kod.</p>
-      <span class="field-label">Kod od autora</span>
-      <input class="text-input" type="text" id="code-input" placeholder="np. K7X2QM" maxlength="6" autocomplete="off">
+      <p data-i18n="code.p">Wpisz kod, który dostałeś/aś od osoby, której ćwiczenie masz ocenić, oraz swoją ksywę. Kod jest jednorazowy i ważny 7 dni. Możesz zrobić przerwę: rozpoczęta recenzja zapisuje się w tej przeglądarce i wrócisz do niej, wpisując ten sam kod.</p>
+      <span class="field-label" data-i18n="code.label">Kod od autora</span>
+      <input class="text-input" type="text" id="code-input" data-i18n-ph="code.ph" placeholder="np. K7X2QM" maxlength="6" autocomplete="off">
       <div class="field-gap">
-        <span class="field-label">Twoja ksywa / pseudonim</span>
-        <input class="text-input" style="text-transform:none;letter-spacing:normal;" type="text" id="reviewer-nick-input" placeholder="np. Panda, Orzeł, AS007..." maxlength="30" autocomplete="off">
+        <span class="field-label" data-i18n="nick.label">Twoja ksywa / pseudonim</span>
+        <input class="text-input" style="text-transform:none;letter-spacing:normal;" type="text" id="reviewer-nick-input" data-i18n-ph="nick.ph" placeholder="np. Panda, Orzeł, AS007..." maxlength="30" autocomplete="off">
       </div>
       <div class="status-note" id="code-status"></div>
       <div style="margin-top:16px;">
-        <button class="btn btn-primary" id="claim-btn" onclick="claimInvite()">Odbierz ćwiczenie do oceny →</button>
+        <button class="btn btn-primary" id="claim-btn" onclick="claimInvite()" data-i18n="claim.btn">Odbierz ćwiczenie do oceny →</button>
       </div>
     </div>
   </div>
@@ -204,25 +219,26 @@
 <!-- SCREEN: REVIEW -->
 <div id="screen-review" class="screen">
   <div class="container">
-    <div class="author-banner">Oceniasz ćwiczenie autora: <strong id="author-ksywa-display"></strong></div>
+    <div class="lang-note" id="review-lang-note" style="display:none"></div>
+    <div class="author-banner"><span data-i18n="author.banner">Oceniasz ćwiczenie autora:</span> <strong id="author-ksywa-display"></strong></div>
 
-    <div class="part-header"><h2>Treść ćwiczenia autora</h2></div>
+    <div class="part-header"><h2 data-i18n="sec.content">Treść ćwiczenia autora</h2></div>
     <div id="submission-content"></div>
 
-    <div class="part-header"><h2>Pełne kryteria oceny</h2></div>
-    <div class="scale-note">Opisy podają trzy punkty odniesienia: 5, 3 i 0–1. Oceny 4 i 2 są pośrednie: wybierz 4, gdy praca wyraźnie przekracza opis dla 3, ale nie spełnia w pełni opisu dla 5. Wybierz 2, gdy jest między 3 a 0–1.</div>
+    <div class="part-header"><h2 data-i18n="sec.criteria">Pełne kryteria oceny</h2></div>
+    <div class="scale-note" data-i18n="scale.note">Opisy podają trzy punkty odniesienia: 5, 3 i 0–1. Oceny 4 i 2 są pośrednie: wybierz 4, gdy praca wyraźnie przekracza opis dla 3, ale nie spełnia w pełni opisu dla 5. Wybierz 2, gdy jest między 3 a 0–1.</div>
     <div id="criteria-form"></div>
 
     <div class="crit-card comments-box">
-      <div class="crit-title">Komentarz dla autora (wymagany)</div>
-      <div class="comments-hint">Same liczby niewiele mówią autorowi. Napisz co najmniej 2–3 zdania: co w tej pracy jest najmocniejsze i co warto poprawić.</div>
-      <textarea class="comments-textarea" id="review-comments" placeholder="Najmocniejsza część tej pracy to... Warto poprawić..."></textarea>
+      <div class="crit-title" data-i18n="comment.title">Komentarz dla autora (wymagany)</div>
+      <div class="comments-hint" data-i18n="comment.hint">Same liczby niewiele mówią autorowi. Napisz co najmniej 2–3 zdania: co w tej pracy jest najmocniejsze i co warto poprawić.</div>
+      <textarea class="comments-textarea" id="review-comments" data-i18n-ph="comment.ph" placeholder="Najmocniejsza część tej pracy to... Warto poprawić..."></textarea>
     </div>
 
     <div class="status-note" id="review-err"></div>
     <div class="btn-row">
-      <div class="draft-note" id="review-draft-note">Recenzja zapisywana automatycznie w tej przeglądarce.</div>
-      <button class="btn btn-primary" id="review-submit-btn" onclick="submitReview()">Zapisz ocenę</button>
+      <div class="draft-note" id="review-draft-note" data-i18n="draft.note">Recenzja zapisywana automatycznie w tej przeglądarce.</div>
+      <button class="btn btn-primary" id="review-submit-btn" onclick="submitReview()" data-i18n="rev.btn">Zapisz ocenę</button>
     </div>
   </div>
 </div>
@@ -231,16 +247,219 @@
 <div id="screen-review-done" class="screen">
   <div class="container">
     <div class="result-hero">
-      <h2>Ocena zapisana</h2>
-      <p>Dziękujemy za recenzję. Autor ćwiczenia będzie mógł zobaczyć Twoją ocenę na platformie.</p>
+      <h2 data-i18n="done.h">Ocena zapisana</h2>
+      <p data-i18n="done.p">Dziękujemy za recenzję. Autor ćwiczenia będzie mógł zobaczyć Twoją ocenę na platformie.</p>
     </div>
-    <a class="btn btn-primary" href="index.html" style="text-decoration:none; display:inline-block;">Wróć do platformy</a>
+    <a class="btn btn-primary" href="index.html" style="text-decoration:none; display:inline-block;" data-i18n="back">Wróć do platformy</a>
   </div>
 </div>
 
 <script>
 const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
 const SESSION_KEY = 'mba_session';
+
+const I18N = {
+  pl: {
+    'gate.empty': 'Wpisz hasło grupy.',
+    'gate.checking': 'Sprawdzam...',
+    'gate.btn': 'Wejdź →',
+    'gate.bad': 'Nieprawidłowe hasło grupy.',
+    'net': 'Błąd połączenia.',
+    'draft.saved': 'Zapisano w tej przeglądarce o {t}.',
+    'resume.h': 'Masz niedokończoną recenzję.',
+    'resume.p': ' Możesz do niej wrócić:',
+    'resume.item': 'Praca autora {a} (kod {c}), ocenione wymiary: {n}/{total}',
+    'resume.btn': 'Wróć do recenzji →',
+    'claim.nocode': 'Wpisz kod od autora.',
+    'claim.nonick': 'Wpisz swoją ksywę.',
+    'claim.err': 'Nie udało się odebrać kodu.',
+    'claim.btn': 'Odbierz ćwiczenie do oceny →',
+    'sub.empty': '(brak odpowiedzi)',
+    'weight': 'Waga: ',
+    'rev.missing': 'Oceń wszystkie {total} wymiarów (brakuje {n}).',
+    'rev.comment': 'Napisz komentarz dla autora: co najmniej 2–3 zdania (minimum {min} znaków, teraz {len}).',
+    'rev.noinvite': 'Brak aktywnego zaproszenia. Wróć i wpisz kod ponownie.',
+    'rev.saving': 'Zapisuję...',
+    'rev.err': 'Błąd zapisu oceny.',
+    'rev.btn': 'Zapisz ocenę',
+    'lang.note': 'Ta recenzja jest po polsku, bo ćwiczenie zostało napisane po polsku.'
+  },
+  en: {
+    'page.title': 'Review MBA',
+    'tb.back': 'MBA Platform',
+    'tb.title': 'Review',
+    'tb.group': 'Group:',
+    'tb.logout': 'Log out',
+    'gate.h': 'Platform access',
+    'gate.p': 'Enter your group password to continue.',
+    'gate.ph': 'Group password...',
+    'gate.btn': 'Enter →',
+    'gate.empty': 'Enter your group password.',
+    'gate.checking': 'Checking...',
+    'gate.bad': 'Invalid group password.',
+    'net': 'Connection error.',
+    'code.eyebrow': 'Peer review',
+    'code.h': 'Review someone else\'s exercise',
+    'code.p': 'Enter the code you received from the person whose exercise you are reviewing, and your nickname. The code can be used once and is valid for 7 days. You can take a break: a started review is saved in this browser, and you can return to it by entering the same code.',
+    'code.label': 'Code from the author',
+    'code.ph': 'e.g. K7X2QM',
+    'nick.label': 'Your nickname',
+    'nick.ph': 'e.g. Panda, Eagle, AS007...',
+    'claim.btn': 'Claim the exercise for review →',
+    'author.banner': 'You are reviewing the exercise by:',
+    'sec.content': 'The author\'s exercise',
+    'sec.criteria': 'Full assessment criteria',
+    'scale.note': 'The descriptions give three reference points: 5, 3 and 0–1. Scores 4 and 2 are intermediate: choose 4 when the work clearly goes beyond the description for 3 but does not fully meet the description for 5. Choose 2 when it falls between 3 and 0–1.',
+    'comment.title': 'Comment for the author (required)',
+    'comment.hint': 'Numbers alone tell the author little. Write at least 2–3 sentences: what is strongest in this work and what is worth improving.',
+    'comment.ph': 'The strongest part of this work is... It would be worth improving...',
+    'draft.note': 'Review saved automatically in this browser.',
+    'rev.btn': 'Save review',
+    'done.h': 'Review saved',
+    'done.p': 'Thank you for your review. The author of the exercise will be able to see your review on the platform.',
+    'back': 'Back to the platform',
+    'draft.saved': 'Saved in this browser at {t}.',
+    'resume.h': 'You have an unfinished review.',
+    'resume.p': ' You can return to it:',
+    'resume.item': 'Work by {a} (code {c}), criteria scored: {n}/{total}',
+    'resume.btn': 'Return to the review →',
+    'claim.nocode': 'Enter the code from the author.',
+    'claim.nonick': 'Enter your nickname.',
+    'claim.err': 'Could not claim the code.',
+    'sub.empty': '(no answer)',
+    'weight': 'Weight: ',
+    'rev.missing': 'Score all {total} criteria ({n} missing).',
+    'rev.comment': 'Write a comment for the author: at least 2–3 sentences (minimum {min} characters, currently {len}).',
+    'rev.noinvite': 'No active invite. Go back and enter the code again.',
+    'rev.saving': 'Saving...',
+    'rev.err': 'Could not save the review.',
+    'lang.note': 'This review is in English because the exercise was written in English.'
+  }
+};
+
+// ── Język interfejsu (PL/EN) ────────────────────────────────────────────────
+// Wybór studenta jest w localStorage pod 'mba_lang' (wspólny z index.html),
+// a ?lang=en w adresie go ustawia. Teksty PL statycznego HTML zbieramy przy
+// pierwszym przełączeniu, więc I18N.en tłumaczy HTML i teksty z JS, a I18N.pl
+// zawiera tylko teksty generowane w JS.
+const MBA_LANG_KEY = 'mba_lang';
+function mbaReadLang() {
+  try {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q === 'pl' || q === 'en') { localStorage.setItem(MBA_LANG_KEY, q); return q; }
+    return localStorage.getItem(MBA_LANG_KEY) === 'en' ? 'en' : 'pl';
+  } catch(e) { return 'pl'; }
+}
+let MBA_LANG = mbaReadLang();
+const MBA_LANG_HOOKS = [];
+const MBA_TITLE_PL = document.title;
+
+function t(key, vars) {
+  const dict = I18N[MBA_LANG] || {};
+  let s = dict[key] !== undefined ? dict[key] : (I18N.pl[key] !== undefined ? I18N.pl[key] : key);
+  if (vars) Object.keys(vars).forEach(function(k) { s = s.split('{' + k + '}').join(vars[k]); });
+  return s;
+}
+
+// Komunikaty Workera są po polsku; w EN tłumaczymy je tutaj.
+const WORKER_ERR_EN = {
+  'Brak hasła': 'Enter your group password.',
+  'Nieprawidłowe hasło grupy': 'Invalid group password.',
+  'Dostęp dla tej grupy został zamknięty': 'Access for this group has been closed.',
+  'Dostęp do tej grupy jeszcze nie jest aktywny': 'Access for this group is not active yet.',
+  'Dostęp dla tej grupy wygasł': 'Access for this group has expired.',
+  'Nieprawidłowy kod dostępu': 'Invalid access code. Log in again with your group password.',
+  'Dostęp dla tej grupy jest zamknięty albo wygasł.': 'Access for this group is closed or has expired.',
+  'Unauthorized': 'Invalid access code. Log in again with your group password.',
+  'Brak ksywy autora.': 'Author nickname is missing.',
+  'Ksywa zbyt długa.': 'The nickname is too long.',
+  'Brak treści ćwiczenia.': 'The exercise content is missing.',
+  'Treść ćwiczenia jest zbyt długa.': 'The exercise content is too long.',
+  'Błąd zapisu do bazy.': 'Could not save to the database. Please try again.',
+  'Błąd bazy danych.': 'Database error. Please try again.',
+  'Nie znaleziono ćwiczenia dla tej ksywy.': 'No exercise found for this nickname.',
+  'Kod dla tego ćwiczenia został już wygenerowany.': 'A code has already been generated for this exercise.',
+  'Nie udało się wygenerować unikalnego kodu, spróbuj ponownie.': 'Could not generate a unique code. Please try again.',
+  'Brak kodu zaproszenia.': 'The invite code is missing.',
+  'Brak ksywy recenzenta.': 'Reviewer nickname is missing.',
+  'Nieprawidłowy kod zaproszenia.': 'Invalid invite code.',
+  'Ten kod pochodzi z innej grupy.': 'This code belongs to a different group.',
+  'Kod zaproszenia wygasł.': 'The invite code has expired.',
+  'Ten kod został już wykorzystany.': 'This code has already been used.',
+  'Nie możesz ocenić własnego ćwiczenia.': 'You cannot review your own exercise.',
+  'Brak wyniku oceny.': 'The scores are missing.',
+  'Nieprawidłowy wynik oceny.': 'Invalid scores.',
+  'Komentarz dla autora jest wymagany (minimum 80 znaków).': 'A comment for the author is required (at least 80 characters).',
+  'Komentarz jest zbyt długi.': 'The comment is too long.',
+  'Ocena została już zapisana dla tego zaproszenia.': 'A review has already been saved for this invite.',
+  'Ten kod został odebrany przez inną osobę.': 'This code was claimed by someone else.',
+  'Brak ksywy.': 'Enter your nickname.',
+  'Wpisz 6-znakowy kod, który dostałeś po zakończeniu ćwiczenia.': 'Enter the 6-character code you received after finishing the exercise.'
+};
+
+function workerErr(msg, fallbackKey) {
+  if (!msg) return t(fallbackKey);
+  if (MBA_LANG !== 'en') return msg;
+  if (WORKER_ERR_EN[msg]) return WORKER_ERR_EN[msg];
+  const wait = /^Za dużo.*?(\d+)s\.$/.exec(msg);
+  if (wait) return 'Too many attempts. Try again in ' + wait[1] + 's.';
+  return t(fallbackKey);
+}
+
+function applyI18n() {
+  const en = MBA_LANG === 'en';
+  document.documentElement.lang = MBA_LANG;
+  document.title = en && I18N.en['page.title'] ? I18N.en['page.title'] : MBA_TITLE_PL;
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    if (el.dataset.i18nPl === undefined) el.dataset.i18nPl = el.textContent;
+    const v = I18N.en[el.dataset.i18n];
+    el.textContent = en && v !== undefined ? v : el.dataset.i18nPl;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el) {
+    if (el.dataset.i18nPlPh === undefined) el.dataset.i18nPlPh = el.placeholder;
+    const v = I18N.en[el.dataset.i18nPh];
+    el.placeholder = en && v !== undefined ? v : el.dataset.i18nPlPh;
+  });
+  document.querySelectorAll('.lang-switch button').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.lang === MBA_LANG);
+  });
+  MBA_LANG_HOOKS.forEach(function(fn) { fn(); });
+}
+
+// persist=false: zmiana tylko na tej stronie (np. recenzja w języku pracy),
+// bez nadpisywania wyboru studenta.
+function setLang(lang, persist) {
+  MBA_LANG = lang === 'en' ? 'en' : 'pl';
+  if (persist !== false) { try { localStorage.setItem(MBA_LANG_KEY, MBA_LANG); } catch(e) {} }
+  applyI18n();
+}
+
+function mountLangSwitches() {
+  document.querySelectorAll('.lang-switch-slot').forEach(function(slot) {
+    const sw = document.createElement('div');
+    sw.className = 'lang-switch';
+    ['pl', 'en'].forEach(function(code) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.lang = code;
+      b.textContent = code.toUpperCase();
+      b.onclick = function() { setLang(code); };
+      sw.appendChild(b);
+    });
+    slot.appendChild(sw);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() { mountLangSwitches(); applyI18n(); });
+
+// Recenzja odbywa się w języku pracy autora (content.lang, domyślnie PL),
+// niezależnie od wyboru recenzenta. Na czas recenzji przełącznik znika.
+let REVIEW_LANG = null;
+function reviewLangOf(invite) {
+  const l = invite && invite.content && invite.content.lang;
+  return l === 'en' ? 'en' : 'pl';
+}
+MBA_LANG_HOOKS.push(function() { if (!REVIEW_LANG) renderResumeBanner(); });
 
 function mbaClearSession() {
   sessionStorage.removeItem(SESSION_KEY);
@@ -263,8 +482,8 @@ async function verifyGroupGate() {
   const err = document.getElementById('gate-err');
   const btn = document.getElementById('gate-btn');
   const pw = (inp ? inp.value : '').trim();
-  if (!pw) { err.textContent = 'Wpisz hasło grupy.'; return; }
-  btn.disabled = true; btn.textContent = 'Sprawdzam...';
+  if (!pw) { err.textContent = t('gate.empty'); return; }
+  btn.disabled = true; btn.textContent = t('gate.checking');
   err.textContent = '';
   try {
     const res = await fetch(WORKER + '/verify-group', {
@@ -281,10 +500,10 @@ async function verifyGroupGate() {
       document.getElementById('tb-groupname').textContent = data.groupName;
       document.getElementById('tb-logout').style.display = '';
     } else {
-      err.textContent = data.error || 'Nieprawidłowe hasło grupy.';
+      err.textContent = workerErr(data.error, 'gate.bad');
     }
-  } catch(e) { err.textContent = 'Błąd połączenia.'; }
-  btn.disabled = false; btn.textContent = 'Wejdź →';
+  } catch(e) { err.textContent = t('net'); }
+  btn.disabled = false; btn.textContent = t('gate.btn');
 }
 
 function showScreen(id) {
@@ -309,6 +528,21 @@ const FIELD_LABELS = {
   c3: 'C3. Przyczyna źródłowa vs objaw',
   c4: 'C4. Rekomendacje'
 };
+const FIELD_LABELS_EN = {
+  a1: 'A1. Timeline of facts',
+  a2: 'A2. Separating facts from interpretation',
+  a3: 'A3. Impact map',
+  a4: 'A4. Control audit',
+  b1: 'B1. Describing the failure',
+  b2: 'B2. Naming emotions',
+  b3: 'B3. What could I realistically have done differently?',
+  b4: 'B4. What does this say about you, and what about the situation?',
+  b5: 'B5. Closure',
+  c1: 'C1. The 5 Whys method',
+  c2: 'C2. Categorising causes (Ishikawa)',
+  c3: 'C3. Root cause vs symptom',
+  c4: 'C4. Recommendations'
+};
 
 // Pełne kryteria oceny (Część 3 dokumentu ćwiczenia) — wagi i opisy poziomów
 const CRITERIA = [
@@ -323,6 +557,18 @@ const CRITERIA = [
   { id: 'rootcause', title: 'Kategoryzacja i przyczyna źródłowa (C2–C3)', weight: '10%', l5: 'Min. 4 kategorie Ishikawy sprawdzone, przyczyna źródłowa jasno wskazana', l3: 'Kategoryzacja częściowa, przyczyna niejednoznaczna', l0: 'Brak rozróżnienia przyczyna/objaw' },
   { id: 'rekomendacje', title: 'Konkretność rekomendacji (C4)', weight: '5%', l5: '3 rekomendacje systemowe, wdrażalne, adresujące przyczynę źródłową', l3: 'Częściowo ogólnikowe ("być bardziej uważnym")', l0: 'Czysto deklaratywne, nie adresują przyczyny źródłowej' }
 ];
+const CRITERIA_EN = {
+  faktografia:  { title: 'Factual accuracy (A1)', l5: 'Specific, verifiable timeline with no judgements', l3: 'Some points contain hidden judgements or are too general', l0: 'Timeline mixed with interpretation or too brief' },
+  rozdzielenie: { title: 'Separating facts and interpretation (A2)', l5: 'The "fact" column is free of evaluation in at least 90% of rows', l3: '60–89% of rows correctly separated', l0: 'Below 60%, the columns blend together' },
+  audyt:        { title: 'Impact map and control audit (A3–A4)', l5: 'At least 3 control categories genuinely filled in, specific impact', l3: 'Control audit flattened to 1–2 categories', l0: 'All factors in a single category' },
+  opis:         { title: 'Describing the failure without excuses (B1)', l5: 'Concise, factual, free of defensive language', l3: 'Occasional excuses or minimising', l0: 'Dominated by excuses or blaming others' },
+  emocje:       { title: 'Naming emotions (B2)', l5: 'At least 3 emotions accurately named with context, without dramatising', l3: '1–2 emotions named, in general terms', l0: 'Emotions not named, or named only declaratively' },
+  balans:       { title: 'Balance of responsibility (B3–B4)', l5: 'A clear distinction between the personal and the situational thread, no extremes', l3: 'One thread dominates disproportionately', l0: 'Pure self-flagellation or pure blame-shifting' },
+  zamkniecie:   { title: 'Quality of the closure (B5)', l5: 'A specific, personal working statement that takes responsibility', l3: 'Present, but general or partly clichéd', l0: 'A cliché, an evasion or no closure' },
+  why5:         { title: 'Depth of the 5 Whys (C1)', l5: 'At least 5 levels, logically consistent, ends at a structural cause', l3: 'A shorter chain (3–4) or loses consistency halfway', l0: 'Stops at the first "why"' },
+  rootcause:    { title: 'Categorisation and root cause (C2–C3)', l5: 'At least 4 Ishikawa categories checked, root cause clearly identified', l3: 'Partial categorisation, ambiguous root cause', l0: 'No distinction between cause and symptom' },
+  rekomendacje: { title: 'Specificity of recommendations (C4)', l5: '3 systemic, actionable recommendations that address the root cause', l3: 'Partly general ("be more careful")', l0: 'Purely declarative, they do not address the root cause' }
+};
 
 let CURRENT_INVITE = null;
 let CURRENT_CODE = null;
@@ -369,7 +615,7 @@ function saveReviewDraft() {
   };
   writeReviewDrafts(all);
   const note = document.getElementById('review-draft-note');
-  if (note) note.textContent = 'Zapisano w tej przeglądarce o ' + new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }) + '.';
+  if (note) note.textContent = t('draft.saved', { t: new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }) });
 }
 
 function removeReviewDraft(code) {
@@ -390,6 +636,12 @@ function openReview(code, invite, savedScores, savedComments) {
   Object.keys(scores).forEach(function(k) { delete scores[k]; });
   Object.assign(scores, savedScores || {});
   document.getElementById('review-comments').value = savedComments || '';
+  REVIEW_LANG = reviewLangOf(invite);
+  document.body.classList.add('lang-fixed');
+  setLang(REVIEW_LANG, false);
+  const langNote = document.getElementById('review-lang-note');
+  langNote.textContent = t('lang.note');
+  langNote.style.display = REVIEW_LANG !== mbaReadLang() ? '' : 'none';
   renderSubmission(invite);
   renderCriteria();
   document.getElementById('author-ksywa-display').textContent = invite.author_ksywa;
@@ -412,7 +664,10 @@ function renderResumeBanner() {
   banner.innerHTML = '';
   if (!codes.length) { banner.style.display = 'none'; return; }
   const head = document.createElement('div');
-  head.innerHTML = '<strong>Masz niedokończoną recenzję.</strong> Możesz do niej wrócić:';
+  const headStrong = document.createElement('strong');
+  headStrong.textContent = t('resume.h');
+  head.appendChild(headStrong);
+  head.appendChild(document.createTextNode(t('resume.p')));
   banner.appendChild(head);
   codes.forEach(function(code) {
     const d = all[code];
@@ -420,11 +675,11 @@ function renderResumeBanner() {
     row.className = 'resume-item';
     const label = document.createElement('span');
     const rated = Object.keys(d.scores || {}).length;
-    label.textContent = 'Praca autora ' + d.invite.author_ksywa + ' (kod ' + code + '), ocenione wymiary: ' + rated + '/' + CRITERIA.length;
+    label.textContent = t('resume.item', { a: d.invite.author_ksywa, c: code, n: rated, total: CRITERIA.length });
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'btn btn-primary';
-    btn.textContent = 'Wróć do recenzji →';
+    btn.textContent = t('resume.btn');
     btn.onclick = function() { resumeReview(code); };
     row.appendChild(label);
     row.appendChild(btn);
@@ -453,8 +708,8 @@ async function claimInvite() {
 
   const code = (codeInp.value || '').trim().toUpperCase();
   const nick = (nickInp.value || '').trim();
-  if (!code) { status.className = 'status-note err'; status.textContent = 'Wpisz kod od autora.'; return; }
-  if (!nick) { status.className = 'status-note err'; status.textContent = 'Wpisz swoją ksywę.'; return; }
+  if (!code) { status.className = 'status-note err'; status.textContent = t('claim.nocode'); return; }
+  if (!nick) { status.className = 'status-note err'; status.textContent = t('claim.nonick'); return; }
 
   if (typeof mbaSaveKsywa === 'function') mbaSaveKsywa(nick);
 
@@ -462,7 +717,7 @@ async function claimInvite() {
   // bo ponowne /invites/claim zostałoby odrzucone.
   if (resumeReview(code)) return;
 
-  btn.disabled = true; btn.textContent = 'Sprawdzam...';
+  btn.disabled = true; btn.textContent = t('gate.checking');
 
   try {
     const res = await fetch(WORKER + '/invites/claim', {
@@ -470,31 +725,32 @@ async function claimInvite() {
       body: JSON.stringify({ code: getSessionCode(), invite_code: code, reviewer_ksywa: nick })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Nie udało się odebrać kodu.');
+    if (!res.ok) throw new Error(workerErr(data.error, 'claim.err'));
 
     openReview(code, Object.assign({ reviewer_ksywa: nick }, data), {}, '');
     saveReviewDraft();
   } catch(e) {
     status.className = 'status-note err';
-    status.textContent = e.message || 'Błąd połączenia.';
+    status.textContent = (e instanceof TypeError || !e.message) ? t('net') : e.message;
   }
-  btn.disabled = false; btn.textContent = 'Odbierz ćwiczenie do oceny →';
+  btn.disabled = false; btn.textContent = t('claim.btn');
 }
 
 function renderSubmission(data) {
   const box = document.getElementById('submission-content');
   box.innerHTML = '';
   const content = data.content || {};
+  const labels = MBA_LANG === 'en' ? FIELD_LABELS_EN : FIELD_LABELS;
   Object.keys(FIELD_LABELS).forEach(function(key) {
     if (!(key in content)) return;
     const wrap = document.createElement('div');
     wrap.className = 'submission-box';
     const label = document.createElement('div');
     label.className = 'sub-label';
-    label.textContent = FIELD_LABELS[key];
+    label.textContent = labels[key];
     const text = document.createElement('div');
     text.className = 'sub-text';
-    text.textContent = content[key] || '(brak odpowiedzi)';
+    text.textContent = content[key] || t('sub.empty');
     wrap.appendChild(label);
     wrap.appendChild(text);
     box.appendChild(wrap);
@@ -504,7 +760,8 @@ function renderSubmission(data) {
 function renderCriteria() {
   const box = document.getElementById('criteria-form');
   box.innerHTML = '';
-  CRITERIA.forEach(function(c) {
+  CRITERIA.forEach(function(crit) {
+    const c = MBA_LANG === 'en' ? Object.assign({}, crit, CRITERIA_EN[crit.id]) : crit;
     const card = document.createElement('div');
     card.className = 'crit-card';
 
@@ -515,7 +772,7 @@ function renderCriteria() {
 
     const weight = document.createElement('div');
     weight.className = 'crit-weight';
-    weight.textContent = 'Waga: ' + c.weight;
+    weight.textContent = t('weight') + c.weight;
     card.appendChild(weight);
 
     const levels = document.createElement('div');
@@ -557,24 +814,24 @@ async function submitReview() {
   const missing = CRITERIA.filter(function(c) { return !(c.id in scores); });
   if (missing.length > 0) {
     errBox.className = 'status-note err';
-    errBox.textContent = 'Oceń wszystkie ' + CRITERIA.length + ' wymiarów (brakuje ' + missing.length + ').';
+    errBox.textContent = t('rev.missing', { total: CRITERIA.length, n: missing.length });
     return;
   }
   const comments = document.getElementById('review-comments').value.trim();
   if (comments.length < MIN_COMMENT_LENGTH) {
     errBox.className = 'status-note err';
-    errBox.textContent = 'Napisz komentarz dla autora: co najmniej 2–3 zdania (minimum ' + MIN_COMMENT_LENGTH + ' znaków, teraz ' + comments.length + ').';
+    errBox.textContent = t('rev.comment', { min: MIN_COMMENT_LENGTH, len: comments.length });
     document.getElementById('review-comments').focus();
     return;
   }
   if (!CURRENT_INVITE || !CURRENT_CODE) {
     errBox.className = 'status-note err';
-    errBox.textContent = 'Brak aktywnego zaproszenia. Wróć i wpisz kod ponownie.';
+    errBox.textContent = t('rev.noinvite');
     return;
   }
 
   const btn = document.getElementById('review-submit-btn');
-  btn.disabled = true; btn.textContent = 'Zapisuję...';
+  btn.disabled = true; btn.textContent = t('rev.saving');
 
   try {
     const res = await fetch(WORKER + '/reviews', {
@@ -582,7 +839,7 @@ async function submitReview() {
       body: JSON.stringify({ code: getSessionCode(), invite_code: CURRENT_CODE, scores: scores, comments: comments, reviewer_ksywa: CURRENT_INVITE.reviewer_ksywa || null })
     });
     const data = await res.json();
-    if (!res.ok || !data.success) throw new Error(data.error || 'Błąd zapisu oceny.');
+    if (!res.ok || !data.success) throw new Error(workerErr(data.error, 'rev.err'));
     clearTimeout(reviewDraftTimer);
     removeReviewDraft(CURRENT_CODE);
     CURRENT_INVITE = null;
@@ -590,8 +847,8 @@ async function submitReview() {
     showScreen('screen-review-done');
   } catch(e) {
     errBox.className = 'status-note err';
-    errBox.textContent = e.message || 'Błąd połączenia.';
-    btn.disabled = false; btn.textContent = 'Zapisz ocenę';
+    errBox.textContent = (e instanceof TypeError || !e.message) ? t('net') : e.message;
+    btn.disabled = false; btn.textContent = t('rev.btn');
   }
 }
 </script>

@@ -1095,5 +1095,25 @@ function showSaveStatus(saved, retry) {
   box.appendChild(btn);
 }
 </script>
+<script>
+// Ćwiczenie jest tylko po polsku: student z wybranym EN (mba_lang z index.html)
+// dostaje o tym krótką informację na dole strony.
+(function(){
+  try { if (localStorage.getItem('mba_lang') !== 'en') return; } catch(e) { return; }
+  var bar = document.createElement('div');
+  bar.setAttribute('lang', 'en');
+  bar.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:10000;background:#1C1D1F;color:#fff;font:600 13px/1.5 Inter,system-ui,sans-serif;padding:10px 16px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;';
+  var msg = document.createElement('span');
+  msg.textContent = 'This exercise is available in Polish only.';
+  var close = document.createElement('button');
+  close.type = 'button';
+  close.textContent = 'OK';
+  close.style.cssText = 'background:#fff;color:#1C1D1F;border:none;padding:4px 12px;font:700 12px Inter,system-ui,sans-serif;cursor:pointer;';
+  close.onclick = function() { bar.remove(); };
+  bar.appendChild(msg);
+  bar.appendChild(close);
+  document.body.appendChild(bar);
+})();
+</script>
 </body>
 </html>

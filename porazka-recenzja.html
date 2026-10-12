@@ -83,6 +83,17 @@
   .score-table td:last-child { text-align:right; font-weight:700; white-space:nowrap; }
   .comments-block { margin-top:16px; padding-top:14px; border-top:1px solid var(--border); font-size:0.85rem; line-height:1.6; }
 
+  /* ── Przełącznik języka ── */
+  .lang-switch { display:inline-flex; border:1.5px solid var(--border); }
+  .lang-switch button { background:#fff; border:none; padding:5px 10px; font-family:inherit; font-size:0.72rem; font-weight:700; letter-spacing:0.06em; color:var(--sec); cursor:pointer; }
+  .lang-switch button + button { border-left:1.5px solid var(--border); }
+  .lang-switch button.active { background:var(--text); color:#fff; }
+  .gate-box .lang-switch-slot { display:flex; justify-content:flex-end; margin:-28px -20px 16px 0; }
+  @media (max-width:600px) {
+    .mba-topbar { padding:0 16px; }
+    .mba-topbar-group { display:none !important; }
+  }
+
   @media (max-width:600px) {
     .option-grid { grid-template-columns:1fr; }
     .gate-box { padding:32px 24px; }
@@ -123,61 +134,63 @@
   <div class="mba-topbar-left">
     <a class="mba-topbar-back" href="index.html">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7L9 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Platforma MBA
+      <span data-i18n="tb.back">Platforma MBA</span>
     </a>
     <div class="mba-topbar-divider"></div>
-    <div class="mba-topbar-title">Praca zespołowa</div>
+    <div class="mba-topbar-title" data-i18n="tb.title">Praca zespołowa</div>
   </div>
   <div class="mba-topbar-right">
-    <div class="mba-topbar-group" id="tb-group" style="display:none">Grupa: <strong id="tb-groupname"></strong></div>
-    <button class="mba-topbar-logout" id="tb-logout" style="display:none" onclick="mbaClearSession()">Wyloguj</button>
+    <div class="lang-switch-slot"></div>
+    <div class="mba-topbar-group" id="tb-group" style="display:none"><span data-i18n="tb.group">Grupa:</span> <strong id="tb-groupname"></strong></div>
+    <button class="mba-topbar-logout" id="tb-logout" style="display:none" onclick="mbaClearSession()" data-i18n="tb.logout">Wyloguj</button>
   </div>
 </div>
 
 <div id="mba-group-gate">
   <div class="gate-box">
-    <p class="gate-eyebrow">Platforma MBA</p>
-    <h2>Dostęp do platformy</h2>
-    <p>Wpisz hasło swojej grupy, aby kontynuować.</p>
-    <input class="gate-input" type="text" id="mba-gate-input" placeholder="Hasło grupy..." autocomplete="off" onkeydown="if(event.key==='Enter')verifyGroupGate();">
+    <div class="lang-switch-slot"></div>
+    <p class="gate-eyebrow" data-i18n="tb.back">Platforma MBA</p>
+    <h2 data-i18n="gate.h">Dostęp do platformy</h2>
+    <p data-i18n="gate.p">Wpisz hasło swojej grupy, aby kontynuować.</p>
+    <input class="gate-input" type="text" id="mba-gate-input" data-i18n-ph="gate.ph" placeholder="Hasło grupy..." autocomplete="off" onkeydown="if(event.key==='Enter')verifyGroupGate();">
     <div class="gate-error" id="gate-err"></div>
-    <button class="gate-btn" id="gate-btn" onclick="verifyGroupGate()">Wejdź →</button>
+    <button class="gate-btn" id="gate-btn" onclick="verifyGroupGate()" data-i18n="gate.btn">Wejdź →</button>
   </div>
 </div>
 
 <div class="container">
   <div class="page-head">
-    <p class="page-eyebrow">Zarządzanie Porażką</p>
-    <h1>Porażka: recenzja</h1>
+    <p class="page-eyebrow" data-i18n="head.eyebrow">Zarządzanie Porażką</p>
+    <h1 data-i18n="head.h">Porażka: recenzja</h1>
   </div>
 
   <div class="option-grid">
     <button class="option-card" id="opt-review" onclick="selectOption('review')">
       <div class="option-icon">📋</div>
-      <div class="option-title">Mam kod, chcę ocenić</div>
-      <div class="option-desc">Dostałeś kod od koleżanki lub kolegi i masz ocenić ich ćwiczenie.</div>
+      <div class="option-title" data-i18n="opt.review.t">Mam kod, chcę ocenić</div>
+      <div class="option-desc" data-i18n="opt.review.d">Dostałeś kod od koleżanki lub kolegi i masz ocenić ich ćwiczenie.</div>
     </button>
     <button class="option-card" id="opt-mine" onclick="selectOption('mine')">
       <div class="option-icon">🔍</div>
-      <div class="option-title">Chcę zobaczyć swoją ocenę</div>
-      <div class="option-desc">Ktoś już ocenił Twoje ćwiczenie i chcesz sprawdzić wynik.</div>
+      <div class="option-title" data-i18n="opt.mine.t">Chcę zobaczyć swoją ocenę</div>
+      <div class="option-desc" data-i18n="opt.mine.d">Ktoś już ocenił Twoje ćwiczenie i chcesz sprawdzić wynik.</div>
     </button>
   </div>
 
   <div class="panel" id="panel-review">
-    <div class="field-label">Kod od autora</div>
-    <p style="font-size:0.85rem; color:var(--sec); margin-bottom:14px;">Przejdziesz na osobną stronę recenzji, gdzie wpiszesz kod i swoją ksywę.</p>
-    <a class="btn-link" href="recenzja.html">Przejdź do recenzji →</a>
+    <div class="field-label" data-i18n="review.label">Kod od autora</div>
+    <p style="font-size:0.85rem; color:var(--sec); margin-bottom:14px;" data-i18n="review.p">Przejdziesz na osobną stronę recenzji, gdzie wpiszesz kod i swoją ksywę.</p>
+    <a class="btn-link" href="recenzja.html" data-i18n="review.link">Przejdź do recenzji →</a>
   </div>
 
   <div class="panel" id="panel-mine">
-    <div class="field-label">Twoja ksywa / pseudonim</div>
-    <input class="text-input" type="text" id="mine-ksywa-input" placeholder="np. Panda, Orzeł, AS007..." maxlength="30" autocomplete="off" oninput="fillSavedInviteCode(true)" onkeydown="if(event.key==='Enter')checkMyReview();">
-    <div class="field-label" style="margin-top:14px;">Twój kod dla recenzenta</div>
-    <p style="font-size:0.85rem; color:var(--sec); margin-bottom:8px;">6-znakowy kod, który dostałeś po zakończeniu ćwiczenia i przekazałeś recenzentowi.</p>
-    <input class="text-input" type="text" id="mine-code-input" placeholder="np. K7M2QX" maxlength="6" autocomplete="off" style="text-transform:uppercase; letter-spacing:2px;" onkeydown="if(event.key==='Enter')checkMyReview();">
+    <div class="field-label" data-i18n="mine.nick">Twoja ksywa / pseudonim</div>
+    <input class="text-input" type="text" id="mine-ksywa-input" data-i18n-ph="mine.nickph" placeholder="np. Panda, Orzeł, AS007..." maxlength="30" autocomplete="off" oninput="fillSavedInviteCode(true)" onkeydown="if(event.key==='Enter')checkMyReview();">
+    <div class="field-label" style="margin-top:14px;" data-i18n="mine.code">Twój kod dla recenzenta</div>
+    <p style="font-size:0.85rem; color:var(--sec); margin-bottom:8px;" data-i18n="mine.codep">6-znakowy kod, który dostałeś po zakończeniu ćwiczenia i przekazałeś recenzentowi.</p>
+    <input class="text-input" type="text" id="mine-code-input" data-i18n-ph="mine.codeph" placeholder="np. K7M2QX" maxlength="6" autocomplete="off" style="text-transform:uppercase; letter-spacing:2px;" onkeydown="if(event.key==='Enter')checkMyReview();">
     <div class="status-note" id="mine-status"></div>
-    <button class="btn btn-primary" id="mine-btn" onclick="checkMyReview()">Sprawdź ocenę →</button>
+    <button class="btn btn-primary" id="mine-btn" onclick="checkMyReview()" data-i18n="mine.btn">Sprawdź ocenę →</button>
 
     <div class="result-box" id="mine-result" style="display:none;"></div>
   </div>
@@ -186,6 +199,186 @@
 <script>
 const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
 const SESSION_KEY = 'mba_session';
+
+const I18N = {
+  pl: {
+    'gate.empty': 'Wpisz hasło grupy.',
+    'gate.checking': 'Sprawdzam...',
+    'gate.btn': 'Wejdź →',
+    'gate.bad': 'Nieprawidłowe hasło grupy.',
+    'net': 'Błąd połączenia.',
+    'mine.nonick': 'Wpisz swoją ksywę.',
+    'mine.badcode': 'Wpisz 6-znakowy kod, który dostałeś po zakończeniu ćwiczenia.',
+    'mine.btn': 'Sprawdź ocenę →',
+    'notfound.h': 'Nie znaleziono ćwiczenia',
+    'notfound.p': 'Nie mamy zapisanego ćwiczenia „Zarządzanie Porażką” dla tej ksywy i tego kodu. Sprawdź pisownię ksywy i kod albo upewnij się, że ćwiczenie zostało zakończone.',
+    'noinv.h': 'Brak wygenerowanego kodu',
+    'noinv.p': 'Twoje ćwiczenie zostało zapisane, ale nie wygenerowano jeszcze kodu dla recenzenta.',
+    'pending.h': 'Czeka na recenzję',
+    'pending.claimed': 'Kod został odebrany przez {r}, ocena jeszcze nie została zapisana.',
+    'pending.none': 'Nikt jeszcze nie odebrał Twojego kodu do recenzji.',
+    'done.h': 'Ocena gotowa',
+    'done.meta': 'Recenzent: {r} &middot; średnia: {avg} / 5',
+    'done.comment': 'Komentarz recenzenta:'
+  },
+  en: {
+    'page.title': 'Failure: review MBA',
+    'tb.back': 'MBA Platform',
+    'tb.title': 'Teamwork',
+    'tb.group': 'Group:',
+    'tb.logout': 'Log out',
+    'gate.h': 'Platform access',
+    'gate.p': 'Enter your group password to continue.',
+    'gate.ph': 'Group password...',
+    'gate.btn': 'Enter →',
+    'gate.empty': 'Enter your group password.',
+    'gate.checking': 'Checking...',
+    'gate.bad': 'Invalid group password.',
+    'net': 'Connection error.',
+    'head.eyebrow': 'Managing Failure',
+    'head.h': 'Failure: review',
+    'opt.review.t': 'I have a code and want to review',
+    'opt.review.d': 'You received a code from a classmate and need to review their exercise.',
+    'opt.mine.t': 'I want to see my review',
+    'opt.mine.d': 'Someone has already reviewed your exercise and you want to check the result.',
+    'review.label': 'Code from the author',
+    'review.p': 'You will go to a separate review page, where you enter the code and your nickname.',
+    'review.link': 'Go to the review →',
+    'mine.nick': 'Your nickname',
+    'mine.nickph': 'e.g. Panda, Eagle, AS007...',
+    'mine.code': 'Your code for the reviewer',
+    'mine.codep': 'The 6-character code you received after finishing the exercise and gave to your reviewer.',
+    'mine.codeph': 'e.g. K7M2QX',
+    'mine.btn': 'Check my review →',
+    'mine.nonick': 'Enter your nickname.',
+    'mine.badcode': 'Enter the 6-character code you received after finishing the exercise.',
+    'notfound.h': 'Exercise not found',
+    'notfound.p': 'We have no saved "Managing Failure" exercise for this nickname and code. Check the spelling of your nickname and the code, or make sure the exercise was finished.',
+    'noinv.h': 'No code generated',
+    'noinv.p': 'Your exercise was saved, but no code for a reviewer has been generated yet.',
+    'pending.h': 'Waiting for review',
+    'pending.claimed': 'The code was claimed by {r}, but the review has not been saved yet.',
+    'pending.none': 'Nobody has claimed your review code yet.',
+    'done.h': 'Review ready',
+    'done.meta': 'Reviewer: {r} &middot; average: {avg} / 5',
+    'done.comment': 'Reviewer\'s comment:'
+  }
+};
+
+// ── Język interfejsu (PL/EN) ────────────────────────────────────────────────
+// Wybór studenta jest w localStorage pod 'mba_lang' (wspólny z index.html),
+// a ?lang=en w adresie go ustawia. Teksty PL statycznego HTML zbieramy przy
+// pierwszym przełączeniu, więc I18N.en tłumaczy HTML i teksty z JS, a I18N.pl
+// zawiera tylko teksty generowane w JS.
+const MBA_LANG_KEY = 'mba_lang';
+function mbaReadLang() {
+  try {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q === 'pl' || q === 'en') { localStorage.setItem(MBA_LANG_KEY, q); return q; }
+    return localStorage.getItem(MBA_LANG_KEY) === 'en' ? 'en' : 'pl';
+  } catch(e) { return 'pl'; }
+}
+let MBA_LANG = mbaReadLang();
+const MBA_LANG_HOOKS = [];
+const MBA_TITLE_PL = document.title;
+
+function t(key, vars) {
+  const dict = I18N[MBA_LANG] || {};
+  let s = dict[key] !== undefined ? dict[key] : (I18N.pl[key] !== undefined ? I18N.pl[key] : key);
+  if (vars) Object.keys(vars).forEach(function(k) { s = s.split('{' + k + '}').join(vars[k]); });
+  return s;
+}
+
+// Komunikaty Workera są po polsku; w EN tłumaczymy je tutaj.
+const WORKER_ERR_EN = {
+  'Brak hasła': 'Enter your group password.',
+  'Nieprawidłowe hasło grupy': 'Invalid group password.',
+  'Dostęp dla tej grupy został zamknięty': 'Access for this group has been closed.',
+  'Dostęp do tej grupy jeszcze nie jest aktywny': 'Access for this group is not active yet.',
+  'Dostęp dla tej grupy wygasł': 'Access for this group has expired.',
+  'Nieprawidłowy kod dostępu': 'Invalid access code. Log in again with your group password.',
+  'Dostęp dla tej grupy jest zamknięty albo wygasł.': 'Access for this group is closed or has expired.',
+  'Unauthorized': 'Invalid access code. Log in again with your group password.',
+  'Brak ksywy autora.': 'Author nickname is missing.',
+  'Ksywa zbyt długa.': 'The nickname is too long.',
+  'Brak treści ćwiczenia.': 'The exercise content is missing.',
+  'Treść ćwiczenia jest zbyt długa.': 'The exercise content is too long.',
+  'Błąd zapisu do bazy.': 'Could not save to the database. Please try again.',
+  'Błąd bazy danych.': 'Database error. Please try again.',
+  'Nie znaleziono ćwiczenia dla tej ksywy.': 'No exercise found for this nickname.',
+  'Kod dla tego ćwiczenia został już wygenerowany.': 'A code has already been generated for this exercise.',
+  'Nie udało się wygenerować unikalnego kodu, spróbuj ponownie.': 'Could not generate a unique code. Please try again.',
+  'Brak kodu zaproszenia.': 'The invite code is missing.',
+  'Brak ksywy recenzenta.': 'Reviewer nickname is missing.',
+  'Nieprawidłowy kod zaproszenia.': 'Invalid invite code.',
+  'Ten kod pochodzi z innej grupy.': 'This code belongs to a different group.',
+  'Kod zaproszenia wygasł.': 'The invite code has expired.',
+  'Ten kod został już wykorzystany.': 'This code has already been used.',
+  'Nie możesz ocenić własnego ćwiczenia.': 'You cannot review your own exercise.',
+  'Brak wyniku oceny.': 'The scores are missing.',
+  'Nieprawidłowy wynik oceny.': 'Invalid scores.',
+  'Komentarz dla autora jest wymagany (minimum 80 znaków).': 'A comment for the author is required (at least 80 characters).',
+  'Komentarz jest zbyt długi.': 'The comment is too long.',
+  'Ocena została już zapisana dla tego zaproszenia.': 'A review has already been saved for this invite.',
+  'Ten kod został odebrany przez inną osobę.': 'This code was claimed by someone else.',
+  'Brak ksywy.': 'Enter your nickname.',
+  'Wpisz 6-znakowy kod, który dostałeś po zakończeniu ćwiczenia.': 'Enter the 6-character code you received after finishing the exercise.'
+};
+
+function workerErr(msg, fallbackKey) {
+  if (!msg) return t(fallbackKey);
+  if (MBA_LANG !== 'en') return msg;
+  if (WORKER_ERR_EN[msg]) return WORKER_ERR_EN[msg];
+  const wait = /^Za dużo.*?(\d+)s\.$/.exec(msg);
+  if (wait) return 'Too many attempts. Try again in ' + wait[1] + 's.';
+  return t(fallbackKey);
+}
+
+function applyI18n() {
+  const en = MBA_LANG === 'en';
+  document.documentElement.lang = MBA_LANG;
+  document.title = en && I18N.en['page.title'] ? I18N.en['page.title'] : MBA_TITLE_PL;
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    if (el.dataset.i18nPl === undefined) el.dataset.i18nPl = el.textContent;
+    const v = I18N.en[el.dataset.i18n];
+    el.textContent = en && v !== undefined ? v : el.dataset.i18nPl;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el) {
+    if (el.dataset.i18nPlPh === undefined) el.dataset.i18nPlPh = el.placeholder;
+    const v = I18N.en[el.dataset.i18nPh];
+    el.placeholder = en && v !== undefined ? v : el.dataset.i18nPlPh;
+  });
+  document.querySelectorAll('.lang-switch button').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.lang === MBA_LANG);
+  });
+  MBA_LANG_HOOKS.forEach(function(fn) { fn(); });
+}
+
+// persist=false: zmiana tylko na tej stronie (np. recenzja w języku pracy),
+// bez nadpisywania wyboru studenta.
+function setLang(lang, persist) {
+  MBA_LANG = lang === 'en' ? 'en' : 'pl';
+  if (persist !== false) { try { localStorage.setItem(MBA_LANG_KEY, MBA_LANG); } catch(e) {} }
+  applyI18n();
+}
+
+function mountLangSwitches() {
+  document.querySelectorAll('.lang-switch-slot').forEach(function(slot) {
+    const sw = document.createElement('div');
+    sw.className = 'lang-switch';
+    ['pl', 'en'].forEach(function(code) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.lang = code;
+      b.textContent = code.toUpperCase();
+      b.onclick = function() { setLang(code); };
+      sw.appendChild(b);
+    });
+    slot.appendChild(sw);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() { mountLangSwitches(); applyI18n(); });
 
 function mbaClearSession() {
   sessionStorage.removeItem(SESSION_KEY);
@@ -208,8 +401,8 @@ async function verifyGroupGate() {
   const err = document.getElementById('gate-err');
   const btn = document.getElementById('gate-btn');
   const pw = (inp ? inp.value : '').trim();
-  if (!pw) { err.textContent = 'Wpisz hasło grupy.'; return; }
-  btn.disabled = true; btn.textContent = 'Sprawdzam...';
+  if (!pw) { err.textContent = t('gate.empty'); return; }
+  btn.disabled = true; btn.textContent = t('gate.checking');
   err.textContent = '';
   try {
     const res = await fetch(WORKER + '/verify-group', {
@@ -226,10 +419,10 @@ async function verifyGroupGate() {
       document.getElementById('tb-groupname').textContent = data.groupName;
       document.getElementById('tb-logout').style.display = '';
     } else {
-      err.textContent = data.error || 'Nieprawidłowe hasło grupy.';
+      err.textContent = workerErr(data.error, 'gate.bad');
     }
-  } catch(e) { err.textContent = 'Błąd połączenia.'; }
-  btn.disabled = false; btn.textContent = 'Wejdź →';
+  } catch(e) { err.textContent = t('net'); }
+  btn.disabled = false; btn.textContent = t('gate.btn');
 }
 
 function selectOption(which) {
@@ -269,6 +462,18 @@ const CRIT_LABELS = {
   rootcause: 'Kategoryzacja i przyczyna źródłowa',
   rekomendacje: 'Konkretność rekomendacji'
 };
+const CRIT_LABELS_EN = {
+  faktografia: 'Factual accuracy',
+  rozdzielenie: 'Separating facts and interpretation',
+  audyt: 'Impact map and control audit',
+  opis: 'Describing the failure without excuses',
+  emocje: 'Naming emotions',
+  balans: 'Balance of responsibility',
+  zamkniecie: 'Quality of the closure',
+  why5: 'Depth of the 5 Whys',
+  rootcause: 'Categorisation and root cause',
+  rekomendacje: 'Specificity of recommendations'
+};
 
 async function checkMyReview() {
   const inp = document.getElementById('mine-ksywa-input');
@@ -282,10 +487,10 @@ async function checkMyReview() {
 
   const ksywa = (inp.value || '').trim();
   const inviteCode = (document.getElementById('mine-code-input').value || '').trim().toUpperCase();
-  if (!ksywa) { status.className = 'status-note err'; status.textContent = 'Wpisz swoją ksywę.'; return; }
-  if (!/^[A-Z0-9]{6}$/.test(inviteCode)) { status.className = 'status-note err'; status.textContent = 'Wpisz 6-znakowy kod, który dostałeś po zakończeniu ćwiczenia.'; return; }
+  if (!ksywa) { status.className = 'status-note err'; status.textContent = t('mine.nonick'); return; }
+  if (!/^[A-Z0-9]{6}$/.test(inviteCode)) { status.className = 'status-note err'; status.textContent = t('mine.badcode'); return; }
 
-  btn.disabled = true; btn.textContent = 'Sprawdzam...';
+  btn.disabled = true; btn.textContent = t('gate.checking');
   if (typeof mbaSaveKsywa === 'function') mbaSaveKsywa(ksywa);
 
   try {
@@ -295,40 +500,41 @@ async function checkMyReview() {
       body: JSON.stringify({ code: session ? session.password : '', ksywa: ksywa, invite_code: inviteCode })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Błąd połączenia.');
+    if (!res.ok) throw new Error(workerErr(data.error, 'net'));
 
     if (!data.found) {
       resultBox.style.display = '';
-      resultBox.innerHTML = '<div class="result-status">Nie znaleziono ćwiczenia</div><div class="result-detail">Nie mamy zapisanego ćwiczenia „Zarządzanie Porażką” dla tej ksywy i tego kodu. Sprawdź pisownię ksywy i kod albo upewnij się, że ćwiczenie zostało zakończone.</div>';
+      resultBox.innerHTML = '<div class="result-status">' + t('notfound.h') + '</div><div class="result-detail">' + t('notfound.p') + '</div>';
     } else if (data.status === 'no_invite') {
       resultBox.style.display = '';
-      resultBox.innerHTML = '<div class="result-status">Brak wygenerowanego kodu</div><div class="result-detail">Twoje ćwiczenie zostało zapisane, ale nie wygenerowano jeszcze kodu dla recenzenta.</div>';
+      resultBox.innerHTML = '<div class="result-status">' + t('noinv.h') + '</div><div class="result-detail">' + t('noinv.p') + '</div>';
     } else if (data.status === 'pending') {
       resultBox.style.display = '';
-      resultBox.innerHTML = '<div class="result-status">Czeka na recenzję</div><div class="result-detail">' +
-        (data.reviewerKsywa ? 'Kod został odebrany przez ' + escapeHtml(data.reviewerKsywa) + ', ocena jeszcze nie została zapisana.' : 'Nikt jeszcze nie odebrał Twojego kodu do recenzji.') +
+      resultBox.innerHTML = '<div class="result-status">' + t('pending.h') + '</div><div class="result-detail">' +
+        (data.reviewerKsywa ? t('pending.claimed', { r: escapeHtml(data.reviewerKsywa) }) : t('pending.none')) +
         '</div>';
     } else if (data.status === 'completed') {
       let rows = '';
       let total = 0, count = 0;
+      const critLabels = MBA_LANG === 'en' ? CRIT_LABELS_EN : CRIT_LABELS;
       Object.keys(CRIT_LABELS).forEach(function(key) {
         if (!(key in data.scores)) return;
-        rows += '<tr><td>' + CRIT_LABELS[key] + '</td><td>' + data.scores[key] + ' / 5</td></tr>';
+        rows += '<tr><td>' + critLabels[key] + '</td><td>' + data.scores[key] + ' / 5</td></tr>';
         total += data.scores[key]; count++;
       });
       const avg = count ? (total / count).toFixed(1) : '—';
       resultBox.style.display = '';
       resultBox.innerHTML =
-        '<div class="result-status">Ocena gotowa</div>' +
-        '<div class="result-detail">Recenzent: ' + escapeHtml(data.reviewerKsywa) + ' &middot; średnia: ' + avg + ' / 5</div>' +
+        '<div class="result-status">' + t('done.h') + '</div>' +
+        '<div class="result-detail">' + t('done.meta', { r: escapeHtml(data.reviewerKsywa), avg: avg }) + '</div>' +
         '<table class="score-table">' + rows + '</table>' +
-        (data.comments ? '<div class="comments-block"><strong>Komentarz recenzenta:</strong><br>' + escapeHtml(data.comments) + '</div>' : '');
+        (data.comments ? '<div class="comments-block"><strong>' + t('done.comment') + '</strong><br>' + escapeHtml(data.comments) + '</div>' : '');
     }
   } catch(e) {
     status.className = 'status-note err';
-    status.textContent = e.message || 'Błąd połączenia.';
+    status.textContent = (e instanceof TypeError || !e.message) ? t('net') : e.message;
   }
-  btn.disabled = false; btn.textContent = 'Sprawdź ocenę →';
+  btn.disabled = false; btn.textContent = t('mine.btn');
 }
 
 function escapeHtml(s) {

@@ -98,6 +98,17 @@
   .copy-btn { margin-top:16px; }
   .submit-error { font-size:0.85rem; color:var(--err); margin-top:12px; }
 
+  /* ── Przełącznik języka ── */
+  .lang-switch { display:inline-flex; border:1.5px solid var(--border); }
+  .lang-switch button { background:#fff; border:none; padding:5px 10px; font-family:inherit; font-size:0.72rem; font-weight:700; letter-spacing:0.06em; color:var(--sec); cursor:pointer; }
+  .lang-switch button + button { border-left:1.5px solid var(--border); }
+  .lang-switch button.active { background:var(--text); color:#fff; }
+  .gate-box .lang-switch-slot { display:flex; justify-content:flex-end; margin:-28px -20px 16px 0; }
+  @media (max-width:600px) {
+    .mba-topbar { padding:0 16px; }
+    .mba-topbar-group { display:none !important; }
+  }
+
   @media (max-width:600px) {
     .welcome-card, .gate-box { padding:32px 24px; }
     .q-card { padding:20px 16px; }
@@ -158,26 +169,28 @@
   <div class="mba-topbar-left">
     <a class="mba-topbar-back" href="index.html">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7L9 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Platforma MBA
+      <span data-i18n="tb.back">Platforma MBA</span>
     </a>
     <div class="mba-topbar-divider"></div>
-    <div class="mba-topbar-title">Zarządzanie Porażką</div>
+    <div class="mba-topbar-title" data-i18n="tb.title">Zarządzanie Porażką</div>
   </div>
   <div class="mba-topbar-right">
-    <div class="mba-topbar-group" id="tb-group" style="display:none">Grupa: <strong id="tb-groupname"></strong></div>
-    <button class="mba-topbar-logout" id="tb-logout" style="display:none" onclick="mbaClearSession()">Wyloguj</button>
+    <div class="lang-switch-slot"></div>
+    <div class="mba-topbar-group" id="tb-group" style="display:none"><span data-i18n="tb.group">Grupa:</span> <strong id="tb-groupname"></strong></div>
+    <button class="mba-topbar-logout" id="tb-logout" style="display:none" onclick="mbaClearSession()" data-i18n="tb.logout">Wyloguj</button>
   </div>
 </div>
 
 <!-- GATE -->
 <div id="mba-group-gate">
   <div class="gate-box">
-    <p class="gate-eyebrow">Platforma MBA</p>
-    <h2>Dostęp do ćwiczenia</h2>
-    <p>Wpisz hasło swojej grupy, aby kontynuować.</p>
-    <input class="gate-input" type="text" id="mba-gate-input" placeholder="Hasło grupy..." autocomplete="off" onkeydown="if(event.key==='Enter')verifyGroupGate();">
+    <div class="lang-switch-slot"></div>
+    <p class="gate-eyebrow" data-i18n="tb.back">Platforma MBA</p>
+    <h2 data-i18n="gate.h">Dostęp do ćwiczenia</h2>
+    <p data-i18n="gate.p">Wpisz hasło swojej grupy, aby kontynuować.</p>
+    <input class="gate-input" type="text" id="mba-gate-input" data-i18n-ph="gate.ph" placeholder="Hasło grupy..." autocomplete="off" onkeydown="if(event.key==='Enter')verifyGroupGate();">
     <div class="gate-error" id="gate-err"></div>
-    <button class="gate-btn" id="gate-btn" onclick="verifyGroupGate()">Wejdź →</button>
+    <button class="gate-btn" id="gate-btn" onclick="verifyGroupGate()" data-i18n="gate.btn">Wejdź →</button>
   </div>
 </div>
 
@@ -185,23 +198,23 @@
 <div id="screen-welcome" class="screen active">
   <div class="container">
     <div class="welcome-card">
-      <p class="eyebrow">Ćwiczenie 07</p>
-      <h1>Zarządzanie Porażką</h1>
-      <p>Ćwiczenie sprawdza, czy potrafisz uczciwie stanąć wobec sytuacji, w której cel lub plan nie został zrealizowany, i przejść od reakcji emocjonalnej do systemowej analizy przyczyn.</p>
-      <p>Wybierz jedną realną sytuację ze swojego doświadczenia zawodowego (ostatnie 24 miesiące), w której miałeś jasno określony cel lub plan, który nie został osiągnięty i miał realne konsekwencje. Ćwiczenie ma sens tylko przy autentycznym materiale.</p>
+      <p class="eyebrow" data-i18n="w.eyebrow">Ćwiczenie 07</p>
+      <h1 data-i18n="tb.title">Zarządzanie Porażką</h1>
+      <p data-i18n="w.p1">Ćwiczenie sprawdza, czy potrafisz uczciwie stanąć wobec sytuacji, w której cel lub plan nie został zrealizowany, i przejść od reakcji emocjonalnej do systemowej analizy przyczyn.</p>
+      <p data-i18n="w.p2">Wybierz jedną realną sytuację ze swojego doświadczenia zawodowego (ostatnie 24 miesiące), w której miałeś jasno określony cel lub plan, który nie został osiągnięty i miał realne konsekwencje. Ćwiczenie ma sens tylko przy autentycznym materiale.</p>
       <div class="welcome-meta">
         <span class="welcome-pill">⏱ ~60–120 min</span>
-        <span class="welcome-pill">Format tekstowy</span>
-        <span class="welcome-pill">Peer-review z drugą osobą</span>
+        <span class="welcome-pill" data-i18n="w.pill2">Format tekstowy</span>
+        <span class="welcome-pill" data-i18n="w.pill3">Peer-review z drugą osobą</span>
       </div>
-      <p>Możesz robić przerwy: odpowiedzi zapisują się automatycznie w tej przeglądarce. Żeby wrócić, otwórz ćwiczenie na tym samym komputerze i wpisz tę samą ksywę.</p>
+      <p data-i18n="w.p3">Możesz robić przerwy: odpowiedzi zapisują się automatycznie w tej przeglądarce. Żeby wrócić, otwórz ćwiczenie na tym samym komputerze i wpisz tę samą ksywę.</p>
       <div class="draft-banner" id="invite-banner" style="display:none"></div>
       <div class="draft-banner" id="draft-banner" style="display:none"></div>
-      <span class="field-label">Twoja ksywa / pseudonim</span>
-      <input class="text-input" type="text" id="nickname-input" placeholder="np. Panda, Orzeł, AS007..." maxlength="30" autocomplete="off">
+      <span class="field-label" data-i18n="w.nick">Twoja ksywa / pseudonim</span>
+      <input class="text-input" type="text" id="nickname-input" data-i18n-ph="w.nickph" placeholder="np. Panda, Orzeł, AS007..." maxlength="30" autocomplete="off">
       <div id="nick-err" style="font-size:0.82rem;color:var(--err);margin-top:6px;min-height:18px;"></div>
       <div style="margin-top:20px;">
-        <button class="btn btn-primary" id="start-btn" onclick="startExercise()">Zacznij ćwiczenie →</button>
+        <button class="btn btn-primary" id="start-btn" onclick="startExercise()" data-i18n="w.start">Zacznij ćwiczenie →</button>
       </div>
     </div>
   </div>
@@ -212,105 +225,105 @@
   <div class="container">
 
     <div class="part-header">
-      <div class="part-eyebrow">Część A</div>
-      <h2>Analityka przed zadaniem</h2>
-      <div class="part-time">Rekomendowane 40–45 min. Zrekonstruuj fakty, zanim napiszesz cokolwiek interpretacyjnego.</div>
+      <div class="part-eyebrow" data-i18n="pa">Część A</div>
+      <h2 data-i18n="pa.h">Analityka przed zadaniem</h2>
+      <div class="part-time" data-i18n="pa.time">Rekomendowane 40–45 min. Zrekonstruuj fakty, zanim napiszesz cokolwiek interpretacyjnego.</div>
     </div>
 
     <div class="q-card">
-      <div class="q-label">A1. Chronologia faktów</div>
-      <div class="q-hint">8–15 punktów kluczowych decyzji i zdarzeń prowadzących do niepowodzenia. Każdy punkt to fakt weryfikowalny (data, decyzja, działanie, zdarzenie), bez ocen, bez przymiotników wartościujących.</div>
+      <div class="q-label" data-i18n="a1.l">A1. Chronologia faktów</div>
+      <div class="q-hint" data-i18n="a1.h">8–15 punktów kluczowych decyzji i zdarzeń prowadzących do niepowodzenia. Każdy punkt to fakt weryfikowalny (data, decyzja, działanie, zdarzenie), bez ocen, bez przymiotników wartościujących.</div>
       <textarea class="q-textarea" id="a1" placeholder="1) ...&#10;2) ...&#10;3) ..."></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label">A2. Rozdzielenie faktów od interpretacji</div>
-      <div class="q-hint">Minimum 8 par. Format jednej linii: najpierw fakt, potem interpretacja lub emocja. Pilnuj, żeby po lewej nie było ocen.</div>
-      <textarea class="q-textarea" id="a2" placeholder="Fakt: ...  Interpretacja: ..."></textarea>
+      <div class="q-label" data-i18n="a2.l">A2. Rozdzielenie faktów od interpretacji</div>
+      <div class="q-hint" data-i18n="a2.h">Minimum 8 par. Format jednej linii: najpierw fakt, potem interpretacja lub emocja. Pilnuj, żeby po lewej nie było ocen.</div>
+      <textarea class="q-textarea" id="a2" data-i18n-ph="a2.ph" placeholder="Fakt: ...  Interpretacja: ..."></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label">A3. Mapa wpływu</div>
-      <div class="q-hint">Osoby/grupy dotknięte niepowodzeniem i jak konkretnie zostały dotknięte (1 zdanie na osobę/grupę).</div>
-      <textarea class="q-textarea short" id="a3" placeholder="Zespół: ...&#10;Klient: ..."></textarea>
+      <div class="q-label" data-i18n="a3.l">A3. Mapa wpływu</div>
+      <div class="q-hint" data-i18n="a3.h">Osoby/grupy dotknięte niepowodzeniem i jak konkretnie zostały dotknięte (1 zdanie na osobę/grupę).</div>
+      <textarea class="q-textarea short" id="a3" data-i18n-ph="a3.ph" placeholder="Zespół: ...&#10;Klient: ..."></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label">A4. Audyt kontroli</div>
-      <div class="q-hint">Minimum 6 czynników podzielonych na trzy kategorie: w pełni w mojej kontroli / częściowo w mojej kontroli / poza moją kontrolą. Jeśli wszystko ląduje w jednej kategorii, to sygnał zbyt uproszczonej analizy.</div>
-      <textarea class="q-textarea" id="a4" placeholder="W mojej kontroli: ...&#10;Częściowo: ...&#10;Poza kontrolą: ..."></textarea>
+      <div class="q-label" data-i18n="a4.l">A4. Audyt kontroli</div>
+      <div class="q-hint" data-i18n="a4.h">Minimum 6 czynników podzielonych na trzy kategorie: w pełni w mojej kontroli / częściowo w mojej kontroli / poza moją kontrolą. Jeśli wszystko ląduje w jednej kategorii, to sygnał zbyt uproszczonej analizy.</div>
+      <textarea class="q-textarea" id="a4" data-i18n-ph="a4.ph" placeholder="W mojej kontroli: ...&#10;Częściowo: ...&#10;Poza kontrolą: ..."></textarea>
     </div>
 
     <div class="part-header">
-      <div class="part-eyebrow">Część B</div>
-      <h2>Pogodzenie się z porażką</h2>
-      <div class="part-time">Rekomendowane 40 min. Strukturyzowana refleksja na bazie Części A, nie wolny strumień świadomości.</div>
+      <div class="part-eyebrow" data-i18n="pb">Część B</div>
+      <h2 data-i18n="pb.h">Pogodzenie się z porażką</h2>
+      <div class="part-time" data-i18n="pb.time">Rekomendowane 40 min. Strukturyzowana refleksja na bazie Części A, nie wolny strumień świadomości.</div>
     </div>
 
     <div class="q-card">
-      <div class="q-label">B1. Opis porażki</div>
-      <div class="q-hint">Jeden zwięzły akapit, bez usprawiedliwień i bez samokrytyki: czysty opis tego, co się nie wydarzyło względem planu.</div>
+      <div class="q-label" data-i18n="b1.l">B1. Opis porażki</div>
+      <div class="q-hint" data-i18n="b1.h">Jeden zwięzły akapit, bez usprawiedliwień i bez samokrytyki: czysty opis tego, co się nie wydarzyło względem planu.</div>
       <textarea class="q-textarea short" id="b1"></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label">B2. Nazwanie emocji</div>
-      <div class="q-hint">Minimum 3 emocje (wtedy i teraz), każda z jednym-dwoma zdaniami kontekstu.</div>
+      <div class="q-label" data-i18n="b2.l">B2. Nazwanie emocji</div>
+      <div class="q-hint" data-i18n="b2.h">Minimum 3 emocje (wtedy i teraz), każda z jednym-dwoma zdaniami kontekstu.</div>
       <textarea class="q-textarea" id="b2"></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label">B3. Co realnie mogłem/aś zrobić inaczej?</div>
-      <div class="q-hint">Na bazie audytu kontroli z A4: co było w Twoim zasięgu, a co poza nim niezależnie od jakości Twoich decyzji?</div>
+      <div class="q-label" data-i18n="b3.l">B3. Co realnie mogłem/aś zrobić inaczej?</div>
+      <div class="q-hint" data-i18n="b3.h">Na bazie audytu kontroli z A4: co było w Twoim zasięgu, a co poza nim niezależnie od jakości Twoich decyzji?</div>
       <textarea class="q-textarea" id="b3"></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label">B4. Co to mówi o Tobie, a co o sytuacji?</div>
-      <div class="q-hint">Napisz oba wątki osobno, nie mieszaj ich w jednym zdaniu: co porażka mówi o Tobie jako decydencie/liderze, a co mówi wyłącznie o kontekście zewnętrznym.</div>
+      <div class="q-label" data-i18n="b4.l">B4. Co to mówi o Tobie, a co o sytuacji?</div>
+      <div class="q-hint" data-i18n="b4.h">Napisz oba wątki osobno, nie mieszaj ich w jednym zdaniu: co porażka mówi o Tobie jako decydencie/liderze, a co mówi wyłącznie o kontekście zewnętrznym.</div>
       <textarea class="q-textarea" id="b4"></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label">B5. Zamknięcie</div>
-      <div class="q-hint">Uznanie faktu i przejęcie odpowiedzialności za dalsze działania, bez deklaracji, że porażka była dobra. Unikaj frazesów, pisz konkretnie i osobiście.</div>
+      <div class="q-label" data-i18n="b5.l">B5. Zamknięcie</div>
+      <div class="q-hint" data-i18n="b5.h">Uznanie faktu i przejęcie odpowiedzialności za dalsze działania, bez deklaracji, że porażka była dobra. Unikaj frazesów, pisz konkretnie i osobiście.</div>
       <textarea class="q-textarea short" id="b5"></textarea>
     </div>
 
     <div class="part-header">
-      <div class="part-eyebrow">Część C</div>
+      <div class="part-eyebrow" data-i18n="pc">Część C</div>
       <h2>Root Cause Analysis</h2>
-      <div class="part-time">Rekomendowane 35–40 min. Systemowa analiza przyczyn, dopiero teraz, po przetworzeniu emocjonalnym.</div>
+      <div class="part-time" data-i18n="pc.time">Rekomendowane 35–40 min. Systemowa analiza przyczyn, dopiero teraz, po przetworzeniu emocjonalnym.</div>
     </div>
 
     <div class="q-card">
-      <div class="q-label">C1. Metoda 5 Why</div>
-      <div class="q-hint">Zacznij od obserwowalnego skutku i zadaj "dlaczego" minimum 5 razy, aż dojdziesz do przyczyny systemowej, nie objawowej. Zapisz cały łańcuch.</div>
-      <textarea class="q-textarea" id="c1" placeholder="1. Dlaczego...? &#10;2. Dlaczego...? &#10;..."></textarea>
+      <div class="q-label" data-i18n="c1.l">C1. Metoda 5 Why</div>
+      <div class="q-hint" data-i18n="c1.h">Zacznij od obserwowalnego skutku i zadaj "dlaczego" minimum 5 razy, aż dojdziesz do przyczyny systemowej, nie objawowej. Zapisz cały łańcuch.</div>
+      <textarea class="q-textarea" id="c1" data-i18n-ph="c1.ph" placeholder="1. Dlaczego...? &#10;2. Dlaczego...? &#10;..."></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label">C2. Kategoryzacja przyczyn (Ishikawa uproszczona)</div>
-      <div class="q-hint">Rozłóż przyczyny na kategorie: ludzie/kompetencje, proces, zasoby/czas, komunikacja/decyzyjność, czynniki zewnętrzne/rynkowe. Sprawdź każdą kategorię.</div>
+      <div class="q-label" data-i18n="c2.l">C2. Kategoryzacja przyczyn (Ishikawa uproszczona)</div>
+      <div class="q-hint" data-i18n="c2.h">Rozłóż przyczyny na kategorie: ludzie/kompetencje, proces, zasoby/czas, komunikacja/decyzyjność, czynniki zewnętrzne/rynkowe. Sprawdź każdą kategorię.</div>
       <textarea class="q-textarea" id="c2"></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label">C3. Przyczyna źródłowa vs objaw</div>
-      <div class="q-hint">Jednym zdaniem wskaż, która przyczyna jest źródłowa (root cause), a które były tylko objawami/wyzwalaczami.</div>
+      <div class="q-label" data-i18n="c3.l">C3. Przyczyna źródłowa vs objaw</div>
+      <div class="q-hint" data-i18n="c3.h">Jednym zdaniem wskaż, która przyczyna jest źródłowa (root cause), a które były tylko objawami/wyzwalaczami.</div>
       <textarea class="q-textarea short" id="c3"></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label">C4. Rekomendacje</div>
-      <div class="q-hint">3 konkretne, wdrażalne rekomendacje systemowe (nie "będę bardziej uważny") adresujące przyczynę źródłową.</div>
+      <div class="q-label" data-i18n="c4.l">C4. Rekomendacje</div>
+      <div class="q-hint" data-i18n="c4.h">3 konkretne, wdrażalne rekomendacje systemowe (nie "będę bardziej uważny") adresujące przyczynę źródłową.</div>
       <textarea class="q-textarea" id="c4" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
     </div>
 
     <div class="submit-error" id="submit-err"></div>
     <div class="btn-row">
-      <div class="autosave-note" id="autosave-note">Wersja robocza zapisywana automatycznie w tej przeglądarce.</div>
-      <button class="btn btn-primary" id="submit-btn" onclick="submitExercise()">Zakończ i wygeneruj kod dla recenzenta →</button>
+      <div class="autosave-note" id="autosave-note" data-i18n="autosave">Wersja robocza zapisywana automatycznie w tej przeglądarce.</div>
+      <button class="btn btn-primary" id="submit-btn" onclick="submitExercise()" data-i18n="submit">Zakończ i wygeneruj kod dla recenzenta →</button>
     </div>
   </div>
 </div>
@@ -319,16 +332,16 @@
 <div id="screen-done" class="screen">
   <div class="container">
     <div class="result-hero">
-      <h2>Ćwiczenie zapisane</h2>
-      <p>Teraz przekaż poniższy kod osobie, która ma ocenić Twoje ćwiczenie. Poproś ją, aby wpisała go na stronie „Recenzja" na platformie.</p>
+      <h2 data-i18n="done.h">Ćwiczenie zapisane</h2>
+      <p data-i18n="done.p">Teraz przekaż poniższy kod osobie, która ma ocenić Twoje ćwiczenie. Poproś ją, aby wpisała go na stronie „Recenzja" na platformie.</p>
     </div>
     <div class="invite-code-box">
-      <div class="field-label">Kod dla recenzenta</div>
+      <div class="field-label" data-i18n="done.label">Kod dla recenzenta</div>
       <div class="invite-code" id="invite-code-display">------</div>
-      <div class="invite-note">Kod jest ważny 7 dni i może zostać użyty tylko raz. Recenzent nie może być tą samą osobą co autor. Kod zapisaliśmy też w tej przeglądarce: zobaczysz go na stronie startowej ćwiczenia po wpisaniu swojej ksywy.</div>
-      <button class="btn btn-ghost copy-btn" onclick="copyInviteCode()">Kopiuj kod</button>
+      <div class="invite-note" data-i18n="done.note">Kod jest ważny 7 dni i może zostać użyty tylko raz. Recenzent nie może być tą samą osobą co autor. Kod zapisaliśmy też w tej przeglądarce: zobaczysz go na stronie startowej ćwiczenia po wpisaniu swojej ksywy.</div>
+      <button class="btn btn-ghost copy-btn" onclick="copyInviteCode()" data-i18n="copy">Kopiuj kod</button>
     </div>
-    <a class="btn btn-primary" href="index.html" style="text-decoration:none; display:inline-block;">Wróć do platformy</a>
+    <a class="btn btn-primary" href="index.html" style="text-decoration:none; display:inline-block;" data-i18n="back">Wróć do platformy</a>
   </div>
 </div>
 
@@ -338,6 +351,246 @@ const SESSION_KEY = 'mba_session';
 const DRAFT_KEY = 'mba_draft_zarzadzanie_porazka';
 const EXERCISE_SLUG = 'zarzadzanie-porazka';
 const FIELD_IDS = ['a1','a2','a3','a4','b1','b2','b3','b4','b5','c1','c2','c3','c4'];
+
+const I18N = {
+  pl: {
+    'gate.empty': 'Wpisz hasło grupy.',
+    'gate.checking': 'Sprawdzam...',
+    'gate.btn': 'Wejdź →',
+    'gate.noaccess': 'Twoja grupa nie ma dostępu do tego ćwiczenia.',
+    'gate.bad': 'Nieprawidłowe hasło grupy.',
+    'net': 'Błąd połączenia.',
+    'draft.loaded': 'Wczytano wersję roboczą z {d}. Zmiany zapisują się automatycznie w tej przeglądarce.',
+    'draft.saved': 'Zapisano w tej przeglądarce o {t}.',
+    'invite.your': 'Twój kod dla recenzenta: ',
+    'invite.meta': ' (wygenerowany {c}, {v}). ',
+    'invite.expired': 'termin ważności minął {d}',
+    'invite.valid': 'ważny do {d}',
+    'copy': 'Kopiuj kod',
+    'copied': 'Skopiowano',
+    'invite.status': 'Status recenzji sprawdzisz na stronie „Porażka: recenzja”.',
+    'draft.have': 'Masz zapisaną wersję roboczą.',
+    'draft.filled': ' Uzupełnione pola: {n}/{total}',
+    'draft.last': ', ostatni zapis: {d}',
+    'w.start': 'Zacznij ćwiczenie →',
+    'w.continue': 'Kontynuuj ćwiczenie →',
+    'nick.empty': 'Wpisz swoją ksywę, żeby kontynuować.',
+    'sub.nonick': 'Brak ksywy. Wróć do ekranu startowego.',
+    'sub.fill': 'Uzupełnij wszystkie pola przed zakończeniem ({n}/{total}).',
+    'sub.saving': 'Zapisuję...',
+    'sub.err': 'Błąd zapisu ćwiczenia.',
+    'sub.inverr': 'Błąd generowania kodu.',
+    'sub.net': 'Błąd połączenia. Spróbuj ponownie.',
+    'submit': 'Zakończ i wygeneruj kod dla recenzenta →'
+  },
+  en: {
+    'page.title': 'Managing Failure MBA',
+    'tb.back': 'MBA Platform',
+    'tb.title': 'Managing Failure',
+    'tb.group': 'Group:',
+    'tb.logout': 'Log out',
+    'gate.h': 'Exercise access',
+    'gate.p': 'Enter your group password to continue.',
+    'gate.ph': 'Group password...',
+    'gate.btn': 'Enter →',
+    'gate.empty': 'Enter your group password.',
+    'gate.checking': 'Checking...',
+    'gate.noaccess': 'Your group does not have access to this exercise.',
+    'gate.bad': 'Invalid group password.',
+    'net': 'Connection error.',
+    'w.eyebrow': 'Exercise 07',
+    'w.p1': 'This exercise tests whether you can look honestly at a situation in which a goal or plan was not achieved, and move from an emotional reaction to a systematic analysis of its causes.',
+    'w.p2': 'Choose one real situation from your professional experience (the last 24 months) in which you had a clearly defined goal or plan that was not achieved and had real consequences. The exercise only makes sense with authentic material.',
+    'w.pill2': 'Written format',
+    'w.pill3': 'Peer review with another person',
+    'w.p3': 'You can take breaks: your answers are saved automatically in this browser. To come back, open the exercise on the same computer and enter the same nickname.',
+    'w.nick': 'Your nickname',
+    'w.nickph': 'e.g. Panda, Eagle, AS007...',
+    'w.start': 'Start the exercise →',
+    'w.continue': 'Continue the exercise →',
+    'pa': 'Part A',
+    'pa.h': 'Analysis before the task',
+    'pa.time': 'Recommended 40–45 min. Reconstruct the facts before you write anything interpretive.',
+    'a1.l': 'A1. Timeline of facts',
+    'a1.h': '8–15 points covering the key decisions and events that led to the failure. Each point is a verifiable fact (date, decision, action, event), with no judgements and no evaluative adjectives.',
+    'a2.l': 'A2. Separating facts from interpretation',
+    'a2.h': 'At least 8 pairs. Each line has the same format: the fact first, then the interpretation or emotion. Make sure the left side contains no judgements.',
+    'a2.ph': 'Fact: ...  Interpretation: ...',
+    'a3.l': 'A3. Impact map',
+    'a3.h': 'The people or groups affected by the failure and how exactly they were affected (1 sentence per person or group).',
+    'a3.ph': 'Team: ...\nClient: ...',
+    'a4.l': 'A4. Control audit',
+    'a4.h': 'At least 6 factors split into three categories: fully within my control / partly within my control / outside my control. If everything lands in one category, the analysis is probably too simplified.',
+    'a4.ph': 'Within my control: ...\nPartly: ...\nOutside my control: ...',
+    'pb': 'Part B',
+    'pb.h': 'Coming to terms with the failure',
+    'pb.time': 'Recommended 40 min. A structured reflection built on Part A.',
+    'b1.l': 'B1. Describing the failure',
+    'b1.h': 'One concise paragraph with no excuses and no self-criticism: a plain description of what did not happen compared with the plan.',
+    'b2.l': 'B2. Naming emotions',
+    'b2.h': 'At least 3 emotions (then and now), each with one or two sentences of context.',
+    'b3.l': 'B3. What could I realistically have done differently?',
+    'b3.h': 'Based on the control audit in A4: what was within your reach, and what was outside it regardless of the quality of your decisions?',
+    'b4.l': 'B4. What does this say about you, and what about the situation?',
+    'b4.h': 'Write the two threads separately and keep each in its own sentences: what the failure says about you as a decision-maker or leader, and what it says only about the external context.',
+    'b5.l': 'B5. Closure',
+    'b5.h': 'Acknowledge the fact and take responsibility for the next steps, without claiming that the failure was a good thing. Avoid clichés. Write specifically and personally.',
+    'pc': 'Part C',
+    'pc.time': 'Recommended 35–40 min. A systematic analysis of causes, done only now, after the emotional processing.',
+    'c1.l': 'C1. The 5 Whys method',
+    'c1.h': 'Start from the observable effect and ask "why" at least 5 times, until you reach a systemic cause that lies deeper than the symptoms. Write down the whole chain.',
+    'c1.ph': '1. Why...?\n2. Why...?\n...',
+    'c2.l': 'C2. Categorising causes (simplified Ishikawa)',
+    'c2.h': 'Break the causes down into categories: people/skills, process, resources/time, communication/decision-making, external/market factors. Check every category.',
+    'c3.l': 'C3. Root cause vs symptom',
+    'c3.h': 'In one sentence, state which cause is the root cause and which were only symptoms or triggers.',
+    'c4.l': 'C4. Recommendations',
+    'c4.h': '3 specific, actionable, systemic recommendations that address the root cause. Statements such as "I will be more careful" do not count.',
+    'autosave': 'Draft saved automatically in this browser.',
+    'submit': 'Finish and generate a code for your reviewer →',
+    'done.h': 'Exercise saved',
+    'done.p': 'Now give the code below to the person who will review your exercise. Ask them to enter it on the "Failure: review" page of the platform.',
+    'done.label': 'Code for your reviewer',
+    'done.note': 'The code is valid for 7 days and can be used only once. The reviewer must be someone other than the author. Your reviewer will see the review form in English, the language of your exercise. We have also saved the code in this browser: you will see it on the exercise start page after entering your nickname.',
+    'copy': 'Copy code',
+    'copied': 'Copied',
+    'back': 'Back to the platform',
+    'draft.loaded': 'Draft from {d} loaded. Changes are saved automatically in this browser.',
+    'draft.saved': 'Saved in this browser at {t}.',
+    'invite.your': 'Your code for the reviewer: ',
+    'invite.meta': ' (generated {c}, {v}). ',
+    'invite.expired': 'expired on {d}',
+    'invite.valid': 'valid until {d}',
+    'invite.status': 'You can check the review status on the "Failure: review" page.',
+    'draft.have': 'You have a saved draft.',
+    'draft.filled': ' Completed fields: {n}/{total}',
+    'draft.last': ', last saved: {d}',
+    'nick.empty': 'Enter your nickname to continue.',
+    'sub.nonick': 'Nickname missing. Go back to the start screen.',
+    'sub.fill': 'Fill in all fields before finishing ({n}/{total}).',
+    'sub.saving': 'Saving...',
+    'sub.err': 'Could not save the exercise.',
+    'sub.inverr': 'Could not generate the code.',
+    'sub.net': 'Connection error. Please try again.'
+  }
+};
+
+// ── Język interfejsu (PL/EN) ────────────────────────────────────────────────
+// Wybór studenta jest w localStorage pod 'mba_lang' (wspólny z index.html),
+// a ?lang=en w adresie go ustawia. Teksty PL statycznego HTML zbieramy przy
+// pierwszym przełączeniu, więc I18N.en tłumaczy HTML i teksty z JS, a I18N.pl
+// zawiera tylko teksty generowane w JS.
+const MBA_LANG_KEY = 'mba_lang';
+function mbaReadLang() {
+  try {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q === 'pl' || q === 'en') { localStorage.setItem(MBA_LANG_KEY, q); return q; }
+    return localStorage.getItem(MBA_LANG_KEY) === 'en' ? 'en' : 'pl';
+  } catch(e) { return 'pl'; }
+}
+let MBA_LANG = mbaReadLang();
+const MBA_LANG_HOOKS = [];
+const MBA_TITLE_PL = document.title;
+
+function t(key, vars) {
+  const dict = I18N[MBA_LANG] || {};
+  let s = dict[key] !== undefined ? dict[key] : (I18N.pl[key] !== undefined ? I18N.pl[key] : key);
+  if (vars) Object.keys(vars).forEach(function(k) { s = s.split('{' + k + '}').join(vars[k]); });
+  return s;
+}
+
+// Komunikaty Workera są po polsku; w EN tłumaczymy je tutaj.
+const WORKER_ERR_EN = {
+  'Brak hasła': 'Enter your group password.',
+  'Nieprawidłowe hasło grupy': 'Invalid group password.',
+  'Dostęp dla tej grupy został zamknięty': 'Access for this group has been closed.',
+  'Dostęp do tej grupy jeszcze nie jest aktywny': 'Access for this group is not active yet.',
+  'Dostęp dla tej grupy wygasł': 'Access for this group has expired.',
+  'Nieprawidłowy kod dostępu': 'Invalid access code. Log in again with your group password.',
+  'Dostęp dla tej grupy jest zamknięty albo wygasł.': 'Access for this group is closed or has expired.',
+  'Unauthorized': 'Invalid access code. Log in again with your group password.',
+  'Brak ksywy autora.': 'Author nickname is missing.',
+  'Ksywa zbyt długa.': 'The nickname is too long.',
+  'Brak treści ćwiczenia.': 'The exercise content is missing.',
+  'Treść ćwiczenia jest zbyt długa.': 'The exercise content is too long.',
+  'Błąd zapisu do bazy.': 'Could not save to the database. Please try again.',
+  'Błąd bazy danych.': 'Database error. Please try again.',
+  'Nie znaleziono ćwiczenia dla tej ksywy.': 'No exercise found for this nickname.',
+  'Kod dla tego ćwiczenia został już wygenerowany.': 'A code has already been generated for this exercise.',
+  'Nie udało się wygenerować unikalnego kodu, spróbuj ponownie.': 'Could not generate a unique code. Please try again.',
+  'Brak kodu zaproszenia.': 'The invite code is missing.',
+  'Brak ksywy recenzenta.': 'Reviewer nickname is missing.',
+  'Nieprawidłowy kod zaproszenia.': 'Invalid invite code.',
+  'Ten kod pochodzi z innej grupy.': 'This code belongs to a different group.',
+  'Kod zaproszenia wygasł.': 'The invite code has expired.',
+  'Ten kod został już wykorzystany.': 'This code has already been used.',
+  'Nie możesz ocenić własnego ćwiczenia.': 'You cannot review your own exercise.',
+  'Brak wyniku oceny.': 'The scores are missing.',
+  'Nieprawidłowy wynik oceny.': 'Invalid scores.',
+  'Komentarz dla autora jest wymagany (minimum 80 znaków).': 'A comment for the author is required (at least 80 characters).',
+  'Komentarz jest zbyt długi.': 'The comment is too long.',
+  'Ocena została już zapisana dla tego zaproszenia.': 'A review has already been saved for this invite.',
+  'Ten kod został odebrany przez inną osobę.': 'This code was claimed by someone else.',
+  'Brak ksywy.': 'Enter your nickname.',
+  'Wpisz 6-znakowy kod, który dostałeś po zakończeniu ćwiczenia.': 'Enter the 6-character code you received after finishing the exercise.'
+};
+
+function workerErr(msg, fallbackKey) {
+  if (!msg) return t(fallbackKey);
+  if (MBA_LANG !== 'en') return msg;
+  if (WORKER_ERR_EN[msg]) return WORKER_ERR_EN[msg];
+  const wait = /^Za dużo.*?(\d+)s\.$/.exec(msg);
+  if (wait) return 'Too many attempts. Try again in ' + wait[1] + 's.';
+  return t(fallbackKey);
+}
+
+function applyI18n() {
+  const en = MBA_LANG === 'en';
+  document.documentElement.lang = MBA_LANG;
+  document.title = en && I18N.en['page.title'] ? I18N.en['page.title'] : MBA_TITLE_PL;
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    if (el.dataset.i18nPl === undefined) el.dataset.i18nPl = el.textContent;
+    const v = I18N.en[el.dataset.i18n];
+    el.textContent = en && v !== undefined ? v : el.dataset.i18nPl;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el) {
+    if (el.dataset.i18nPlPh === undefined) el.dataset.i18nPlPh = el.placeholder;
+    const v = I18N.en[el.dataset.i18nPh];
+    el.placeholder = en && v !== undefined ? v : el.dataset.i18nPlPh;
+  });
+  document.querySelectorAll('.lang-switch button').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.lang === MBA_LANG);
+  });
+  MBA_LANG_HOOKS.forEach(function(fn) { fn(); });
+}
+
+// persist=false: zmiana tylko na tej stronie (np. recenzja w języku pracy),
+// bez nadpisywania wyboru studenta.
+function setLang(lang, persist) {
+  MBA_LANG = lang === 'en' ? 'en' : 'pl';
+  if (persist !== false) { try { localStorage.setItem(MBA_LANG_KEY, MBA_LANG); } catch(e) {} }
+  applyI18n();
+}
+
+function mountLangSwitches() {
+  document.querySelectorAll('.lang-switch-slot').forEach(function(slot) {
+    const sw = document.createElement('div');
+    sw.className = 'lang-switch';
+    ['pl', 'en'].forEach(function(code) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.lang = code;
+      b.textContent = code.toUpperCase();
+      b.onclick = function() { setLang(code); };
+      sw.appendChild(b);
+    });
+    slot.appendChild(sw);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() { mountLangSwitches(); applyI18n(); });
+
+MBA_LANG_HOOKS.push(function() { renderDraftBanner(); });
 
 function mbaClearSession() {
   sessionStorage.removeItem(SESSION_KEY);
@@ -362,8 +615,8 @@ async function verifyGroupGate() {
   const err = document.getElementById('gate-err');
   const btn = document.getElementById('gate-btn');
   const pw = (inp ? inp.value : '').trim();
-  if (!pw) { err.textContent = 'Wpisz hasło grupy.'; return; }
-  btn.disabled = true; btn.textContent = 'Sprawdzam...';
+  if (!pw) { err.textContent = t('gate.empty'); return; }
+  btn.disabled = true; btn.textContent = t('gate.checking');
   err.textContent = '';
   try {
     const res = await fetch(WORKER + '/verify-group', {
@@ -374,8 +627,8 @@ async function verifyGroupGate() {
     if (data.valid) {
       const allowed = data.allowedExercises;
       if (allowed && !allowed.includes('zarzadzanie-porazka')) {
-        err.textContent = 'Twoja grupa nie ma dostępu do tego ćwiczenia.';
-        btn.disabled = false; btn.textContent = 'Wejdź →';
+        err.textContent = t('gate.noaccess');
+        btn.disabled = false; btn.textContent = t('gate.btn');
         return;
       }
       sessionStorage.setItem(SESSION_KEY, JSON.stringify({
@@ -386,10 +639,10 @@ async function verifyGroupGate() {
       document.getElementById('tb-groupname').textContent = data.groupName;
       document.getElementById('tb-logout').style.display = '';
     } else {
-      err.textContent = data.error || 'Nieprawidłowe hasło grupy.';
+      err.textContent = workerErr(data.error, 'gate.bad');
     }
-  } catch(e) { err.textContent = 'Błąd połączenia.'; }
-  btn.disabled = false; btn.textContent = 'Wejdź →';
+  } catch(e) { err.textContent = t('net'); }
+  btn.disabled = false; btn.textContent = t('gate.btn');
 }
 
 function showScreen(id) {
@@ -418,6 +671,8 @@ function draftFilledCount(draft) {
 function formatSavedAt(ts) {
   if (!ts) return '';
   const d = new Date(ts);
+  // Format daty zostaje polski w obu językach; w EN bez polskich nazw miesięcy.
+  if (MBA_LANG === 'en') return d.toLocaleDateString('pl-PL') + ', ' + d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
   return d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' }) + ', ' + d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
 }
 
@@ -437,7 +692,7 @@ function loadDraft(nick) {
     document.getElementById(id).value = (draft && draft[id]) || '';
   });
   if (draft && draft.savedAt) {
-    document.getElementById('autosave-note').textContent = 'Wczytano wersję roboczą z ' + formatSavedAt(draft.savedAt) + '. Zmiany zapisują się automatycznie w tej przeglądarce.';
+    document.getElementById('autosave-note').textContent = t('draft.loaded', { d: formatSavedAt(draft.savedAt) });
   }
 }
 
@@ -448,7 +703,7 @@ function saveDraft() {
     FIELD_IDS.forEach(function(id) { draft[id] = document.getElementById(id).value; });
     if (!draftFilledCount(draft)) { localStorage.removeItem(draftKeyFor(draftOwner)); return; }
     localStorage.setItem(draftKeyFor(draftOwner), JSON.stringify(draft));
-    document.getElementById('autosave-note').textContent = 'Zapisano w tej przeglądarce o ' + new Date(draft.savedAt).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }) + '.';
+    document.getElementById('autosave-note').textContent = t('draft.saved', { t: new Date(draft.savedAt).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }) });
   } catch(e) {}
 }
 
@@ -488,27 +743,27 @@ function renderInviteBanner() {
   const expired = Date.now() > expiresAt;
   banner.textContent = '';
   const strong = document.createElement('strong');
-  strong.textContent = 'Twój kod dla recenzenta: ' + saved.code;
+  strong.textContent = t('invite.your') + saved.code;
   banner.appendChild(strong);
-  banner.appendChild(document.createTextNode(
-    ' (wygenerowany ' + formatSavedAt(saved.createdAt) + ', ' +
-    (expired ? 'termin ważności minął ' + formatSavedAt(expiresAt) : 'ważny do ' + formatSavedAt(expiresAt)) + '). '
-  ));
+  banner.appendChild(document.createTextNode(t('invite.meta', {
+    c: formatSavedAt(saved.createdAt),
+    v: expired ? t('invite.expired', { d: formatSavedAt(expiresAt) }) : t('invite.valid', { d: formatSavedAt(expiresAt) })
+  })));
   if (!expired) {
     const copy = document.createElement('button');
     copy.type = 'button';
     copy.className = 'btn btn-ghost';
     copy.style.cssText = 'padding:4px 10px;font-size:0.78rem;';
-    copy.textContent = 'Kopiuj kod';
+    copy.textContent = t('copy');
     copy.onclick = function() {
       if (navigator.clipboard) navigator.clipboard.writeText(saved.code);
-      copy.textContent = 'Skopiowano';
+      copy.textContent = t('copied');
     };
     banner.appendChild(copy);
   }
   const status = document.createElement('div');
   status.style.cssText = 'margin-top:6px;font-size:0.8rem;';
-  status.textContent = 'Status recenzji sprawdzisz na stronie „Porażka: recenzja”.';
+  status.textContent = t('invite.status');
   banner.appendChild(status);
   banner.style.display = '';
 }
@@ -522,24 +777,24 @@ function renderDraftBanner() {
   const btn = document.getElementById('start-btn');
   if (!filled) {
     banner.style.display = 'none';
-    btn.textContent = 'Zacznij ćwiczenie →';
+    btn.textContent = t('w.start');
     return;
   }
   banner.textContent = '';
   const strong = document.createElement('strong');
-  strong.textContent = 'Masz zapisaną wersję roboczą.';
+  strong.textContent = t('draft.have');
   banner.appendChild(strong);
-  banner.appendChild(document.createTextNode(' Uzupełnione pola: ' + filled + '/' + FIELD_IDS.length +
-    (draft.savedAt ? ', ostatni zapis: ' + formatSavedAt(draft.savedAt) : '') + '.'));
+  banner.appendChild(document.createTextNode(t('draft.filled', { n: filled, total: FIELD_IDS.length }) +
+    (draft.savedAt ? t('draft.last', { d: formatSavedAt(draft.savedAt) }) : '') + '.'));
   banner.style.display = '';
-  btn.textContent = 'Kontynuuj ćwiczenie →';
+  btn.textContent = t('w.continue');
 }
 
 function startExercise() {
   const inp = document.getElementById('nickname-input');
   const err = document.getElementById('nick-err');
   const nick = (inp.value || '').trim();
-  if (!nick) { err.textContent = 'Wpisz swoją ksywę, żeby kontynuować.'; return; }
+  if (!nick) { err.textContent = t('nick.empty'); return; }
   if (typeof mbaSaveKsywa === 'function') mbaSaveKsywa(nick);
   migrateLegacyDraft(nick);
   draftOwner = nick;
@@ -564,7 +819,7 @@ async function submitExercise() {
   const errBox = document.getElementById('submit-err');
   errBox.textContent = '';
   const nick = (typeof mbaGetKsywa === 'function' ? mbaGetKsywa() : '') || '';
-  if (!nick) { errBox.textContent = 'Brak ksywy. Wróć do ekranu startowego.'; return; }
+  if (!nick) { errBox.textContent = t('sub.nonick'); return; }
 
   const content = {};
   let filled = 0;
@@ -574,12 +829,12 @@ async function submitExercise() {
     if (v) filled++;
   });
   if (filled < FIELD_IDS.length) {
-    errBox.textContent = 'Uzupełnij wszystkie pola przed zakończeniem (' + filled + '/' + FIELD_IDS.length + ').';
+    errBox.textContent = t('sub.fill', { n: filled, total: FIELD_IDS.length });
     return;
   }
 
   const btn = document.getElementById('submit-btn');
-  btn.disabled = true; btn.textContent = 'Zapisuję...';
+  btn.disabled = true; btn.textContent = t('sub.saving');
 
   const session = (() => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e){ return null; } })();
   const groupCode = session ? session.password : '';
@@ -587,17 +842,17 @@ async function submitExercise() {
   try {
     const subRes = await fetch(WORKER + '/submissions', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ code: groupCode, exercise_slug: EXERCISE_SLUG, author_ksywa: nick, content: content })
+      body: JSON.stringify({ code: groupCode, exercise_slug: EXERCISE_SLUG, author_ksywa: nick, content: Object.assign({ lang: MBA_LANG }, content) })
     });
     const subData = await subRes.json();
-    if (!subRes.ok || !subData.submission_id) throw new Error(subData.error || 'Błąd zapisu ćwiczenia.');
+    if (!subRes.ok || !subData.submission_id) throw new Error(workerErr(subData.error, 'sub.err'));
 
     const invRes = await fetch(WORKER + '/invites', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ code: groupCode, submission_id: subData.submission_id, author_ksywa: nick })
     });
     const invData = await invRes.json();
-    if (!invRes.ok || !invData.invite_code) throw new Error(invData.error || 'Błąd generowania kodu.');
+    if (!invRes.ok || !invData.invite_code) throw new Error(workerErr(invData.error, 'sub.inverr'));
 
     clearTimeout(autosaveTimer);
     try { localStorage.removeItem(draftKeyFor(nick)); } catch(e) {}
@@ -606,8 +861,8 @@ async function submitExercise() {
     document.getElementById('invite-code-display').textContent = invData.invite_code;
     showScreen('screen-done');
   } catch(e) {
-    errBox.textContent = e.message || 'Błąd połączenia. Spróbuj ponownie.';
-    btn.disabled = false; btn.textContent = 'Zakończ i wygeneruj kod dla recenzenta →';
+    errBox.textContent = (e instanceof TypeError || !e.message) ? t('sub.net') : e.message;
+    btn.disabled = false; btn.textContent = t('submit');
   }
 }
 </script>

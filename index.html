@@ -444,6 +444,17 @@
         .session-logout { font-size:0.78rem; color:#5624D0; cursor:pointer; background:none; border:none; font-family:Inter,sans-serif; font-weight:600; }
         .session-logout:hover { text-decoration:underline; }
         .session-wrap { background:#fff; border-bottom:1px solid #D1D7DC; }
+
+        /* ── Language switch ── */
+        .hero-inner { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+        .login-box .lang-switch-slot { display:flex; justify-content:flex-end; margin:-20px -16px 12px 0; }
+        .lang-switch { display:inline-flex; border:1.5px solid var(--border); }
+        .lang-switch button { background:#fff; border:none; padding:6px 11px; font-family:inherit; font-size:0.75rem; font-weight:700; letter-spacing:0.06em; color:var(--text-muted); cursor:pointer; }
+        .lang-switch button + button { border-left:1.5px solid var(--border); }
+        .lang-switch button.active { background:var(--text); color:#fff; }
+        .card.lang-locked, .final-card.lang-locked { opacity:0.45; pointer-events:none; cursor:default; filter:grayscale(60%); }
+        .card.lang-locked:hover, .final-card.lang-locked:hover { box-shadow:none; transform:none; opacity:0.45; }
+        .lang-flag { position:absolute; top:8px; right:8px; z-index:2; background:#1C1D1F; color:#fff; font-size:0.62rem; font-weight:700; letter-spacing:0.05em; padding:3px 7px; }
     </style>
 </head>
 <body>
@@ -451,41 +462,45 @@
 <!-- ── Login modal ── -->
 <div class="login-overlay" id="login-overlay">
   <div class="login-box">
-    <h2>Dostęp do platformy</h2>
-    <p>Wprowadź hasło swojej grupy, aby uzyskać dostęp do ćwiczeń.</p>
+    <div class="lang-switch-slot"></div>
+    <h2 data-i18n="login.h">Dostęp do platformy</h2>
+    <p data-i18n="login.p">Wprowadź hasło swojej grupy, aby uzyskać dostęp do ćwiczeń.</p>
     <input class="login-input" type="password" id="student-password"
-      placeholder="Hasło grupy..." autocomplete="off"
+      data-i18n-ph="login.ph" placeholder="Hasło grupy..." autocomplete="off"
       onkeydown="if(event.key==='Enter')doStudentLogin();" />
     <div class="login-error" id="login-error-msg"></div>
-    <button class="login-btn" id="login-btn" onclick="doStudentLogin()">Zaloguj →</button>
+    <button class="login-btn" id="login-btn" onclick="doStudentLogin()" data-i18n="login.btn">Zaloguj →</button>
   </div>
 </div>
 
 <!-- ── Session bar (shown when logged in) ── -->
 <div class="session-wrap" id="session-wrap" style="display:none;">
   <div class="session-bar">
-    <span>Zalogowany jako: <strong id="session-group-name"></strong></span>
-    <button class="session-logout" onclick="doStudentLogout()">Wyloguj</button>
+    <span><span data-i18n="session.as">Zalogowany jako:</span> <strong id="session-group-name"></strong></span>
+    <button class="session-logout" onclick="doStudentLogout()" data-i18n="session.out">Wyloguj</button>
   </div>
 </div>
 
 <div class="refresh-banner" id="refresh-banner">
-  Uprawnienia Twojej grupy zostały zmienione. Odśwież stronę, żeby zobaczyć aktualne zadania.
-  <button onclick="location.reload()">Odśwież</button>
+  <span data-i18n="refresh.msg">Uprawnienia Twojej grupy zostały zmienione. Odśwież stronę, żeby zobaczyć aktualne zadania.</span>
+  <button onclick="location.reload()" data-i18n="refresh.btn">Odśwież</button>
 </div>
 
     <section class="hero">
         <div class="hero-inner">
-            <div class="hero-eyebrow">Platforma edukacyjna · MBA 2026</div>
-            <h1>Interaktywne Zadania MBA</h1>
+            <div>
+                <div class="hero-eyebrow" data-i18n="hero.eyebrow">Platforma edukacyjna · MBA 2026</div>
+                <h1 data-i18n="hero.h1">Interaktywne Zadania MBA</h1>
+            </div>
+            <div class="lang-switch-slot"></div>
         </div>
     </section>
 
     <main class="main">
 
         <div class="section-head">
-            <h2>Ćwiczenia</h2>
-            <span>8 modułów</span>
+            <h2 data-i18n="sec.ex">Ćwiczenia</h2>
+            <span data-i18n="sec.count">8 modułów</span>
         </div>
 
         <div class="cards-grid">
@@ -493,15 +508,15 @@
             <a href="korelacja-danych.html" class="card card-01">
                 <div class="card-thumb">
                     <img class="card-thumb-img" src="images/thumb-01.png" alt="Korelacja danych">
-                    <span class="card-thumb-num">Ćwiczenie 01</span>
+                    <span class="card-thumb-num"><span data-i18n="ex">Ćwiczenie</span> 01</span>
                 </div>
                 <div class="card-body">
-                    <div class="card-title">Korelacja Danych <span class="version-badge">v1.4</span></div>
-                    <div class="card-desc">Sprawdź intuicję o korelacjach w świecie SaaS, CRM i BI.</div>
+                    <div class="card-title"><span data-i18n="c01.t">Korelacja Danych</span> <span class="version-badge">v1.4</span></div>
+                    <div class="card-desc" data-i18n="c01.d">Sprawdź intuicję o korelacjach w świecie SaaS, CRM i BI.</div>
                     <div class="card-meta">
                         <span class="meta-pill">⏱ 15 min</span>
                         <span class="meta-sep">·</span>
-                        <span class="meta-pill">5 pytań</span>
+                        <span class="meta-pill" data-i18n="p.q5">5 pytań</span>
                     </div>
                 </div>
             </a>
@@ -509,15 +524,15 @@
             <a href="myslenie-krytyczne.html" class="card card-02">
                 <div class="card-thumb">
                     <img class="card-thumb-img" src="images/thumb-02.png" alt="Myślenie krytyczne">
-                    <span class="card-thumb-num">Ćwiczenie 02</span>
+                    <span class="card-thumb-num"><span data-i18n="ex">Ćwiczenie</span> 02</span>
                 </div>
                 <div class="card-body">
-                    <div class="card-title">Myślenie Krytyczne <span class="version-badge">v1.3</span></div>
-                    <div class="card-desc">10 pułapek logicznych każdego menedżera. Błędy poznawcze, fałszywe wnioski, manipulacja danymi.</div>
+                    <div class="card-title"><span data-i18n="c02.t">Myślenie Krytyczne</span> <span class="version-badge">v1.3</span></div>
+                    <div class="card-desc" data-i18n="c02.d">10 pułapek logicznych każdego menedżera. Błędy poznawcze, fałszywe wnioski, manipulacja danymi.</div>
                     <div class="card-meta">
                         <span class="meta-pill">⏱ 15 min</span>
                         <span class="meta-sep">·</span>
-                        <span class="meta-pill">10 pytań</span>
+                        <span class="meta-pill" data-i18n="p.q10">10 pytań</span>
                     </div>
                 </div>
             </a>
@@ -525,15 +540,15 @@
             <a href="symulacja-transformacja.html" class="card card-03">
                 <div class="card-thumb">
                     <img class="card-thumb-img" src="images/thumb-03.png" alt="Transformacja cyfrowa">
-                    <span class="card-thumb-num">Ćwiczenie 03</span>
+                    <span class="card-thumb-num"><span data-i18n="ex">Ćwiczenie</span> 03</span>
                 </div>
                 <div class="card-body">
-                    <div class="card-title">Symulacja: Transformacja Cyfrowa <span class="version-badge">v2.0</span></div>
-                    <div class="card-desc">Wciel się w CDO. 6 decyzji strategicznych, AI przeanalizuje Twoją strategię.</div>
+                    <div class="card-title"><span data-i18n="c03.t">Symulacja: Transformacja Cyfrowa</span> <span class="version-badge">v2.0</span></div>
+                    <div class="card-desc" data-i18n="c03.d">Wciel się w CDO. 6 decyzji strategicznych, AI przeanalizuje Twoją strategię.</div>
                     <div class="card-meta">
                         <span class="meta-pill">⏱ 30 min</span>
                         <span class="meta-sep">·</span>
-                        <span class="meta-pill">6 decyzji</span>
+                        <span class="meta-pill" data-i18n="p.dec6">6 decyzji</span>
                     </div>
                 </div>
             </a>
@@ -541,15 +556,15 @@
             <a href="ciemne-dane.html" class="card card-04">
                 <div class="card-thumb">
                     <img class="card-thumb-img" src="images/thumb-04.png" alt="Ciemne dane">
-                    <span class="card-thumb-num">Ćwiczenie 04</span>
+                    <span class="card-thumb-num"><span data-i18n="ex">Ćwiczenie</span> 04</span>
                 </div>
                 <div class="card-body">
-                    <div class="card-title">Audyt Ciemnych Danych <span class="version-badge">v1.1</span></div>
-                    <div class="card-desc">Konsultant danych w Nordia S.A. Oceń 12 zbiorów — dark data: koszty, decyzje.</div>
+                    <div class="card-title"><span data-i18n="c04.t">Audyt Ciemnych Danych</span> <span class="version-badge">v1.1</span></div>
+                    <div class="card-desc" data-i18n="c04.d">Konsultant danych w Nordia S.A. Oceń 12 zbiorów — dark data: koszty, decyzje.</div>
                     <div class="card-meta">
                         <span class="meta-pill">⏱ 25 min</span>
                         <span class="meta-sep">·</span>
-                        <span class="meta-pill">Ticker kosztów</span>
+                        <span class="meta-pill" data-i18n="p.ticker">Ticker kosztów</span>
                     </div>
                 </div>
             </a>
@@ -557,15 +572,15 @@
             <a href="gra-inzynieria-danych.html" class="card card-05">
                 <div class="card-thumb">
                     <img class="card-thumb-img" src="images/thumb-05.png" alt="Inżynieria danych">
-                    <span class="card-thumb-num">Ćwiczenie 05</span>
+                    <span class="card-thumb-num"><span data-i18n="ex">Ćwiczenie</span> 05</span>
                 </div>
                 <div class="card-body">
-                    <div class="card-title">Gra: Inżynieria Danych Biznesowych <span class="version-badge">v1.0</span></div>
-                    <div class="card-desc">Zaprojektuj architekturę danych w roli Data Engineer.</div>
+                    <div class="card-title"><span data-i18n="c05.t">Gra: Inżynieria Danych Biznesowych</span> <span class="version-badge">v1.0</span></div>
+                    <div class="card-desc" data-i18n="c05.d">Zaprojektuj architekturę danych w roli Data Engineer.</div>
                     <div class="card-meta">
-                        <span class="meta-pill">⏱ ~4 godz.</span>
+                        <span class="meta-pill" data-i18n="p.4h">⏱ ~4 godz.</span>
                         <span class="meta-sep">·</span>
-                        <span class="meta-pill">Strategiczne</span>
+                        <span class="meta-pill" data-i18n="p.strat">Strategiczne</span>
                     </div>
                 </div>
             </a>
@@ -573,11 +588,11 @@
             <a href="test-predyspozycji.html" class="card card-06">
                 <div class="card-thumb">
                     <img class="card-thumb-img" src="images/thumb-pred.png" alt="Test Predyspozycji">
-                    <span class="card-thumb-num">Ćwiczenie 06</span>
+                    <span class="card-thumb-num"><span data-i18n="ex">Ćwiczenie</span> 06</span>
                 </div>
                 <div class="card-body">
-                    <div class="card-title">Test Predyspozycji <span class="version-badge">v1.4</span></div>
-                    <div class="card-desc">Losowe pytania z trzech obszarów: językowego, matematycznego i werbalnego.</div>
+                    <div class="card-title"><span data-i18n="c06.t">Test Predyspozycji</span> <span class="version-badge">v1.4</span></div>
+                    <div class="card-desc" data-i18n="c06.d">Losowe pytania z trzech obszarów: językowego, matematycznego i werbalnego.</div>
                     <div class="card-meta">
                         <span class="meta-pill">⏱ ~15 min</span>
                     </div>
@@ -587,15 +602,15 @@
             <a href="zarzadzanie-porazka.html" class="card card-07">
                 <div class="card-thumb">
                     <img class="card-thumb-img" src="images/thumb-07.jpg" alt="Zarządzanie Porażką">
-                    <span class="card-thumb-num">Ćwiczenie 07</span>
+                    <span class="card-thumb-num"><span data-i18n="ex">Ćwiczenie</span> 07</span>
                 </div>
                 <div class="card-body">
-                    <div class="card-title">Zarządzanie Porażką <span class="version-badge">v1.3</span></div>
-                    <div class="card-desc">Pogódź się z niewykonanym celem: analiza faktów, RCA, ocena peer-review z drugą osobą.</div>
+                    <div class="card-title"><span data-i18n="c07.t">Zarządzanie Porażką</span> <span class="version-badge">v2.0</span></div>
+                    <div class="card-desc" data-i18n="c07.d">Pogódź się z niewykonanym celem: analiza faktów, RCA, ocena peer-review z drugą osobą.</div>
                     <div class="card-meta">
                         <span class="meta-pill">⏱ 60–120 min</span>
                         <span class="meta-sep">·</span>
-                        <span class="meta-pill">Peer-review</span>
+                        <span class="meta-pill" data-i18n="p.peer">Peer-review</span>
                     </div>
                 </div>
             </a>
@@ -603,15 +618,15 @@
             <a href="strategie-komunikacyjne-dla-zmiany.html" class="card card-08">
                 <div class="card-thumb">
                     <img class="card-thumb-img" src="images/change.png" alt="Strategie Komunikacyjne dla Zmiany">
-                    <span class="card-thumb-num">Ćwiczenie 08</span>
+                    <span class="card-thumb-num"><span data-i18n="ex">Ćwiczenie</span> 08</span>
                 </div>
                 <div class="card-body">
-                    <div class="card-title">Strategie Komunikacyjne dla Zmiany <span class="version-badge">v1.1</span></div>
-                    <div class="card-desc">Diagnoza dyspozycji do reagowania na zmianę (model Oreg) i dobór strategii komunikacyjnej.</div>
+                    <div class="card-title"><span data-i18n="c08.t">Strategie Komunikacyjne dla Zmiany</span> <span class="version-badge">v1.1</span></div>
+                    <div class="card-desc" data-i18n="c08.d">Diagnoza dyspozycji do reagowania na zmianę (model Oreg) i dobór strategii komunikacyjnej.</div>
                     <div class="card-meta">
                         <span class="meta-pill">⏱ 20 min</span>
                         <span class="meta-sep">·</span>
-                        <span class="meta-pill">15 pozycji</span>
+                        <span class="meta-pill" data-i18n="p.items15">15 pozycji</span>
                     </div>
                 </div>
             </a>
@@ -619,7 +634,7 @@
         </div>
 
         <div class="section-head">
-            <h2>Praca zespołowa</h2>
+            <h2 data-i18n="sec.team">Praca zespołowa</h2>
         </div>
         <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:8px;">
             <a href="porazka-recenzja.html" class="card" style="width:260px;">
@@ -627,41 +642,213 @@
                     <img class="card-thumb-img" src="images/cooperation.jpg" alt="Praca zespołowa">
                 </div>
                 <div class="card-body">
-                    <div class="card-title">Porażka: recenzja</div>
-                    <div class="card-desc">Oceń czyjeś ćwiczenie kodem albo sprawdź własną ocenę.</div>
+                    <div class="card-title" data-i18n="rev.t">Porażka: recenzja</div>
+                    <div class="card-desc" data-i18n="rev.d">Oceń czyjeś ćwiczenie kodem albo sprawdź własną ocenę.</div>
                 </div>
             </a>
         </div>
 
         <div class="final-section">
             <div class="section-head">
-                <h2>Zaliczenie</h2>
+                <h2 data-i18n="sec.final">Zaliczenie</h2>
             </div>
             <a href="test-wiedzy.html" class="final-card">
                 <div class="final-thumb"><img style="width:100%;height:100%;object-fit:cover;object-position:center;" src="images/thumb-final.png" alt="Test wiedzy"></div>
                 <div class="final-body">
-                    <div class="final-eyebrow">Zaliczenie końcowe</div>
-                    <div class="final-title">Test Wiedzy</div>
-                    <div class="final-desc">Sprawdzian zamknięty dla uczestników zajęć. Wyniki są poufne i widoczne wyłącznie dla prowadzącego. Do wejścia potrzebujesz hasła grupy.</div>
+                    <div class="final-eyebrow" data-i18n="final.eyebrow">Zaliczenie końcowe</div>
+                    <div class="final-title" data-i18n="final.t">Test Wiedzy</div>
+                    <div class="final-desc" data-i18n="final.d">Sprawdzian zamknięty dla uczestników zajęć. Wyniki są poufne i widoczne wyłącznie dla prowadzącego. Do wejścia potrzebujesz hasła grupy.</div>
                     <div class="final-meta">
                         <span class="final-pill">⏱ ~15 min</span>
-                        <span class="final-pill">📋 Wyniki poufne</span>
+                        <span class="final-pill" data-i18n="final.conf">📋 Wyniki poufne</span>
                     </div>
                 </div>
                 <div class="final-cta">
-                    <div class="cta-btn">Przejdź do testu →</div>
+                    <div class="cta-btn" data-i18n="final.cta">Przejdź do testu →</div>
                 </div>
             </a>
         </div>
 
         <div class="footer">
-            <div class="footer-left">Interaktywne Zadania MBA &copy; 2026</div>
-            <div class="footer-right">MBA · Zarządzanie Cyfrowe</div>
+            <div class="footer-left" data-i18n="footer.l">Interaktywne Zadania MBA © 2026</div>
+            <div class="footer-right" data-i18n="footer.r">MBA · Zarządzanie Cyfrowe</div>
         </div>
 
     </main>
 
 
+<script>
+// ── Język interfejsu (PL/EN) ────────────────────────────────────────────────
+// Wybór studenta trzymamy w localStorage pod 'mba_lang' (wspólny dla wszystkich
+// stron), a ?lang=en w adresie go ustawia. Teksty PL zbieramy z HTML przy
+// pierwszym przełączeniu, więc słownik zawiera tylko tłumaczenia EN.
+const MBA_LANG_KEY = 'mba_lang';
+// Ćwiczenia (po href) dostępne w danym języku. Brak wpisu = tylko PL.
+const HREF_LANGS = {
+  'zarzadzanie-porazka.html': ['pl', 'en'],
+  'porazka-recenzja.html':    ['pl', 'en']
+};
+const I18N_EN = {
+  'login.h': 'Platform access',
+  'login.p': 'Enter your group password to access the exercises.',
+  'login.ph': 'Group password...',
+  'login.btn': 'Log in →',
+  'login.empty': 'Enter your group password.',
+  'login.checking': 'Checking...',
+  'login.bad': 'Invalid password.',
+  'login.net': 'Connection error. Please try again.',
+  'session.as': 'Logged in as:',
+  'session.out': 'Log out',
+  'refresh.msg': 'Your group\'s permissions have changed. Refresh the page to see the current exercises.',
+  'refresh.btn': 'Refresh',
+  'hero.eyebrow': 'Learning platform · MBA 2026',
+  'hero.h1': 'Interactive MBA Exercises',
+  'sec.ex': 'Exercises',
+  'sec.count': '8 modules',
+  'sec.team': 'Teamwork',
+  'sec.final': 'Final assessment',
+  'ex': 'Exercise',
+  'c01.t': 'Data Correlation',
+  'c01.d': 'Test your intuition about correlations in SaaS, CRM and BI.',
+  'c02.t': 'Critical Thinking',
+  'c02.d': '10 logical traps every manager faces. Cognitive biases, false conclusions, data manipulation.',
+  'c03.t': 'Simulation: Digital Transformation',
+  'c03.d': 'Step into the CDO role. 6 strategic decisions, then AI analyses your strategy.',
+  'c04.t': 'Dark Data Audit',
+  'c04.d': 'You are a data consultant at Nordia S.A. Assess 12 datasets: dark data, costs, decisions.',
+  'c05.t': 'Game: Business Data Engineering',
+  'c05.d': 'Design a data architecture in the role of a Data Engineer.',
+  'c06.t': 'Aptitude Test',
+  'c06.d': 'Random questions from three areas: language, maths and verbal reasoning.',
+  'c07.t': 'Managing Failure',
+  'c07.d': 'Come to terms with a missed goal: fact analysis, RCA, peer review with another person.',
+  'c08.t': 'Communication Strategies for Change',
+  'c08.d': 'Diagnose how you tend to react to change (Oreg model) and choose a communication strategy.',
+  'p.q5': '5 questions',
+  'p.q10': '10 questions',
+  'p.dec6': '6 decisions',
+  'p.ticker': 'Cost ticker',
+  'p.4h': '⏱ ~4 hrs',
+  'p.strat': 'Strategic',
+  'p.peer': 'Peer review',
+  'p.items15': '15 items',
+  'rev.t': 'Failure: review',
+  'rev.d': 'Review someone\'s exercise with a code or check your own review.',
+  'final.eyebrow': 'Final assessment',
+  'final.t': 'Knowledge Test',
+  'final.d': 'A closed test for course participants. Results are confidential and visible only to the instructor. You need your group password to enter.',
+  'final.conf': '📋 Confidential results',
+  'final.cta': 'Go to the test →',
+  'footer.l': 'Interactive MBA Exercises © 2026',
+  'footer.r': 'MBA · Digital Management',
+  'lang.only': 'Polish only'
+};
+const I18N_PL = {
+  'login.empty': 'Wprowadź hasło grupy.',
+  'login.checking': 'Sprawdzam...',
+  'login.bad': 'Nieprawidłowe hasło.',
+  'login.net': 'Błąd połączenia. Spróbuj ponownie.',
+  'lang.only': 'Tylko PL'
+};
+// Komunikaty Workera są po polsku; w EN tłumaczymy je po stronie przeglądarki.
+const WORKER_ERR_EN = {
+  'Brak hasła': 'Enter your group password.',
+  'Nieprawidłowe hasło grupy': 'Invalid group password.',
+  'Dostęp dla tej grupy został zamknięty': 'Access for this group has been closed.',
+  'Dostęp do tej grupy jeszcze nie jest aktywny': 'Access for this group is not active yet.',
+  'Dostęp dla tej grupy wygasł': 'Access for this group has expired.'
+};
+
+function mbaReadLang() {
+  try {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q === 'pl' || q === 'en') { localStorage.setItem(MBA_LANG_KEY, q); return q; }
+    return localStorage.getItem(MBA_LANG_KEY) === 'en' ? 'en' : 'pl';
+  } catch(e) { return 'pl'; }
+}
+let MBA_LANG = mbaReadLang();
+
+function t(key) {
+  const dict = MBA_LANG === 'en' ? I18N_EN : I18N_PL;
+  return dict[key] !== undefined ? dict[key] : key;
+}
+
+function workerErr(msg, fallbackKey) {
+  if (!msg) return t(fallbackKey);
+  if (MBA_LANG !== 'en') return msg;
+  if (WORKER_ERR_EN[msg]) return WORKER_ERR_EN[msg];
+  const wait = /^Za dużo.*?(\d+)s\.$/.exec(msg);
+  if (wait) return 'Too many attempts. Try again in ' + wait[1] + 's.';
+  return t(fallbackKey);
+}
+
+function hrefLangs(href) { return HREF_LANGS[href] || ['pl']; }
+
+function applyI18n() {
+  document.documentElement.lang = MBA_LANG;
+  document.title = MBA_LANG === 'en' ? 'Interactive MBA Exercises' : 'Interaktywne Zadania MBA';
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    if (el.dataset.i18nPl === undefined) el.dataset.i18nPl = el.textContent;
+    const key = el.dataset.i18n;
+    el.textContent = MBA_LANG === 'en' && I18N_EN[key] !== undefined ? I18N_EN[key] : el.dataset.i18nPl;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el) {
+    if (el.dataset.i18nPlPh === undefined) el.dataset.i18nPlPh = el.placeholder;
+    const key = el.dataset.i18nPh;
+    el.placeholder = MBA_LANG === 'en' && I18N_EN[key] !== undefined ? I18N_EN[key] : el.dataset.i18nPlPh;
+  });
+  document.querySelectorAll('.lang-switch button').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.lang === MBA_LANG);
+  });
+  applyLangToCards();
+}
+
+// Kafelki ćwiczeń niedostępnych w wybranym języku: wyszarzone z etykietą.
+// Działa niezależnie od blokady grupy (klasa .locked).
+function applyLangToCards() {
+  document.querySelectorAll('.card, .final-card').forEach(function(card) {
+    const href = card.getAttribute('href') || card.dataset.href;
+    if (!href) return;
+    card.dataset.href = href;
+    const ok = hrefLangs(href).includes(MBA_LANG);
+    card.classList.toggle('lang-locked', !ok);
+    let flag = card.querySelector('.lang-flag');
+    if (!ok) {
+      if (!flag) {
+        flag = document.createElement('span');
+        flag.className = 'lang-flag';
+        (card.querySelector('.card-thumb, .final-thumb') || card).appendChild(flag);
+      }
+      flag.textContent = t('lang.only');
+    } else if (flag) {
+      flag.remove();
+    }
+  });
+}
+
+function setLang(lang) {
+  MBA_LANG = lang === 'en' ? 'en' : 'pl';
+  try { localStorage.setItem(MBA_LANG_KEY, MBA_LANG); } catch(e) {}
+  applyI18n();
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.lang-switch-slot').forEach(function(slot) {
+    const sw = document.createElement('div');
+    sw.className = 'lang-switch';
+    ['pl', 'en'].forEach(function(code) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.lang = code;
+      b.textContent = code.toUpperCase();
+      b.onclick = function() { setLang(code); };
+      sw.appendChild(b);
+    });
+    slot.appendChild(sw);
+  });
+  applyI18n();
+});
+</script>
 <script>
 (function() {
   const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
@@ -797,8 +984,8 @@
     const pw = document.getElementById('student-password').value.trim();
     const errEl = document.getElementById('login-error-msg');
     const btn = document.getElementById('login-btn');
-    if (!pw) { errEl.textContent = 'Wprowadź hasło grupy.'; return; }
-    btn.disabled = true; btn.textContent = 'Sprawdzam...';
+    if (!pw) { errEl.textContent = t('login.empty'); return; }
+    btn.disabled = true; btn.textContent = t('login.checking');
     errEl.textContent = '';
     try {
       const res = await fetch(WORKER + '/verify-group', {
@@ -812,12 +999,12 @@
         document.getElementById('login-overlay').classList.remove('open');
         applySession({ groupName: data.groupName, allowedExercises: data.allowedExercises ?? null });
       } else {
-        errEl.textContent = data.error || 'Nieprawidłowe hasło.';
+        errEl.textContent = workerErr(data.error, 'login.bad');
       }
     } catch(e) {
-      errEl.textContent = 'Błąd połączenia. Spróbuj ponownie.';
+      errEl.textContent = t('login.net');
     }
-    btn.disabled = false; btn.textContent = 'Zaloguj →';
+    btn.disabled = false; btn.textContent = MBA_LANG === 'en' ? I18N_EN['login.btn'] : 'Zaloguj →';
   }
 
   function doStudentLogout() {
