@@ -648,12 +648,21 @@ document.getElementById('date-modal').addEventListener('click', function(e) {
 // ── Config ──────────────────────────────────────────────────────────────────
 async function loadConfig() {
   try {
-    const res = await fetch(WORKER + '/admin/get-config', { headers: { 'X-Admin-Key': ADMIN_KEY } });
+    // Worker obsługuje /admin/get-config tylko jako POST (GET dawał 404 i panel po cichu pokazywał domyślne 20/40)
+    const res = await fetch(WORKER + '/admin/get-config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY },
+      body: JSON.stringify({})
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     document.getElementById('cfg-questions').value = data.totalQuestions;
     document.getElementById('cfg-secs').value = data.secsPerQuestion;
     updateConfigTotal();
-  } catch(e) { console.warn('Config load failed', e); }
+  } catch(e) {
+    console.warn('Config load failed', e);
+    document.getElementById('cfg-msg').innerHTML = '<div class="alert alert-err" style="margin-top:12px;">Nie udało się wczytać aktualnej konfiguracji. Pola pokazują wartości domyślne, a nie te, które widzą studenci.</div>';
+  }
 }
 
 function updateConfigTotal() {
