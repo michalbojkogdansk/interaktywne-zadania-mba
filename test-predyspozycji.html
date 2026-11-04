@@ -403,7 +403,7 @@ let BANK = null;
 async function loadBank() {
   if (BANK) return BANK;
   try {
-    const res = await fetch('questions.json?v=2');
+    const res = await fetch('questions.json?v=3');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     BANK = await res.json();
   } catch(e) {
@@ -411,7 +411,7 @@ async function loadBank() {
     // Fallback: try absolute URL
     try {
       const base = window.location.href.replace(/[^/]*$/, '');
-      const res2 = await fetch(base + 'questions.json?v=2');
+      const res2 = await fetch(base + 'questions.json?v=3');
       BANK = await res2.json();
     } catch(e2) {
       console.error('loadBank failed completely:', e2);

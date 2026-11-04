@@ -188,23 +188,23 @@
       ]
     },
     {
-      "id": "j18",
+      "id": "j18b",
       "diff": "medium",
-      "question": "Słońce: energia, wiatr: ?",
+      "question": "Słońce: panel słoneczny, wiatr: ?",
       "options": [
-        "ruch",
         "prąd",
-        "moc",
-        "turbina"
+        "turbina",
+        "ruch",
+        "chmura"
       ]
     },
     {
-      "id": "j19",
+      "id": "j19b",
       "diff": "medium",
       "question": "Król: korona, sędzia: ?",
       "options": [
         "krawat",
-        "młotek",
+        "wyrok",
         "toga",
         "sala"
       ]
@@ -243,14 +243,14 @@
       ]
     },
     {
-      "id": "j23",
+      "id": "j23b",
       "diff": "hard",
       "question": "Śmiech: komedia, łzy: ?",
       "options": [
         "tragedia",
-        "dramat",
+        "aktor",
         "smutek",
-        "melodramat"
+        "scena"
       ]
     },
     {
@@ -265,13 +265,13 @@
       ]
     },
     {
-      "id": "j25",
+      "id": "j25b",
       "diff": "hard",
-      "question": "Chaos: porządek, konflikt: ?",
+      "question": "Chaos: porządek, wojna: ?",
       "options": [
-        "spokój",
-        "zgoda",
-        "harmonia",
+        "rozejm",
+        "armia",
+        "zwycięstwo",
         "pokój"
       ]
     },
@@ -298,14 +298,14 @@
       ]
     },
     {
-      "id": "j28",
+      "id": "j28b",
       "diff": "hard",
-      "question": "Prawo: obowiązek, wolność: ?",
+      "question": "Przyczyna: skutek, decyzja: ?",
       "options": [
-        "odpowiedzialność",
+        "konsekwencja",
         "wybór",
-        "niezależność",
-        "przywilej"
+        "wahanie",
+        "plan"
       ]
     },
     {
