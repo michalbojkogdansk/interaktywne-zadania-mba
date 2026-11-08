@@ -1023,7 +1023,7 @@
   <!-- ═══════════════════════════════════════════════════ -->
   <div id="screen-results" class="card hidden">
     <div id="resultsContent"></div>
-    <div class="saved-badge" id="savedBadge">✅ Wyniki zapisane do systemu wykładowcy</div>
+    <div class="saved-badge" id="savedBadge" style="display:none;">✅ Wyniki zapisane do systemu wykładowcy</div>
     <div class="error-box" id="errorBox"></div>
     <button class="btn btn-secondary btn-full" onclick="location.reload()" style="margin-top:16px;">↩ Zacznij od nowa</button>
   </div>
@@ -1871,9 +1871,14 @@ async function submitForAnalysis() {
     
   } catch (err) {
     showScreen('results');
-    document.getElementById('resultsContent').innerHTML = `<p style="color:var(--red); padding:20px;">Wystąpił błąd analizy AI. Spróbuj ponownie za chwilę.<br><small>${err.message}</small></p>`;
+    document.getElementById('resultsContent').innerHTML = `<p style="color:var(--red); padding:20px;">Wystąpił błąd analizy AI. Spróbuj ponownie za chwilę.<br><small>${err.message}</small></p><div style="padding:0 20px 20px;"><button class="btn btn-primary" onclick="submitForAnalysis()">🔄 Ponów analizę AI</button></div>`;
     document.getElementById('errorBox').style.display = 'block';
     document.getElementById('errorBox').textContent = 'Błąd: ' + err.message;
+    // Decyzje studenta zapisujemy nawet wtedy, gdy analiza AI się nie powiodła (raz na sesję).
+    if (!window._savedWithoutAnalysis) {
+      window._savedWithoutAnalysis = true;
+      saveToGitHub(null);
+    }
   }
 }
 
@@ -2157,23 +2162,9 @@ async function saveToGitHub(analysis) {
     return `**${d.id}. ${d.title}:** ${ansText}`;
   }).join('\n');
   
-  const body = `## 🏭 Symulacja Transformacji Cyfrowej: Wyniki
-
-**Student:** ${state.nickname}
-**Data:** ${dateStr}
-**Profil:** ${analysis.profileEmoji} ${analysis.profileName}
-**Ocena spójności (AI):** ${analysis.scoreOverall}/100
-**Wynik punktowy (algorytm):** ${calcDeterministicScore(state.answers).total}/100
-
----
-
-### Decyzje
-
-${decisionsText}
-
----
-
-### Analiza AI
+  const hasAI = !!analysis;
+  const profileLine = hasAI ? `${analysis.profileEmoji} ${analysis.profileName}` : 'brak (analiza AI nie powiodła się)';
+  const aiSection = hasAI ? `### Analiza AI
 
 **Ocena ogólna:** ${analysis.overallAssessment}
 
@@ -2188,7 +2179,25 @@ ${(analysis.risks || []).map(r => `- ${r}`).join('\n')}
 - Szacowany ROI: ${analysis.kpi.roiEstimate}
 - Ryzyko adopcji: ${analysis.kpi.adoptionRisk}
 
-**Rekomendacja:** ${analysis.recommendation}`;
+**Rekomendacja:** ${analysis.recommendation}` : '### Analiza AI\n\nNie wykonano: błąd modelu AI (np. limit zapytań). Student może ponowić analizę, wtedy pojawi się osobne zgłoszenie z pełnym wynikiem.';
+
+  const body = `## 🏭 Symulacja Transformacji Cyfrowej: Wyniki
+
+**Student:** ${state.nickname}
+**Data:** ${dateStr}
+**Profil:** ${profileLine}
+**Ocena spójności (AI):** ${hasAI ? analysis.scoreOverall + '/100' : 'brak'}
+**Wynik punktowy (algorytm):** ${calcDeterministicScore(state.answers).total}/100
+
+---
+
+### Decyzje
+
+${decisionsText}
+
+---
+
+${aiSection}`;
 
   const _session = (() => { try { return JSON.parse(sessionStorage.getItem('mba_session')); } catch(e) { return null; } })();
 
@@ -2198,7 +2207,7 @@ ${(analysis.risks || []).map(r => `- ${r}`).join('\n')}
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         code: _session && _session.password,
-        title: `🏭 Symulacja Transformacji: ${state.nickname}${getGroupName() ? ': ' + getGroupName() : ''}: ${analysis.profileName}: ${dateStr}`,
+        title: `🏭 Symulacja Transformacji: ${state.nickname}${getGroupName() ? ': ' + getGroupName() : ''}: ${hasAI ? analysis.profileName : 'BEZ ANALIZY AI'}: ${dateStr}`,
         body: body + (getGroupName() ? '\n\n---\n**Grupa:** ' + getGroupName() : ''),
         labels: ['symulacja-transformacja']
       })
