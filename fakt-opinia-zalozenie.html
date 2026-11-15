@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev; frame-ancestors 'none';">
+<title>Fakt/Opinia/Założenie</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --bg-page: #F7F9FA;
+    --border: #D1D7DC;
+    --border-dark: #9CA3AF;
+    --text: #1C1D1F;
+    --sec: #6A6F73;
+    --accent: #3B5BA9;
+    --accent-dark: #2C4480;
+    --accent-light: #EAF0FB;
+    --purple: #5624D0;
+    --ok: #1e7e34;
+    --err: #c0392b;
+    --warn: #92400E;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg-page); color: var(--text); min-height: 100vh; padding-top: 52px; }
+
+  /* Topbar */
+  .mba-topbar { position:fixed; top:0; left:0; right:0; z-index:9990; background:#fff; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 24px; height:52px; }
+  .mba-topbar-left { display:flex; align-items:center; gap:16px; min-width:0; }
+  .mba-topbar-back { display:flex; align-items:center; gap:6px; font-size:0.82rem; font-weight:700; color:var(--text); text-decoration:none; white-space:nowrap; }
+  .mba-topbar-back:hover { color:var(--purple); }
+  .mba-topbar-divider { width:1px; height:20px; background:var(--border); }
+  .mba-topbar-title { font-size:0.85rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mba-topbar-right { display:flex; align-items:center; gap:12px; }
+  .mba-topbar-group { font-size:0.78rem; color:var(--sec); }
+  .mba-topbar-group strong { color:var(--text); font-weight:700; }
+  .mba-topbar-logout { font-size:0.75rem; font-weight:600; color:var(--purple); cursor:pointer; background:none; border:none; font-family:inherit; }
+  .mba-topbar-logout:hover { text-decoration:underline; }
+
+  /* Language switch */
+  .lang-switch { display:inline-flex; border:1.5px solid var(--border); }
+  .lang-switch button { background:#fff; border:none; padding:5px 10px; font-family:inherit; font-size:0.72rem; font-weight:700; letter-spacing:0.06em; color:var(--sec); cursor:pointer; }
+  .lang-switch button + button { border-left:1.5px solid var(--border); }
+  .lang-switch button.active { background:var(--text); color:#fff; }
+  .gate-box .lang-switch-slot { display:flex; justify-content:flex-end; margin:-28px -20px 16px 0; }
+  body.lang-fixed .mba-topbar .lang-switch-slot { display:none; }
+
+  /* Gate */
+  #mba-group-gate { position:fixed; inset:0; background:#fff; z-index:9999; display:flex; align-items:center; justify-content:center; }
+  .gate-box { background:#fff; border:1.5px solid var(--border); padding:48px 40px; max-width:420px; width:90%; }
+  .gate-eyebrow { font-size:11px; font-weight:700; letter-spacing:1.8px; text-transform:uppercase; color:#9b8f84; margin-bottom:12px; }
+  .gate-box h2 { font-size:1.6rem; font-weight:800; margin-bottom:8px; }
+  .gate-box p { color:var(--sec); margin-bottom:24px; font-size:0.9rem; line-height:1.55; }
+  .gate-input { width:100%; padding:13px 14px; border:1.5px solid var(--border); font-size:1rem; font-family:inherit; outline:none; margin-bottom:10px; }
+  .gate-input:focus { border-color:var(--accent); }
+  .gate-error { font-size:0.82rem; color:var(--err); margin-bottom:10px; min-height:18px; }
+  .gate-btn { width:100%; padding:13px; background:var(--accent); color:#fff; border:none; font-size:0.95rem; font-weight:700; font-family:inherit; cursor:pointer; }
+  .gate-btn:hover { background:var(--accent-dark); }
+  .gate-btn:disabled { opacity:0.6; cursor:not-allowed; }
+
+  /* Progress */
+  .progress-wrap { background:#fff; border-bottom:1px solid var(--border); padding:14px 24px; position:sticky; top:52px; z-index:100; display:none; }
+  .progress-wrap.on { display:block; }
+  .progress-meta { display:flex; justify-content:space-between; gap:12px; font-size:0.8rem; color:var(--sec); margin-bottom:8px; flex-wrap:wrap; }
+  .progress-meta strong { color:var(--text); }
+  .progress-bar { height:4px; background:var(--border); border-radius:2px; }
+  .progress-fill { height:100%; background:var(--accent); border-radius:2px; transition:width 0.3s; }
+
+  /* Layout */
+  .container { max-width:780px; margin:0 auto; padding:40px 24px 80px; }
+  .container.wide { max-width:1120px; padding-top:24px; }
+  .grid { display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr); gap:20px; align-items:start; }
+  .grid.single { grid-template-columns:minmax(0,1fr); }
+  .grid.single .case { display:none; }
+  .card { background:#fff; border:1.5px solid var(--border); padding:32px; margin-bottom:20px; }
+  .grid .card { margin-bottom:0; }
+  .case { position:sticky; top:124px; max-height:calc(100vh - 140px); overflow:auto; padding:24px; }
+  @media (max-width:860px) { .grid { grid-template-columns:1fr; } .case { position:static; max-height:none; } }
+
+  .eyebrow { font-size:11px; font-weight:700; letter-spacing:1.8px; text-transform:uppercase; color:var(--sec); margin-bottom:12px; }
+  h1.page-title { font-size:1.9rem; font-weight:900; margin-bottom:14px; letter-spacing:-0.02em; }
+  .card h2 { font-size:1.1rem; font-weight:800; margin-bottom:12px; }
+  .card h3 { font-size:1rem; font-weight:800; margin:20px 0 10px; }
+  .card p { color:var(--sec); line-height:1.65; margin-bottom:14px; font-size:0.92rem; }
+  .step-title { font-size:1.4rem !important; font-weight:900 !important; letter-spacing:-0.01em; margin-bottom:8px !important; }
+  .prompt { color:var(--sec); line-height:1.6; margin-bottom:18px; font-size:0.95rem; }
+  .note { font-size:0.84rem; color:var(--sec); line-height:1.55; margin-top:4px; }
+
+  /* Case column */
+  .case h2 { font-size:1.15rem; font-weight:800; margin-bottom:10px; }
+  .case p { color:var(--text); font-size:0.9rem; line-height:1.6; margin-bottom:12px; }
+  .case ul { margin:0 0 12px 20px; font-size:0.9rem; line-height:1.6; }
+  .tablewrap { overflow-x:auto; margin:0 0 14px; }
+  table { border-collapse:collapse; width:100%; font-size:0.86rem; }
+  th, td { padding:7px 10px; border-bottom:1px solid var(--border); text-align:left; }
+  th { font-weight:700; color:var(--sec); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  blockquote { margin:0 0 12px; padding:10px 14px; border-left:3px solid var(--accent); background:var(--accent-light); color:var(--accent-dark); font-size:0.88rem; line-height:1.55; }
+
+  /* Timer */
+  .timer { display:flex; align-items:center; gap:14px; margin:0 0 18px; }
+  .tnum { font-size:1.5rem; font-weight:800; min-width:4.2ch; font-variant-numeric:tabular-nums; }
+  .bar { flex:1; height:8px; background:var(--border); overflow:hidden; }
+  .bar i { display:block; height:100%; width:100%; background:var(--accent); }
+  .timer.urgent .tnum { color:var(--err); }
+  .timer.urgent .bar i { background:var(--err); }
+
+  /* Options */
+  .opts { display:grid; gap:8px; }
+  .opt { display:block; width:100%; text-align:left; font:inherit; font-size:0.92rem; color:inherit; background:#fff; border:1.5px solid var(--border); padding:12px 16px; cursor:pointer; line-height:1.45; }
+  .opt:hover { border-color:var(--accent); }
+  .opt[aria-checked="true"] { border-color:var(--accent); background:var(--accent-light); color:var(--accent-dark); font-weight:600; }
+  .opt:focus-visible, .btn:focus-visible, .ofzb:focus-visible, input:focus-visible, select:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+  .counter { font-size:0.8rem; color:var(--sec); margin:0 0 8px; font-variant-numeric:tabular-nums; }
+  .ofzrow { display:grid; grid-template-columns:1fr auto; gap:8px 14px; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); font-size:0.92rem; line-height:1.45; }
+  .ofzrow:last-child { border-bottom:none; }
+  .ofzgrp { display:flex; gap:6px; }
+  .ofzb { font:inherit; font-weight:800; width:44px; height:40px; border:1.5px solid var(--border); background:#fff; color:var(--text); cursor:pointer; }
+  .ofzb:hover { border-color:var(--accent); }
+  .ofzb[aria-pressed="true"] { background:var(--accent); color:#fff; border-color:var(--accent); }
+  @media (max-width:480px) { .ofzrow { grid-template-columns:1fr; } }
+  .legend { font-size:0.84rem; color:var(--sec); margin:0 0 8px; line-height:1.5; }
+
+  /* Buttons */
+  .btn { padding:12px 24px; font-size:0.9rem; font-weight:700; font-family:inherit; cursor:pointer; border:none; }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-primary:hover { background:var(--accent-dark); }
+  .btn-ghost { background:#fff; color:var(--text); border:1.5px solid var(--border); }
+  .btn-ghost:hover { background:var(--bg-page); }
+  .btn:disabled { opacity:0.5; cursor:not-allowed; }
+  .btn-row { display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-top:24px; }
+
+  /* Forms */
+  .field-label { font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--sec); display:block; margin-bottom:6px; }
+  .text-input, select.text-input { width:100%; padding:12px 14px; border:1.5px solid var(--border); font-size:0.95rem; font-family:inherit; outline:none; background:#fff; color:var(--text); }
+  .text-input:focus { border-color:var(--accent); }
+  .field-err { font-size:0.82rem; color:var(--err); margin-top:6px; min-height:18px; }
+  .rules { margin:0 0 20px 20px; font-size:0.92rem; line-height:1.65; color:var(--text); }
+  .rules li { margin:4px 0; }
+  .form-row { margin-top:18px; }
+
+  /* Learn screen */
+  .defs { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin:0 0 18px; }
+  .def { border:1.5px solid var(--border); padding:16px; }
+  .def h3 { margin:0 0 8px; font-size:0.95rem; display:flex; gap:8px; align-items:center; }
+  .def p { margin:0 0 8px; font-size:0.86rem; }
+  .def .ex { color:var(--accent-dark); background:var(--accent-light); padding:6px 10px; }
+  .def .q { margin:0; font-size:0.82rem; }
+  .letter { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; background:var(--accent); color:#fff; font-size:0.8rem; font-weight:800; flex-shrink:0; }
+  .note-box { background:var(--accent-light); border-left:3px solid var(--accent); padding:14px 18px; margin:16px 0; font-size:0.86rem; line-height:1.6; color:var(--accent-dark); }
+  .warm { border:1.5px dashed var(--border-dark); padding:16px 18px; margin:18px 0 0; }
+  .warm h3 { margin:0 0 6px; }
+  .fb { font-size:0.84rem; margin:6px 0 0; color:var(--sec); line-height:1.5; }
+  .fb.ok { color:var(--ok); }
+  .fb.bad { color:var(--err); }
+
+  /* Results */
+  .stage { padding:18px 0; border-bottom:2px solid var(--border); }
+  .stage:last-of-type { border-bottom:none; }
+  .stage > h3 { margin:0 0 10px; font-size:1.05rem; }
+  .scen { margin:12px 0; padding:16px 18px; border:1.5px solid var(--border); }
+  .scen > h4 { margin:0 0 6px; font-size:0.98rem; font-weight:800; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .sumrow { padding:10px 0; border-bottom:1px solid var(--border); font-size:0.88rem; line-height:1.5; }
+  .sumrow:last-child { border-bottom:none; }
+  .sumrow h5 { margin:0 0 2px; font-size:0.88rem; font-weight:700; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .sumrow .tm { font-size:0.75rem; color:var(--sec); font-variant-numeric:tabular-nums; }
+  .sumrow ul { margin:4px 0 0 20px; }
+  .pill { display:inline-block; font-size:0.72rem; font-weight:800; padding:2px 8px; background:var(--accent-light); color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .pill.p2 { background:#EAF5EF; color:#1F5A41; }
+  .pill.p1 { background:#FFFBEB; color:var(--warn); }
+  .pill.p0 { background:#FDF0EE; color:#8E2A1F; }
+  .unlock { margin-top:14px; padding:16px 18px; border:1.5px dashed var(--border-dark); background:#fff; }
+  .unlock-row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:8px 0 6px; }
+  .unlock-row .text-input { flex:1; min-width:160px; width:auto; }
+  .total { font-size:1.15rem; font-weight:800; font-variant-numeric:tabular-nums; margin-top:10px; }
+  .grand { background:var(--text); color:#fff; padding:24px 28px; margin:16px 0 0; font-size:1.4rem; font-weight:900; }
+  textarea.copy-ta { width:100%; min-height:200px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:0.8rem; border:1.5px solid var(--border); padding:8px; margin-top:8px; }
+
+  @media (max-width:640px) {
+    .card, .gate-box { padding:28px 20px; }
+    .case { padding:20px; }
+    .container { padding:24px 16px 80px; }
+    .progress-wrap { padding:12px 16px; }
+  }
+  @media (max-width:600px) {
+    .mba-topbar { padding:0 16px; }
+    .mba-topbar-group { display:none !important; }
+    .mba-topbar-divider, .mba-topbar-title { display:none; }
+  }
+</style>
+
+<script>
+(function(){
+  var SK = 'mba_session';
+  try {
+    var s = JSON.parse(sessionStorage.getItem(SK));
+    if (s && s.password) {
+      var style = document.createElement('style');
+      style.textContent = '#mba-group-gate{display:none!important}';
+      document.head.appendChild(style);
+      document.addEventListener('DOMContentLoaded', function() {
+        var inp = document.getElementById('mba-gate-input');
+        if (inp) { inp.value = s.password; style.remove(); if (typeof verifyGroupGate === 'function') verifyGroupGate(); }
+        else style.remove();
+      });
+    }
+  } catch(e){}
+})();
+</script>
+<script>
+(function(){
+  var KSYWA_KEY = 'mba_ksywa';
+  window.mbaGetKsywa = function() { try { return localStorage.getItem(KSYWA_KEY) || ''; } catch(e) { return ''; } };
+  window.mbaSaveKsywa = function(v) { try { localStorage.setItem(KSYWA_KEY, v); } catch(e) {} };
+})();
+</script>
+</head>
+<body>
+
+<div class="mba-topbar">
+  <div class="mba-topbar-left">
+    <a class="mba-topbar-back" href="index.html">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7L9 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span data-i18n="tb.back">Platforma MBA</span>
+    </a>
+    <div class="mba-topbar-divider"></div>
+    <div class="mba-topbar-title" data-i18n="tb.title">Fakt/Opinia/Założenie</div>
+  </div>
+  <div class="mba-topbar-right">
+    <div class="lang-switch-slot"></div>
+    <div class="mba-topbar-group" id="tb-group" style="display:none"><span data-i18n="tb.group">Grupa:</span> <strong id="tb-groupname"></strong></div>
+    <button class="mba-topbar-logout" id="tb-logout" style="display:none" onclick="mbaClearSession()" data-i18n="tb.logout">Wyloguj</button>
+  </div>
+</div>
+
+<!-- GATE -->
+<div id="mba-group-gate">
+  <div class="gate-box">
+    <div class="lang-switch-slot"></div>
+    <p class="gate-eyebrow" data-i18n="tb.back">Platforma MBA</p>
+    <h2 data-i18n="gate.h">Dostęp do ćwiczenia</h2>
+    <p data-i18n="gate.p">Wpisz hasło swojej grupy, aby kontynuować.</p>
+    <input class="gate-input" type="text" id="mba-gate-input" data-i18n-ph="gate.ph" placeholder="Hasło grupy..." autocomplete="off" onkeydown="if(event.key==='Enter')verifyGroupGate();">
+    <div class="gate-error" id="gate-err"></div>
+    <button class="gate-btn" id="gate-btn" onclick="verifyGroupGate()" data-i18n="gate.btn">Wejdź →</button>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progress">
+  <div class="progress-meta"><span id="prog-left"></span><span id="prog-right"></span></div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="container" id="main">
+  <div id="save-status" role="status" style="display:none"></div>
+  <div class="grid single" id="grid">
+    <aside class="card case" id="case-col"><div class="eyebrow" id="case-eyebrow">Scenariusz</div><div id="casebox"></div></aside>
+    <section class="card" id="panel" aria-live="polite"></section>
+  </div>
+</div>
+
+<script>
+const WORKER = 'https://mba-quiz-proxy.michal-bojko-gdansk.workers.dev';
+const SESSION_KEY = 'mba_session';
+const EXERCISE_ID = 'fakt-opinia';
+// Hasło do klucza odpowiedzi podaje prowadzący na zajęciach (wielkość liter bez znaczenia).
+const HINT_PASS = 'HinT';
+
+// ── Teksty interfejsu (PL/EN) ───────────────────────────────────────────────
+// Statyczny HTML: tekst PL zostaje w HTML (data-i18n), I18N.en go tłumaczy.
+// Teksty generowane w JS są w obu słownikach.
+const I18N = {
+  pl: {
+    'gate.empty': 'Wpisz hasło grupy.',
+    'gate.checking': 'Sprawdzam...',
+    'gate.btn': 'Wejdź →',
+    'gate.noaccess': 'Twoja grupa nie ma dostępu do tego ćwiczenia.',
+    'gate.bad': 'Nieprawidłowe hasło grupy.',
+    'gate.net': 'Błąd połączenia.',
+    'L.F': 'F', 'L.O': 'O', 'L.Z': 'Z',
+    'stage.n0': '1 scenariusz', 'stage.n1': '2 scenariusze', 'stage.n2': '3 scenariusze',
+    'stage': 'Etap', 'of': 'z',
+    'case': 'Scenariusz',
+    'st.read': 'Przeczytaj', 'st.read.p': 'Czytasz scenariusz. Potem wybierasz. Każdy krok ma limit czasu.',
+    'st.teza': 'Teza', 'st.teza.p': 'Wybierz jedną tezę. To pierwsze zdanie, które mówisz na głos.',
+    'st.fakty': 'Fakty', 'st.fakty.p': 'Wybierz do 3 faktów, na których oprzesz tezę. Masz tylko 3 miejsca.',
+    'st.ofz': 'Fakt, opinia czy założenie', 'st.ofz.p': 'Oznacz każde zdanie: F (fakt), O (opinia), Z (założenie).',
+    'st.braki': 'Czego brakuje', 'st.braki.p': 'Wybierz do 2 braków, które najbardziej ograniczają Twoją tezę.',
+    'st.presja': 'Presja', 'st.presja.p': '{who}: „{text}” Wybierz swoją reakcję.',
+    'res.ofz': 'Fakt, opinia, założenie',
+    'r1': 'Zmieniam tezę. Ta osoba ma duże doświadczenie, więc jej zdanie waży więcej.', 'r1n': 'Autorytet wzięty za dowód.',
+    'r2': 'Utrzymuję tezę. Nie padł żaden nowy fakt, to opinia, więc ją zapisuję.', 'r2n': 'Zgodne z regułą Kotwicy: zmiana tezy wymaga nowego faktu.',
+    'r3': 'Zmieniam tezę. Nie chcę psuć relacji.', 'r3n': 'Dopasowanie kosztem własnego zdania.',
+    'r4': 'Zmieniam tezę. Padł nowy fakt: „{claim}”.', 'r4n': 'Opinia lub ogólnik uznane za fakt.',
+    'r5': 'Zmieniam tezę. Mówi z taką pewnością, że pewnie ma dowody.', 'r5n': 'Założenie zamiast pytania „skąd to wiesz?”.',
+    'r6': 'Utrzymuję tezę i pytam, jaki dowód lub wynik zmieniłby moje zdanie.', 'r6n': 'Najlepsze: teza plus warunek zmiany.',
+    'r7': 'Utrzymuję tezę, bo tak uważam.', 'r7n': 'Stanowisko jest, brakuje uzasadnienia.',
+    'flag.autorytet': 'autorytet', 'flag.relacja': 'relacja',
+    'none': '(brak wyboru)', 'noTeza': 'Brak tezy w limicie czasu.', 'noPresja': 'Brak reakcji w limicie czasu.',
+    'tag.K': 'kluczowy', 'tag.T': 'pułapka', 'tag.N': 'prawdziwy, ale nie rozstrzyga',
+    'tag.ok': 'trafny', 'tag.off': 'poza tematem',
+    'you': 'Ty', 'key': 'klucz', 'matches': 'Zgodnych: {n} z {m}.',
+    'read.note': 'Czytasz. Przycisk „Przeczytane, dalej” przechodzi do wyboru tezy.',
+    'chosen': 'Wybrane: {n} z {m}',
+    'legend': 'F = fakt (sprawdzalne). O = opinia (czyjś sąd). Z = założenie (bez potwierdzenia). Oznaczone: {n} z {m}.',
+    'mark': 'Oznaczenie zdania',
+    'btn.read': 'Przeczytane, dalej', 'btn.ok': 'Zatwierdź', 'btn.last': 'Zatwierdź scenariusz',
+    'sec': 's', 'secOf': '{u} s z {l} s', 'timedOut': 'limit przekroczony',
+    'diffQ': 'Pytania do rozbieżności: „Skąd to wiesz?” i „Co byłoby dowodem przeciwnym?”.',
+    'trace': 'Ślad: {f}.',
+    'stageTotal': 'Etap {s} razem: {p} / {m}',
+    'unlock.h': 'Poznaj odpowiedzi', 'unlock.label': 'Hasło od prowadzącego', 'unlock.btn': 'Poznaj odpowiedzi',
+    'unlock.hint': 'Wpisz hasło, żeby zobaczyć klucz i punkty dla tego etapu.',
+    'unlock.bad': 'Złe hasło. Spróbuj jeszcze raz.',
+    'learn.eyebrow': 'Wprowadzenie', 'learn.h': 'Fakt, opinia, założenie',
+    'learn.p': 'Trzy typy zdań, dwa pojęcia i jedna zasada. Przeczytaj, wypróbuj na trzech zdaniach i dopiero potem zaczynasz.',
+    'def.F.h': 'Fakt', 'def.F.p': 'Zdanie, które da się sprawdzić w danych, dokumencie lub u źródła. Zwykle ma liczbę, datę albo nazwę.', 'def.F.ex': '„Newsletter kosztował 2 000 zł i dał 2 umowy.”', 'def.F.q': 'Pytanie kontrolne: czy mogę to sprawdzić?',
+    'def.O.h': 'Opinia (ocena)', 'def.O.p': 'Czyjś sąd o faktach. Może być trafny, ale zależy od osoby, która go wydaje. Często zawiera słowa: najlepszy, na pewno, powinien, ma rację.', 'def.O.ex': '„Webinary to najlepszy kanał.”', 'def.O.q': 'Pytanie kontrolne: czy ktoś inny mógłby ocenić to inaczej?',
+    'def.Z.h': 'Założenie', 'def.Z.p': 'Coś przyjęte bez sprawdzenia: o przyszłości, o czymś, czego nikt nie zmierzył, o cudzych motywach. Często zaczyna się od: z tego co pamiętam, pewnie, będzie.', 'def.Z.ex': '„Przy większym budżecie ten kanał da podobny wynik.”', 'def.Z.q': 'Pytanie kontrolne: skąd to wiem i czym to potwierdzę?',
+    'def.T.l': 'T', 'def.T.h': 'Teza', 'def.T.p': 'Twój wniosek w jednym zdaniu, podany jako pierwszy. Zmieniasz go tylko wtedy, gdy pojawi się nowy fakt. Opinia bez faktu trafia do notatki, a teza zostaje.', 'def.T.q': 'Pytanie kontrolne: co musiałoby się pojawić, żeby zmienić zdanie?',
+    'def.B.l': 'B', 'def.B.h': 'Braki', 'def.B.p': 'Informacje, których nie ma w tekście, a które zmieniłyby decyzję. Gdy danych brakuje, wskazujesz, czego brakuje, i nie zgadujesz.', 'def.B.q': 'Pytanie kontrolne: jaka jedna informacja najbardziej zmieniłaby decyzję?',
+    'rule': '<b>Zasada.</b> Wiarygodne źródło nie zmienia typu zdania. Opinia doświadczonej osoby nadal jest opinią. Twierdzenie jednej ze stron sporu nadal wymaga sprawdzenia. Osoba z Twojej grupy docelowej jest dobrym źródłem faktów o własnej reakcji (jedna próbka), a o strategii wydaje opinię.',
+    'steps.h': 'Co ćwiczysz w 6 krokach', 'steps.c1': 'Krok', 'steps.c2': 'Co robisz',
+    'steps.read': 'Szukasz pytania i decyzji do podjęcia.',
+    'steps.teza': 'Wybierasz wniosek, który mówisz jako pierwszy.',
+    'steps.fakty': 'Wybierasz do 3 faktów. Opinie i niepewne liczby nie liczą się jako fakty.',
+    'steps.ofz': 'Oznaczasz osiem zdań literami F, O, Z.',
+    'steps.braki': 'Wskazujesz, czego brakuje do pewniejszej decyzji.',
+    'steps.presja': 'Ktoś naciska bez nowego faktu. Utrzymujesz tezę albo zmieniasz ją z powodu faktu.',
+    'warm.h': 'Rozgrzewka: trzy zdania', 'warm.p': 'Oznacz każde zdanie. Po kliknięciu zobaczysz krótkie wyjaśnienie. Punktów nie ma.',
+    'warm.yes': 'Tak. ', 'warm.no': 'Odpowiedź to {k}. ',
+    'btn.tostart': 'Rozumiem, dalej →',
+    'start.eyebrow': 'Start', 'start.h': 'Zasady',
+    'rules.1': 'Sześć scenariuszy w trzech etapach. Etap 1: 1 scenariusz. Etap 2: 2 scenariusze. Etap 3: 3 scenariusze.',
+    'rules.2': 'Każdy scenariusz ma 6 kroków: przeczytaj, teza, fakty, fakt/opinia/założenie, braki, presja.',
+    'rules.3': 'Każdy krok ma limit czasu. Po jego upływie zapisuje się to, co zaznaczone. Z etapu na etap limity są krótsze.',
+    'rules.4': 'Odpowiedzi poznasz po ostatnim scenariuszu etapu, po wpisaniu hasła od prowadzącego. W trakcie etapu nie ma podglądu.',
+    'rules.5': 'Po ostatnim etapie Twoje wybory i wynik trafiają do prowadzącego.',
+    'nick': 'Twoja ksywa / pseudonim', 'nick.ph': 'np. Panda, Orzeł, AS007...', 'nick.err': 'Wpisz ksywę, żeby zacząć.',
+    'mult': 'Limit czasu', 'mult.1': 'Standardowy', 'mult.15': '+50%', 'mult.2': 'Podwójny', 'mult.075': 'Krótszy (−25%)',
+    'btn.start': 'Zaczynam etap 1 →',
+    'intro.h': 'Etap {s} z 3',
+    'intro.p': 'Limit czasu w tym etapie to {p}% limitu bazowego. Odpowiedzi poznasz po ostatnim scenariuszu etapu. Nie ma podglądu w trakcie.',
+    'btn.startstage': 'Start etapu {s} →',
+    'end.eyebrow': 'Koniec etapu {s}', 'end.h': 'Twoje wybory', 'end.p': 'Odpowiedzi poznasz po wpisaniu hasła. Możesz też od razu przejść dalej.',
+    'btn.next': 'Dalej do etapu {s} →',
+    'final.eyebrow': 'Koniec', 'final.h': 'Podsumowanie', 'final.p': 'Wybory ze wszystkich etapów. Etapy bez odblokowanych odpowiedzi możesz odblokować tutaj.',
+    'grand': 'Razem: {p} / 60',
+    'btn.copy': 'Kopiuj wyniki', 'btn.restart': 'Od nowa',
+    'copied': 'Skopiowano do schowka.', 'copyManual': 'Zaznacz tekst i skopiuj ręcznie.',
+    'prog.scen': 'Scenariusz {a} z {b} · krok {c} z 6',
+    'txt.head': 'Fakt/Opinia/Założenie. Mnożnik czasu bazowy x{m}',
+    'txt.stage': 'ETAP {s} ({n}, limit czasu x{m})',
+    'txt.locked': 'Odpowiedzi nieodblokowane.',
+    'txt.scen': 'Scenariusz: {t} (razem {p}/10)',
+    'txt.line': '{t}: {p}/2, czas {u} s z {l}{x}',
+    'txt.over': ' (limit przekroczony)',
+    'txt.diff': '  Rozbieżności z kluczem:',
+    'txt.note': '  Uwaga: ',
+    'txt.trace': '  Ślad: ',
+    'txt.stageTotal': 'Etap {s} razem: {p}/{m}',
+    'save.h': 'Fakt/Opinia/Założenie · wyniki',
+    'save.nick': 'Ksywa', 'save.group': 'Grupa', 'save.date': 'Data', 'save.lang': 'Język', 'save.total': 'Wynik łączny',
+    'save.ok': '✓ Wynik zapisany i przekazany prowadzącemu.',
+    'save.fail': 'Nie udało się zapisać wyniku, więc prowadzący go nie zobaczy. Sprawdź połączenie i spróbuj ponownie. Jeśli błąd się powtórzy, skopiuj wyniki przyciskiem „Kopiuj wyniki” i przekaż je prowadzącemu. ',
+    'save.retry': 'Spróbuj zapisać ponownie', 'save.saving': 'Zapisuję…'
+  },
+  en: {
+    'page.title': 'Fact/Opinion/Assumption',
+    'tb.back': 'MBA Platform',
+    'tb.title': 'Fact/Opinion/Assumption',
+    'tb.group': 'Group:',
+    'tb.logout': 'Log out',
+    'gate.h': 'Exercise access',
+    'gate.p': 'Enter your group password to continue.',
+    'gate.ph': 'Group password...',
+    'gate.btn': 'Enter →',
+    'gate.empty': 'Enter your group password.',
+    'gate.checking': 'Checking...',
+    'gate.noaccess': 'Your group does not have access to this exercise.',
+    'gate.bad': 'Invalid group password.',
+    'gate.net': 'Connection error.',
+    'L.F': 'F', 'L.O': 'O', 'L.Z': 'A',
+    'stage.n0': '1 scenario', 'stage.n1': '2 scenarios', 'stage.n2': '3 scenarios',
+    'stage': 'Stage', 'of': 'of',
+    'case': 'Scenario',
+    'st.read': 'Read', 'st.read.p': 'Read the scenario. Then you choose. Each step has a time limit.',
+    'st.teza': 'Thesis', 'st.teza.p': 'Choose one thesis. It is the first sentence you say out loud.',
+    'st.fakty': 'Facts', 'st.fakty.p': 'Choose up to 3 facts to base your thesis on. You only have 3 slots.',
+    'st.ofz': 'Fact, opinion or assumption', 'st.ofz.p': 'Mark each statement: F (fact), O (opinion), A (assumption).',
+    'st.braki': 'What is missing', 'st.braki.p': 'Choose up to 2 gaps that limit your thesis the most.',
+    'st.presja': 'Pressure', 'st.presja.p': '{who}: “{text}” Choose your reaction.',
+    'res.ofz': 'Fact, opinion, assumption',
+    'r1': 'I change my thesis. This person has a lot of experience, so their view carries more weight.', 'r1n': 'Authority taken as evidence.',
+    'r2': 'I keep my thesis. No new fact came up, it is an opinion, so I note it down.', 'r2n': 'Follows the Anchor rule: changing the thesis requires a new fact.',
+    'r3': 'I change my thesis. I don’t want to damage the relationship.', 'r3n': 'Fitting in at the cost of your own view.',
+    'r4': 'I change my thesis. A new fact came up: “{claim}”.', 'r4n': 'An opinion or a generality taken as a fact.',
+    'r5': 'I change my thesis. They sound so certain that they probably have evidence.', 'r5n': 'An assumption instead of asking “how do you know?”.',
+    'r6': 'I keep my thesis and ask what evidence or result would change my mind.', 'r6n': 'Best: a thesis plus a condition for changing it.',
+    'r7': 'I keep my thesis because that is what I think.', 'r7n': 'There is a position, the reasoning is missing.',
+    'flag.autorytet': 'authority', 'flag.relacja': 'relationship',
+    'none': '(nothing chosen)', 'noTeza': 'No thesis within the time limit.', 'noPresja': 'No reaction within the time limit.',
+    'tag.K': 'key', 'tag.T': 'trap', 'tag.N': 'true, but not decisive',
+    'tag.ok': 'relevant', 'tag.off': 'off-topic',
+    'you': 'You', 'key': 'key', 'matches': 'Matching: {n} of {m}.',
+    'read.note': 'Read the scenario. The “Read, next” button takes you to choosing a thesis.',
+    'chosen': 'Chosen: {n} of {m}',
+    'legend': 'F = fact (verifiable). O = opinion (someone’s judgement). A = assumption (unconfirmed). Marked: {n} of {m}.',
+    'mark': 'Mark the statement',
+    'btn.read': 'Read, next', 'btn.ok': 'Confirm', 'btn.last': 'Confirm scenario',
+    'sec': 's', 'secOf': '{u} s of {l} s', 'timedOut': 'time limit exceeded',
+    'diffQ': 'Questions for the mismatches: “How do you know?” and “What would be evidence against it?”.',
+    'trace': 'Pattern: {f}.',
+    'stageTotal': 'Stage {s} total: {p} / {m}',
+    'unlock.h': 'See the answers', 'unlock.label': 'Password from your instructor', 'unlock.btn': 'See the answers',
+    'unlock.hint': 'Enter the password to see the key and points for this stage.',
+    'unlock.bad': 'Wrong password. Try again.',
+    'learn.eyebrow': 'Introduction', 'learn.h': 'Fact, opinion, assumption',
+    'learn.p': 'Three types of statements, two concepts and one rule. Read them, try them on three statements, and only then start.',
+    'def.F.h': 'Fact', 'def.F.p': 'A statement you can check in data, a document or at the source. It usually has a number, a date or a name.', 'def.F.ex': '“The newsletter cost PLN 2,000 and brought 2 contracts.”', 'def.F.q': 'Check question: can I verify this?',
+    'def.O.h': 'Opinion', 'def.O.p': 'Someone’s judgement about the facts. It may be accurate, but it depends on the person making it. It often contains words like: best, definitely, should, is right.', 'def.O.ex': '“Webinars are the best channel.”', 'def.O.q': 'Check question: could someone else judge this differently?',
+    'def.Z.h': 'Assumption', 'def.Z.p': 'Something taken without checking: about the future, about something nobody measured, about other people’s motives. It often starts with: as far as I remember, probably, will.', 'def.Z.ex': '“With a bigger budget, this channel will deliver a similar result.”', 'def.Z.q': 'Check question: how do I know this, and how will I confirm it?',
+    'def.T.l': 'T', 'def.T.h': 'Thesis', 'def.T.p': 'Your conclusion in one sentence, stated first. You change it only when a new fact appears. An opinion without a fact goes into your notes, and the thesis stays.', 'def.T.q': 'Check question: what would have to appear for me to change my mind?',
+    'def.B.l': 'G', 'def.B.h': 'Gaps', 'def.B.p': 'Information missing from the text that would change the decision. When data are missing, you say what is missing and you do not guess.', 'def.B.q': 'Check question: which single piece of information would change the decision most?',
+    'rule': '<b>Rule.</b> A credible source does not change the type of a statement. An experienced person’s opinion is still an opinion. A claim by one party to a dispute still needs checking. A person from your target group is a good source of facts about their own reaction (one sample), and about strategy they give an opinion.',
+    'steps.h': 'What you practise in 6 steps', 'steps.c1': 'Step', 'steps.c2': 'What you do',
+    'steps.read': 'You look for the question and the decision to be made.',
+    'steps.teza': 'You choose the conclusion you would state first.',
+    'steps.fakty': 'You choose up to 3 facts. Opinions and uncertain numbers do not count as facts.',
+    'steps.ofz': 'You mark eight statements with F, O, A.',
+    'steps.braki': 'You point out what is missing for a more confident decision.',
+    'steps.presja': 'Someone pushes without a new fact. You keep your thesis or change it because of a fact.',
+    'warm.h': 'Warm-up: three statements', 'warm.p': 'Mark each statement. After you click, you will see a short explanation. There are no points.',
+    'warm.yes': 'Yes. ', 'warm.no': 'The answer is {k}. ',
+    'btn.tostart': 'Got it, next →',
+    'start.eyebrow': 'Start', 'start.h': 'Rules',
+    'rules.1': 'Six scenarios in three stages. Stage 1: 1 scenario. Stage 2: 2 scenarios. Stage 3: 3 scenarios.',
+    'rules.2': 'Each scenario has 6 steps: read, thesis, facts, fact/opinion/assumption, gaps, pressure.',
+    'rules.3': 'Each step has a time limit. When it runs out, whatever you have marked is saved. The limits get shorter from stage to stage.',
+    'rules.4': 'You see the answers after the last scenario of a stage, once you enter the password from your instructor. There is no preview during a stage.',
+    'rules.5': 'After the last stage, your choices and score are sent to your instructor.',
+    'nick': 'Your nickname', 'nick.ph': 'e.g. Panda, Eagle, AS007...', 'nick.err': 'Enter a nickname to start.',
+    'mult': 'Time limit', 'mult.1': 'Standard', 'mult.15': '+50%', 'mult.2': 'Double', 'mult.075': 'Shorter (−25%)',
+    'btn.start': 'Start stage 1 →',
+    'intro.h': 'Stage {s} of 3',
+    'intro.p': 'The time limit in this stage is {p}% of the base limit. You see the answers after the last scenario of the stage. There is no preview during it.',
+    'btn.startstage': 'Start stage {s} →',
+    'end.eyebrow': 'End of stage {s}', 'end.h': 'Your choices', 'end.p': 'You see the answers after entering the password. You can also move on straight away.',
+    'btn.next': 'On to stage {s} →',
+    'final.eyebrow': 'Finished', 'final.h': 'Summary', 'final.p': 'Your choices from all stages. You can unlock the answers for any stage here.',
+    'grand': 'Total: {p} / 60',
+    'btn.copy': 'Copy results', 'btn.restart': 'Start again',
+    'copied': 'Copied to clipboard.', 'copyManual': 'Select the text and copy it manually.',
+    'prog.scen': 'Scenario {a} of {b} · step {c} of 6',
+    'txt.head': 'Fact/Opinion/Assumption. Base time multiplier x{m}',
+    'txt.stage': 'STAGE {s} ({n}, time limit x{m})',
+    'txt.locked': 'Answers not unlocked.',
+    'txt.scen': 'Scenario: {t} (total {p}/10)',
+    'txt.line': '{t}: {p}/2, time {u} s of {l}{x}',
+    'txt.over': ' (time limit exceeded)',
+    'txt.diff': '  Mismatches with the key:',
+    'txt.note': '  Note: ',
+    'txt.trace': '  Pattern: ',
+    'txt.stageTotal': 'Stage {s} total: {p}/{m}',
+    'save.h': 'Fact/Opinion/Assumption · results',
+    'save.nick': 'Nickname', 'save.group': 'Group', 'save.date': 'Date', 'save.lang': 'Language', 'save.total': 'Total score',
+    'save.ok': '✓ Your result has been saved and sent to your instructor.',
+    'save.fail': 'Your result could not be saved, so your instructor will not see it. Check your connection and try again. If the error persists, copy your results with “Copy results” and send them to your instructor. ',
+    'save.retry': 'Try saving again', 'save.saving': 'Saving…'
+  }
+};
+
+// ── Scenariusze (PL i EN mają te same id i klucze) ─────────────────────────
+// teza.pts: 0-2. fakty.k: K = kluczowy, N = prawdziwy, ale nie rozstrzyga, T = pułapka.
+// ofz.key: F = fakt, O = opinia, Z = założenie (w EN wyświetlane jako A).
+const SCEN = {
+pl: [
+/* 1 */
+{title:'Kanał na kampanię',
+ caseHtml:'<h2>Kanał na kampanię</h2><p>Firma szkoleniowa ma 30 000 zł na kampanię w IV kwartale. Cel: 12 umów. Dyrektor sprzedaży pyta, jak rozdzielić budżet. Dane z poprzedniego kwartału:</p><div class="tablewrap"><table><thead><tr><th>Kanał</th><th class="num">Koszt</th><th class="num">Zapytania</th><th class="num">Umowy</th></tr></thead><tbody><tr><td>LinkedIn Ads</td><td class="num">12 000 zł</td><td class="num">60</td><td class="num">3</td></tr><tr><td>Webinary</td><td class="num">6 000 zł</td><td class="num">18</td><td class="num">4</td></tr><tr><td>Newsletter</td><td class="num">2 000 zł</td><td class="num">25</td><td class="num">2</td></tr><tr><td>Targi branżowe</td><td class="num">10 000 zł</td><td class="num">12</td><td class="num">1</td></tr></tbody></table></div><blockquote>Dyrektor sprzedaży: „LinkedIn dał najwięcej zapytań, więc daj mu całe 30 000 zł.”</blockquote><blockquote>Szefowa finansów: „Z tego co pamiętam, umowa to koło 15 tysięcy, więc każdy z tych kanałów się zwraca.”</blockquote><p>Decyzja do czwartku.</p>',
+ teza:[
+  {id:'t1',text:'Dać całe 30 000 zł LinkedInowi, bo dał najwięcej zapytań.',pts:0,note:'Opinia dyrektora i liczba zapytań zamiast kosztu na umowę.'},
+  {id:'t2',text:'Przesunąć budżet z targów i LinkedIna na webinary i newsletter.',pts:2,note:'Zgodne z kluczem. Ryzyko: małe próbki (4 i 2 umowy).'},
+  {id:'t3',text:'Przesunąć budżet z targów na webinary i newsletter, LinkedIn zostawić bez zmian.',pts:2,note:'Obronne, jeśli uzasadnienie opiera się na koszcie na umowę.'},
+  {id:'t4',text:'Przesunąć cały budżet na newsletter, bo ma najniższy koszt na umowę.',pts:1,note:'Wniosek z faktów, ale 2 umowy to mała próbka i 25 zapytań to sufit skali.'},
+  {id:'t5',text:'Zostawić podział z poprzedniego kwartału.',pts:0,note:'Brak decyzji, choć dane pozwalają ją podjąć.'},
+  {id:'t6',text:'Potrzebuję więcej danych, zanim zaproponuję podział.',pts:0,note:'Analiza zamiast wniosku. Dane wystarczają na wniosek z ryzykiem.'},
+  {id:'t7',text:'Wszystkie kanały się zwracają, więc podział ma małe znaczenie.',pts:0,note:'Opiera się na niepotwierdzonej wartości umowy i myli przychód z zyskiem.'},
+  {id:'t8',text:'Zapytać dyrektora sprzedaży, co poleca, bo zna klientów.',pts:0,note:'Dopasowanie do autorytetu zamiast własnego zdania.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'Koszt na umowę: newsletter 1 000 zł, webinary 1 500 zł.',k:'K'},
+  {id:'f2',text:'Koszt na umowę: LinkedIn 4 000 zł, targi 10 000 zł.',k:'K'},
+  {id:'f3',text:'Poprzedni kwartał: 10 umów przy budżecie 30 000 zł, cel to 12.',k:'K'},
+  {id:'f4',text:'Webinary dały tylko 18 zapytań, więc skala jest ograniczona.',k:'K'},
+  {id:'f5',text:'LinkedIn dał 60 zapytań, najwięcej ze wszystkich kanałów.',k:'N'},
+  {id:'f6',text:'Średnia wartość umowy to ok. 15 000 zł.',k:'T'},
+  {id:'f7',text:'Dyrektor sprzedaży chce całość na LinkedIn.',k:'T'},
+  {id:'f8',text:'Konwersja zapytań na umowy: webinary 22%, LinkedIn 5%.',k:'K'}],
+ nFakty:'Kluczowe: koszt na umowę, 10 umów przy 30 000 zł, skala webinarów, konwersja. Pułapki: 15 000 zł (niepotwierdzone) i opinia dyrektora.',
+ ofz:[
+  {id:'s1',text:'Newsletter kosztował 2 000 zł i dał 2 umowy.',key:'F'},
+  {id:'s2',text:'LinkedIn dał najwięcej zapytań, więc daj mu całe 30 000 zł.',key:'O'},
+  {id:'s3',text:'Z tego co pamiętam, umowa to koło 15 tysięcy.',key:'Z'},
+  {id:'s4',text:'Każdy z tych kanałów się zwraca.',key:'Z'},
+  {id:'s5',text:'W poprzednim kwartale było 10 umów przy budżecie 30 000 zł.',key:'F'},
+  {id:'s6',text:'Webinary to najlepszy kanał.',key:'O'},
+  {id:'s7',text:'Przy większym budżecie webinary dadzą podobny wynik.',key:'Z'},
+  {id:'s8',text:'Targi kosztowały 10 000 zł i dały 1 umowę.',key:'F'}],
+ braki:[
+  {id:'b1',text:'Faktyczna wartość i marża z umowy (dane z systemu).',ok:true},
+  {id:'b2',text:'Czy webinary i newsletter dadzą ten sam wynik przy większym budżecie.',ok:true},
+  {id:'b3',text:'Czy IV kwartał jest sezonowo porównywalny z poprzednim.',ok:true},
+  {id:'b4',text:'Ile osób pracuje w dziale marketingu.',ok:false},
+  {id:'b5',text:'Jakie ceny mają konkurenci.',ok:false},
+  {id:'b6',text:'Co dyrektor sprzedaży sądzi o webinarach.',ok:false}],
+ nBraki:'Trafne braki: wartość i marża umowy, skalowanie, sezonowość.',
+ p:{who:'Dyrektor sprzedaży',text:'Znam ten rynek od 15 lat. LinkedIn zawsze działa. Wpisz całość tam.',claim:'LinkedIn zawsze działa'}
+},
+/* 2 */
+{title:'Opóźnione wdrożenie',
+ caseHtml:'<h2>Opóźnione wdrożenie</h2><p>Firma wdraża system do obsługi zamówień. Termin końca wdrożenia: 30 listopada. Dziś jest 3 listopada, a dostawca zgłasza 3 tygodnie opóźnienia względem planu. Stan modułów:</p><div class="tablewrap"><table><thead><tr><th>Status</th><th class="num">Moduły</th></tr></thead><tbody><tr><td>Gotowe i przetestowane</td><td class="num">14</td></tr><tr><td>Gotowe, do przetestowania</td><td class="num">2</td></tr><tr><td>W trakcie</td><td class="num">3</td></tr><tr><td>Niezaczęte</td><td class="num">1</td></tr></tbody></table></div><p>Opcje:</p><ul><li>A: dodać 2 programistów od dostawcy, koszt 48 000 zł. Dostawca szacuje, że dzięki temu zdąży w terminie.</li><li>B: przesunąć termin o 3 tygodnie, kara umowna 10 000 zł.</li></ul><blockquote>Dostawca: „Opóźnienie wynika ze zmian wymagań po stronie firmy.”</blockquote><blockquote>Kierownik IT: „To na pewno wina dostawcy. Od początku mieli za mało ludzi.”</blockquote><p>Zarząd decyduje w piątek.</p>',
+ teza:[
+  {id:'t1',text:'Przesunąć termin o 3 tygodnie za 10 000 zł.',pts:2,note:'Tańsze 4,8 razy, bez zależności od szacunku dostawcy.'},
+  {id:'t2',text:'Dodać 2 programistów za 48 000 zł, żeby zdążyć w terminie.',pts:1,note:'Brak informacji, że termin jest twardy. Efekt to deklaracja dostawcy.'},
+  {id:'t3',text:'Najpierw ustalić, kto zawinił, a potem zdecydować.',pts:0,note:'Przyczyna nie jest potrzebna do decyzji w piątek.'},
+  {id:'t4',text:'Zmienić dostawcę.',pts:0,note:'Poza opcjami i bez danych.'},
+  {id:'t5',text:'Przyjąć wersję kierownika IT i obciążyć dostawcę kosztami.',pts:0,note:'Hipoteza podana jak fakt.',flag:'autorytet'},
+  {id:'t6',text:'Przesunąć termin i zażądać od dostawcy pokrycia kary.',pts:1,note:'Dobra decyzja, ale roszczenie opiera się na niewykazanej winie.'},
+  {id:'t7',text:'Zostawić termin bez zmian i czekać.',pts:0,note:'Brak decyzji.'},
+  {id:'t8',text:'Zapytać kierownika IT, którą opcję woli, i zrobić jak on.',pts:0,note:'Dopasowanie do autorytetu.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'Gotowych i przetestowanych jest 14 z 20 modułów.',k:'K'},
+  {id:'f2',text:'Przesunięcie terminu o 3 tygodnie kosztuje 10 000 zł kary.',k:'K'},
+  {id:'f3',text:'Dodatkowi programiści kosztują 48 000 zł.',k:'K'},
+  {id:'f4',text:'Efekt dodatkowych programistów to szacunek dostawcy, bez gwarancji.',k:'K'},
+  {id:'f5',text:'Opóźnienie względem planu wynosi 3 tygodnie.',k:'N'},
+  {id:'f6',text:'Opóźnienie to wina dostawcy.',k:'T'},
+  {id:'f7',text:'Opóźnienie wynika ze zmian wymagań po stronie firmy.',k:'T'},
+  {id:'f8',text:'Do końca zostaje 6 modułów: 2 do przetestowania, 3 w trakcie, 1 niezaczęty.',k:'K'}],
+ nFakty:'Kluczowe: stan modułów, koszty obu opcji, brak gwarancji. Pułapki: wina dostawcy i zmiana wymagań to twierdzenia stron sporu, nie ustalenia.',
+ ofz:[
+  {id:'s1',text:'Dodatkowi programiści kosztują 48 000 zł.',key:'F'},
+  {id:'s2',text:'To na pewno wina dostawcy.',key:'O'},
+  {id:'s3',text:'Dwóch programistów nadrobi trzy tygodnie w dwa tygodnie.',key:'Z'},
+  {id:'s4',text:'Kara za przesunięcie terminu to 10 000 zł.',key:'F'},
+  {id:'s5',text:'Przesunięcie terminu to porażka projektu.',key:'O'},
+  {id:'s6',text:'14 z 20 modułów jest gotowych i przetestowanych.',key:'F'},
+  {id:'s7',text:'Zmiany wymagań spowodowały opóźnienie.',key:'Z'},
+  {id:'s8',text:'Po przesunięciu terminu nie będzie kolejnych opóźnień.',key:'Z'}],
+ braki:[
+  {id:'b1',text:'Przyczyna opóźnienia ustalona na podstawie dokumentów (wymagania, harmonogram).',ok:true},
+  {id:'b2',text:'Czy termin 30 listopada jest twardy i jakie są skutki biznesowe jego przekroczenia.',ok:true},
+  {id:'b3',text:'Czy dostawca da pisemną gwarancję efektu dodatkowych programistów.',ok:true},
+  {id:'b4',text:'Ile lat dostawca działa na rynku.',ok:false},
+  {id:'b5',text:'Jakie kolory ma interfejs systemu.',ok:false},
+  {id:'b6',text:'Co kierownik IT sądzi o dostawcy.',ok:false}],
+ nBraki:'Trafne braki: przyczyna z dokumentów (kto płaci), twardość terminu, gwarancja dostawcy.',
+ p:{who:'Kierownik IT',text:'Pracuję w IT od 20 lat i wiem, że to ich wina. Obciążmy ich kosztami i dowieźmy w terminie z dodatkowymi ludźmi.',claim:'To ich wina'}
+},
+/* 3 */
+{title:'Efekt programu rozwoju',
+ caseHtml:'<h2>Efekt programu rozwoju</h2><p>Firma przeprowadziła 6-miesięczny program rozwoju dla 30 handlowców. Grupa porównawcza: 30 handlowców bez programu, o podobnym stażu i w podobnych regionach. Miernik: średnia miesięczna sprzedaż na osobę (tys. zł).</p><div class="tablewrap"><table><thead><tr><th>Grupa</th><th class="num">Osoby</th><th class="num">Przed</th><th class="num">Po</th></tr></thead><tbody><tr><td>Program</td><td class="num">30</td><td class="num">80</td><td class="num">92</td></tr><tr><td>Porównawcza</td><td class="num">30</td><td class="num">80</td><td class="num">88</td></tr></tbody></table></div><p>Koszt programu: 90 000 zł (3 000 zł na osobę). Zarząd pyta o rozszerzenie na 150 handlowców (ok. 450 000 zł).</p><blockquote>Dyrektor HR: „Sprzedaż wzrosła o 15%, więc program się opłacił.”</blockquote><blockquote>Szef sprzedaży: „Handlowcy bardzo go chwalą.”</blockquote><p>Zarząd decyduje w czwartek.</p>',
+ teza:[
+  {id:'t1',text:'Rozszerzyć program na 150 osób, bo sprzedaż wzrosła o 15%.',pts:0,note:'Całość wzrostu przypisana programowi, choć grupa porównawcza też wzrosła.'},
+  {id:'t2',text:'Nie rozszerzać, zanim ktoś oszacuje, ile jest warta różnica 4 tys. zł sprzedaży miesięcznie.',pts:2,note:'Zgodne z kluczem: efekt netto jest, wartość nieznana.'},
+  {id:'t3',text:'Rozszerzyć na część handlowców jako kolejny test z grupą porównawczą.',pts:2,note:'Obronne: ogranicza koszt i sprawdza, czy efekt się powtarza.'},
+  {id:'t4',text:'Nie rozszerzać, bo program nie działa.',pts:0,note:'Efekt netto jest dodatni (4 tys. zł na osobę), więc to nadinterpretacja.'},
+  {id:'t5',text:'Rozszerzyć, bo handlowcy go chwalą.',pts:0,note:'Opinia uczestników zamiast wyniku.',flag:'autorytet'},
+  {id:'t6',text:'Poprosić o więcej danych, zanim cokolwiek zaproponuję.',pts:0,note:'Analiza zamiast wniosku.'},
+  {id:'t7',text:'Rozszerzyć, bo wzrost w grupie programu (12 tys.) jest większy niż w porównawczej (8 tys.).',pts:1,note:'Poprawne porównanie, ale bez marży i trwałości efektu wniosek jest za mocny.'},
+  {id:'t8',text:'Zapytać dyrektor HR, jak ocenia program, i przyjąć jej zdanie.',pts:0,note:'Dopasowanie do autorytetu.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'W grupie programu sprzedaż na osobę wzrosła o 12 tys. zł, w porównawczej o 8 tys. zł.',k:'K'},
+  {id:'f2',text:'Efekt netto programu to ok. 4 tys. zł sprzedaży miesięcznie na osobę.',k:'K'},
+  {id:'f3',text:'Program kosztuje 3 000 zł na osobę, rozszerzenie ok. 450 000 zł.',k:'K'},
+  {id:'f4',text:'Grupa porównawcza też wzrosła, więc część wzrostu nie pochodzi z programu.',k:'K'},
+  {id:'f5',text:'Wzrost sprzedaży w grupie programu wyniósł 15%.',k:'N'},
+  {id:'f6',text:'Handlowcy bardzo chwalą program.',k:'T'},
+  {id:'f7',text:'Program się opłacił.',k:'T'},
+  {id:'f8',text:'Wynik dotyczy sprzedaży, nie marży.',k:'K'}],
+ nFakty:'Kluczowe: wzrost w obu grupach, efekt netto 4 tys. zł, koszt, sprzedaż to nie marża. Pułapki: opinia uczestników i wniosek dyrektor HR.',
+ ofz:[
+  {id:'s1',text:'W grupie porównawczej sprzedaż wzrosła z 80 do 88 tys. zł na osobę.',key:'F'},
+  {id:'s2',text:'Program się opłacił.',key:'O'},
+  {id:'s3',text:'Efekt programu utrzyma się po jego zakończeniu.',key:'Z'},
+  {id:'s4',text:'Program dla 30 osób kosztuje 90 000 zł.',key:'F'},
+  {id:'s5',text:'Handlowcy bardzo chwalą program.',key:'O'},
+  {id:'s6',text:'Na 150 osobach efekt będzie taki sam jak na 30.',key:'Z'},
+  {id:'s7',text:'W grupie programu sprzedaż wzrosła z 80 do 92 tys. zł na osobę.',key:'F'},
+  {id:'s8',text:'Cała różnica między grupami wynika z programu.',key:'Z'}],
+ braki:[
+  {id:'b1',text:'Marża na sprzedaży (ile z 4 tys. zł zostaje firmie).',ok:true},
+  {id:'b2',text:'Czy efekt utrzyma się po zakończeniu programu (np. po kolejnych 6 miesiącach).',ok:true},
+  {id:'b3',text:'Jak dobrano grupę porównawczą i czy była naprawdę porównywalna.',ok:true},
+  {id:'b4',text:'Jak wyglądała sala szkoleniowa.',ok:false},
+  {id:'b5',text:'Ilu handlowców dyrektor HR zna osobiście.',ok:false},
+  {id:'b6',text:'Jakie programy rozwoju mają inne firmy w branży.',ok:false}],
+ nBraki:'Trafne braki: marża, trwałość efektu, jakość doboru grupy porównawczej.',
+ p:{who:'Dyrektor HR',text:'Zajmuję się rozwojem ludzi od 15 lat. Sprzedaż wzrosła o 15%, więc program działa. Wpisz rozszerzenie na wszystkich.',claim:'Sprzedaż wzrosła o 15%'}
+},
+/* 4 */
+{title:'Licencje na narzędzie',
+ caseHtml:'<h2>Licencje na narzędzie</h2><p>Dział kupuje roczną licencję na narzędzie do zarządzania projektami.</p><ul><li>Cena: 120 zł za użytkownika miesięcznie.</li><li>Zniżka 10% przy zamówieniu powyżej 40 użytkowników.</li><li>Budżet roczny: 60 000 zł.</li><li>Dział IT szacuje, że będzie z niego korzystać 35 osób. Dział HR szacuje 45 osób. Nikt nie sprawdził listy w systemie kadrowym.</li><li>Dostawca trzyma ofertę do piątku.</li></ul><blockquote>Dyrektor operacyjny: „Zamów na 45 osób, lepiej mieć zapas.”</blockquote>',
+ teza:[
+  {id:'t1',text:'Zamówić na 45 osób, bo tak radzi dyrektor operacyjny.',pts:0,note:'Wynik mieści się w budżecie, ale podstawą jest opinia i nieznana liczba.',flag:'autorytet'},
+  {id:'t2',text:'Do piątku ustalić liczbę użytkowników z systemu kadrowego i zamówić do 46 osób (limit budżetu).',pts:2,note:'Zgodne z kluczem: braki do uzupełnienia przed terminem, limit z budżetu.'},
+  {id:'t3',text:'Zamówić na 35 osób, bo tyle szacuje IT.',pts:0,note:'Jeden z dwóch niesprawdzonych szacunków.'},
+  {id:'t4',text:'Zamówić na 40 osób, żeby wyjść w środku.',pts:0,note:'Zgadywanie. Przy 40 osobach zniżka nie obowiązuje.'},
+  {id:'t5',text:'Poprosić dostawcę o przedłużenie oferty i zamówić po sprawdzeniu liczby.',pts:1,note:'Rozsądne, ale zależy od zgody dostawcy. Najpierw sprawdź liczbę do piątku.'},
+  {id:'t6',text:'Zamówić na 45 osób i sprawdzić liczbę po zakupie.',pts:1,note:'Mieści się w budżecie, ale decyzja zapada przed sprawdzeniem liczby.'},
+  {id:'t7',text:'Nie zamawiać, dopóki nie będzie pewności.',pts:0,note:'Oferta wygasa w piątek.'},
+  {id:'t8',text:'Zapytać IT i HR, kto ma rację, i przyjąć zdanie tego, kto mówi pewniej.',pts:0,note:'Pewność zamiast danych.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'Cena roczna to 1 440 zł za użytkownika (120 zł razy 12).',k:'K'},
+  {id:'f2',text:'35 użytkowników kosztuje 50 400 zł.',k:'K'},
+  {id:'f3',text:'45 użytkowników ze zniżką 10% kosztuje 58 320 zł, czyli mieści się w budżecie.',k:'K'},
+  {id:'f4',text:'Bez zniżki 45 użytkowników kosztuje 64 800 zł, czyli 4 800 zł ponad budżet.',k:'K'},
+  {id:'f5',text:'IT szacuje 35 użytkowników, HR 45, a nikt nie sprawdził listy w systemie kadrowym.',k:'K'},
+  {id:'f6',text:'Budżet roczny wynosi 60 000 zł.',k:'N'},
+  {id:'f7',text:'Lepiej mieć zapas.',k:'T'},
+  {id:'f8',text:'Narzędzia będzie używać 45 osób.',k:'T'}],
+ nFakty:'Kluczowe: ceny dla 35 i 45 osób, rola zniżki, brak sprawdzonej liczby. Pułapki: „zapas” i 45 osób podane jak fakt.',
+ ofz:[
+  {id:'s1',text:'Cena to 120 zł za użytkownika miesięcznie.',key:'F'},
+  {id:'s2',text:'Lepiej mieć zapas.',key:'O'},
+  {id:'s3',text:'Narzędzia będzie używać 45 osób.',key:'Z'},
+  {id:'s4',text:'Zniżka 10% obowiązuje przy zamówieniu powyżej 40 użytkowników.',key:'F'},
+  {id:'s5',text:'Liczba użytkowników nie zmieni się w trakcie roku.',key:'Z'},
+  {id:'s6',text:'Dostawca trzyma ofertę do piątku.',key:'F'},
+  {id:'s7',text:'Szacunek HR jest wiarygodniejszy niż szacunek IT.',key:'O'},
+  {id:'s8',text:'Dostawca przedłuży ofertę, jeśli o to poprosimy.',key:'Z'}],
+ braki:[
+  {id:'b1',text:'Dokładna liczba użytkowników z systemu kadrowego.',ok:true},
+  {id:'b2',text:'Czy dostawca przedłuży ofertę po piątku.',ok:true},
+  {id:'b3',text:'Czy w trakcie roku da się dokupić licencje i po jakiej cenie.',ok:true},
+  {id:'b4',text:'Jakiego koloru jest logo dostawcy.',ok:false},
+  {id:'b5',text:'Ile wynosi budżet innego działu.',ok:false},
+  {id:'b6',text:'Co dyrektor operacyjny sądzi o dostawcy.',ok:false}],
+ nBraki:'Trafne braki: liczba użytkowników, możliwość przedłużenia oferty, dokupienie licencji w trakcie roku.',
+ p:{who:'Dyrektor operacyjny',text:'Robiłem takie zakupy dziesiątki razy. 45 osób to bezpieczna liczba. Zamów i mamy spokój.',claim:'45 osób to bezpieczna liczba'}
+},
+/* 5 */
+{title:'Opis oferty na stronie',
+ caseHtml:'<h2>Opis oferty na stronie</h2><p>Mała agencja badawcza (4 osoby) zmieniła opis oferty na swojej stronie trzy razy w pięć tygodni, za każdym razem po radzie innej osoby. Dane miesięczne po każdej zmianie:</p><div class="tablewrap"><table><thead><tr><th>Wersja</th><th>Zmiana (czyja rada)</th><th class="num">Odwiedziny</th><th class="num">Zapytania</th></tr></thead><tbody><tr><td>Wyjściowa</td><td>brak</td><td class="num">400</td><td class="num">4</td></tr><tr><td>1</td><td>Krótszy opis (klient)</td><td class="num">380</td><td class="num">5</td></tr><tr><td>2</td><td>Dodane certyfikaty (kolega z branży)</td><td class="num">410</td><td class="num">3</td></tr><tr><td>3</td><td>Więcej zdjęć (grafik)</td><td class="num">390</td><td class="num">4</td></tr></tbody></table></div><blockquote>Klientka z grupy docelowej: „Kupuję takie usługi od lat. Zmieńcie nagłówek na pytanie do klienta, wtedy kliknę.”</blockquote><p>Właścicielka decyduje do poniedziałku, czy wprowadzić czwartą zmianę.</p>',
+ teza:[
+  {id:'t1',text:'Wprowadzić czwartą zmianę, bo radzi ją klientka z grupy docelowej.',pts:0,note:'Autorytet grupy docelowej wzięty za dowód.',flag:'autorytet'},
+  {id:'t2',text:'Nie wprowadzać czwartej zmiany. Zostawić jedną wersję na 8 tygodni i mierzyć zapytania.',pts:2,note:'Zgodne z kluczem: zmiany były szumem, potrzeba dłuższej próby.'},
+  {id:'t3',text:'Wrócić do wersji 1, bo dała najwięcej zapytań (5).',pts:1,note:'Decyzja odwracalna, ale różnica 1 zapytania to szum.'},
+  {id:'t4',text:'Przetestować czwartą zmianę równolegle z wersją 1 (test A/B).',pts:1,note:'Kierunek dobry, ale 400 odwiedzin miesięcznie to za mało na test.'},
+  {id:'t5',text:'Zmienić opis jeszcze raz według rad wszystkich czterech osób naraz.',pts:0,note:'Nie da się ustalić, co zadziałało.'},
+  {id:'t6',text:'Zapytać więcej osób o opinię o stronie, zanim zdecyduję.',pts:0,note:'Kolejne rady zamiast decyzji.'},
+  {id:'t7',text:'Usunąć certyfikaty, bo dały najgorszy wynik (3 zapytania).',pts:0,note:'Różnica 1 do 2 zapytań to szum.'},
+  {id:'t8',text:'Zapytać kolegę z branży, co sądzi o czwartej zmianie.',pts:0,note:'Dopasowanie do autorytetu.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'Cztery wersje opisu dały od 3 do 5 zapytań miesięcznie.',k:'K'},
+  {id:'f2',text:'Odwiedziny w tym czasie wahały się od 380 do 410 miesięcznie.',k:'K'},
+  {id:'f3',text:'Konwersja: 1,0% (wyjściowa), 1,3%, 0,7%, 1,0%.',k:'K'},
+  {id:'f4',text:'Różnice między wersjami to 1 do 2 zapytań miesięcznie.',k:'K'},
+  {id:'f5',text:'Każda zmiana poszła za radą innej osoby.',k:'K'},
+  {id:'f6',text:'Wersja 1 dała najwięcej zapytań (5).',k:'N'},
+  {id:'f7',text:'Klientka z grupy docelowej wie, co działa na stronach takich usług.',k:'T'},
+  {id:'f8',text:'Certyfikaty obniżyły liczbę zapytań.',k:'T'}],
+ nFakty:'Kluczowe: zakres zapytań i odwiedzin, konwersja, mała skala różnic, fakt że każda zmiana szła za cudzą radą. Pułapki: wiedza klientki jako dowód i przyczynowość certyfikatów.',
+ ofz:[
+  {id:'s1',text:'Wersja 1 dała 5 zapytań przy 380 odwiedzinach.',key:'F'},
+  {id:'s2',text:'Opis z certyfikatami wypada najgorzej.',key:'O'},
+  {id:'s3',text:'Nagłówek w formie pytania zwiększy liczbę zapytań.',key:'Z'},
+  {id:'s4',text:'Przed pierwszą zmianą strona miała 400 odwiedzin i 4 zapytania miesięcznie.',key:'F'},
+  {id:'s5',text:'Klientka z grupy docelowej ma rację.',key:'O'},
+  {id:'s6',text:'Certyfikaty obniżyły liczbę zapytań.',key:'Z'},
+  {id:'s7',text:'Opis zmieniono trzy razy w pięć tygodni.',key:'F'},
+  {id:'s8',text:'Po kolejnej zmianie liczba odwiedzin się nie zmieni.',key:'Z'}],
+ braki:[
+  {id:'b1',text:'Dane z dłuższego okresu (np. 8 tygodni) dla jednej wersji opisu.',ok:true},
+  {id:'b2',text:'Skąd przychodzą odwiedziny i czy ich skład zmieniał się między wersjami.',ok:true},
+  {id:'b3',text:'Ile zapytań kończy się umową i jaka jest wartość umowy.',ok:true},
+  {id:'b4',text:'Jakiego koloru jest przycisk u konkurencji.',ok:false},
+  {id:'b5',text:'Ile lat doświadczenia ma grafik.',ok:false},
+  {id:'b6',text:'Co jeszcze doradziłby kolega z branży.',ok:false}],
+ nBraki:'Trafne braki: dłuższa próba, źródła ruchu, wartość zapytania.',
+ p:{who:'Klientka',text:'Kupuję takie usługi od lat. Wiem, co mnie przekonuje. Zmieńcie nagłówek na pytanie, a kliknę.',claim:'Klientka by kliknęła',r4note:'To jedna próbka (n=1). Warto ją zapisać jako sygnał do testu, ale nie jest powodem zmiany tezy.'}
+},
+/* 6 */
+{title:'Wybór kandydata',
+ caseHtml:'<h2>Wybór kandydata</h2><p>Zespół analityczny szuka analityka. Budżet na wynagrodzenie: 14 000 zł brutto miesięcznie. Projekt startuje za 6 tygodni i potrzebna jest osoba pracująca od startu.</p><div class="tablewrap"><table><thead><tr><th>Kandydat</th><th class="num">Doświadczenie</th><th class="num">Zadanie (pkt/100)</th><th class="num">Referencje</th><th class="num">Oczekiwania</th><th>Start pracy</th></tr></thead><tbody><tr><td>A</td><td class="num">8 lat</td><td class="num">72</td><td class="num">0 z 3</td><td class="num">16 000 zł</td><td>od zaraz</td></tr><tr><td>B</td><td class="num">4 lata</td><td class="num">88</td><td class="num">3 z 3</td><td class="num">13 000 zł</td><td>za 8 tygodni</td></tr><tr><td>C</td><td class="num">6 lat</td><td class="num">81</td><td class="num">1 z 3</td><td class="num">14 000 zł</td><td>za 5 tygodni</td></tr></tbody></table></div><blockquote>Kierownik zespołu: „Kandydat A zrobił na mnie najlepsze wrażenie. Widać, że to ktoś z klasą.”</blockquote><p>Decyzja do środy.</p>',
+ teza:[
+  {id:'t1',text:'Wybrać A, bo zrobił najlepsze wrażenie na kierowniku.',pts:0,note:'Wrażenie jako argument. A ma najniższy wynik zadania i przekracza budżet.',flag:'autorytet'},
+  {id:'t2',text:'Wybrać C: mieści się w budżecie i w terminie startu. Dopytać o pozostałe 2 referencje.',pts:2,note:'Zgodne z kluczem: spełnia oba twarde warunki, ryzyko wskazane.'},
+  {id:'t3',text:'Wybrać B: najlepszy wynik zadania i pełne referencje, a start przesunąć o 2 tygodnie.',pts:1,note:'Mocne dane, ale łamie warunek startu. Wymaga potwierdzenia, że projekt zniesie 2 tygodnie.'},
+  {id:'t4',text:'Wybrać A i wynegocjować pensję w dół do 14 000 zł.',pts:0,note:'Założenie, że A się zgodzi.'},
+  {id:'t5',text:'Wybrać kandydata z najdłuższym doświadczeniem, czyli A.',pts:0,note:'Doświadczenie jedyną miarą, przy ignorowaniu budżetu i wyniku zadania.'},
+  {id:'t6',text:'Poprosić o dodatkową rozmowę ze wszystkimi trzema, zanim zdecyduję.',pts:0,note:'Dane wystarczają na wniosek z ryzykiem, a decyzja jest w środę.'},
+  {id:'t7',text:'Wybrać B, bo ma najlepsze referencje i wynik, a termin startu to szczegół.',pts:0,note:'Twardy warunek uznany za szczegół.'},
+  {id:'t8',text:'Zapytać kierownika, kogo woli, i się z nim zgodzić.',pts:0,note:'Dopasowanie do autorytetu.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'Kandydat A oczekuje 16 000 zł, a budżet to 14 000 zł.',k:'K'},
+  {id:'f2',text:'Kandydat B może zacząć za 8 tygodni, a projekt startuje za 6.',k:'K'},
+  {id:'f3',text:'Kandydat C: 14 000 zł, start za 5 tygodni, zadanie 81 punktów.',k:'K'},
+  {id:'f4',text:'Kandydat B ma najlepszy wynik zadania (88) i 3 z 3 potwierdzone referencje.',k:'K'},
+  {id:'f5',text:'Kandydat A ma najniższy wynik zadania (72) i 0 z 3 potwierdzonych referencji.',k:'K'},
+  {id:'f6',text:'Kandydat A ma najdłuższe doświadczenie (8 lat).',k:'N'},
+  {id:'f7',text:'Kandydat A zrobił najlepsze wrażenie.',k:'T'},
+  {id:'f8',text:'Kandydat A to ktoś z klasą.',k:'T'}],
+ nFakty:'Kluczowe: budżet, termin startu, wyniki zadań, referencje. Pułapki: wrażenie kierownika i „klasa” kandydata.',
+ ofz:[
+  {id:'s1',text:'Kandydat C ma potwierdzoną 1 z 3 referencji.',key:'F'},
+  {id:'s2',text:'Kandydat A zrobił najlepsze wrażenie.',key:'O'},
+  {id:'s3',text:'Pozostałe referencje kandydata C będą dobre.',key:'Z'},
+  {id:'s4',text:'Kandydat B zrobił zadanie na 88 punktów.',key:'F'},
+  {id:'s5',text:'Kandydat A to ktoś z klasą.',key:'O'},
+  {id:'s6',text:'Kandydat A zgodzi się na 14 000 zł.',key:'Z'},
+  {id:'s7',text:'Projekt startuje za 6 tygodni.',key:'F'},
+  {id:'s8',text:'Kandydat B skróci okres wypowiedzenia.',key:'Z'}],
+ braki:[
+  {id:'b1',text:'Wyniki sprawdzenia pozostałych dwóch referencji kandydata C.',ok:true},
+  {id:'b2',text:'Czy projekt może ruszyć bez analityka przez 2 tygodnie.',ok:true},
+  {id:'b3',text:'Czy kandydat B może skrócić okres wypowiedzenia.',ok:true},
+  {id:'b4',text:'Jak kandydaci ubrali się na rozmowę.',ok:false},
+  {id:'b5',text:'Jakie hobby ma kandydat A.',ok:false},
+  {id:'b6',text:'Co kierownik zespołu pamięta z rozmowy z kandydatem A.',ok:false}],
+ nBraki:'Trafne braki: reszta referencji C, tolerancja projektu na opóźnienie startu, skrócenie wypowiedzenia B.',
+ p:{who:'Kierownik zespołu',text:'Prowadzę rekrutacje od 12 lat. Jak widzę dobrego kandydata, to wiem. Bierz A, resztę dogadamy.',claim:'Kierownik wie, kto jest dobry'}
+}
+],
+en: [
+/* 1 */
+{title:'Campaign channels',
+ caseHtml:'<h2>Campaign channels</h2><p>A training company has PLN 30,000 for a Q4 campaign. Target: 12 contracts. The sales director asks how to split the budget. Data from the previous quarter:</p><div class="tablewrap"><table><thead><tr><th>Channel</th><th class="num">Cost</th><th class="num">Enquiries</th><th class="num">Contracts</th></tr></thead><tbody><tr><td>LinkedIn Ads</td><td class="num">PLN 12,000</td><td class="num">60</td><td class="num">3</td></tr><tr><td>Webinars</td><td class="num">PLN 6,000</td><td class="num">18</td><td class="num">4</td></tr><tr><td>Newsletter</td><td class="num">PLN 2,000</td><td class="num">25</td><td class="num">2</td></tr><tr><td>Trade fairs</td><td class="num">PLN 10,000</td><td class="num">12</td><td class="num">1</td></tr></tbody></table></div><blockquote>Sales director: “LinkedIn brought the most enquiries, so give it the whole PLN 30,000.”</blockquote><blockquote>Head of finance: “As far as I remember, a contract is worth about 15 thousand, so every one of these channels pays off.”</blockquote><p>Decision due by Thursday.</p>',
+ teza:[
+  {id:'t1',text:'Give the whole PLN 30,000 to LinkedIn because it brought the most enquiries.',pts:0,note:'The director’s opinion and the enquiry count instead of cost per contract.'},
+  {id:'t2',text:'Move budget from trade fairs and LinkedIn to webinars and the newsletter.',pts:2,note:'Matches the key. Risk: small samples (4 and 2 contracts).'},
+  {id:'t3',text:'Move budget from trade fairs to webinars and the newsletter, and keep LinkedIn unchanged.',pts:2,note:'Defensible if the reasoning rests on cost per contract.'},
+  {id:'t4',text:'Move the whole budget to the newsletter because it has the lowest cost per contract.',pts:1,note:'A conclusion from facts, but 2 contracts is a small sample and 25 enquiries caps the scale.'},
+  {id:'t5',text:'Keep last quarter’s split.',pts:0,note:'No decision, although the data allow one.'},
+  {id:'t6',text:'I need more data before I propose a split.',pts:0,note:'Analysis instead of a conclusion. The data are enough for a conclusion with stated risk.'},
+  {id:'t7',text:'All channels pay off, so the split matters little.',pts:0,note:'Rests on an unconfirmed contract value and confuses revenue with profit.'},
+  {id:'t8',text:'Ask the sales director for a recommendation, since they know the clients.',pts:0,note:'Deferring to authority instead of forming your own view.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'Cost per contract: newsletter PLN 1,000, webinars PLN 1,500.',k:'K'},
+  {id:'f2',text:'Cost per contract: LinkedIn PLN 4,000, trade fairs PLN 10,000.',k:'K'},
+  {id:'f3',text:'Last quarter: 10 contracts on a PLN 30,000 budget, and the target is 12.',k:'K'},
+  {id:'f4',text:'Webinars brought only 18 enquiries, so their scale is limited.',k:'K'},
+  {id:'f5',text:'LinkedIn brought 60 enquiries, the most of all channels.',k:'N'},
+  {id:'f6',text:'The average contract value is about PLN 15,000.',k:'T'},
+  {id:'f7',text:'The sales director wants everything on LinkedIn.',k:'T'},
+  {id:'f8',text:'Enquiry-to-contract conversion: webinars 22%, LinkedIn 5%.',k:'K'}],
+ nFakty:'Key: cost per contract, 10 contracts on PLN 30,000, webinar scale, conversion. Traps: PLN 15,000 (unconfirmed) and the director’s opinion.',
+ ofz:[
+  {id:'s1',text:'The newsletter cost PLN 2,000 and brought 2 contracts.',key:'F'},
+  {id:'s2',text:'LinkedIn brought the most enquiries, so give it the whole PLN 30,000.',key:'O'},
+  {id:'s3',text:'As far as I remember, a contract is worth about 15 thousand.',key:'Z'},
+  {id:'s4',text:'Every one of these channels pays off.',key:'Z'},
+  {id:'s5',text:'Last quarter there were 10 contracts on a PLN 30,000 budget.',key:'F'},
+  {id:'s6',text:'Webinars are the best channel.',key:'O'},
+  {id:'s7',text:'With a bigger budget, webinars will deliver a similar result.',key:'Z'},
+  {id:'s8',text:'Trade fairs cost PLN 10,000 and brought 1 contract.',key:'F'}],
+ braki:[
+  {id:'b1',text:'The actual value and margin of a contract (data from the system).',ok:true},
+  {id:'b2',text:'Whether webinars and the newsletter will deliver the same result with a bigger budget.',ok:true},
+  {id:'b3',text:'Whether Q4 is seasonally comparable with the previous quarter.',ok:true},
+  {id:'b4',text:'How many people work in the marketing department.',ok:false},
+  {id:'b5',text:'What prices competitors charge.',ok:false},
+  {id:'b6',text:'What the sales director thinks about webinars.',ok:false}],
+ nBraki:'Relevant gaps: contract value and margin, scaling, seasonality.',
+ p:{who:'Sales director',text:'I’ve known this market for 15 years. LinkedIn always works. Put everything there.',claim:'LinkedIn always works'}
+},
+/* 2 */
+{title:'Delayed implementation',
+ caseHtml:'<h2>Delayed implementation</h2><p>A company is implementing an order-management system. Implementation deadline: 30 November. Today is 3 November, and the vendor reports a 3-week delay against the plan. Module status:</p><div class="tablewrap"><table><thead><tr><th>Status</th><th class="num">Modules</th></tr></thead><tbody><tr><td>Done and tested</td><td class="num">14</td></tr><tr><td>Done, awaiting testing</td><td class="num">2</td></tr><tr><td>In progress</td><td class="num">3</td></tr><tr><td>Not started</td><td class="num">1</td></tr></tbody></table></div><p>Options:</p><ul><li>A: add 2 developers from the vendor, cost PLN 48,000. The vendor estimates this will let them meet the deadline.</li><li>B: move the deadline by 3 weeks, contractual penalty PLN 10,000.</li></ul><blockquote>Vendor: “The delay is caused by requirement changes on the company’s side.”</blockquote><blockquote>IT manager: “It’s definitely the vendor’s fault. They had too few people from the start.”</blockquote><p>The board decides on Friday.</p>',
+ teza:[
+  {id:'t1',text:'Move the deadline by 3 weeks for PLN 10,000.',pts:2,note:'4.8 times cheaper, and it does not depend on the vendor’s estimate.'},
+  {id:'t2',text:'Add 2 developers for PLN 48,000 to meet the deadline.',pts:1,note:'Nothing says the deadline is fixed. The effect is the vendor’s claim.'},
+  {id:'t3',text:'First establish who is to blame, then decide.',pts:0,note:'The cause is not needed for Friday’s decision.'},
+  {id:'t4',text:'Change the vendor.',pts:0,note:'Outside the options and without data.'},
+  {id:'t5',text:'Accept the IT manager’s version and charge the costs to the vendor.',pts:0,note:'A hypothesis presented as fact.',flag:'autorytet'},
+  {id:'t6',text:'Move the deadline and demand that the vendor covers the penalty.',pts:1,note:'A good decision, but the claim rests on blame that has not been shown.'},
+  {id:'t7',text:'Keep the deadline unchanged and wait.',pts:0,note:'No decision.'},
+  {id:'t8',text:'Ask the IT manager which option they prefer and do that.',pts:0,note:'Deferring to authority.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'14 of 20 modules are done and tested.',k:'K'},
+  {id:'f2',text:'Moving the deadline by 3 weeks costs a PLN 10,000 penalty.',k:'K'},
+  {id:'f3',text:'The extra developers cost PLN 48,000.',k:'K'},
+  {id:'f4',text:'The effect of the extra developers is the vendor’s estimate, with no guarantee.',k:'K'},
+  {id:'f5',text:'The delay against the plan is 3 weeks.',k:'N'},
+  {id:'f6',text:'The delay is the vendor’s fault.',k:'T'},
+  {id:'f7',text:'The delay is caused by requirement changes on the company’s side.',k:'T'},
+  {id:'f8',text:'6 modules remain: 2 awaiting testing, 3 in progress, 1 not started.',k:'K'}],
+ nFakty:'Key: module status, the cost of both options, no guarantee. Traps: the vendor’s fault and the requirement changes are claims made by the parties to a dispute, and nobody has verified them.',
+ ofz:[
+  {id:'s1',text:'The extra developers cost PLN 48,000.',key:'F'},
+  {id:'s2',text:'It’s definitely the vendor’s fault.',key:'O'},
+  {id:'s3',text:'Two developers will make up three weeks in two weeks.',key:'Z'},
+  {id:'s4',text:'The penalty for moving the deadline is PLN 10,000.',key:'F'},
+  {id:'s5',text:'Moving the deadline means the project has failed.',key:'O'},
+  {id:'s6',text:'14 of 20 modules are done and tested.',key:'F'},
+  {id:'s7',text:'Requirement changes caused the delay.',key:'Z'},
+  {id:'s8',text:'After the deadline moves, there will be no further delays.',key:'Z'}],
+ braki:[
+  {id:'b1',text:'The cause of the delay, established from documents (requirements, schedule).',ok:true},
+  {id:'b2',text:'Whether the 30 November deadline is fixed and what missing it means for the business.',ok:true},
+  {id:'b3',text:'Whether the vendor will give a written guarantee of the extra developers’ effect.',ok:true},
+  {id:'b4',text:'How many years the vendor has been on the market.',ok:false},
+  {id:'b5',text:'What colours the system’s interface uses.',ok:false},
+  {id:'b6',text:'What the IT manager thinks of the vendor.',ok:false}],
+ nBraki:'Relevant gaps: the cause established from documents (who pays), how fixed the deadline is, the vendor’s guarantee.',
+ p:{who:'IT manager',text:'I’ve worked in IT for 20 years and I know it’s their fault. Let’s charge them the costs and deliver on time with extra people.',claim:'It’s their fault'}
+},
+/* 3 */
+{title:'Development programme impact',
+ caseHtml:'<h2>Development programme impact</h2><p>A company ran a 6-month development programme for 30 salespeople. Comparison group: 30 salespeople without the programme, with similar tenure and in similar regions. Metric: average monthly sales per person (PLN thousand).</p><div class="tablewrap"><table><thead><tr><th>Group</th><th class="num">People</th><th class="num">Before</th><th class="num">After</th></tr></thead><tbody><tr><td>Programme</td><td class="num">30</td><td class="num">80</td><td class="num">92</td></tr><tr><td>Comparison</td><td class="num">30</td><td class="num">80</td><td class="num">88</td></tr></tbody></table></div><p>Programme cost: PLN 90,000 (PLN 3,000 per person). The board is asking about extending it to 150 salespeople (about PLN 450,000).</p><blockquote>HR director: “Sales grew by 15%, so the programme paid off.”</blockquote><blockquote>Head of sales: “The salespeople praise it highly.”</blockquote><p>The board decides on Thursday.</p>',
+ teza:[
+  {id:'t1',text:'Extend the programme to 150 people because sales grew by 15%.',pts:0,note:'The whole increase is credited to the programme, although the comparison group grew too.'},
+  {id:'t2',text:'Do not extend it until someone estimates what a PLN 4 thousand difference in monthly sales is worth.',pts:2,note:'Matches the key: there is a net effect, and its value is unknown.'},
+  {id:'t3',text:'Extend it to some of the salespeople as another test with a comparison group.',pts:2,note:'Defensible: it limits the cost and checks whether the effect repeats.'},
+  {id:'t4',text:'Do not extend it because the programme does not work.',pts:0,note:'The net effect is positive (PLN 4 thousand per person), so this overreads the data.'},
+  {id:'t5',text:'Extend it because the salespeople praise it.',pts:0,note:'Participants’ opinion instead of the result.',flag:'autorytet'},
+  {id:'t6',text:'Ask for more data before proposing anything.',pts:0,note:'Analysis instead of a conclusion.'},
+  {id:'t7',text:'Extend it because growth in the programme group (12 thousand) is larger than in the comparison group (8 thousand).',pts:1,note:'A correct comparison, but without margin and durability of the effect the conclusion is too strong.'},
+  {id:'t8',text:'Ask the HR director for their assessment of the programme and adopt it.',pts:0,note:'Deferring to authority.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'In the programme group sales per person grew by PLN 12 thousand, in the comparison group by PLN 8 thousand.',k:'K'},
+  {id:'f2',text:'The programme’s net effect is about PLN 4 thousand in monthly sales per person.',k:'K'},
+  {id:'f3',text:'The programme costs PLN 3,000 per person, and the extension about PLN 450,000.',k:'K'},
+  {id:'f4',text:'The comparison group also grew, so part of the growth does not come from the programme.',k:'K'},
+  {id:'f5',text:'Sales growth in the programme group was 15%.',k:'N'},
+  {id:'f6',text:'The salespeople praise the programme highly.',k:'T'},
+  {id:'f7',text:'The programme paid off.',k:'T'},
+  {id:'f8',text:'The result concerns sales and says nothing about margin.',k:'K'}],
+ nFakty:'Key: growth in both groups, a net effect of PLN 4 thousand, cost, and the fact that sales are different from margin. Traps: participants’ opinion and the HR director’s conclusion.',
+ ofz:[
+  {id:'s1',text:'In the comparison group, sales grew from 80 to 88 thousand PLN per person.',key:'F'},
+  {id:'s2',text:'The programme paid off.',key:'O'},
+  {id:'s3',text:'The programme’s effect will last after it ends.',key:'Z'},
+  {id:'s4',text:'The programme for 30 people costs PLN 90,000.',key:'F'},
+  {id:'s5',text:'The salespeople praise the programme highly.',key:'O'},
+  {id:'s6',text:'With 150 people, the effect will be the same as with 30.',key:'Z'},
+  {id:'s7',text:'In the programme group, sales grew from 80 to 92 thousand PLN per person.',key:'F'},
+  {id:'s8',text:'The whole difference between the groups comes from the programme.',key:'Z'}],
+ braki:[
+  {id:'b1',text:'The margin on sales (how much of the PLN 4 thousand the company keeps).',ok:true},
+  {id:'b2',text:'Whether the effect lasts after the programme ends (e.g. after another 6 months).',ok:true},
+  {id:'b3',text:'How the comparison group was selected and whether it was truly comparable.',ok:true},
+  {id:'b4',text:'What the training room looked like.',ok:false},
+  {id:'b5',text:'How many salespeople the HR director knows personally.',ok:false},
+  {id:'b6',text:'What development programmes other companies in the industry run.',ok:false}],
+ nBraki:'Relevant gaps: margin, durability of the effect, how well the comparison group was selected.',
+ p:{who:'HR director',text:'I’ve worked in people development for 15 years. Sales grew by 15%, so the programme works. Put down the extension for everyone.',claim:'Sales grew by 15%'}
+},
+/* 4 */
+{title:'Tool licences',
+ caseHtml:'<h2>Tool licences</h2><p>A department is buying an annual licence for a project-management tool.</p><ul><li>Price: PLN 120 per user per month.</li><li>10% discount for orders above 40 users.</li><li>Annual budget: PLN 60,000.</li><li>The IT department estimates that 35 people will use it. The HR department estimates 45. Nobody has checked the list in the HR system.</li><li>The vendor holds the offer until Friday.</li></ul><blockquote>Operations director: “Order for 45 people, it’s better to have a buffer.”</blockquote>',
+ teza:[
+  {id:'t1',text:'Order for 45 people because the operations director advises it.',pts:0,note:'The result fits the budget, but it rests on an opinion and an unknown number.',flag:'autorytet'},
+  {id:'t2',text:'By Friday, get the number of users from the HR system and order for up to 46 people (the budget limit).',pts:2,note:'Matches the key: fill the gaps before the deadline, with the limit set by the budget.'},
+  {id:'t3',text:'Order for 35 people because that is IT’s estimate.',pts:0,note:'One of two unverified estimates.'},
+  {id:'t4',text:'Order for 40 people to land in the middle.',pts:0,note:'Guessing. At 40 people the discount does not apply.'},
+  {id:'t5',text:'Ask the vendor to extend the offer and order after checking the number.',pts:1,note:'Sensible, but it depends on the vendor agreeing. Check the number by Friday first.'},
+  {id:'t6',text:'Order for 45 people and check the number after the purchase.',pts:1,note:'It fits the budget, but the decision comes before the number is checked.'},
+  {id:'t7',text:'Do not order until there is certainty.',pts:0,note:'The offer expires on Friday.'},
+  {id:'t8',text:'Ask IT and HR who is right and adopt the view of whoever sounds more confident.',pts:0,note:'Confidence instead of data.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'The annual price is PLN 1,440 per user (PLN 120 times 12).',k:'K'},
+  {id:'f2',text:'35 users cost PLN 50,400.',k:'K'},
+  {id:'f3',text:'45 users with the 10% discount cost PLN 58,320, which fits the budget.',k:'K'},
+  {id:'f4',text:'Without the discount, 45 users cost PLN 64,800, which is PLN 4,800 over budget.',k:'K'},
+  {id:'f5',text:'IT estimates 35 users, HR 45, and nobody has checked the list in the HR system.',k:'K'},
+  {id:'f6',text:'The annual budget is PLN 60,000.',k:'N'},
+  {id:'f7',text:'It’s better to have a buffer.',k:'T'},
+  {id:'f8',text:'45 people will use the tool.',k:'T'}],
+ nFakty:'Key: prices for 35 and 45 people, the role of the discount, no verified number. Traps: the “buffer” and 45 people presented as fact.',
+ ofz:[
+  {id:'s1',text:'The price is PLN 120 per user per month.',key:'F'},
+  {id:'s2',text:'It’s better to have a buffer.',key:'O'},
+  {id:'s3',text:'45 people will use the tool.',key:'Z'},
+  {id:'s4',text:'The 10% discount applies to orders above 40 users.',key:'F'},
+  {id:'s5',text:'The number of users will not change during the year.',key:'Z'},
+  {id:'s6',text:'The vendor holds the offer until Friday.',key:'F'},
+  {id:'s7',text:'HR’s estimate is more reliable than IT’s.',key:'O'},
+  {id:'s8',text:'The vendor will extend the offer if we ask.',key:'Z'}],
+ braki:[
+  {id:'b1',text:'The exact number of users from the HR system.',ok:true},
+  {id:'b2',text:'Whether the vendor will extend the offer past Friday.',ok:true},
+  {id:'b3',text:'Whether licences can be added during the year and at what price.',ok:true},
+  {id:'b4',text:'What colour the vendor’s logo is.',ok:false},
+  {id:'b5',text:'How big another department’s budget is.',ok:false},
+  {id:'b6',text:'What the operations director thinks of the vendor.',ok:false}],
+ nBraki:'Relevant gaps: the number of users, whether the offer can be extended, adding licences during the year.',
+ p:{who:'Operations director',text:'I’ve made purchases like this dozens of times. 45 people is a safe number. Order it and we’re covered.',claim:'45 people is a safe number'}
+},
+/* 5 */
+{title:'Offer description on the website',
+ caseHtml:'<h2>Offer description on the website</h2><p>A small research agency (4 people) changed the offer description on its website three times in five weeks, each time on the advice of a different person. Monthly data after each change:</p><div class="tablewrap"><table><thead><tr><th>Version</th><th>Change (whose advice)</th><th class="num">Visits</th><th class="num">Enquiries</th></tr></thead><tbody><tr><td>Original</td><td>none</td><td class="num">400</td><td class="num">4</td></tr><tr><td>1</td><td>Shorter description (client)</td><td class="num">380</td><td class="num">5</td></tr><tr><td>2</td><td>Certificates added (industry colleague)</td><td class="num">410</td><td class="num">3</td></tr><tr><td>3</td><td>More photos (designer)</td><td class="num">390</td><td class="num">4</td></tr></tbody></table></div><blockquote>A client from the target group: “I’ve been buying services like this for years. Turn the headline into a question to the client, and then I’ll click.”</blockquote><p>The owner decides by Monday whether to make a fourth change.</p>',
+ teza:[
+  {id:'t1',text:'Make the fourth change because a client from the target group recommends it.',pts:0,note:'The authority of the target group taken as evidence.',flag:'autorytet'},
+  {id:'t2',text:'Do not make a fourth change. Keep one version for 8 weeks and measure enquiries.',pts:2,note:'Matches the key: the changes were noise, and a longer trial is needed.'},
+  {id:'t3',text:'Go back to version 1 because it brought the most enquiries (5).',pts:1,note:'A reversible decision, but a difference of 1 enquiry is noise.'},
+  {id:'t4',text:'Test the fourth change in parallel with version 1 (A/B test).',pts:1,note:'The direction is good, but 400 visits a month is too few for a test.'},
+  {id:'t5',text:'Change the description again, following the advice of all four people at once.',pts:0,note:'There is no way to tell what worked.'},
+  {id:'t6',text:'Ask more people for their opinion of the website before deciding.',pts:0,note:'More advice instead of a decision.'},
+  {id:'t7',text:'Remove the certificates because they gave the worst result (3 enquiries).',pts:0,note:'A difference of 1 to 2 enquiries is noise.'},
+  {id:'t8',text:'Ask the industry colleague what they think of the fourth change.',pts:0,note:'Deferring to authority.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'The four versions of the description brought 3 to 5 enquiries a month.',k:'K'},
+  {id:'f2',text:'Visits in that period ranged from 380 to 410 a month.',k:'K'},
+  {id:'f3',text:'Conversion: 1.0% (original), 1.3%, 0.7%, 1.0%.',k:'K'},
+  {id:'f4',text:'The differences between versions are 1 to 2 enquiries a month.',k:'K'},
+  {id:'f5',text:'Each change followed a different person’s advice.',k:'K'},
+  {id:'f6',text:'Version 1 brought the most enquiries (5).',k:'N'},
+  {id:'f7',text:'The client from the target group knows what works on websites for services like these.',k:'T'},
+  {id:'f8',text:'The certificates reduced the number of enquiries.',k:'T'}],
+ nFakty:'Key: the range of enquiries and visits, conversion, the small scale of the differences, and the fact that each change followed someone else’s advice. Traps: the client’s knowledge as evidence and the certificates as a cause.',
+ ofz:[
+  {id:'s1',text:'Version 1 brought 5 enquiries from 380 visits.',key:'F'},
+  {id:'s2',text:'The description with certificates performs the worst.',key:'O'},
+  {id:'s3',text:'A headline phrased as a question will increase enquiries.',key:'Z'},
+  {id:'s4',text:'Before the first change, the website had 400 visits and 4 enquiries a month.',key:'F'},
+  {id:'s5',text:'The client from the target group is right.',key:'O'},
+  {id:'s6',text:'The certificates reduced the number of enquiries.',key:'Z'},
+  {id:'s7',text:'The description was changed three times in five weeks.',key:'F'},
+  {id:'s8',text:'After another change, the number of visits will stay the same.',key:'Z'}],
+ braki:[
+  {id:'b1',text:'Data from a longer period (e.g. 8 weeks) for a single version of the description.',ok:true},
+  {id:'b2',text:'Where the visits come from and whether their mix changed between versions.',ok:true},
+  {id:'b3',text:'How many enquiries end in a contract and what a contract is worth.',ok:true},
+  {id:'b4',text:'What colour the competitors’ button is.',ok:false},
+  {id:'b5',text:'How many years of experience the designer has.',ok:false},
+  {id:'b6',text:'What else the industry colleague would advise.',ok:false}],
+ nBraki:'Relevant gaps: a longer trial, traffic sources, the value of an enquiry.',
+ p:{who:'Client',text:'I’ve been buying services like this for years. I know what convinces me. Turn the headline into a question and I’ll click.',claim:'The client would click',r4note:'That is one sample (n=1). It is worth noting as a signal for a test, but it is no reason to change your thesis.'}
+},
+/* 6 */
+{title:'Choosing a candidate',
+ caseHtml:'<h2>Choosing a candidate</h2><p>An analytics team is hiring an analyst. Salary budget: PLN 14,000 gross a month. The project starts in 6 weeks and needs someone working from day one.</p><div class="tablewrap"><table><thead><tr><th>Candidate</th><th class="num">Experience</th><th class="num">Task (pts/100)</th><th class="num">References</th><th class="num">Expectations</th><th>Start</th></tr></thead><tbody><tr><td>A</td><td class="num">8 years</td><td class="num">72</td><td class="num">0 of 3</td><td class="num">PLN 16,000</td><td>immediately</td></tr><tr><td>B</td><td class="num">4 years</td><td class="num">88</td><td class="num">3 of 3</td><td class="num">PLN 13,000</td><td>in 8 weeks</td></tr><tr><td>C</td><td class="num">6 years</td><td class="num">81</td><td class="num">1 of 3</td><td class="num">PLN 14,000</td><td>in 5 weeks</td></tr></tbody></table></div><blockquote>Team lead: “Candidate A made the best impression on me. You can tell this person has class.”</blockquote><p>Decision due by Wednesday.</p>',
+ teza:[
+  {id:'t1',text:'Choose A because A made the best impression on the team lead.',pts:0,note:'An impression used as an argument. A has the lowest task score and exceeds the budget.',flag:'autorytet'},
+  {id:'t2',text:'Choose C: fits the budget and the start date. Follow up on the other 2 references.',pts:2,note:'Matches the key: meets both hard conditions, and the risk is named.'},
+  {id:'t3',text:'Choose B: best task score and full references, and push the start back by 2 weeks.',pts:1,note:'Strong data, but it breaks the start condition. It needs confirmation that the project can absorb 2 weeks.'},
+  {id:'t4',text:'Choose A and negotiate the salary down to PLN 14,000.',pts:0,note:'Assumes A will agree.'},
+  {id:'t5',text:'Choose the candidate with the longest experience, i.e. A.',pts:0,note:'Experience as the only measure, ignoring the budget and the task score.'},
+  {id:'t6',text:'Ask for another interview with all three before deciding.',pts:0,note:'The data are enough for a conclusion with stated risk, and the decision is on Wednesday.'},
+  {id:'t7',text:'Choose B for the best references and score, since the start date is a detail.',pts:0,note:'A hard condition treated as a detail.'},
+  {id:'t8',text:'Ask the team lead who they prefer and agree with them.',pts:0,note:'Deferring to authority.',flag:'autorytet'}],
+ fakty:[
+  {id:'f1',text:'Candidate A expects PLN 16,000 and the budget is PLN 14,000.',k:'K'},
+  {id:'f2',text:'Candidate B can start in 8 weeks and the project starts in 6.',k:'K'},
+  {id:'f3',text:'Candidate C: PLN 14,000, starts in 5 weeks, task score 81.',k:'K'},
+  {id:'f4',text:'Candidate B has the best task score (88) and 3 of 3 confirmed references.',k:'K'},
+  {id:'f5',text:'Candidate A has the lowest task score (72) and 0 of 3 confirmed references.',k:'K'},
+  {id:'f6',text:'Candidate A has the longest experience (8 years).',k:'N'},
+  {id:'f7',text:'Candidate A made the best impression.',k:'T'},
+  {id:'f8',text:'Candidate A has class.',k:'T'}],
+ nFakty:'Key: budget, start date, task scores, references. Traps: the team lead’s impression and the candidate’s “class”.',
+ ofz:[
+  {id:'s1',text:'Candidate C has 1 of 3 references confirmed.',key:'F'},
+  {id:'s2',text:'Candidate A made the best impression.',key:'O'},
+  {id:'s3',text:'Candidate C’s remaining references will be good.',key:'Z'},
+  {id:'s4',text:'Candidate B scored 88 points on the task.',key:'F'},
+  {id:'s5',text:'Candidate A has class.',key:'O'},
+  {id:'s6',text:'Candidate A will agree to PLN 14,000.',key:'Z'},
+  {id:'s7',text:'The project starts in 6 weeks.',key:'F'},
+  {id:'s8',text:'Candidate B will shorten their notice period.',key:'Z'}],
+ braki:[
+  {id:'b1',text:'The results of checking candidate C’s other two references.',ok:true},
+  {id:'b2',text:'Whether the project can start without an analyst for 2 weeks.',ok:true},
+  {id:'b3',text:'Whether candidate B can shorten their notice period.',ok:true},
+  {id:'b4',text:'How the candidates dressed for the interview.',ok:false},
+  {id:'b5',text:'What hobbies candidate A has.',ok:false},
+  {id:'b6',text:'What the team lead remembers from the interview with candidate A.',ok:false}],
+ nBraki:'Relevant gaps: C’s remaining references, how long the project can wait for its analyst, B shortening the notice period.',
+ p:{who:'Team lead',text:'I’ve been running recruitment for 12 years. When I see a good candidate, I know. Take A, we’ll sort out the rest.',claim:'The team lead knows who is good'}
+}
+]
+};
+
+const WARMQ = {
+  pl: [
+    {id:'w1',text:'Sklep internetowy miał w październiku 1 200 zamówień.',key:'F',why:'Da się sprawdzić w systemie sklepu. Ma liczbę i datę.'},
+    {id:'w2',text:'Ten sklep ma najlepszą obsługę klienta w branży.',key:'O',why:'To sąd. Inna osoba może ocenić inaczej, a „najlepszą” nie ma w danych miary.'},
+    {id:'w3',text:'W grudniu będzie ich dwa razy więcej.',key:'Z',why:'Dotyczy przyszłości i nie zostało sprawdzone. To założenie, nawet jeśli brzmi rozsądnie.'}
+  ],
+  en: [
+    {id:'w1',text:'An online shop had 1,200 orders in October.',key:'F',why:'It can be checked in the shop’s system. It has a number and a date.'},
+    {id:'w2',text:'This shop has the best customer service in the industry.',key:'O',why:'It is a judgement. Someone else may judge differently, and the data have no measure for “the best”.'},
+    {id:'w3',text:'In December there will be twice as many.',key:'Z',why:'It concerns the future and has not been checked. It is an assumption, even if it sounds reasonable.'}
+  ]
+};
+
+// ── Język interfejsu (PL/EN) ────────────────────────────────────────────────
+// Wybór studenta jest w localStorage pod 'mba_lang' (wspólny z index.html),
+// a ?lang=en w adresie go ustawia.
+const MBA_LANG_KEY = 'mba_lang';
+function mbaReadLang() {
+  try {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q === 'pl' || q === 'en') { localStorage.setItem(MBA_LANG_KEY, q); return q; }
+    return localStorage.getItem(MBA_LANG_KEY) === 'en' ? 'en' : 'pl';
+  } catch(e) { return 'pl'; }
+}
+let MBA_LANG = mbaReadLang();
+const MBA_TITLE_PL = document.title;
+
+function t(key, vars) {
+  const dict = I18N[MBA_LANG] || {};
+  let s = dict[key] !== undefined ? dict[key] : (I18N.pl[key] !== undefined ? I18N.pl[key] : key);
+  if (vars) Object.keys(vars).forEach(function(k) { s = s.split('{' + k + '}').join(vars[k]); });
+  return s;
+}
+
+const WORKER_ERR_EN = {
+  'Brak hasła': 'Enter your group password.',
+  'Nieprawidłowe hasło grupy': 'Invalid group password.',
+  'Dostęp dla tej grupy został zamknięty': 'Access for this group has been closed.',
+  'Dostęp do tej grupy jeszcze nie jest aktywny': 'Access for this group is not active yet.',
+  'Dostęp dla tej grupy wygasł': 'Access for this group has expired.'
+};
+function workerErr(msg, fallbackKey) {
+  if (!msg) return t(fallbackKey);
+  if (MBA_LANG !== 'en') return msg;
+  if (WORKER_ERR_EN[msg]) return WORKER_ERR_EN[msg];
+  const wait = /^Za dużo.*?(\d+)s\.$/.exec(msg);
+  if (wait) return 'Too many attempts. Try again in ' + wait[1] + 's.';
+  return t(fallbackKey);
+}
+
+function applyI18n() {
+  const en = MBA_LANG === 'en';
+  document.documentElement.lang = MBA_LANG;
+  document.title = en ? I18N.en['page.title'] : MBA_TITLE_PL;
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    if (el.dataset.i18nPl === undefined) el.dataset.i18nPl = el.textContent;
+    const v = I18N.en[el.dataset.i18n];
+    el.textContent = en && v !== undefined ? v : el.dataset.i18nPl;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el) {
+    if (el.dataset.i18nPlPh === undefined) el.dataset.i18nPlPh = el.placeholder;
+    const v = I18N.en[el.dataset.i18nPh];
+    el.placeholder = en && v !== undefined ? v : el.dataset.i18nPlPh;
+  });
+  document.querySelectorAll('.lang-switch button').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.lang === MBA_LANG);
+  });
+}
+
+function setLang(lang) {
+  if (state && state.stage === 'run') return; // w trakcie kroku z zegarem język jest zablokowany
+  MBA_LANG = lang === 'en' ? 'en' : 'pl';
+  try { localStorage.setItem(MBA_LANG_KEY, MBA_LANG); } catch(e) {}
+  applyI18n();
+  renderStage();
+}
+
+function mountLangSwitches() {
+  document.querySelectorAll('.lang-switch-slot').forEach(function(slot) {
+    const sw = document.createElement('div');
+    sw.className = 'lang-switch';
+    ['pl', 'en'].forEach(function(code) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.lang = code;
+      b.textContent = code.toUpperCase();
+      b.onclick = function() { setLang(code); };
+      sw.appendChild(b);
+    });
+    slot.appendChild(sw);
+  });
+}
+
+// ── Sesja i bramka ──────────────────────────────────────────────────────────
+function mbaClearSession() {
+  sessionStorage.removeItem(SESSION_KEY);
+  window.location.href = 'index.html';
+}
+function loadSession() {
+  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e) { return null; }
+}
+function showTopbarGroup(name) {
+  document.getElementById('tb-group').style.display = '';
+  document.getElementById('tb-groupname').textContent = name;
+  document.getElementById('tb-logout').style.display = '';
+}
+
+async function verifyGroupGate() {
+  const inp = document.getElementById('mba-gate-input');
+  const err = document.getElementById('gate-err');
+  const btn = document.getElementById('gate-btn');
+  const pw = (inp ? inp.value : '').trim();
+  if (!pw) { err.textContent = t('gate.empty'); return; }
+  btn.disabled = true; btn.textContent = t('gate.checking');
+  err.textContent = '';
+  try {
+    const res = await fetch(WORKER + '/verify-group', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ password: pw })
+    });
+    const data = await res.json();
+    if (data.valid) {
+      const allowed = data.allowedExercises;
+      if (allowed && !allowed.includes(EXERCISE_ID)) {
+        document.getElementById('mba-group-gate').style.display = '';
+        err.textContent = t('gate.noaccess');
+        btn.disabled = false; btn.textContent = t('gate.btn');
+        return;
+      }
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+        password: pw, groupName: data.groupName, allowedExercises: data.allowedExercises
+      }));
+      document.getElementById('mba-group-gate').style.display = 'none';
+      showTopbarGroup(data.groupName);
+    } else {
+      document.getElementById('mba-group-gate').style.display = '';
+      err.textContent = workerErr(data.error, 'gate.bad');
+    }
+  } catch(e) { err.textContent = t('gate.net'); }
+  btn.disabled = false; btn.textContent = t('gate.btn');
+}
+
+// ── Model ćwiczenia ─────────────────────────────────────────────────────────
+const STAGES = [[0],[1,2],[3,4,5]];
+const STAGEMULT = [1, 0.8, 0.65];
+const STEPS_PER_SCEN = 6;
+const TOTAL_STEPS = 6 * STEPS_PER_SCEN;
+
+function $(s) { return document.querySelector(s); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+function SC() { return SCEN[MBA_LANG] || SCEN.pl; }
+function LET(v) { return v === '-' ? '-' : t('L.' + v); }
+function stageName(s) { return t('stage.n' + s); }
+
+function presjaOptions(sc) {
+  const p = sc.p;
+  return [
+    {id:'r1', text:t('r1'), pts:0, note:t('r1n'), flag:'autorytet'},
+    {id:'r2', text:t('r2'), pts:2, note:t('r2n')},
+    {id:'r3', text:t('r3'), pts:0, note:t('r3n'), flag:'relacja'},
+    {id:'r4', text:t('r4', {claim:p.claim}), pts:0, note:p.r4note || t('r4n')},
+    {id:'r5', text:t('r5'), pts:0, note:t('r5n')},
+    {id:'r6', text:t('r6'), pts:2, note:t('r6n')},
+    {id:'r7', text:t('r7'), pts:1, note:t('r7n')}
+  ];
+}
+
+function stepsFor(si) {
+  const sc = SC()[si];
+  return [
+    {id:'read',   title:t('st.read'),   type:'read',   time:30, prompt:t('st.read.p')},
+    {id:'teza',   title:t('st.teza'),   type:'single', time:20, prompt:t('st.teza.p'), options:sc.teza},
+    {id:'fakty',  title:t('st.fakty'),  type:'multi', max:3, time:30, prompt:t('st.fakty.p'), options:sc.fakty},
+    {id:'ofz',    title:t('st.ofz'),    type:'ofz',    time:45, prompt:t('st.ofz.p'), options:sc.ofz},
+    {id:'braki',  title:t('st.braki'),  type:'multi', max:2, time:20, prompt:t('st.braki.p'), options:sc.braki},
+    {id:'presja', title:t('st.presja'), type:'single', time:25, prompt:t('st.presja.p', {who:sc.p.who, text:sc.p.text}), options:presjaOptions(sc)}
+  ];
+}
+function optById(step, id) { for (let i = 0; i < step.options.length; i++) { if (step.options[i].id === id) return step.options[i]; } return null; }
+
+// ── Stan ───────────────────────────────────────────────────────────────────
+function fresh(mult) { return {mult:mult || 1, stage:'start', st:0, sp:0, idx:0, ans:{}, times:{}, order:{}, unlocked:[false,false,false], saved:false}; }
+let state = fresh(1);
+state.stage = 'learn';
+const WARM = {};
+let NICK = '';
+let MULT_CHOICE = '1';
+let t0 = 0, tlimit = 0, timerId = null;
+function curSi() { return STAGES[state.st][state.sp]; }
+function stageMult() { return state.mult * STAGEMULT[state.st]; }
+
+// ── Zegar ──────────────────────────────────────────────────────────────────
+function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+function startTimer(sec) {
+  stopTimer();
+  t0 = performance.now();
+  tlimit = sec * stageMult() * 1000;
+  timerId = setInterval(function() {
+    const el = performance.now() - t0, left = Math.max(0, tlimit - el);
+    const n = $('#tleft'), b = $('#tbar'), tm = $('#timer');
+    if (n) n.textContent = Math.ceil(left / 1000);
+    if (b) b.style.width = (left / tlimit * 100) + '%';
+    if (tm && left <= 5000) tm.classList.add('urgent');
+    if (left <= 0) finishStep(true);
+  }, 100);
+}
+function finishStep(timedOut) {
+  const used = Math.min((performance.now() - t0) / 1000, tlimit / 1000);
+  stopTimer();
+  const si = curSi(), s = stepsFor(si)[state.idx];
+  state.times[si] = state.times[si] || {};
+  state.times[si][s.id] = {used:Math.round(used * 10) / 10, timedOut:!!timedOut, limit:Math.round(tlimit / 1000)};
+  if (state.idx < STEPS_PER_SCEN - 1) { state.idx++; }
+  else if (state.sp < STAGES[state.st].length - 1) { state.sp++; state.idx = 0; }
+  else { state.stage = (state.st < 2) ? 'stageEnd' : 'final'; }
+  renderStage();
+  window.scrollTo(0, 0);
+  if (state.stage === 'final' && !state.saved) { state.saved = true; saveResult(); }
+}
+
+// ── Punktacja ──────────────────────────────────────────────────────────────
+function score(si) {
+  const A = state.ans[si] || {}, steps = stepsFor(si), r = [];
+  function step(id) { for (let i = 0; i < steps.length; i++) { if (steps[i].id === id) return steps[i]; } }
+  const none = t('none');
+  let st = step('teza'), a = A.teza, o = a ? optById(st, a) : null;
+  r.push({id:'teza', title:st.title, pts:o ? o.pts : 0, clean:[o ? o.text : none], tagged:[o ? o.text : none], note:o ? o.note : t('noTeza'), flag:o && o.flag});
+
+  st = step('fakty');
+  let sel = A.fakty || [], key = 0, trap = 0, cl = [], tg = [];
+  sel.forEach(function(id) {
+    const x = optById(st, id);
+    if (x.k === 'K') key++; else if (x.k === 'T') trap++;
+    cl.push(x.text); tg.push(x.text + ' [' + t('tag.' + x.k) + ']');
+  });
+  r.push({id:'fakty', title:st.title, pts:(key >= 2 && trap === 0) ? 2 : (key >= 1 && trap <= 1) ? 1 : 0, clean:cl.length ? cl : [none], tagged:tg.length ? tg : [none], note:SC()[si].nFakty});
+
+  st = step('ofz');
+  const oa = A.ofz || {}; let good = 0; const miss = [], cl2 = [];
+  st.options.forEach(function(x) {
+    const v = oa[x.id] || '-';
+    if (v === x.key) good++; else miss.push(x.text + ' (' + t('you') + ': ' + LET(v) + ', ' + t('key') + ': ' + LET(x.key) + ')');
+    cl2.push(x.text + ' → ' + LET(v));
+  });
+  r.push({id:'ofz', title:t('res.ofz'), pts:good >= 7 ? 2 : good >= 5 ? 1 : 0, clean:cl2, tagged:cl2, note:t('matches', {n:good, m:st.options.length}), diff:miss});
+
+  st = step('braki');
+  const bs = A.braki || []; let bv = 0; const bc = [], bt = [];
+  bs.forEach(function(id) {
+    const x = optById(st, id);
+    if (x.ok) bv++;
+    bc.push(x.text); bt.push(x.text + ' [' + t(x.ok ? 'tag.ok' : 'tag.off') + ']');
+  });
+  r.push({id:'braki', title:st.title, pts:bv === 2 ? 2 : bv === 1 ? 1 : 0, clean:bc.length ? bc : [none], tagged:bt.length ? bt : [none], note:SC()[si].nBraki});
+
+  st = step('presja'); a = A.presja; o = a ? optById(st, a) : null;
+  r.push({id:'presja', title:st.title, pts:o ? o.pts : 0, clean:[o ? o.text : none], tagged:[o ? o.text : none], note:o ? o.note : t('noPresja'), flag:o && o.flag});
+  return r;
+}
+function total(r) { let s = 0; r.forEach(function(x) { s += x.pts; }); return s; }
+function grandTotal() { let s = 0; for (let q = 0; q < 6; q++) s += total(score(q)); return s; }
+
+function resultsText(si) {
+  const r = score(si), T = state.times[si] || {};
+  const L = [t('txt.scen', {t:SC()[si].title, p:total(r)})];
+  r.forEach(function(x) {
+    const tm = T[x.id] || {};
+    L.push(t('txt.line', {t:x.title, p:x.pts, u:(tm.used != null ? tm.used : '-'), l:(tm.limit || '-'), x:(tm.timedOut ? t('txt.over') : '')}));
+    x.tagged.forEach(function(c) { L.push('  - ' + c); });
+    if (x.diff && x.diff.length) { L.push(t('txt.diff')); x.diff.forEach(function(d) { L.push('  * ' + d); }); }
+    L.push(t('txt.note') + x.note);
+    if (x.flag) L.push(t('txt.trace') + t('flag.' + x.flag));
+  });
+  return L.join('\n');
+}
+// force=true: pełny wynik z kluczem niezależnie od odblokowania (zapis dla prowadzącego).
+function allText(force) {
+  const parts = [t('txt.head', {m:state.mult})];
+  for (let s = 0; s < 3; s++) {
+    parts.push('');
+    parts.push(t('txt.stage', {s:s + 1, n:stageName(s), m:(state.mult * STAGEMULT[s]).toFixed(2)}));
+    if (!force && !state.unlocked[s]) { parts.push(t('txt.locked')); continue; }
+    let tot = 0;
+    STAGES[s].forEach(function(si) { parts.push(''); parts.push(resultsText(si)); tot += total(score(si)); });
+    parts.push(''); parts.push(t('txt.stageTotal', {s:s + 1, p:tot, m:STAGES[s].length * 10}));
+  }
+  return parts.join('\n');
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────
+function renderProgress() {
+  const wrap = $('#progress');
+  const on = state.stage === 'run' || state.stage === 'intro';
+  wrap.classList.toggle('on', on);
+  if (!on) return;
+  const firstSi = STAGES[state.st][0];
+  const done = state.stage === 'run' ? curSi() * STEPS_PER_SCEN + state.idx : firstSi * STEPS_PER_SCEN;
+  $('#prog-left').innerHTML = '<strong>' + esc(t('stage')) + ' ' + (state.st + 1) + ' ' + esc(t('of')) + ' 3</strong> · ' + esc(stageName(state.st));
+  $('#prog-right').textContent = state.stage === 'run'
+    ? t('prog.scen', {a:state.sp + 1, b:STAGES[state.st].length, c:state.idx + 1})
+    : '';
+  $('#prog-fill').style.width = (done / TOTAL_STEPS * 100) + '%';
+}
+
+function renderOpts() {
+  const si = curSi(), s = stepsFor(si)[state.idx], box = $('#opts');
+  if (!box) return;
+  state.ans[si] = state.ans[si] || {};
+  const ans = state.ans[si][s.id];
+  const order = (state.order[si] && state.order[si][s.id]) || [];
+  let html = '';
+  if (s.type === 'read') {
+    html = '<p class="note">' + esc(t('read.note')) + '</p>';
+  } else if (s.type === 'single') {
+    html = '<div class="opts" role="radiogroup" aria-label="' + esc(s.title) + '">';
+    order.forEach(function(id) {
+      const o = optById(s, id);
+      html += '<button type="button" class="opt" role="radio" aria-checked="' + (ans === id) + '" data-act="pick" data-id="' + id + '">' + esc(o.text) + '</button>';
+    });
+    html += '</div>';
+  } else if (s.type === 'multi') {
+    const sel = ans || [];
+    html = '<p class="counter">' + esc(t('chosen', {n:sel.length, m:s.max})) + '</p><div class="opts" role="group" aria-label="' + esc(s.title) + '">';
+    order.forEach(function(id) {
+      const o = optById(s, id), on = sel.indexOf(id) > -1;
+      html += '<button type="button" class="opt" role="checkbox" aria-checked="' + on + '" data-act="toggle" data-id="' + id + '">' + esc(o.text) + '</button>';
+    });
+    html += '</div>';
+  } else if (s.type === 'ofz') {
+    const a = ans || {}, done = Object.keys(a).length;
+    html = '<p class="legend">' + esc(t('legend', {n:done, m:s.options.length})) + '</p>';
+    order.forEach(function(id) {
+      const o = optById(s, id);
+      html += '<div class="ofzrow"><div>' + esc(o.text) + '</div><div class="ofzgrp" role="group" aria-label="' + esc(t('mark')) + '">';
+      ['F','O','Z'].forEach(function(v) {
+        html += '<button type="button" class="ofzb" aria-pressed="' + (a[id] === v) + '" data-act="ofz" data-id="' + id + '" data-v="' + v + '">' + esc(LET(v)) + '</button>';
+      });
+      html += '</div></div>';
+    });
+  }
+  box.innerHTML = html;
+}
+
+function stageBlock(st) {
+  const unlocked = state.unlocked[st];
+  let h = '<div class="stage"><h3>' + esc(t('stage')) + ' ' + (st + 1) + ' · ' + esc(stageName(st)) + '</h3>';
+  let stTotal = 0;
+  STAGES[st].forEach(function(si) {
+    const r = score(si), T = state.times[si] || {}, tot = total(r);
+    stTotal += tot;
+    h += '<div class="scen"><h4>' + esc(SC()[si].title) + (unlocked ? ' <span class="pill p' + (tot >= 8 ? 2 : tot >= 5 ? 1 : 0) + '">' + tot + ' / 10</span>' : '') + '</h4>';
+    r.forEach(function(x) {
+      const tm = T[x.id] || {};
+      h += '<div class="sumrow"><h5>' + esc(x.title) + (unlocked ? ' <span class="pill p' + x.pts + '">' + x.pts + ' / 2</span>' : '') + '</h5>';
+      h += '<div class="tm">' + esc(t('secOf', {u:(tm.used != null ? tm.used : '-'), l:(tm.limit || '-')})) + (tm.timedOut ? ' · ' + esc(t('timedOut')) : '') + '</div>';
+      const lines = unlocked ? x.tagged : x.clean;
+      if (lines.length > 1 || x.id === 'fakty' || x.id === 'braki' || x.id === 'ofz') {
+        h += '<ul>' + lines.map(function(c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>';
+      } else {
+        h += '<div>' + esc(lines[0]) + '</div>';
+      }
+      if (unlocked) {
+        h += '<div class="note">' + esc(x.note) + '</div>';
+        if (x.diff && x.diff.length) {
+          h += '<ul>' + x.diff.map(function(d) { return '<li>' + esc(d) + '</li>'; }).join('') + '</ul><div class="note">' + esc(t('diffQ')) + '</div>';
+        }
+        if (x.flag) h += '<div class="note">' + esc(t('trace', {f:t('flag.' + x.flag)})) + '</div>';
+      }
+      h += '</div>';
+    });
+    h += '</div>';
+  });
+  if (unlocked) {
+    h += '<div class="total">' + esc(t('stageTotal', {s:st + 1, p:stTotal, m:STAGES[st].length * 10})) + '</div>';
+  } else {
+    h += '<div class="unlock"><div class="eyebrow" style="margin-bottom:4px">' + esc(t('unlock.h')) + '</div>' +
+      '<label class="field-label" for="code-' + st + '" style="margin-top:8px">' + esc(t('unlock.label')) + '</label>' +
+      '<div class="unlock-row"><input class="text-input" type="password" id="code-' + st + '" autocomplete="off" aria-describedby="hint-' + st + '" data-stage="' + st + '">' +
+      '<button type="button" class="btn btn-ghost" data-act="unlock" data-stage="' + st + '">' + esc(t('unlock.btn')) + '</button></div>' +
+      '<p class="note" id="hint-' + st + '">' + esc(t('unlock.hint')) + '</p></div>';
+  }
+  h += '</div>';
+  return h;
+}
+
+function renderLearn(p) {
+  const defs = [
+    {l:t('L.F'), k:'F', ex:true}, {l:t('L.O'), k:'O', ex:true}, {l:t('L.Z'), k:'Z', ex:true},
+    {l:t('def.T.l'), k:'T'}, {l:t('def.B.l'), k:'B'}
+  ];
+  let L = '<div class="eyebrow">' + esc(t('learn.eyebrow')) + '</div><h1 class="page-title">' + esc(t('learn.h')) + '</h1><p class="prompt">' + esc(t('learn.p')) + '</p><div class="defs">';
+  defs.forEach(function(d) {
+    L += '<div class="def"><h3><span class="letter">' + esc(d.l) + '</span> ' + esc(t('def.' + d.k + '.h')) + '</h3><p>' + esc(t('def.' + d.k + '.p')) + '</p>' +
+      (d.ex ? '<p class="ex">' + esc(t('def.' + d.k + '.ex')) + '</p>' : '') + '<p class="q">' + esc(t('def.' + d.k + '.q')) + '</p></div>';
+  });
+  L += '</div><div class="note-box">' + t('rule') + '</div>';
+  L += '<h3>' + esc(t('steps.h')) + '</h3><div class="tablewrap"><table><thead><tr><th>' + esc(t('steps.c1')) + '</th><th>' + esc(t('steps.c2')) + '</th></tr></thead><tbody>';
+  [['st.read','steps.read'],['st.teza','steps.teza'],['st.fakty','steps.fakty'],['st.ofz','steps.ofz'],['st.braki','steps.braki'],['st.presja','steps.presja']].forEach(function(r) {
+    L += '<tr><td><strong>' + esc(t(r[0])) + '</strong></td><td>' + esc(t(r[1])) + '</td></tr>';
+  });
+  L += '</tbody></table></div>';
+  L += '<div class="warm"><h3>' + esc(t('warm.h')) + '</h3><p class="note" style="margin-bottom:6px">' + esc(t('warm.p')) + '</p>';
+  (WARMQ[MBA_LANG] || WARMQ.pl).forEach(function(q) {
+    const a = WARM[q.id];
+    L += '<div class="ofzrow"><div>' + esc(q.text) +
+      (a ? '<p class="fb ' + (a === q.key ? 'ok' : 'bad') + '">' + esc(a === q.key ? t('warm.yes') : t('warm.no', {k:LET(q.key)})) + esc(q.why) + '</p>' : '') +
+      '</div><div class="ofzgrp" role="group" aria-label="' + esc(t('mark')) + '">';
+    ['F','O','Z'].forEach(function(v) {
+      L += '<button type="button" class="ofzb" aria-pressed="' + (a === v) + '" data-act="warm" data-id="' + q.id + '" data-v="' + v + '">' + esc(LET(v)) + '</button>';
+    });
+    L += '</div></div>';
+  });
+  L += '</div><div class="btn-row"><button type="button" class="btn btn-primary" data-act="tostart">' + esc(t('btn.tostart')) + '</button></div>';
+  p.innerHTML = L;
+}
+
+function renderStart(p) {
+  if (!NICK) NICK = window.mbaGetKsywa ? window.mbaGetKsywa() : '';
+  const opts = [['1','mult.1'],['1.5','mult.15'],['2','mult.2'],['0.75','mult.075']];
+  p.innerHTML = '<div class="eyebrow">' + esc(t('start.eyebrow')) + '</div><h1 class="page-title">' + esc(t('start.h')) + '</h1><ul class="rules">' +
+    ['rules.1','rules.2','rules.3','rules.4','rules.5'].map(function(k) { return '<li>' + esc(t(k)) + '</li>'; }).join('') + '</ul>' +
+    '<div class="form-row"><label class="field-label" for="nick">' + esc(t('nick')) + '</label>' +
+    '<input class="text-input" type="text" id="nick" maxlength="30" autocomplete="off" placeholder="' + esc(t('nick.ph')) + '" value="' + esc(NICK) + '">' +
+    '<div class="field-err" id="nick-err"></div></div>' +
+    '<div class="form-row"><label class="field-label" for="mult">' + esc(t('mult')) + '</label><select class="text-input" id="mult">' +
+    opts.map(function(o) { return '<option value="' + o[0] + '"' + (MULT_CHOICE === o[0] ? ' selected' : '') + '>' + esc(t(o[1])) + '</option>'; }).join('') +
+    '</select></div>' +
+    '<div class="btn-row"><button type="button" class="btn btn-primary" data-act="start">' + esc(t('btn.start')) + '</button></div>';
+}
+
+function renderStage() {
+  stopTimer();
+  const p = $('#panel'), g = $('#grid'), main = $('#main');
+  const run = state.stage === 'run';
+  g.className = 'grid' + (run ? '' : ' single');
+  main.classList.toggle('wide', run);
+  document.body.classList.toggle('lang-fixed', run);
+  $('#case-eyebrow').textContent = t('case');
+  $('#save-status').style.display = (state.stage === 'final' && $('#save-status').childNodes.length) ? '' : 'none';
+  renderProgress();
+
+  if (state.stage === 'learn') { renderLearn(p); return; }
+  if (state.stage === 'start') { renderStart(p); return; }
+  if (state.stage === 'intro') {
+    p.innerHTML = '<div class="eyebrow">' + esc(t('intro.h', {s:state.st + 1})) + '</div><h1 class="page-title">' + esc(stageName(state.st)) + '</h1>' +
+      '<p class="prompt">' + esc(t('intro.p', {p:Math.round(stageMult() * 100)})) + '</p>' +
+      '<div class="btn-row"><button type="button" class="btn btn-primary" data-act="startstage">' + esc(t('btn.startstage', {s:state.st + 1})) + '</button></div>';
+    return;
+  }
+  if (state.stage === 'stageEnd') {
+    p.innerHTML = '<div class="eyebrow">' + esc(t('end.eyebrow', {s:state.st + 1})) + '</div><h1 class="page-title">' + esc(t('end.h')) + '</h1><p class="prompt">' + esc(t('end.p')) + '</p>' +
+      stageBlock(state.st) +
+      '<div class="btn-row"><button type="button" class="btn btn-primary" data-act="nextstage">' + esc(t('btn.next', {s:state.st + 2})) + '</button></div>';
+    return;
+  }
+  if (state.stage === 'final') {
+    let h = '<div class="eyebrow">' + esc(t('final.eyebrow')) + '</div><h1 class="page-title">' + esc(t('final.h')) + '</h1><p class="prompt">' + esc(t('final.p')) + '</p>';
+    for (let s = 0; s < 3; s++) h += stageBlock(s);
+    if (state.unlocked[0] && state.unlocked[1] && state.unlocked[2]) h += '<div class="grand">' + esc(t('grand', {p:grandTotal()})) + '</div>';
+    h += '<div class="btn-row"><button type="button" class="btn btn-ghost" data-act="restart">' + esc(t('btn.restart')) + '</button><button type="button" class="btn btn-primary" data-act="copy">' + esc(t('btn.copy')) + '</button></div><div id="copybox"></div>';
+    p.innerHTML = h;
+    return;
+  }
+  /* run */
+  const si = curSi(), steps = stepsFor(si), s2 = steps[state.idx];
+  state.ans[si] = state.ans[si] || {}; state.order[si] = state.order[si] || {};
+  if (!state.order[si][s2.id] && s2.options) {
+    const ids = s2.options.map(function(o) { return o.id; });
+    state.order[si][s2.id] = s2.type === 'ofz' ? ids : shuffle(ids);
+  }
+  $('#casebox').innerHTML = SC()[si].caseHtml;
+  const last = state.idx === steps.length - 1;
+  p.innerHTML = '<div class="eyebrow">' + esc(t('stage')) + ' ' + (state.st + 1) + ' · ' + esc(t('prog.scen', {a:state.sp + 1, b:STAGES[state.st].length, c:state.idx + 1})) + '</div>' +
+    '<h2 class="step-title">' + esc(s2.title) + '</h2>' +
+    '<p class="prompt">' + esc(s2.prompt) + '</p>' +
+    '<div class="timer" id="timer"><span class="tnum"><span id="tleft">' + Math.ceil(s2.time * stageMult()) + '</span> s</span><div class="bar"><i id="tbar"></i></div></div>' +
+    '<div id="opts"></div>' +
+    '<div class="btn-row"><button type="button" class="btn btn-primary" data-act="done">' + esc(s2.type === 'read' ? t('btn.read') : (last ? t('btn.last') : t('btn.ok'))) + '</button></div>';
+  renderOpts();
+  startTimer(s2.time);
+}
+
+// ── Zapis wyniku dla prowadzącego (/private-issue) ─────────────────────────
+async function saveResult() {
+  const session = loadSession();
+  const groupName = session ? session.groupName : 'Nieznana';
+  const password = session ? session.password : '';
+  const tot = grandTotal();
+  const stageTotals = [0,1,2].map(function(s) {
+    let x = 0; STAGES[s].forEach(function(si) { x += total(score(si)); });
+    return (s + 1) + ': ' + x + '/' + (STAGES[s].length * 10);
+  }).join(' · ');
+  const body = [
+    '## ' + t('save.h'),
+    '',
+    '**' + t('save.nick') + ':** ' + NICK,
+    '**' + t('save.group') + ':** ' + groupName,
+    '**' + t('save.date') + ':** ' + new Date().toLocaleString('pl-PL'),
+    '**' + t('save.lang') + ':** ' + MBA_LANG,
+    '**' + t('save.total') + ': ' + tot + '/60** (' + stageTotals + ')',
+    '',
+    '```',
+    allText(true),
+    '```'
+  ].join('\n');
+
+  let saved = false;
+  try {
+    const res = await fetch(WORKER + '/private-issue', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        code: password,
+        title: '🧭 Fakt/Opinia/Założenie · ' + NICK + ' · ' + groupName + ' · ' + tot + '/60',
+        body: body,
+        labels: ['fakt-opinia-zalozenie']
+      })
+    });
+    const data = await res.json().catch(function() { return null; });
+    saved = res.ok && !!(data && data.number);
+  } catch(e) { console.warn('Zapis wyniku nieudany:', e); }
+  showSaveStatus(saved);
+}
+
+function showSaveStatus(saved) {
+  const box = $('#save-status');
+  box.textContent = '';
+  box.style.cssText = 'margin:0 0 16px;padding:12px 14px;font-size:0.9rem;line-height:1.5;border:1.5px solid;' +
+    (saved ? 'border-color:#2E7D5B;background:#EAF5EF;color:#1F5A41;' : 'border-color:#C0392B;background:#FDF0EE;color:#8E2A1F;');
+  if (saved) { box.textContent = t('save.ok'); return; }
+  box.appendChild(document.createTextNode(t('save.fail')));
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = t('save.retry');
+  btn.style.cssText = 'margin-top:8px;padding:8px 14px;border:0;background:#8E2A1F;color:#fff;font:inherit;font-weight:700;cursor:pointer;';
+  btn.onclick = function() { btn.disabled = true; btn.textContent = t('save.saving'); saveResult(); };
+  box.appendChild(document.createElement('br'));
+  box.appendChild(btn);
+}
+
+// ── Zdarzenia ──────────────────────────────────────────────────────────────
+function tryUnlock(st) {
+  const inp = $('#code-' + st);
+  const c = ((inp && inp.value) || '').trim().toLowerCase();
+  if (c === HINT_PASS.toLowerCase()) { state.unlocked[st] = true; renderStage(); }
+  else { const hint = $('#hint-' + st); if (hint) { hint.textContent = t('unlock.bad'); hint.style.color = 'var(--err)'; } }
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'nick') NICK = e.target.value;
+});
+document.addEventListener('change', function(e) {
+  if (e.target.id === 'mult') MULT_CHOICE = e.target.value;
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && e.target.id && e.target.id.indexOf('code-') === 0) tryUnlock(parseInt(e.target.dataset.stage, 10));
+});
+
+document.addEventListener('click', function(e) {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const act = b.getAttribute('data-act'), id = b.getAttribute('data-id');
+  const run = state.stage === 'run';
+  const si = run ? curSi() : null, s = run ? stepsFor(si)[state.idx] : null;
+  if (act === 'warm') {
+    WARM[id] = b.getAttribute('data-v'); renderStage();
+  } else if (act === 'tostart') {
+    state.stage = 'start'; renderStage(); window.scrollTo(0, 0);
+  } else if (act === 'start') {
+    const nick = (NICK || '').trim();
+    if (!nick) { $('#nick-err').textContent = t('nick.err'); $('#nick').focus(); return; }
+    NICK = nick;
+    if (window.mbaSaveKsywa) window.mbaSaveKsywa(nick);
+    const m = parseFloat(MULT_CHOICE);
+    state = fresh(isNaN(m) ? 1 : m);
+    state.stage = 'intro';
+    $('#save-status').textContent = '';
+    renderStage(); window.scrollTo(0, 0);
+  } else if (act === 'startstage') {
+    state.stage = 'run'; state.sp = 0; state.idx = 0; renderStage(); window.scrollTo(0, 0);
+  } else if (act === 'nextstage') {
+    state.st++; state.sp = 0; state.idx = 0; state.stage = 'intro'; renderStage(); window.scrollTo(0, 0);
+  } else if (act === 'pick' && run) {
+    state.ans[si][s.id] = id; renderOpts();
+  } else if (act === 'toggle' && run) {
+    const cur = state.ans[si][s.id] || [], i = cur.indexOf(id);
+    if (i > -1) cur.splice(i, 1); else if (cur.length < s.max) cur.push(id);
+    state.ans[si][s.id] = cur; renderOpts();
+  } else if (act === 'ofz' && run) {
+    const oa = state.ans[si][s.id] || {}; oa[id] = b.getAttribute('data-v'); state.ans[si][s.id] = oa; renderOpts();
+  } else if (act === 'done' && run) {
+    finishStep(false);
+  } else if (act === 'unlock') {
+    tryUnlock(parseInt(b.getAttribute('data-stage'), 10));
+  } else if (act === 'copy') {
+    const txt = allText(false);
+    const ok = function() { const cb = $('#copybox'); if (cb) cb.innerHTML = '<p class="note">' + esc(t('copied')) + '</p>'; };
+    const fallback = function() {
+      const cb = $('#copybox');
+      if (cb) { cb.innerHTML = '<p class="note">' + esc(t('copyManual')) + '</p><textarea class="copy-ta" id="ta" readonly></textarea>'; const ta = $('#ta'); ta.value = txt; ta.focus(); ta.select(); }
+    };
+    try { navigator.clipboard.writeText(txt).then(ok, fallback); } catch(err) { fallback(); }
+  } else if (act === 'restart') {
+    state = fresh(state.mult); $('#save-status').textContent = ''; renderStage(); window.scrollTo(0, 0);
+  }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  mountLangSwitches();
+  applyI18n();
+  const s = loadSession();
+  if (s && s.groupName) showTopbarGroup(s.groupName);
+  renderStage();
+});
+</script>
+</body>
+</html>

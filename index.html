@@ -500,7 +500,7 @@
 
         <div class="section-head">
             <h2 data-i18n="sec.ex">Ćwiczenia</h2>
-            <span data-i18n="sec.count">8 modułów</span>
+            <span data-i18n="sec.count">9 modułów</span>
         </div>
 
         <div class="cards-grid">
@@ -631,6 +631,22 @@
                 </div>
             </a>
 
+            <a href="fakt-opinia-zalozenie.html" class="card card-09">
+                <div class="card-thumb">
+                    <img class="card-thumb-img" src="images/fakt-opinia.png" alt="Fakt/Opinia/Założenie" style="object-position:center top;">
+                    <span class="card-thumb-num"><span data-i18n="ex">Ćwiczenie</span> 09</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title"><span data-i18n="c09.t">Fakt/Opinia/Założenie</span> <span class="version-badge">v1.0</span></div>
+                    <div class="card-desc" data-i18n="c09.d">Sześć decyzji biznesowych pod presją czasu: oddziel fakty od opinii i założeń, postaw tezę i utrzymaj ją pod naciskiem.</div>
+                    <div class="card-meta">
+                        <span class="meta-pill">⏱ ~25 min</span>
+                        <span class="meta-sep">·</span>
+                        <span class="meta-pill" data-i18n="p.scen6">6 scenariuszy</span>
+                    </div>
+                </div>
+            </a>
+
         </div>
 
         <div class="section-head">
@@ -686,7 +702,8 @@ const MBA_LANG_KEY = 'mba_lang';
 // Ćwiczenia (po href) dostępne w danym języku. Brak wpisu = tylko PL.
 const HREF_LANGS = {
   'zarzadzanie-porazka.html': ['pl', 'en'],
-  'porazka-recenzja.html':    ['pl', 'en']
+  'porazka-recenzja.html':    ['pl', 'en'],
+  'fakt-opinia-zalozenie.html': ['pl', 'en']
 };
 const I18N_EN = {
   'login.h': 'Platform access',
@@ -704,7 +721,7 @@ const I18N_EN = {
   'hero.eyebrow': 'Learning platform · MBA 2026',
   'hero.h1': 'Interactive MBA Exercises',
   'sec.ex': 'Exercises',
-  'sec.count': '8 modules',
+  'sec.count': '9 modules',
   'sec.team': 'Teamwork',
   'sec.final': 'Final assessment',
   'ex': 'Exercise',
@@ -724,6 +741,8 @@ const I18N_EN = {
   'c07.d': 'Come to terms with a missed goal: fact analysis, RCA, peer review with another person.',
   'c08.t': 'Communication Strategies for Change',
   'c08.d': 'Diagnose how you tend to react to change (Oreg model) and choose a communication strategy.',
+  'c09.t': 'Fact/Opinion/Assumption',
+  'c09.d': 'Six business decisions under time pressure: separate facts from opinions and assumptions, state a thesis and hold it under pressure.',
   'p.q5': '5 questions',
   'p.q10': '10 questions',
   'p.dec6': '6 decisions',
@@ -732,6 +751,7 @@ const I18N_EN = {
   'p.strat': 'Strategic',
   'p.peer': 'Peer review',
   'p.items15': '15 items',
+  'p.scen6': '6 scenarios',
   'rev.t': 'Failure: review',
   'rev.d': 'Review someone\'s exercise with a code or check your own review.',
   'final.eyebrow': 'Final assessment',
@@ -862,7 +882,8 @@ window.addEventListener('DOMContentLoaded', function() {
     'test-wiedzy.html':             'test',
     'test-predyspozycji.html':      'predyspozycje',
     'zarzadzanie-porazka.html':     'zarzadzanie-porazka',
-    'strategie-komunikacyjne-dla-zmiany.html': 'strategie-zmiany'
+    'strategie-komunikacyjne-dla-zmiany.html': 'strategie-zmiany',
+    'fakt-opinia-zalozenie.html':   'fakt-opinia'
   };
 
   function saveSession(password, groupName, allowedExercises) {
